@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPR Data Model Viewer - GSSI SIR-4000</title>
+<style>
+  :root { --bg: #1a1a2e; --panel: #16213e; --accent: #0f3460; --text: #e0e0e0; --highlight: #e94560; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; overflow:hidden; height:100vh; }
+  #app { display:flex; flex-direction:column; height:100vh; }
+  #toolbar { background:var(--panel); padding:8px 16px; display:flex; align-items:center; gap:16px; border-bottom:2px solid var(--accent); flex-shrink:0; }
+  #toolbar h1 { font-size:16px; font-weight:600; margin-right:auto; }
+  #toolbar label { font-size:12px; display:flex; align-items:center; gap:4px; }
+  #toolbar select, #toolbar input { background:var(--accent); color:var(--text); border:1px solid #444; padding:3px 6px; border-radius:4px; font-size:12px; }
+  #main { display:flex; flex:1; overflow:hidden; }
+  #radargrams { display:flex; flex-direction:column; flex:3; overflow:hidden; }
+  .radar-panel { flex:1; position:relative; border-bottom:1px solid #333; overflow:hidden; }
+  .radar-panel canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
+  .radar-panel .label { position:absolute; top:8px; left:12px; font-size:13px; font-weight:600; color:#fff; text-shadow:0 0 6px rgba(0,0,0,0.8); z-index:5; pointer-events:none; }
+  .radar-panel .depth-marker { position:absolute; left:0; right:0; height:1px; border-bottom:1px dashed rgba(0,255,255,0.5); pointer-events:none; z-index:4; display:none; }
+  .radar-panel .depth-label { position:absolute; right:8px; font-size:11px; color:#0ff; pointer-events:none; z-index:4; display:none; transform:translateY(-50%); }
+  .radar-panel .cursor { position:absolute; top:0; bottom:0; width:1px; background:rgba(255,255,0,0.7); pointer-events:none; z-index:3; display:none; }
+  #sidepanel { flex:1.2; background:var(--panel); display:flex; flex-direction:column; overflow-y:auto; min-width:340px; max-width:460px; }
+  #trace-view { flex:1; position:relative; min-height:300px; border-bottom:1px solid #333; }
+  #trace-view canvas { position:absolute; top:0; left:0; width:100%; height:100%; }
+  #info-panel { padding:12px; }
+  #info-panel h3 { font-size:13px; margin:8px 0 4px; color:var(--highlight); }
+  #info-panel table { width:100%; font-size:11px; border-collapse:collapse; }
+  #info-panel td { padding:3px 6px; border-bottom:1px solid #222; }
+  #info-panel td:first-child { color:#999; }
+  #reflector-list { max-height:200px; overflow-y:auto; font-size:11px; padding:4px 8px; }
+  .reflector-row { display:flex; justify-content:space-between; padding:3px 8px; cursor:pointer; border-radius:3px; }
+  .reflector-row:hover { background:var(--accent); }
+  .reflector-row .bar { display:inline-block; height:8px; border-radius:2px; background:var(--highlight); margin-left:8px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="toolbar">
+    <h1>GPR Depth Model — GSSI SIR-4000</h1>
+    <label>Color: <select id="cmap"><option value="gray">Grayscale</option><option value="seismic">Seismic</option><option value="hot">Thermal</option><option value="terrain">Terrain</option></select></label>
+    <label>Gain: <input type="range" id="gain" min="0.5" max="4" step="0.1" value="1"></label>
+    <label>Show reflectors: <input type="checkbox" id="showRefl" checked></label>
+    <span style="font-size:11px;color:#999;">Move mouse over radargram to inspect</span>
+  </div>
+  <div id="main">
+    <div id="radargrams">
+      <div class="radar-panel" id="panel1"><canvas id="canvas1"></canvas><div class="label">Line 1</div><div class="depth-marker" id="dm1"></div><div class="depth-label" id="dl1"></div><div class="cursor" id="cur1"></div></div>
+      <div class="radar-panel" id="panel2"><canvas id="canvas2"></canvas><div class="label">Line 2</div><div class="depth-marker" id="dm2"></div><div class="depth-label" id="dl2"></div><div class="cursor" id="cur2"></div></div>
+    </div>
+    <div id="sidepanel">
+      <div id="trace-view"><canvas id="traceCanvas"></canvas></div>
+      <div id="info-panel">
+        <h3>Survey Parameters</h3>
+        <table>
+          <tr><td>System</td><td>GSSI SIR-4000</td></tr>
+          <tr><td>Antenna</td><td>Model 34 (100 kHz)</td></tr>
+          <tr><td>Dielectric (εr)</td><td>8.0</td></tr>
+          <tr><td>Velocity</td><td>0.106 m/ns</td></tr>
+          <tr><td>Depth Range</td><td>31.82 m</td></tr>
+          <tr><td>Profile Length</td><td>4.1 m (205 scans)</td></tr>
+          <tr><td>Scans/Meter</td><td>50</td></tr>
+          <tr><td>Scan Spacing</td><td>0.02 m</td></tr>
+          <tr><td>Samples/Scan</td><td>1024</td></tr>
+          <tr><td>Depth Resolution</td><td>0.031 m/sample</td></tr>
+          <tr><td>Time Window</td><td>~600 ns TWT</td></tr>
+        </table>
+        <h3>Major Reflectors (Line 1) <span style="font-weight:normal;font-size:10px;color:#999;">— click to jump</span></h3>
+        <div id="reflector-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ DATA LOADING ============
+const SURVEY = { dielectric:8, velocity:0.106, depthMax:31.82, scansPerM:50, scanSpacing:0.02,
+  lineLength:4.1, samplesPerScan:1024, dtNs:0.586 };
+
+// Embedded base64 data will be injected here
+const DATA_B64 = { line1: '{{LINE1_B64}}', line2: '{{LINE2_B64}}' };
+
+function decodeLine(b64) {
+  const raw = atob(b64);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  // 52 scans × 512 samples = 26624 bytes
+  const nScans = 52, nSamples = 512;
+  const data = new Float32Array(nScans * nSamples);
+  for (let i = 0; i < nScans * nSamples; i++) {
+    data[i] = (bytes[i] - 128) / 127; // de-normalize to ~[-1, 1]
+  }
+  return { data, nScans, nSamples };
+}
+
+// ============ COLORMAPS ============
+function getColor(val, cmap) {
+  const v = Math.max(-1, Math.min(1, val));
+  switch(cmap) {
+    case 'seismic': { // blue-white-red
+      const t = v * 0.5 + 0.5;
+      const r = t < 0.5 ? 0 : (t - 0.5) * 2;
+      const g = 1 - 2 * Math.abs(t - 0.5);
+      const b = t < 0.5 ? (0.5 - t) * 2 : 0;
+      return [r * 255, g * 255, b * 255];
+    }
+    case 'hot': { const t=v*0.5+0.5; return [Math.min(1,t*3)*255,Math.max(0,(t-0.3)*3)*255,Math.max(0,(t-0.6)*3)*255]; }
+    case 'terrain': {
+      const stops = [[0,0,100],[0.2,0,180,0],[0.4,80,200,80],[0.6,180,180,80],[0.7,160,120,60],[0.85,220,220,220],[1,255,255,255]];
+      for (let i=0;i<stops.length-1;i++) {
+        if (v<=stops[i+1][0]||i===stops.length-2) {
+          const s=stops[i], e=stops[i+1];
+          const t=Math.max(0,Math.min(1,(v-s[0])/(e[0]-s[0]||0.001)));
+          return [s[1]+(e[1]-s[1])*t, s[2]+(e[2]-s[2])*t, s[3]+(e[3]-s[3])*t];
+        }
+      }
+    }
+    default: return [v*0.5*255+128, v*0.5*255+128, v*0.5*255+128]; // gray
+  }
+}
+
+// ============ REFLECTORS (from processing) ============
+const REFLECTORS_L1 = [
+  [1.00,0.846],[1.99,0.773],[3.55,0.726],[4.73,0.789],[5.60,0.753],[6.22,0.675],
+  [7.06,0.744],[8.30,0.825],[9.08,0.731],[9.83,0.689],[10.95,0.701],[11.66,0.793],
+  [12.91,0.679],[13.65,0.751],[14.28,0.647],[15.40,0.676],[16.17,0.705],[17.42,0.681],
+  [18.23,0.643],[18.97,0.631],[19.81,0.748],[20.44,0.700],[21.28,0.643],[22.02,0.690],
+  [23.11,0.641],[24.39,0.666],[25.16,0.656],[26.00,0.757],[26.72,0.739],[27.71,0.771],
+  [28.96,0.650],[29.89,1.000],[30.64,0.712],[31.79,0.801]
+];
+
+// ============ RENDER STATE ============
+let lines = {};
+let mouseX = -1, mouseY = -1;
+let activeScan1 = 26, activeScan2 = 26;
+let cmapName = 'gray', gainVal = 1, showRefl = true;
+
+// ============ CANVAS RENDERING ============
+function renderRadargram(canvas, line, activeScan, cursorX, cursorDepth) {
+  const ctx = canvas.getContext('2d');
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const W = rect.width, H = rect.height;
+  canvas.width = W * devicePixelRatio;
+  canvas.height = H * devicePixelRatio;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  const { data, nScans, nSamples } = line;
+  const img = ctx.createImageData(W, H);
+
+  for (let py = 0; py < H; py++) {
+    const depthIdx = Math.floor(py / H * nSamples);
+    for (let px = 0; px < W; px++) {
+      const scanIdx = Math.floor(px / W * nScans);
+      const val = Math.max(-1, Math.min(1, data[scanIdx * nSamples + depthIdx] * gainVal));
+      const [r, g, b] = getColor(val, cmapName);
+      const idx = (py * W + px) * 4;
+      img.data[idx] = r;
+      img.data[idx + 1] = g;
+      img.data[idx + 2] = b;
+      img.data[idx + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+
+  // Reflector lines
+  if (showRefl) {
+    ctx.strokeStyle = 'rgba(0,255,255,0.35)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    REFLECTORS_L1.forEach(([d, amp]) => {
+      const y = d / SURVEY.depthMax * H;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  }
+
+  // Cursor
+  if (cursorX >= 0) {
+    ctx.strokeStyle = 'rgba(255,255,0,0.7)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cursorX * W, 0);
+    ctx.lineTo(cursorX * W, H);
+    ctx.stroke();
+
+    // Scan number label
+    const scanNum = Math.floor(cursorX * nScans);
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(cursorX * W + 8, 8, 80, 20);
+    ctx.fillStyle = '#ff0';
+    ctx.font = '11px monospace';
+    ctx.fillText(`Scan ${scanNum}`, cursorX * W + 12, 22);
+    ctx.fillText(`${(cursorX * SURVEY.lineLength).toFixed(2)}m`, cursorX * W + 12, 36);
+  }
+}
+
+function renderTraceView(canvas, lines, scan1, scan2) {
+  const ctx = canvas.getContext('2d');
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const W = rect.width, H = rect.height;
+  canvas.width = W * devicePixelRatio;
+  canvas.height = H * devicePixelRatio;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  ctx.fillStyle = '#0a0a1a';
+  ctx.fillRect(0, 0, W, H);
+
+  const pad = { left: 55, right: 20, top: 20, bottom: 30 };
+  const pw = W - pad.left - pad.right, ph = H - pad.top - pad.bottom;
+
+  // Grid
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 8; i++) {
+    const y = pad.top + ph * i / 8;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+    ctx.fillStyle = '#666'; ctx.font = '10px monospace'; ctx.textAlign = 'right';
+    ctx.fillText((SURVEY.depthMax * i / 8).toFixed(1) + 'm', pad.left - 8, y + 4);
+  }
+
+  // Zero line
+  ctx.strokeStyle = '#444'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.left, pad.top); ctx.lineTo(W - pad.right, pad.top + ph); ctx.stroke();
+
+  const drawTrace = (line, scanIdx, color, label) => {
+    const { data, nSamples } = line;
+    const offset = scanIdx * nSamples;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let d = 0; d < nSamples; d++) {
+      const val = data[offset + d] * gainVal;
+      const x = pad.left + pw * (val * 0.4 + 0.5);
+      const y = pad.top + ph * d / (nSamples - 1);
+      if (d === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Fill positive
+    ctx.fillStyle = color.replace('1)', '0.15)').replace('rgb', 'rgba');
+    ctx.beginPath();
+    for (let d = 0; d < nSamples; d++) {
+      const val = data[offset + d] * gainVal;
+      const x = pad.left + pw * (val * 0.4 + 0.5);
+      const y = pad.top + ph * d / (nSamples - 1);
+      if (d === 0) { ctx.moveTo(pad.left + pw * 0.5, y); ctx.lineTo(x, y); }
+      else ctx.lineTo(x, y);
+    }
+    for (let d = nSamples - 1; d >= 0; d--) {
+      ctx.lineTo(pad.left + pw * 0.5, pad.top + ph * d / (nSamples - 1));
+    }
+    ctx.fill();
+
+    // Label
+    const maxVal = Math.max(...Array.from({length:nSamples}, (_,d) => Math.abs(data[offset+d])));
+    ctx.fillStyle = color;
+    ctx.font = 'bold 11px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${label} (scan ${scanIdx})`, W - pad.right - 170, pad.top + 16);
+    ctx.fillText(`max=${(maxVal*gainVal).toFixed(2)}`, W - pad.right - 170, pad.top + 32);
+  };
+
+  drawTrace(lines.line1 || line1, scan1, 'rgb(255,80,80)', 'Line 1');
+  drawTrace(lines.line2 || line2, scan2, 'rgb(80,150,255)', 'Line 2');
+
+  // Depth axis label
+  ctx.fillStyle = '#999';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'center';
+  ctx.save();
+  ctx.translate(12, pad.top + ph / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Depth (m)', 0, 0);
+  ctx.restore();
+}
+
+// ============ INIT ============
+async function init() {
+  // Load data
+  const resp1 = await fetch('line_1_b64.txt');
+  const resp2 = await fetch('line_2_b64.txt');
+  const b64_1 = await resp1.text();
+  const b64_2 = await resp2.text();
+
+  lines.line1 = decodeLine(b64_1);
+  lines.line2 = decodeLine(b64_2);
+  console.log('Data loaded:', lines.line1.data.length, lines.line2.data.length);
+
+  // Build reflector list
+  const reflDiv = document.getElementById('reflector-list');
+  REFLECTORS_L1.forEach(([d, amp]) => {
+    const row = document.createElement('div');
+    row.className = 'reflector-row';
+    row.innerHTML = `<span>${d.toFixed(2)} m</span><span class="bar" style="width:${amp*100}px"></span><span style="color:#999">${(amp*100).toFixed(0)}%</span>`;
+    row.onclick = () => {
+      const depthFrac = d / SURVEY.depthMax;
+      document.getElementById('dm1').style.top = (depthFrac * 100) + '%';
+      document.getElementById('dm1').style.display = 'block';
+      document.getElementById('dl1').style.top = (depthFrac * 100) + '%';
+      document.getElementById('dl1').style.display = 'block';
+      document.getElementById('dl1').textContent = d.toFixed(1) + 'm';
+      document.getElementById('dm2').style.top = (depthFrac * 100) + '%';
+      document.getElementById('dm2').style.display = 'block';
+    };
+    reflDiv.appendChild(row);
+  });
+
+  renderAll();
+
+  // Mouse tracking
+  ['panel1', 'panel2'].forEach((pid, i) => {
+    const panel = document.getElementById(pid);
+    panel.addEventListener('mousemove', (e) => {
+      const rect = panel.getBoundingClientRect();
+      const relX = (e.clientX - rect.left) / rect.width;
+      const relY = (e.clientY - rect.top) / rect.height;
+      mouseX = relX;
+      mouseY = relY;
+      if (i === 0) activeScan1 = Math.floor(relX * lines.line1.nScans);
+      else activeScan2 = Math.floor(relX * lines.line2.nScans);
+
+      // Update depth marker
+      const dm = document.getElementById('dm' + (i+1));
+      const dl = document.getElementById('dl' + (i+1));
+      dm.style.top = (relY * 100) + '%';
+      dm.style.display = 'block';
+      dl.style.top = (relY * 100) + '%';
+      dl.style.display = 'block';
+      dl.textContent = (relY * SURVEY.depthMax).toFixed(1) + 'm';
+
+      renderAll();
+    });
+    panel.addEventListener('mouseleave', () => {
+      document.getElementById('dm' + (i+1)).style.display = 'none';
+      document.getElementById('dl' + (i+1)).style.display = 'none';
+    });
+  });
+
+  // Controls
+  document.getElementById('cmap').addEventListener('change', (e) => { cmapName = e.target.value; renderAll(); });
+  document.getElementById('gain').addEventListener('input', (e) => { gainVal = parseFloat(e.target.value); renderAll(); });
+  document.getElementById('showRefl').addEventListener('change', (e) => { showRefl = e.target.checked; renderAll(); });
+
+  // Resize handling
+  window.addEventListener('resize', () => renderAll());
+}
+
+function renderAll() {
+  renderRadargram(document.getElementById('canvas1'), lines.line1, activeScan1, mouseX, mouseY);
+  renderRadargram(document.getElementById('canvas2'), lines.line2, activeScan2, mouseX, mouseY);
+  renderTraceView(document.getElementById('traceCanvas'), lines, activeScan1, activeScan2);
+}
+
+init().catch(err => { console.error(err); document.body.innerHTML = '<div style="padding:40px;text-align:center;"><h2>Error loading data</h2><p>Make sure line_1_b64.txt and line_2_b64.txt are in the same folder.</p><pre>' + err.message + '</pre></div>'; });
+</script>
+</body>
+</html>

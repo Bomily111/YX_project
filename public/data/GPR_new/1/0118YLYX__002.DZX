@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DZX xmlns="www.geophysical.com/DZX/1.020000">
+    <GlobalProperties>
+        <verticalUnit>m</verticalUnit>
+        <horizontalUnit>m</horizontalUnit>
+        <dielectric>8</dielectric>
+        <readOnly>0</readOnly>
+        <unitsPerMark>0.000000</unitsPerMark>
+        <unitsPerScan>0.020000</unitsPerScan>
+    </GlobalProperties>
+    <DataCollection>
+        <system>SIR4K</system>
+        <softwareVersion>1.4.21</softwareVersion>
+        <Ctable>11</Ctable>
+        <colorStretch>0.000000</colorStretch>
+        <colorSlide>0.000000</colorSlide>
+        <displayGain>0</displayGain>
+        <depthRange>31.819805</depthRange>
+        <originalDielectric>8.000000</originalDielectric>
+        <scanPerMeters>50.000000</scanPerMeters>
+        <gridId>Grid</gridId>
+        <antSerialNumber>0</antSerialNumber>
+        <antModelNumber>34</antModelNumber>
+        <scanRate>93</scanRate>
+        <transmitRate>100</transmitRate>
+    </DataCollection>
+    <Macro>
+        <state>0</state>
+        <Process>
+            <state>0</state>
+            <BinaryData size="16">0&amp;``!```$$`!C``(``````"`@
+
+</BinaryData>
+        </Process>
+        <Process>
+            <state>0</state>
+            <BinaryData size="44">L+``!```$)`!-`@```(``````````````%D0````````````````````````@
+
+</BinaryData>
+        </Process>
+        <Process>
+            <state>0</state>
+            <BinaryData size="150">ME@`!```$C@`["````.#`````P```X$```#!!``#000``V$$``!!"```D0@``
+
+M``````````````````````````````````````````#_`P``````````````
+
+M````````````````````````````````````````````````````````````
+
+/````````````````````
+
+</BinaryData>
+        </Process>
+        <Process>
+            <state>0</state>
+            <BinaryData size="72">M2``!```$0``$"``````#"``````````````````````L`1D```#_`P``````
+
+;````````````````````````````````````
+
+</BinaryData>
+        </Process>
+    </Macro>
+    <File>
+        <Profile>
+            <scanRange>0,70</scanRange>
+            <WayPt>
+                <scan>0</scan>
+                <localCoords>0.000000, 0.000000, 0</localCoords>
+            </WayPt>
+            <WayPt>
+                <scan>70</scan>
+                <localCoords>10.000000, 0.000000, 0</localCoords>
+            </WayPt>
+        </Profile>
+        <scanRange>0,70</scanRange>
+    </File>
+</DZX>

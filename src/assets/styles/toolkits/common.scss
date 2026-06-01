@@ -1,0 +1,28 @@
+/*
+ * @Author: Lincong-pro
+ * @Date: 2023-04-08 13:19:57
+ * @LastEditors: Lincong-pro
+ * @LastEditTime: 2023-04-12 10:15:58
+ * @FilePath: \geoproject2.0\src\assets\styles\Toolkits\Common.scss
+ * @Description: 主要用于控制工具栏的公共样式
+ * Copyright (c) 2023 by VGE, All Rights Reserved. 
+ */
+
+// 按钮的基本样式
+.button {
+  display: inline-block;
+  margin: 0 5px 5px;
+  padding: 5px 10px;
+  border: solid 1px rgb(12 168 214);
+  border-radius: 5px;
+  color: rgb(12 168 214);
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+}
+
+// 按钮按下之后的样式
+.checkedBtn {
+  color: rgb(255 255 255 / 84.7%);
+  background: linear-gradient(to right, rgb(10 176 231), rgb(35 227 173));
+}

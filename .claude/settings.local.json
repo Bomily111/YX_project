@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vue-tsc *)",
+      "Bash(npx vite *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(node scripts/build_tem_volume.mjs)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const rbf = require\\('rbf'\\); console.log\\(Object.keys\\(rbf\\)\\);\")",
+      "Bash(node -e \"import\\('rbf'\\).then\\(m => console.log\\(Object.keys\\(m\\)\\)\\);\")",
+      "Bash(node scripts/build_tem_fans.mjs)",
+      "Bash(node -e \"const m = JSON.parse\\(require\\('fs'\\).readFileSync\\('D:/project/public/data/TEM/1/fans/line2.json','utf8'\\)\\); console.log\\('profile:', m.profile, 'phi:', m.phi\\); console.log\\('positions len:', m.positions.length, '\\(expect', m.cols*m.rows*3, '\\)'\\); console.log\\('colors len:', m.colors.length, '\\(expect', m.cols*m.rows*4, '\\)'\\); console.log\\('indices len:', m.indices.length, '\\(expect', 2*\\(m.cols-1\\)*\\(m.rows-1\\)*3, '\\)'\\); console.log\\('sample vertex 0: pos=', m.positions.slice\\(0,3\\), 'color=', m.colors.slice\\(0,4\\)\\); console.log\\('sample vertex mid: pos=', m.positions.slice\\(180*3,180*3+3\\), 'color=', m.colors.slice\\(180*4,180*4+4\\)\\);\")",
+      "Bash(sed -n '502,504p' d:/project/public/data/wind/tunnel_wind.txt)",
+      "Bash(sed -n '100001,100005p' d:/project/public/data/wind/tunnel_wind.txt)",
+      "Bash(python scripts/build_tem_volume.py)",
+      "Bash(cat /c/Users/25603/AppData/Local/Temp/claude/d--project/74434218-20cd-4106-a779-162a8d1d2359/tasks/bmmq2t08m.output)",
+      "Read(//c/Users/25603/AppData/Local/Temp/claude/d--project/74434218-20cd-4106-a779-162a8d1d2359/tasks/**)"
+    ]
+  }
+}

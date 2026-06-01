@@ -1,0 +1,7 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v6.0.4214709720)
+
+newmtl tex_3.png
+illum 1
+map_Kd tex_3.png
+

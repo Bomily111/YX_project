@@ -1,0 +1,15 @@
+{
+  "mapProvider": "Cesium Ion",
+  "tdtToken": "85a16639478d6d32f753fde8af3e0f15",
+  "ionToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlODE0MTRjZC0zZjQ3LTQxNTctYjE0NC05NGY1MjA0ZDgxYmMiLCJpZCI6OTg4MjAsImlhdCI6MTY4NTE2MjA1Mn0.FxQ9MoKycjkrZFuExULXjjgjHVxYTQ4qsSieZLLjWyQ",
+  "openFPS": false,
+  "openlayerControl": false,
+  "debugMode": false,
+  "ipServer": "",
+  "cdnServer": "",
+  "neo4jServer": "",
+  "geoserver": "",
+  "middlewareServer": "",
+  "serverPage": "",
+  "zzsmImage": ""
+}

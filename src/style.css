@@ -1,0 +1,17 @@
+:root {
+  font-family: "Microsoft YaHei", sans-serif;
+  overflow: hidden; /* 禁止出现滚动条，防止挤压布局 */
+}
+
+/* === 核心修复 === */
+* {
+  box-sizing: border-box; /* 关键：让 padding 不会把宽度撑开 */
+}
+
+html, body, #app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+}

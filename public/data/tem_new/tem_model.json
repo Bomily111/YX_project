@@ -1,0 +1,92 @@
+{
+  "properties": {
+    "background": "rgba(0,0,0,0)",
+    "nogui": true
+  },
+  "views": [
+    {
+      "axes": false,
+      "border": false,
+      "translate": [
+        0,
+        0,
+        0
+      ],
+      "rotate": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "name": "volume",
+      "volume": {
+        "url": "data/tem_new/tem_volume.png",
+        "res": [
+          128,
+          128,
+          128
+        ],
+        "scale": [
+          101.84411117107791,
+          66.93526478792303,
+          101.95169750699004
+        ],
+        "autoscale": true
+      },
+      "samples": 256,
+      "density": 5.0,
+      "power": 1.5,
+      "isovalue": 0.3,
+      "isowalls": false,
+      "isoalpha": 0.65,
+      "isosmooth": 1.0,
+      "colour": [
+        0,
+        70,
+        200
+      ],
+      "tricubicfilter": true,
+      "usecolourmap": true,
+      "xmin": 0.0,
+      "xmax": 1.0,
+      "ymin": 0.0,
+      "ymax": 1.0,
+      "zmin": 0.0,
+      "zmax": 1.0
+    }
+  ],
+  "colourmaps": [
+    {
+      "colours": [
+        {
+          "position": 0.0,
+          "colour": "rgba(0,60,180,0.95)"
+        },
+        {
+          "position": 0.15,
+          "colour": "rgba(0,140,230,0.75)"
+        },
+        {
+          "position": 0.35,
+          "colour": "rgba(0,200,220,0.50)"
+        },
+        {
+          "position": 0.55,
+          "colour": "rgba(30,210,180,0.25)"
+        },
+        {
+          "position": 0.75,
+          "colour": "rgba(50,160,150,0.08)"
+        },
+        {
+          "position": 1.0,
+          "colour": "rgba(0,0,0,0.0)"
+        }
+      ]
+    }
+  ]
+}

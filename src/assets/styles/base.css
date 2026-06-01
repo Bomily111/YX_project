@@ -1,0 +1,9 @@
+/* 更改ElLoading的颜色 */
+.el-loading-text{
+	color: rgb(255, 255, 255) !important;
+	font-size: 16px !important;
+}
+.path {
+	stroke: rgb(255, 255, 255)  !important;
+	stroke-width: 4 !important;
+}
