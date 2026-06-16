@@ -157,7 +157,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
-import { setRebarMeshesVisible, loadRebarMeshes, setRebarHighlight } from '@/utils/Common/DrawLine';
+import { setRebarMeshesVisible, loadRebarMeshes, setRebarHighlight, setSecondRebarVisible, setSecondRebarHighlight, loadSecondRebarMeshes, setSteelFrameVisible, setSteelFrameHighlight, loadSteelFrameMeshes, setPipeShedVisible, setPipeShedHighlight, loadPipeShedMeshes, setAnchorVisible, setAnchorHighlight, loadAnchorMeshes } from '@/utils/Common/DrawLine';
 import { startWind, changePower, removeFlowLine, getCurrentPower } from '@/utils/Common/WindFieldSimulation';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 
@@ -222,20 +222,33 @@ const SCENE_DATA: Record<string, SceneData> = {
     alerts: [],
     structureTree: [
       {
+        id: 'advance_support',
+        label: '超前支护',
+        icon: '⊕',
+        defaultExpanded: true,
+        children: [
+          { id: 'pipe_shed', label: 'ZZ-QJsx-φ76中管棚', icon: '⬡', visible: false },
+        ],
+      },
+      {
         id: 'primary_support',
-        label: '初支结构',
+        label: '初支',
         icon: '◈',
         defaultExpanded: true,
         children: [
-          { id: 'rebar', label: '钢筋衬砌', icon: '⬡', visible: false },
+          { id: 'anchor', label: 'ZZ-QJsx-φ25自进式中空注浆锚杆', icon: '⊙', visible: false },
         ],
       },
       {
         id: 'secondary_lining',
-        label: '二次衬砌',
+        label: '二衬',
         icon: '⬡',
-        defaultExpanded: false,
-        children: [],
+        defaultExpanded: true,
+        children: [
+          { id: 'rebar', label: 'Z-PM-洞口钢筋网', icon: '⬡', visible: false },
+          { id: 'lining_rebar', label: 'ZZ-QJsx-二衬钢筋', icon: '⬡', visible: false },
+          { id: 'steel_frame', label: 'ZZ-QJsx-钢架', icon: '⊞', visible: false },
+        ],
       },
     ],
   },
@@ -367,15 +380,51 @@ function toggleNodeVisible(nodeId: string) {
     if (!current) {
       loadRebarMeshes();
       setRebarMeshesVisible(true);
-      // 加载后同步当前高亮状态
-      if (nodeHighlight[nodeId]) {
-        setRebarHighlight(true);
-      }
+      if (nodeHighlight[nodeId]) setRebarHighlight(true);
     } else {
       setRebarMeshesVisible(false);
-      // 隐藏时自动关闭高亮
       nodeHighlight[nodeId] = false;
       setRebarHighlight(false);
+    }
+  } else if (nodeId === 'lining_rebar') {
+    if (!current) {
+      loadSecondRebarMeshes();
+      setSecondRebarVisible(true);
+      if (nodeHighlight[nodeId]) setSecondRebarHighlight(true);
+    } else {
+      setSecondRebarVisible(false);
+      nodeHighlight[nodeId] = false;
+      setSecondRebarHighlight(false);
+    }
+  } else if (nodeId === 'steel_frame') {
+    if (!current) {
+      loadSteelFrameMeshes();
+      setSteelFrameVisible(true);
+      if (nodeHighlight[nodeId]) setSteelFrameHighlight(true);
+    } else {
+      setSteelFrameVisible(false);
+      nodeHighlight[nodeId] = false;
+      setSteelFrameHighlight(false);
+    }
+  } else if (nodeId === 'pipe_shed') {
+    if (!current) {
+      loadPipeShedMeshes();
+      setPipeShedVisible(true);
+      if (nodeHighlight[nodeId]) setPipeShedHighlight(true);
+    } else {
+      setPipeShedVisible(false);
+      nodeHighlight[nodeId] = false;
+      setPipeShedHighlight(false);
+    }
+  } else if (nodeId === 'anchor') {
+    if (!current) {
+      loadAnchorMeshes();
+      setAnchorVisible(true);
+      if (nodeHighlight[nodeId]) setAnchorHighlight(true);
+    } else {
+      setAnchorVisible(false);
+      nodeHighlight[nodeId] = false;
+      setAnchorHighlight(false);
     }
   }
 }
@@ -384,6 +433,14 @@ function toggleNodeHighlight(nodeId: string) {
   nodeHighlight[nodeId] = !nodeHighlight[nodeId];
   if (nodeId === 'rebar') {
     setRebarHighlight(nodeHighlight[nodeId]);
+  } else if (nodeId === 'lining_rebar') {
+    setSecondRebarHighlight(nodeHighlight[nodeId]);
+  } else if (nodeId === 'steel_frame') {
+    setSteelFrameHighlight(nodeHighlight[nodeId]);
+  } else if (nodeId === 'pipe_shed') {
+    setPipeShedHighlight(nodeHighlight[nodeId]);
+  } else if (nodeId === 'anchor') {
+    setAnchorHighlight(nodeHighlight[nodeId]);
   }
 }
 
@@ -820,6 +877,13 @@ function statusBarColor(level?: string): string {
   font-size: 13px;
 }
 .sdp-alert-text { line-height: 1.5; }
+
+// ── 调参面板通用 ───────────────────────────────────────────
+.sdp-tune { padding: 12px 16px; border-top: 1px solid rgba(0, 170, 255, 0.1); }
+.tune-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; &:last-child { margin-bottom: 0; } }
+.tune-label { font-size: 11px; color: rgba(180,220,255,0.5); width: 50px; flex-shrink: 0; }
+.tune-slider { flex: 1; height: 3px; accent-color: #ffaa00; cursor: pointer; }
+.tune-val { font-size: 11px; color: #ffaa00; min-width: 36px; text-align: right; font-family: 'Consolas', monospace; }
 
 // ── 风场模拟 ──────────────────────────────────────────────
 .sdp-wind-sim {

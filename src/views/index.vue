@@ -86,8 +86,7 @@
           <span class="terrain-alpha-value">{{ Math.round(terrainAlpha * 100) }}%</span>
         </div>
 
-
-</div>
+        </div>
     </div>
 
     <!-- 爆破设计界面（叠加在 Cesium 三维场景上） -->
@@ -216,7 +215,7 @@ import DTVolume from '@/utils/AllPrevious/All/DTVolume.vue';
 import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
-import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setCenterLineVisible, removeRebarMeshes } from '@/utils/Common/DrawLine';
+import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setCenterLineVisible, removeRebarMeshes, loadWindTunnelGlb, removeWindTunnelGlb } from '@/utils/Common/DrawLine';
 import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
@@ -741,6 +740,16 @@ const handleSelectScene = (key: string) => {
 
   activeScene.value = key;
 
+  // 通风除尘场景：切换为风场模拟隧道模型
+  if (key === 'vent') {
+    setTunnelGlbVisible(false);
+    loadWindTunnelGlb(viewer);
+  } else {
+    // 进入其他场景时恢复原始隧道
+    removeWindTunnelGlb(viewer);
+    setTunnelGlbVisible(layerState.showTunnel);
+  }
+
   // 关闭所有场景浮层
   showLining.value = false;
   showDispatchPersonnel.value = false;
@@ -793,6 +802,10 @@ const handleBackToOverview = () => {
 
   // 清理支护场景的钢筋网模型
   removeRebarMeshes(viewer);
+
+  // 清理风场隧道模型，恢复原始隧道
+  removeWindTunnelGlb(viewer);
+  setTunnelGlbVisible(layerState.showTunnel);
 
   // 恢复地球模式
   restoreEarthMode(viewer);
