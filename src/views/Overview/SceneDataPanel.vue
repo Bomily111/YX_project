@@ -87,6 +87,13 @@
           />
         </div>
         <template v-if="windEnabled">
+          <div class="wind-mode-row">
+            <span class="wind-mode-label">显示模式</span>
+            <div class="wind-mode-tabs">
+              <button :class="{ active: windMode === 'streamline' }" @click="setWindMode('streamline')">流线</button>
+              <button :class="{ active: windMode === 'vectorField' }" @click="setWindMode('vectorField')">矢量</button>
+            </div>
+          </div>
           <div class="wind-power-row">
             <input
               type="range"
@@ -157,9 +164,11 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
-import { setRebarMeshesVisible, loadRebarMeshes, setRebarHighlight, setSecondRebarVisible, setSecondRebarHighlight, loadSecondRebarMeshes, setSteelFrameVisible, setSteelFrameHighlight, loadSteelFrameMeshes, setPipeShedVisible, setPipeShedHighlight, loadPipeShedMeshes, setAnchorVisible, setAnchorHighlight, loadAnchorMeshes } from '@/utils/Common/DrawLine';
+import { setRebarMeshesVisible, loadRebarMeshes, setRebarHighlight, setSecondRebarVisible, setSecondRebarHighlight, loadSecondRebarMeshes, setSteelFrameVisible, setSteelFrameHighlight, loadSteelFrameMeshes, setPipeShedVisible, setPipeShedHighlight, loadPipeShedMeshes, setAnchorVisible, setAnchorHighlight, loadAnchorMeshes, setConduitVisible, setConduitHighlight, loadConduitMeshes, setLockAnchorVisible, setLockAnchorHighlight, loadLockAnchorMeshes } from '@/utils/Common/DrawLine';
 import { startWind, changePower, removeFlowLine, getCurrentPower } from '@/utils/Common/WindFieldSimulation';
+import { startVectorField, removeVectorField, changeVectorPower, getVectorPower } from '@/utils/Common/WindVectorField';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
+import { useSceneStore } from '@/stores/sceneStore';
 
 export interface LayerItem { key: string; name: string; }
 interface Metric  { label: string; val: string; unit: string; level?: string }
@@ -237,6 +246,8 @@ const SCENE_DATA: Record<string, SceneData> = {
         defaultExpanded: true,
         children: [
           { id: 'anchor', label: 'ZZ-QJsx-φ25自进式中空注浆锚杆', icon: '⊙', visible: false },
+          { id: 'conduit', label: 'ZZ-QJsx-φ42注浆小导管', icon: '≋', visible: false },
+          { id: 'lock_anchor', label: 'ZZ-QJsx-φ42锁脚锚杆', icon: '⊕', visible: false },
         ],
       },
       {
@@ -306,7 +317,33 @@ const emit = defineEmits<{
   'select-layer': [item: LayerItem];
 }>();
 
-const data = computed(() => (props.sceneKey ? SCENE_DATA[props.sceneKey] : null));
+function apiSceneToSceneData(api: any): Partial<SceneData> {
+  return {
+    icon: api.icon, name: api.name_cn, color: api.color,
+    metrics: (api.metrics || []).map((m: any) => ({ label: m.label, val: '--', unit: m.unit || '' })),
+    statusList: (api.statusList || []).map((s: any) => ({ label: s.label, val: s.val, pct: s.pct, level: s.level })),
+    alerts: [],
+  }
+}
+
+const sceneStore = useSceneStore();
+
+const data = computed(() => {
+  if (!props.sceneKey) return null;
+  const local = SCENE_DATA[props.sceneKey];
+  const apiScene = sceneStore.getScene(props.sceneKey);
+  if (!apiScene) return local;
+  const apiPart = apiSceneToSceneData(apiScene);
+  if (!local) return { chartTitle: '', chartLabels: [], chartValues: [], ...apiPart, alerts: [] } as SceneData;
+  return {
+    ...local,
+    icon: apiPart.icon ?? local.icon,
+    name: apiPart.name ?? local.name,
+    color: apiPart.color ?? local.color,
+    metrics: apiPart.metrics?.length ? apiPart.metrics : local.metrics,
+    statusList: apiPart.statusList?.length ? apiPart.statusList : local.statusList,
+  };
+});
 const sceneIcon  = computed(() => data.value?.icon  ?? '');
 const sceneName  = computed(() => data.value?.name  ?? '');
 const sceneColor = computed(() => data.value?.color ?? '#00e5ff');
@@ -326,14 +363,34 @@ const nodeVisible = reactive<Record<string, boolean>>({});
 // ── 风场模拟状态 ─────────────────────────────────────────
 const windEnabled = ref(false);
 const windPower = ref(getCurrentPower() + 1);
+const windMode = ref<'streamline' | 'vectorField'>('streamline');
+
+const setWindMode = (mode: 'streamline' | 'vectorField') => {
+  if (mode === windMode.value) return;
+  windMode.value = mode;
+  const viewer = DTScopeEngine.viewer;
+  if (!viewer) return;
+  removeFlowLine(viewer);
+  removeVectorField(viewer);
+  if (mode === 'streamline') {
+    startWind(viewer);
+  } else {
+    startVectorField(viewer);
+  }
+};
 
 const onWindToggle = (val: boolean) => {
+  const viewer = DTScopeEngine.viewer;
+  if (!viewer) return;
   if (val) {
-    const viewer = DTScopeEngine.viewer;
-    if (viewer) startWind(viewer);
+    if (windMode.value === 'vectorField') {
+      startVectorField(viewer);
+    } else {
+      startWind(viewer);
+    }
   } else {
-    const viewer = DTScopeEngine.viewer;
-    if (viewer) removeFlowLine(viewer);
+    removeFlowLine(viewer);
+    removeVectorField(viewer);
   }
 };
 
@@ -341,17 +398,17 @@ const onWindPowerChange = (e: Event) => {
   const val = parseInt((e.target as HTMLInputElement).value);
   windPower.value = val;
   changePower(val - 1);
-  if (windEnabled.value) {
-    const viewer = DTScopeEngine.viewer;
-    if (viewer) startWind(viewer);
-  }
+  changeVectorPower(val - 1);
 };
 
 // 场景切换时清理风场
 watch(() => props.sceneKey, (key) => {
   if (key !== 'vent') {
     const viewer = DTScopeEngine.viewer;
-    if (viewer) removeFlowLine(viewer);
+    if (viewer) {
+      removeFlowLine(viewer);
+      removeVectorField(viewer);
+    }
     windEnabled.value = false;
   }
 });
@@ -426,6 +483,26 @@ function toggleNodeVisible(nodeId: string) {
       nodeHighlight[nodeId] = false;
       setAnchorHighlight(false);
     }
+  } else if (nodeId === 'conduit') {
+    if (!current) {
+      loadConduitMeshes();
+      setConduitVisible(true);
+      if (nodeHighlight[nodeId]) setConduitHighlight(true);
+    } else {
+      setConduitVisible(false);
+      nodeHighlight[nodeId] = false;
+      setConduitHighlight(false);
+    }
+  } else if (nodeId === 'lock_anchor') {
+    if (!current) {
+      loadLockAnchorMeshes();
+      setLockAnchorVisible(true);
+      if (nodeHighlight[nodeId]) setLockAnchorHighlight(true);
+    } else {
+      setLockAnchorVisible(false);
+      nodeHighlight[nodeId] = false;
+      setLockAnchorHighlight(false);
+    }
   }
 }
 
@@ -441,6 +518,10 @@ function toggleNodeHighlight(nodeId: string) {
     setPipeShedHighlight(nodeHighlight[nodeId]);
   } else if (nodeId === 'anchor') {
     setAnchorHighlight(nodeHighlight[nodeId]);
+  } else if (nodeId === 'conduit') {
+    setConduitHighlight(nodeHighlight[nodeId]);
+  } else if (nodeId === 'lock_anchor') {
+    setLockAnchorHighlight(nodeHighlight[nodeId]);
   }
 }
 
@@ -934,6 +1015,47 @@ function statusBarColor(level?: string): string {
     border-color: #00c3ff;
     color: #00c3ff;
     box-shadow: 0 0 6px rgba(0, 195, 255, 0.25);
+  }
+}
+
+.wind-mode-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 8px;
+}
+
+.wind-mode-label {
+  font-size: 11px;
+  color: rgba(130, 180, 220, 0.8);
+}
+
+.wind-mode-tabs {
+  display: flex;
+  gap: 0;
+
+  button {
+    padding: 3px 10px;
+    border: 1px solid rgba(0, 120, 220, 0.3);
+    background: rgba(0, 30, 60, 0.4);
+    color: rgba(130, 180, 220, 0.7);
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:first-child { border-radius: 3px 0 0 3px; }
+    &:last-child { border-radius: 0 3px 3px 0; }
+
+    &:hover {
+      background: rgba(0, 60, 130, 0.6);
+      color: rgba(200, 240, 255, 0.9);
+    }
+
+    &.active {
+      background: rgba(0, 100, 200, 0.4);
+      border-color: #00c3ff;
+      color: #00c3ff;
+    }
   }
 }
 

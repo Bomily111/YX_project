@@ -441,3 +441,90 @@ function _cleanup(viewer: any) {
   // 清除体数据 canvas（从体数据模型切换到纯 GLB 模型时需要）
   clearVolume();
 }
+
+// ── API 数据加载 ─────────────────────────────────────────
+/**
+ * 从后端 API 返回的模型实例数组合并到 MODEL_CONFIGS。
+ * API 数据 > 本地硬编码默认值，实现热切换。
+ *
+ * 调用方式：应用启动时 fetch /api/tunnels/:id/models 后调用此函数。
+ */
+export function mergeModelConfigsFromApi(instances: Array<{
+  model_type_code: string; name: string; start_dk: number; end_dk: number;
+  glb_urls?: { url: string; mileage: number; heightOffset?: number }[] | null;
+  volume_url?: string | null;
+  anchor_lon?: number; anchor_lat?: number; anchor_height?: number;
+  rotation_x?: number; rotation_y?: number; rotation_z?: number;
+  translate_x?: number; translate_y?: number; translate_z?: number;
+  scale_x?: number; scale_y?: number; scale_z?: number;
+  heading_deg?: number; glb_heading?: number; glb_y_rot?: number; glb_z_rot?: number;
+  reference_mileage?: number;
+  fly_dest_x?: number; fly_dest_y?: number; fly_dest_z?: number;
+  fly_heading?: number; fly_pitch?: number;
+  look_at_lon?: number; look_at_lat?: number; look_at_height?: number;
+  look_at_offset_x?: number; look_at_offset_y?: number; look_at_offset_z?: number;
+  skip_look_at?: boolean;
+  sub_type?: string;
+}>) {
+  for (const inst of instances) {
+    const key = inst.sub_type && inst.model_type_code === 'tsp'
+      ? `tsp_${inst.sub_type}` as string
+      : inst.model_type_code;
+
+    const config: ModelConfig = {
+      tunnelPos: [
+        inst.anchor_lon ?? 0,
+        inst.anchor_lat ?? 0,
+        inst.anchor_height ?? 0,
+      ],
+      tunnelHeading: inst.heading_deg ?? 0,
+      flyDest: {
+        x: inst.fly_dest_x ?? 0,
+        y: inst.fly_dest_y ?? 0,
+        z: inst.fly_dest_z ?? 0,
+      },
+      flyOrientation: {
+        heading: inst.fly_heading ?? 0,
+        pitch: inst.fly_pitch ?? 0,
+      },
+      lookAtPos: [
+        inst.look_at_lon ?? 0,
+        inst.look_at_lat ?? 0,
+        inst.look_at_height ?? 0,
+      ],
+      lookAtOffset: [
+        inst.look_at_offset_x ?? 0,
+        inst.look_at_offset_y ?? 0,
+        inst.look_at_offset_z ?? 0,
+      ],
+      skipLookAt: inst.skip_look_at ?? undefined,
+    };
+
+    if (inst.volume_url) config.volumeUrl = inst.volume_url;
+    if (inst.glb_urls?.length) config.glbItems = inst.glb_urls;
+    if (inst.glb_heading != null) config.glbHeading = inst.glb_heading;
+    if (inst.glb_y_rot != null) config.glbYRot = inst.glb_y_rot;
+    if (inst.glb_z_rot != null) config.glbZRot = inst.glb_z_rot;
+    if (inst.reference_mileage != null) config.referenceMileage = inst.reference_mileage;
+
+    if (inst.rotation_x != null || inst.translate_x != null || inst.scale_x != null) {
+      config.cesiumConfig = {
+        rotate: [inst.rotation_x ?? 0, inst.rotation_y ?? 0, inst.rotation_z ?? 0],
+        translate: [inst.translate_x ?? 0, inst.translate_y ?? 0, inst.translate_z ?? 0],
+        scale: [inst.scale_x ?? 1, inst.scale_y ?? 1, inst.scale_z ?? 1],
+      };
+    }
+
+    (MODEL_CONFIGS as Record<string, ModelConfig>)[key] = config;
+  }
+}
+
+/** 获取当前所有模型配置的 key 列表 */
+export function getModelConfigKeys(): string[] {
+  return Object.keys(MODEL_CONFIGS);
+}
+
+/** 获取单个模型配置 */
+export function getModelConfig(key: string): ModelConfig | undefined {
+  return MODEL_CONFIGS[key];
+}

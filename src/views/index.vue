@@ -21,7 +21,10 @@
         />
       </div>
 
+      <MileageSearchBar />
+
       <div class="header-right">
+        <router-link to="/admin" class="overview-btn admin-entry" title="管理后台">⚙ 管理</router-link>
         <button class="overview-btn" @click="flyToOverview" title="跳转至线路总览视角">
           ⊙ 线路总览
         </button>
@@ -73,6 +76,11 @@
           <input type="checkbox" v-model="layerState.showRock" @change="toggleRockModel">
           <span class="custom-check"></span>
           围岩模型
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" v-model="layerState.showWindTunnel" @change="toggleWindTunnelModel">
+          <span class="custom-check"></span>
+          通风模型
         </label>
 
         <div v-show="layerState.showMap" class="terrain-alpha-row">
@@ -147,9 +155,6 @@
     <DispatchEquipment v-if="showDispatchEquipment" @close="showDispatchEquipment = false" />
     <DispatchGantt v-if="showDispatchGantt" @close="showDispatchGantt = false" />
 
-    <!-- AI 智能助手（暂时停用，功能齐全后启用） -->
-    <!-- <AgentChat @scene-open="handleSceneNavClick" /> -->
-
     <!-- 底部状态与进度栏 -->
     <div class="bottom-metrics-bar">
       <div class="mileage-progress-wrap">
@@ -202,7 +207,6 @@ import Lining from '@/components/SceneManagement/LiningComponents/Lining.vue';
 import DispatchPersonnel from '@/components/SceneManagement/DispatchComponents/DispatchPersonnel.vue';
 import DispatchEquipment from '@/components/SceneManagement/DispatchComponents/DispatchEquipment.vue';
 import DispatchGantt from '@/components/SceneManagement/DispatchComponents/DispatchGantt.vue';
-// import AgentChat from '@/components/AgentAssistant/AgentChat.vue'; // 暂时停用
 import ProcessingWorkflowSidebar from '@/views/chaobao/ProcessingWorkflowSidebar.vue';
 import BLDZ from '@/components/SceneManagement/BLDZComponents/BLDZ.vue';
 import ZZMSM from '@/components/SceneManagement/ZZMSMComponents/ZZMSM.vue';
@@ -214,11 +218,21 @@ import TEM from '@/components/SceneManagement/TEMComponents/TEM.vue';
 import DTVolume from '@/utils/AllPrevious/All/DTVolume.vue';
 import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
+import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
-import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setCenterLineVisible, removeRebarMeshes, loadWindTunnelGlb, removeWindTunnelGlb } from '@/utils/Common/DrawLine';
-import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible } from '@/utils/Common/GeoModelController';
+import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible } from '@/utils/Common/DrawLine';
+import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, mergeModelConfigsFromApi } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
+import { removeVectorField } from '@/utils/Common/WindVectorField';
+import { useSceneStore } from '@/stores/sceneStore';
+import { useTunnelStore } from '@/stores/tunnelStore';
+import { useModelStore } from '@/stores/modelStore';
+
+// ── Stores ──────────────────────────────────────────────
+const sceneStore = useSceneStore();
+const tunnelStore = useTunnelStore();
+const modelStore = useModelStore();
 
 // ── 侧边栏 / 模型视图模式状态 ────────────────────────────
 const isModelViewMode = ref(false);
@@ -497,7 +511,7 @@ const flyToOverview = () => {
 
 // --- 悬浮拖拽逻辑与图层状态 ---
 const drag = reactive({ left: window.innerWidth - 550, top: 100, isDragging: false, startX: 0, startY: 0 });
-const layerState = reactive({ showModel: true, showMap: true, showTunnel: true, showRock: true });
+const layerState = reactive({ showModel: true, showMap: true, showTunnel: true, showRock: true, showWindTunnel: true });
 
 // ── 核心逻辑：初始化场景数据 ─────────────────────────────
 const initSceneData = () => {
@@ -546,6 +560,17 @@ const initSceneData = () => {
 
     addWorksiteEntities(viewer);
     setupWorksiteClickHandler(viewer);
+
+    // 从后端加载场景、隧道、模型配置数据
+    sceneStore.fetchScenes();
+    tunnelStore.fetchTunnels().then(() => {
+      if (tunnelStore.currentTunnelId) {
+        modelStore.fetchModels(tunnelStore.currentTunnelId).then(() => {
+          mergeModelConfigsFromApi(modelStore.models);
+        });
+        tunnelStore.fetchWorksites(tunnelStore.currentTunnelId);
+      }
+    });
 
   };
 
@@ -695,6 +720,10 @@ const toggleRockModel = () => {
   setRockModelVisible(layerState.showRock);
 };
 
+const toggleWindTunnelModel = () => {
+  setWindTunnelVisible(layerState.showWindTunnel);
+};
+
 const toggleImagery = () => {
   const v = getViewer();
   if (!v) return;
@@ -702,10 +731,9 @@ const toggleImagery = () => {
   if (!isModelViewMode.value) {
     if (layerState.showMap) {
       restoreEarthMode(v);
-      loadTerrain(v);
     } else {
       enableBlackModelMode(v);
-      unloadTerrain(v);
+      // 保留地形高程，确保缩放/旋转手感与有底图时一致
     }
   }
   if (v.imageryLayers.length > 0) {
@@ -743,10 +771,11 @@ const handleSelectScene = (key: string) => {
   // 通风除尘场景：切换为风场模拟隧道模型
   if (key === 'vent') {
     setTunnelGlbVisible(false);
-    loadWindTunnelGlb(viewer);
+    loadWindTunnelGlb(viewer, layerState.showWindTunnel);
   } else {
     // 进入其他场景时恢复原始隧道
     removeWindTunnelGlb(viewer);
+    removeVectorField(viewer);
     setTunnelGlbVisible(layerState.showTunnel);
   }
 
@@ -800,11 +829,18 @@ const handleBackToOverview = () => {
     }
   }
 
-  // 清理支护场景的钢筋网模型
+  // 清理支护场景的所有支护构件模型
   removeRebarMeshes(viewer);
+  removeSecondRebarMeshes(viewer);
+  removeSteelFrameMeshes(viewer);
+  removePipeShedMeshes(viewer);
+  removeAnchorMeshes(viewer);
+  removeConduitMeshes(viewer);
+  removeLockAnchorMeshes(viewer);
 
   // 清理风场隧道模型，恢复原始隧道
   removeWindTunnelGlb(viewer);
+  removeVectorField(viewer);
   setTunnelGlbVisible(layerState.showTunnel);
 
   // 恢复地球模式
@@ -829,12 +865,31 @@ const handleBackToOverview = () => {
   });
 };
 
+async function loadApiData() {
+  try {
+    const sceneStore = useSceneStore();
+    const tunnelStore = useTunnelStore();
+    const modelStore = useModelStore();
+    await Promise.all([sceneStore.fetchScenes(), tunnelStore.fetchTunnels()]);
+    if (tunnelStore.currentTunnelId) {
+      await modelStore.fetchModels(tunnelStore.currentTunnelId);
+      if (modelStore.models.length) {
+        mergeModelConfigsFromApi(modelStore.models);
+        console.log('[API] 场景配置 + 隧道数据 + 地质模型 已加载');
+      }
+    }
+  } catch (e) {
+    console.warn('[API] 后端不可用，使用本地硬编码数据:', (e as Error).message);
+  }
+}
+
 onMounted(() => {
   updateTime();
   timer = setInterval(updateTime, 1000);
 
   // 延迟一点启动，给 Viewer 初始化留出缓冲时间
   setTimeout(initSceneData, 800);
+  loadApiData();
 });
 
 onBeforeUnmount(() => {

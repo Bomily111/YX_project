@@ -9,11 +9,19 @@ import { setCameraViewPoint } from './CameraControl';
 // ── 类型定义 ──────────────────────────────────────────────
 type LngLatHeight = [number, number, number];
 
-/** ANSYS 流线：每条为一组 [lon, lat, height] 点 */
+/** 单条流线：坐标点 + 平均横向偏移（用于着色） */
+interface StreamlineItem {
+  pts: LngLatHeight[];
+  avgX: number;
+}
+
+/** ANSYS 流线数据 */
 interface AnysStreamline {
-  streamlines: LngLatHeight[][];
+  streamlines: StreamlineItem[];
   totalCurves: number;
   sampledCurves: number;
+  xMin: number;
+  xMax: number;
 }
 
 // ── ANSYS 流线数据缓存 ────────────────────────────────────
@@ -36,7 +44,7 @@ async function loadAnsysData(): Promise<AnysStreamline> {
     })
     .catch((e) => {
       console.warn('[WindField] ANSYS 流线加载失败:', e);
-      return { streamlines: [], totalCurves: 0, sampledCurves: 0 };
+      return { streamlines: [], totalCurves: 0, sampledCurves: 0, xMin: 0, xMax: 0 };
     })
     .finally(() => { loading = false; });
 
@@ -50,27 +58,40 @@ let currentPower = 5; // 0-11
 // 风力档位 → 线宽
 const PWIDTH = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5];
 
-// ANSYS 速度色带 (蓝→青→绿→黄→橙→红)
-const VELOCITY_COLORS: [number, number, number][] = [
-  [0.23, 0.30, 0.75], // 蓝 (低速)
-  [0.31, 0.42, 0.77],
-  [0.40, 0.53, 0.78],
-  [0.49, 0.65, 0.80],
-  [0.58, 0.76, 0.81],
-  [0.67, 0.88, 0.83],
-  [0.73, 0.94, 0.82],
-  [0.78, 0.96, 0.71],
-  [0.82, 0.94, 0.55],
-  [0.83, 0.84, 0.41],
-  [0.81, 0.69, 0.30],
-  [0.75, 0.47, 0.22],
-  [0.71, 0.29, 0.17], // 红 (高速)
+// jet 色带 (蓝→青→绿→黄→红)，低速蓝、高速红
+export const VELOCITY_COLORS: [number, number, number][] = [
+  [0.00, 0.00, 0.56], // 深蓝 (低速)
+  [0.00, 0.00, 0.80],
+  [0.00, 0.40, 1.00],
+  [0.00, 0.80, 1.00], // 青
+  [0.00, 1.00, 0.80],
+  [0.00, 1.00, 0.40],
+  [0.00, 1.00, 0.00], // 绿
+  [0.40, 1.00, 0.00],
+  [0.80, 1.00, 0.00],
+  [1.00, 1.00, 0.00], // 黄
+  [1.00, 0.80, 0.00],
+  [1.00, 0.40, 0.00],
+  [1.00, 0.00, 0.00], // 红 (高速)
 ];
 
-// ── 自定义飞线材质 ────────────────────────────────────────
-function getFlylineMaterial(r: number, g: number, b: number): Cesium.PolylineMaterialAppearance {
+// ── 自定义飞线材质（逐顶点着色 + 单 Primitive 批次）───────
+
+/** 飞线动画开关（预埋，关闭后流线完整显示为实线） */
+let flylineAnimating = false;
+
+export function setFlylineAnimating(on: boolean) {
+  flylineAnimating = on;
+}
+export function getFlylineAnimating(): boolean {
+  return flylineAnimating;
+}
+
+function getFlylineMaterial(): Cesium.PolylineMaterialAppearance {
   const material = Cesium.Material.fromType('Color');
   material.uniforms.color = Cesium.Color.ORANGE;
+
+  const doAnim = flylineAnimating;
 
   const fragmentShaderSource = `
     in vec2 v_st;
@@ -78,17 +99,18 @@ function getFlylineMaterial(r: number, g: number, b: number): Cesium.PolylineMat
     in float v_polylineAngle;
     in vec4 v_positionEC;
     in vec3 v_normalEC;
+    in vec4 v_color;
     out vec4 fragColor;
     void main()
     {
         vec2 st = v_st;
+        float a = 1.0;
+        ${doAnim ? `
         float xx = fract(st.s - czm_frameNumber / 60.0);
-        if (xx > 0.8) { xx = 0.0; }
-        float r = ${(r - 0.01).toFixed(4)};
-        float g = ${(g - 0.01).toFixed(4)};
-        float b = ${(b - 0.01).toFixed(4)};
-        float a = xx;
-        fragColor = vec4(r, g, b, a);
+        if (xx > 0.8) { a = 0.0; }
+        else { a = xx; }
+        ` : ''}
+        fragColor = vec4(v_color.rgb, a);
     }`;
 
   return new Cesium.PolylineMaterialAppearance({
@@ -187,13 +209,16 @@ function getFlylineMaterial(r: number, g: number, b: number): Cesium.PolylineMat
       in vec2 expandAndWidth;
       in vec2 st;
       in float batchId;
+      in vec4 color;
       out float v_width;
       out vec2 v_st;
       out float v_polylineAngle;
       out vec4 v_positionEC;
       out vec3 v_normalEC;
+      out vec4 v_color;
       void main()
       {
+          v_color = color;
           float expandDir = expandAndWidth.x;
           float width = abs(expandAndWidth.y) + 0.5;
           bool usePrev = expandAndWidth.y < 0.0;
@@ -217,7 +242,7 @@ function getFlylineMaterial(r: number, g: number, b: number): Cesium.PolylineMat
 // ── 渲染 ANSYS 流线 ──────────────────────────────────────
 
 /** 颜色插值：在色带中按比例取色 */
-function lerpColor(t: number): [number, number, number] {
+export function lerpColor(t: number): [number, number, number] {
   const idx = Math.max(0, Math.min(1, t)) * (VELOCITY_COLORS.length - 1);
   const lo = Math.floor(idx);
   const hi = Math.min(lo + 1, VELOCITY_COLORS.length - 1);
@@ -231,30 +256,45 @@ function lerpColor(t: number): [number, number, number] {
   ];
 }
 
-function renderStreamlines(viewer: Cesium.Viewer, streamlines: LngLatHeight[][]) {
+function renderStreamlines(viewer: Cesium.Viewer, streamlines: StreamlineItem[]) {
   const size = PWIDTH[currentPower];
+  const instances: Cesium.GeometryInstance[] = [];
+  const total = streamlines.length || 1;
 
-  streamlines.forEach((streamline, si) => {
-    if (streamline.length < 2) return;
+  streamlines.forEach((sl, si) => {
+    if (sl.pts.length < 2) return;
 
-    const positions = streamline.map(
+    const positions = sl.pts.map(
       ([lon, lat, h]) => Cesium.Cartesian3.fromDegrees(lon, lat, h),
     );
 
-    // 按流线索引分布颜色（模拟速度从高到低）
-    const t = si / (streamlines.length - 1 || 1);
-    const [r, g, b] = lerpColor(1 - t); // 内圈高速=红, 外圈低速=蓝
+    const t = si / total;
+    const [r, g, b] = lerpColor(1 - t);
+    const clr = new Cesium.Color(r, g, b);
+    const colors = Array(positions.length).fill(clr);
 
-    const pri = new Cesium.Primitive({
-      geometryInstances: new Cesium.GeometryInstance({
-        geometry: new Cesium.PolylineGeometry({ positions, width: size }),
+    instances.push(
+      new Cesium.GeometryInstance({
+        geometry: new Cesium.PolylineGeometry({
+          positions,
+          colors,
+          width: size,
+          arcType: Cesium.ArcType.NONE,
+        }),
       }),
-      appearance: getFlylineMaterial(r, g, b),
-      allowPicking: false,
-    });
-    primitiveList.push(pri);
-    viewer.scene.primitives.add(pri);
+    );
   });
+
+  if (instances.length === 0) return;
+
+  const pri = new Cesium.Primitive({
+    geometryInstances: instances,
+    appearance: getFlylineMaterial(),
+    allowPicking: false,
+  });
+  primitiveList.push(pri);
+  viewer.scene.primitives.add(pri);
+  console.log(`[WindField] ${instances.length} 条流线 → 1 次 draw call`);
 }
 
 // ── 公共 API ──────────────────────────────────────────────

@@ -97,7 +97,67 @@ export function snapToCenterline(
   };
 }
 
+/**
+ * 根据 DK 里程获取中线位置 + heading（弧度，从北顺时针）
+ * 用于需要横向偏移的坐标映射（如 ANSYS X → 垂直于中线的偏移）
+ */
+export function getPositionWithHeading(
+  dkNumber: number,
+  startDk: number = 278100,
+): {
+  lon: number;
+  lat: number;
+  elev: number;
+  heading: number;
+  metersPerDegLon: number;
+  metersPerDegLat: number;
+} | null {
+  const { distances } = getCache();
+  const targetDist = dkNumber - startDk;
+  if (targetDist < 0 || targetDist > distances[distances.length - 1]) {
+    return null;
+  }
+  return interpolateOnLineWithHeading(coords, distances, targetDist);
+}
+
 // ── 内部 ────────────────────────────────────────────────────
+
+function interpolateOnLineWithHeading(
+  pts: Coord3[],
+  distances: number[],
+  targetDist: number,
+): {
+  lon: number;
+  lat: number;
+  elev: number;
+  heading: number;
+  metersPerDegLon: number;
+  metersPerDegLat: number;
+} {
+  let lo = 0;
+  let hi = distances.length - 1;
+  while (lo < hi - 1) {
+    const mid = (lo + hi) >> 1;
+    if (distances[mid] < targetDist) lo = mid;
+    else hi = mid;
+  }
+  const segLen = distances[hi] - distances[lo];
+  const t = segLen > 0 ? (targetDist - distances[lo]) / segLen : 0;
+  const a = pts[lo];
+  const b = pts[hi];
+  const lon = a[0] + (b[0] - a[0]) * t;
+  const lat = a[1] + (b[1] - a[1]) * t;
+  const elev = a[2] + (b[2] - a[2]) * t;
+
+  // heading: radians from north, clockwise
+  const metersPerDegLon = 111320 * Math.cos((lat * Math.PI) / 180);
+  const metersPerDegLat = 110940;
+  const dLonM = (b[0] - a[0]) * metersPerDegLon;
+  const dLatM = (b[1] - a[1]) * metersPerDegLat;
+  const heading = Math.atan2(dLonM, dLatM);
+
+  return { lon, lat, elev, heading, metersPerDegLon, metersPerDegLat };
+}
 
 function interpolateOnLine(
   pts: Coord3[],

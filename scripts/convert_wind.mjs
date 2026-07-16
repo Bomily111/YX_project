@@ -45,7 +45,7 @@ function sampleAt(t) {
 }
 
 // ── Parse ANSYS tunnel_wind.txt ────────────────────────────
-const raw = readFileSync(resolve(root, 'public/data/wind/tunnel_wind.txt'), 'utf-8');
+const raw = readFileSync(resolve(root, 'public/data/wind/tunnel-velocity.txt'), 'utf-8');
 const lines = raw.split('\n');
 
 const curves = [];
@@ -66,8 +66,17 @@ if (current.length > 0) curves.push(current);
 console.log(`Parsed ${curves.length} curves from ANSYS data`);
 
 // ── Coordinate mapping ─────────────────────────────────────
-// ANSYS Z (4.5 ~ 64.4m) → distance along centerLine from start
-const Z_OFFSET = 4.5; // ANSYS model starts at Z=4.5
+// ANSYS Z → distance along centerLine from start
+
+// Find min Z from parsed curves for Z_OFFSET
+let zMin = Infinity;
+for (const curve of curves) {
+  for (const pt of curve) {
+    if (pt[2] < zMin) zMin = pt[2];
+  }
+}
+const Z_OFFSET = zMin;
+console.log(`Z_OFFSET (auto): ${Z_OFFSET.toFixed(2)}`);
 
 // Find the start heading
 const startInfo = sampleAt(0);
@@ -77,18 +86,21 @@ console.log(`Heading at start: ${(startHeading * 180 / Math.PI).toFixed(2)}°`);
 
 // ── Convert each streamline ─────────────────────────────────
 // Downsample: every DOWNSAMPLE_CURVE-th curve, every DOWNSAMPLE_PT-th point
-const DOWNSAMPLE_CURVE = 8;
-const DOWNSAMPLE_PT = 3;
+const DOWNSAMPLE_CURVE = 1;
+const DOWNSAMPLE_PT   = 2;
 
 const streamlines = [];
 let sampledCount = 0;
+let globalXMin = Infinity, globalXMax = -Infinity;
 
 for (let ci = 0; ci < curves.length; ci += DOWNSAMPLE_CURVE) {
   const curve = curves[ci];
   const points = [];
+  let sumX = 0;
 
   for (let pi = 0; pi < curve.length; pi += DOWNSAMPLE_PT) {
     const [x, y, z] = curve[pi];
+    sumX += x;
     const dist = z - Z_OFFSET;
     const anchor = sampleAt(dist);
 
@@ -112,14 +124,24 @@ for (let ci = 0; ci < curves.length; ci += DOWNSAMPLE_CURVE) {
   }
 
   if (points.length >= 3) {
-    streamlines.push(points);
+    const avgX = sumX / points.length;
+    if (avgX < globalXMin) globalXMin = avgX;
+    if (avgX > globalXMax) globalXMax = avgX;
+    streamlines.push({ pts: points, avgX });
     sampledCount++;
   }
 }
 console.log(`After downsampling: ${sampledCount} streamlines`);
+console.log(`ANSYS X range: ${globalXMin.toFixed(2)} ~ ${globalXMax.toFixed(2)}`);
 
 // ── Output ──────────────────────────────────────────────────
-const output = { streamlines, totalCurves: curves.length, sampledCurves: sampledCount };
+const output = {
+  streamlines,
+  totalCurves: curves.length,
+  sampledCurves: sampledCount,
+  xMin: globalXMin,
+  xMax: globalXMax,
+};
 const outPath = resolve(root, 'public/data/wind/tunnel_streamlines.json');
 writeFileSync(outPath, JSON.stringify(output));
 console.log(`Written to ${outPath}`);

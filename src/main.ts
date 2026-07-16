@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import './style.css'
 import ElementPlus from 'element-plus'
@@ -12,6 +13,7 @@ async function bootstrap() {
   await appConfig.loadConfig('/config/Application.json');
 
   const app = createApp(App)
+  app.use(createPinia())
   app.use(ElementPlus)
   app.use(router)
   app.mount('#app')

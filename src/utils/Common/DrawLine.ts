@@ -10,6 +10,30 @@ let allLineEntity: Cesium.Entity | null | undefined = null;
 let tunnelGlbPrimitives: any[] = [];
 let windTunnelGlbPrimitives: any[] = [];
 
+// ── globe 原始状态暂存（enableBlackModelMode 修改前保存，restoreEarthMode 恢复） ──
+let _savedGlobeShow: boolean | null = null;
+let _savedGlobeLighting: boolean | null = null;
+let _savedGlobeBaseColor: Cesium.Color | null = null;
+let _savedSkyAtmosphereShow: boolean | null = null;
+
+// 风场隧道模型的变换参数（供 WindVectorField 坐标映射使用）
+let _windTunnelModelMatrix: Cesium.Matrix4 | null = null;
+let _windTunnelFinalPos: Cesium.Cartesian3 | null = null;
+let _windTunnelHeading: number = 0;
+
+/** 获取风场隧道模型的变换矩阵（ANSYS 局部坐标 → ECEF 世界坐标） */
+export function getWindTunnelTransform(): {
+  modelMatrix: Cesium.Matrix4;
+  position: Cesium.Cartesian3;
+  heading: number;
+} | null {
+  if (!_windTunnelModelMatrix || !_windTunnelFinalPos) return null;
+  return {
+    modelMatrix: _windTunnelModelMatrix,
+    position: _windTunnelFinalPos,
+    heading: _windTunnelHeading,
+  };
+}
 
 // ── 隧道混凝土纹理 ─────────────────────────────────────────
 let concreteTextureUrl: string | null = null;
@@ -181,19 +205,33 @@ export function enableBlackModelMode(customViewer?: any) {
   if (!viewer) return;
 
   const sceneController = viewer.scene;
-  
-  // 1. 隐藏基础环境要素（隐藏地球和天空）
+  const globe = sceneController.globe;
+
+  // 保存原始状态，供 restoreEarthMode 精确恢复
+  if (_savedGlobeShow === null) {
+    _savedGlobeShow = globe.show;
+    _savedGlobeLighting = globe.enableLighting;
+    _savedGlobeBaseColor = globe.baseColor.clone();
+    _savedSkyAtmosphereShow = sceneController.skyAtmosphere.show;
+  }
+
+  // 1. 隐藏天空、大气、日月
   sceneController.sun.show = false;
-  sceneController.globe.show = false; // 直接隐藏地球
   sceneController.moon.show = false;
   sceneController.skyBox.show = false;
+  sceneController.skyAtmosphere.show = false;
 
-  // 2. 设置特定的方向光（移植过来的打光参数）
+  // 2. 保留 globe 几何体 + 地形，关闭光照 + 黑色基底 → 视觉黑底
+  globe.show = true;
+  globe.enableLighting = false;
+  globe.baseColor = Cesium.Color.BLACK;
+
+  // 3. 设置特定的方向光
   sceneController.light = new Cesium.DirectionalLight({
     direction: new Cesium.Cartesian3(0.354925, -0.890918, -0.283358),
   });
 
-  console.log('🌑 已切换至全黑模型模式');
+  console.log('🌑 已切换至全黑模型模式（保留椭球参考面）');
 }
 
 /**
@@ -205,15 +243,30 @@ export function restoreEarthMode(customViewer?: any) {
   if (!viewer) return;
 
   const sceneController = viewer.scene;
-  
+  const globe = sceneController.globe;
+
   // 1. 恢复显示
   sceneController.sun.show = true;
-  sceneController.globe.show = true;
   sceneController.moon.show = true;
   sceneController.skyBox.show = true;
+  sceneController.skyAtmosphere.show = _savedSkyAtmosphereShow ?? true;
 
-  // 2. 恢复默认的太阳光照
+  // 2. 恢复 globe 原始状态
+  globe.show = _savedGlobeShow ?? true;
+  globe.enableLighting = _savedGlobeLighting ?? true;
+  if (_savedGlobeBaseColor) {
+    globe.baseColor = _savedGlobeBaseColor.clone();
+  }
+
+  // 3. 恢复默认太阳光照
   sceneController.light = new Cesium.SunLight();
+
+  // 清除暂存，下次进入黑模时重新保存
+  _savedGlobeShow = null;
+  _savedGlobeLighting = null;
+  _savedGlobeBaseColor = null;
+  _savedSkyAtmosphereShow = null;
+
   console.log('🌍 已恢复地球显示');
 }
 
@@ -482,6 +535,16 @@ export function setSecondRebarHighlight(enabled: boolean) {
   }
 }
 
+/** 移除所有二衬钢筋模型 */
+export function removeSecondRebarMeshes(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  for (const p of secondRebarPrimitives) {
+    try { viewer.scene.primitives.remove(p); } catch (_) {}
+  }
+  secondRebarPrimitives = [];
+}
+
 // ── 钢架模型 ────────────────────────────────────────────────
 let steelFramePrimitives: any[] = [];
 
@@ -522,6 +585,16 @@ export function setSteelFrameHighlight(enabled: boolean) {
   for (const p of steelFramePrimitives) {
     p.color = enabled ? Cesium.Color.YELLOW : Cesium.Color.WHITE;
   }
+}
+
+/** 移除所有钢架模型 */
+export function removeSteelFrameMeshes(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  for (const p of steelFramePrimitives) {
+    try { viewer.scene.primitives.remove(p); } catch (_) {}
+  }
+  steelFramePrimitives = [];
 }
 
 // ── 中管棚模型 ──────────────────────────────────────────────
@@ -611,6 +684,16 @@ export function setPipeShedHighlight(enabled: boolean) {
   }
 }
 
+/** 移除所有中管棚模型 */
+export function removePipeShedMeshes(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  for (const p of pipeShedPrimitives) {
+    try { viewer.scene.primitives.remove(p.model); } catch (_) {}
+  }
+  pipeShedPrimitives = [];
+}
+
 // ── 锚杆模型 ────────────────────────────────────────────────
 interface AnchorEntry { model: any; theta: number }
 let anchorPrimitives: AnchorEntry[] = [];
@@ -637,8 +720,7 @@ export function loadAnchorMeshes(customViewer?: any) {
   const archHalf = ANCHOR_ARCH_ANGLE / 2 * Math.PI / 180;
   const sideArcLen = ANCHOR_RADIUS * archHalf;
   const sideCount = Math.floor(sideArcLen / ANCHOR_CIRC_SPACING);
-  // 调试：2环梅花状
-  const ringCount = 2;
+  const ringCount = Math.floor(ANCHOR_LENGTH / ANCHOR_LONG_SPACING) + 1;
   for (let ri = 0; ri < ringCount; ri++) {
     const ringDist = ANCHOR_START + ri * ANCHOR_LONG_SPACING;
     const pos = utils.sampleAt(ringDist);
@@ -676,7 +758,7 @@ export function loadAnchorMeshes(customViewer?: any) {
     }
   }
 
-  console.log(`[DrawLine] 锚杆调试：2环梅花状，R=${ANCHOR_RADIUS}m`);
+  console.log(`[DrawLine] 锚杆共 ${ringCount} 环梅花状，间距${ANCHOR_LONG_SPACING}m，R=${ANCHOR_RADIUS}m`);
 }
 
 /** 控制锚杆显示/隐藏 */
@@ -691,18 +773,195 @@ export function setAnchorHighlight(enabled: boolean) {
   }
 }
 
-function buildAnchorMatrix(anchorPos: Cesium.Cartesian3, tunnelHeading: number, theta: number): Cesium.Matrix4 {
-  // 从钢架 GLB 精确法向 (glTF 空间): 圆心角 θ 处，外法向 = (sinθ, cosθ, 0)
-  const nxGl = Math.sin(theta);
-  const nyGl = Math.cos(theta);
-  const nzGl = 0;
-  // 锚杆 glTF+X → 目标方向 (nxGl, nyGl, 0)，绕 glTF+Z(=Cesium-Y) 旋转
-  const rotAngle = Math.atan2(nyGl, nxGl);
-  let m = Cesium.Transforms.headingPitchRollToFixedFrame(anchorPos, new Cesium.HeadingPitchRoll(tunnelHeading, 0, 0));
-  const rY = Cesium.Matrix3.fromRotationY(-rotAngle);
-  m = Cesium.Matrix4.multiply(m, Cesium.Matrix4.fromRotationTranslation(rY), new Cesium.Matrix4());
-  return m;
+/** 移除所有锚杆模型 */
+export function removeAnchorMeshes(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  for (const p of anchorPrimitives) {
+    try { viewer.scene.primitives.remove(p.model); } catch (_) {}
+  }
+  anchorPrimitives = [];
 }
+
+function buildAnchorMatrix(anchorPos: Cesium.Cartesian3, tunnelHeading: number, theta: number): Cesium.Matrix4 {
+  // 钢架同位置模型矩阵（+X=侧向, +Z=上）
+  const enu = Cesium.Transforms.eastNorthUpToFixedFrame(anchorPos);
+  const sideENU = new Cesium.Cartesian3(Math.cos(tunnelHeading), -Math.sin(tunnelHeading), 0);
+  const sideECEF = Cesium.Matrix4.multiplyByPointAsVector(enu, sideENU, new Cesium.Cartesian3());
+  const upECEF = Cesium.Matrix4.multiplyByPointAsVector(enu, Cesium.Cartesian3.UNIT_Z, new Cesium.Cartesian3());
+  // 构建钢架基准矩阵：col0=侧向, col1, col2=上
+  const tunnelENU = new Cesium.Cartesian3(Math.sin(tunnelHeading), Math.cos(tunnelHeading), 0);
+  const tunnelECEF = Cesium.Matrix4.multiplyByPointAsVector(enu, tunnelENU, new Cesium.Cartesian3());
+  const steelMat = Cesium.Matrix4.fromColumnMajorArray([
+    sideECEF.x, sideECEF.y, sideECEF.z, 0,
+    tunnelECEF.x, tunnelECEF.y, tunnelECEF.z, 0,
+    upECEF.x, upECEF.y, upECEF.z, 0,
+    anchorPos.x, anchorPos.y, anchorPos.z, 1,
+  ]);
+  // 钢架法向=(sinθ,cosθ,0), 拱切线=(cosθ,-sinθ,0) glTF → Cesium=(cosθ,0,-sinθ)
+  // 先绕法向旋转角度 φ=atan2(cosθ,sinθ) 对齐glTF+X, 再绕切线旋转90°
+  const phi = Math.atan2(Math.cos(theta), Math.sin(theta));
+  const rPhi = Cesium.Matrix3.fromRotationY(phi);
+  const tangentCesium = new Cesium.Cartesian3(Math.cos(theta), 0, -Math.sin(theta));
+  Cesium.Cartesian3.normalize(tangentCesium, tangentCesium);
+  const r90 = Cesium.Matrix3.fromQuaternion(
+    Cesium.Quaternion.fromAxisAngle(tangentCesium, Math.PI / 2));
+  const rot = Cesium.Matrix3.multiply(r90, rPhi, new Cesium.Matrix3());
+  return Cesium.Matrix4.multiply(steelMat, Cesium.Matrix4.fromRotationTranslation(rot), new Cesium.Matrix4());
+}
+
+// ── 注浆小导管模型 ──────────────────────────────────────────
+interface ConduitEntry { model: any; theta: number }
+let conduitPrimitives: ConduitEntry[] = [];
+
+const CONDUIT_START = 23;
+const CONDUIT_LENGTH = 44;
+const CONDUIT_LONG_SPACING = 0.5;
+const CONDUIT_CIRC_SPACING = 2.4;
+const CONDUIT_ARCH_START = 65.2 * Math.PI / 180;
+const CONDUIT_RADIUS = 6.33;
+const CONDUIT_CENTER_Y = 2.1;
+
+/** 加载注浆小导管模型（起拱线 65.2° 以上，梅花状排布） */
+export function loadConduitMeshes(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  if (conduitPrimitives.length > 0) return;
+
+  const utils = getCenterlineUtils();
+  if (!utils) return;
+
+  const url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42注浆小导管.glb';
+  const ringCount = Math.floor(CONDUIT_LENGTH / CONDUIT_LONG_SPACING) + 1;
+
+  for (let ri = 0; ri < ringCount; ri++) {
+    const ringDist = CONDUIT_START + ri * CONDUIT_LONG_SPACING;
+    const pos = utils.sampleAt(ringDist);
+    const next = utils.sampleAt(Math.min(ringDist + 0.1, utils.totalLen));
+    const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
+    const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
+    const dir = Cesium.Cartesian3.subtract(next, pos, new Cesium.Cartesian3());
+    const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, dir, new Cesium.Cartesian3());
+    const tunnelHeading = Math.atan2(localDir.x, localDir.y);
+    const cosH = Math.cos(tunnelHeading);
+    const sinH = Math.sin(tunnelHeading);
+
+    const place = (theta: number) => {
+      const sideDist = CONDUIT_RADIUS * Math.sin(theta);
+      const upDist = CONDUIT_CENTER_Y + CONDUIT_RADIUS * Math.cos(theta);
+      const localOffset = new Cesium.Cartesian3(sideDist * cosH, -sideDist * sinH, upDist);
+      const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
+      const p = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
+      const m = buildAnchorMatrix(p, tunnelHeading, theta);
+      Cesium.Model.fromGltfAsync({ url, modelMatrix: m })
+        .then((mdl: any) => { conduitPrimitives.push({ model: viewer.scene.primitives.add(mdl), theta }); })
+        .catch((e: any) => console.error(`[DrawLine] 小导管加载失败:`, e));
+    };
+
+    const offset = ri % 2 === 1 ? CONDUIT_CIRC_SPACING / 2 : 0;
+    const maxCount = ri % 2 === 0 ? 3 : 2;
+    for (let i = 0; i < maxCount; i++) {
+      const arcDist = offset + i * CONDUIT_CIRC_SPACING;
+      const theta = CONDUIT_ARCH_START + arcDist / CONDUIT_RADIUS;
+      place(theta);
+      place(-theta);
+    }
+  }
+
+  console.log(`[DrawLine] 小导管共 ${ringCount} 环梅花状，R=${CONDUIT_RADIUS}m`);
+}
+
+export function setConduitVisible(show: boolean) {
+  for (const p of conduitPrimitives) p.model.show = show;
+}
+
+export function setConduitHighlight(enabled: boolean) {
+  for (const p of conduitPrimitives) {
+    p.model.color = enabled ? Cesium.Color.YELLOW : Cesium.Color.WHITE;
+  }
+}
+
+/** 移除所有注浆小导管模型 */
+export function removeConduitMeshes(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  for (const p of conduitPrimitives) {
+    try { viewer.scene.primitives.remove(p.model); } catch (_) {}
+  }
+  conduitPrimitives = [];
+}
+
+// ── 锁脚锚杆模型 ────────────────────────────────────────────
+interface LockAnchorEntry { model: any; theta: number }
+let lockAnchorPrimitives: LockAnchorEntry[] = [];
+
+const LOCK_ANCHOR_START = 23;
+const LOCK_ANCHOR_LENGTH = 44;
+const LOCK_ANCHOR_SPACING = 0.5;
+const LOCK_ANCHOR_ANGLE = 117.4 * Math.PI / 180;
+const LOCK_ANCHOR_RADIUS = 6.33;
+const LOCK_ANCHOR_CENTER_Y = 2.1;
+
+/** 加载锁脚锚杆模型（拱脚 117.4° 处，每环 2 根） */
+export function loadLockAnchorMeshes(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  if (lockAnchorPrimitives.length > 0) return;
+
+  const utils = getCenterlineUtils();
+  if (!utils) return;
+
+  const url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42锁脚锚杆.glb';
+  const ringCount = Math.floor(LOCK_ANCHOR_LENGTH / LOCK_ANCHOR_SPACING) + 1;
+
+  for (let ri = 0; ri < ringCount; ri++) {
+    const ringDist = LOCK_ANCHOR_START + ri * LOCK_ANCHOR_SPACING;
+    const pos = utils.sampleAt(ringDist);
+    const next = utils.sampleAt(Math.min(ringDist + 0.1, utils.totalLen));
+    const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
+    const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
+    const dir = Cesium.Cartesian3.subtract(next, pos, new Cesium.Cartesian3());
+    const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, dir, new Cesium.Cartesian3());
+    const tunnelHeading = Math.atan2(localDir.x, localDir.y);
+    const cosH = Math.cos(tunnelHeading);
+    const sinH = Math.sin(tunnelHeading);
+
+    for (const theta of [LOCK_ANCHOR_ANGLE, -LOCK_ANCHOR_ANGLE]) {
+      const sideDist = LOCK_ANCHOR_RADIUS * Math.sin(theta);
+      const upDist = LOCK_ANCHOR_CENTER_Y + LOCK_ANCHOR_RADIUS * Math.cos(theta);
+      const localOffset = new Cesium.Cartesian3(sideDist * cosH, -sideDist * sinH, upDist);
+      const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
+      const p = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
+      const m = buildAnchorMatrix(p, tunnelHeading, theta);
+      Cesium.Model.fromGltfAsync({ url, modelMatrix: m })
+        .then((mdl: any) => { lockAnchorPrimitives.push({ model: viewer.scene.primitives.add(mdl), theta }); })
+        .catch((e: any) => console.error(`[DrawLine] 锁脚锚杆加载失败:`, e));
+    }
+  }
+
+  console.log(`[DrawLine] 锁脚锚杆共 ${ringCount} 环 ×2，θ=${LOCK_ANCHOR_ANGLE * 180 / Math.PI}°`);
+}
+
+export function setLockAnchorVisible(show: boolean) {
+  for (const p of lockAnchorPrimitives) p.model.show = show;
+}
+
+export function setLockAnchorHighlight(enabled: boolean) {
+  for (const p of lockAnchorPrimitives) {
+    p.model.color = enabled ? Cesium.Color.YELLOW : Cesium.Color.WHITE;
+  }
+}
+
+/** 移除所有锁脚锚杆模型 */
+export function removeLockAnchorMeshes(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  for (const p of lockAnchorPrimitives) {
+    try { viewer.scene.primitives.remove(p.model); } catch (_) {}
+  }
+  lockAnchorPrimitives = [];
+}
+
 let activeGeoModel: any = null;
 
 /**
@@ -843,7 +1102,7 @@ export function setTunnelGlbVisible(show: boolean) {
  * 检测中线中最长的近乎直线段，并在此处加载风场模拟隧道完整模型
  * 模型是直的，需放在弯曲度最小的位置
  */
-export function loadWindTunnelGlb(customViewer?: any) {
+export function loadWindTunnelGlb(customViewer?: any, visible = true) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
 
@@ -892,8 +1151,8 @@ export function loadWindTunnelGlb(customViewer?: any) {
     }
   }
 
-  // 取直段末端作为模型放置位
-  const posIdx = Math.min(bestEnd, pts.length - 1);
+  // 取直段起始端作为模型放置位，模型首端从中线直线开始处放置
+  const posIdx = Math.min(bestStart, pts.length - 1);
   const pos = pts[posIdx];
 
   // 用直段的平均方向计算 heading
@@ -906,17 +1165,35 @@ export function loadWindTunnelGlb(customViewer?: any) {
   const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
   const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
   const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, avgDir, new Cesium.Cartesian3());
-  const heading = Math.atan2(localDir.x, localDir.y) + Math.PI / 2;
+  const heading = Math.atan2(localDir.x, localDir.y) + Math.PI / 2 + Math.PI;
+
+  // 中线为左洞，模型右洞需对齐中线 → 将模型向中线的左侧偏移 30m
+  const leftENU = new Cesium.Cartesian3(-localDir.y, localDir.x, 0);
+  Cesium.Cartesian3.normalize(leftENU, leftENU);
+  const leftECEF = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, leftENU, new Cesium.Cartesian3());
+  const offsetECEF = Cesium.Cartesian3.multiplyByScalar(leftECEF, 100, new Cesium.Cartesian3());
+  const shiftedPos = Cesium.Cartesian3.add(pos, offsetECEF, new Cesium.Cartesian3());
+
+  // 上移 20m
+  const upECEF = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, new Cesium.Cartesian3(0, 0, 1), new Cesium.Cartesian3());
+  const upOffset = Cesium.Cartesian3.multiplyByScalar(upECEF, 5, new Cesium.Cartesian3());
+  const finalPos = Cesium.Cartesian3.add(shiftedPos, upOffset, new Cesium.Cartesian3());
 
   const hpr = new Cesium.HeadingPitchRoll(heading, 0, 0);
-  const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr);
+  const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(finalPos, hpr);
+
+  // 存储变换参数供 WindVectorField 使用
+  _windTunnelModelMatrix = modelMatrix;
+  _windTunnelFinalPos = finalPos;
+  _windTunnelHeading = heading;
 
   const url = 'data/wind/suidao.glb';
 
   Cesium.Model.fromGltfAsync({ url, modelMatrix })
     .then((model: any) => {
+      model.show = visible;
       windTunnelGlbPrimitives.push(viewer.scene.primitives.add(model));
-      console.log(`[DrawLine] 风场隧道模型已加载，放置于直段中点（索引 ${posIdx}，直段长 ${pts.length} 个点）`);
+      console.log(`[DrawLine] 风场隧道模型已加载，放置于直段起点（索引 ${posIdx}，直段范围 ${bestStart}-${bestEnd}），可见=${visible}`);
     })
     .catch((e: any) => console.error('[DrawLine] wind/suidao.glb 加载失败:', e));
 }
@@ -931,6 +1208,10 @@ export function removeWindTunnelGlb(customViewer?: any) {
     try { viewer.scene.primitives.remove(p); } catch (_) {}
   }
   windTunnelGlbPrimitives = [];
+  _windTunnelModelMatrix = null;
+  _windTunnelFinalPos = null;
 }
-
-
+/** 控制风场隧道模型显示/隐藏 */
+export function setWindTunnelVisible(show: boolean) {
+  for (const p of windTunnelGlbPrimitives) p.show = show;
+}
