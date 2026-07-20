@@ -72,8 +72,8 @@ export interface WorksiteSummary {
   id: string; name: string; code: string; dk_number: number
   lon: number; lat: number; height: number
   rock_classification: string; excavation_method: string
-  risk_level: string; current_procedure: string
-  cycle_advance_m: number; status: string
+  risk_level: string; current_procedure: string; status: string
+  cycle_advance_m?: number; cross_section_area_m2?: number
 }
 
 // ── API 函数 ─────────────────────────────────────────────
@@ -153,8 +153,15 @@ export const supportApi = {
 }
 
 export const alertsApi = {
-  list: (active?: boolean) =>
-    request<any[]>(`/alerts${active ? '?active=true' : ''}`),
+  list: (active?: boolean, tunnelId?: string, level?: string, sceneKey?: string) => {
+    const p = new URLSearchParams()
+    if (active) p.set('active', 'true')
+    if (tunnelId) p.set('tunnel_id', tunnelId)
+    if (level) p.set('level', level)
+    if (sceneKey) p.set('scene_key', sceneKey)
+    const qs = p.toString()
+    return request<any[]>(`/alerts${qs ? '?' + qs : ''}`)
+  },
   create: (data: any) =>
     request<any>('/alerts', { method: 'POST', body: JSON.stringify(data) }),
   acknowledge: (id: string) =>

@@ -90,7 +90,46 @@ router.post('/readings', async (req, res) => {
       `INSERT INTO monitoring_readings (config_id, time, value, quality) VALUES ${values.join(',')}`,
       params
     )
-    res.status(201).json({ inserted: readings.length })
+
+    // 阈值检测 → 自动创建告警
+    const alertsCreated = []
+    for (const r of readings) {
+      const { rows: [cfg] } = await query(
+        `SELECT mc.*, w.tunnel_id, w.id AS worksite_id, w.dk_number
+         FROM monitoring_configs mc
+         JOIN worksites w ON mc.worksite_id = w.id
+         WHERE mc.id = $1 AND mc.is_active = true`,
+        [r.config_id]
+      )
+      if (!cfg) continue
+
+      let level = null
+      const v = r.value
+
+      if (cfg.critical_max != null && v > cfg.critical_max) level = 'critical'
+      else if (cfg.critical_min != null && v < cfg.critical_min) level = 'critical'
+      else if (cfg.warning_max != null && v > cfg.warning_max) level = 'warn'
+      else if (cfg.warning_min != null && v < cfg.warning_min) level = 'warn'
+
+      if (!level) continue
+
+      // 检查是否已有同 config 的活跃告警
+      const { rows: existing } = await query(
+        `SELECT id FROM alerts WHERE entity_type = 'monitoring_config' AND entity_id = $1 AND is_active = true LIMIT 1`,
+        [r.config_id]
+      )
+      if (existing.length) continue
+
+      const title = `${cfg.metric_name_cn} 超标: ${v} ${cfg.unit} (阈值: ${level === 'critical' ? 'critical' : 'warning'})`
+      await query(
+        `INSERT INTO alerts (entity_type, entity_id, title, description, level, tunnel_id, dk_number)
+         VALUES ('monitoring_config', $1, $2, $3, $4, $5, $6)`,
+        [r.config_id, title, `${cfg.metric_name_cn} = ${v} ${cfg.unit}`, level, cfg.tunnel_id, cfg.dk_number]
+      )
+      alertsCreated.push({ config_id: r.config_id, level, title })
+    }
+
+    res.status(201).json({ inserted: readings.length, alerts: alertsCreated })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

@@ -72,6 +72,9 @@
           <span class="custom-check"></span>
           隧道模型
         </label>
+        <div v-show="layerState.showTunnel" class="xray-row">
+          <button class="xray-btn" :class="{ active: isXray }" @click="toggleXray">👁 透视</button>
+        </div>
         <label class="checkbox-item">
           <input type="checkbox" v-model="layerState.showRock" @change="toggleRockModel">
           <span class="custom-check"></span>
@@ -82,6 +85,9 @@
           <span class="custom-check"></span>
           通风模型
         </label>
+        <div v-show="layerState.showWindTunnel" class="xray-row">
+          <button class="xray-btn" :class="{ active: isWindXray }" @click="toggleWindXray">👁 透视</button>
+        </div>
 
         <div v-show="layerState.showMap" class="terrain-alpha-row">
           <span class="terrain-alpha-label">地形透视</span>
@@ -97,12 +103,6 @@
         </div>
     </div>
 
-    <!-- 爆破设计界面（叠加在 Cesium 三维场景上） -->
-    <BlastStation
-      v-if="showBlastStation && selectedWorksite !== null"
-      :worksite="selectedWorksite"
-      @close="closeBlastStation"
-    />
 
     <!-- 自动化处理流程侧边栏 -->
     <ProcessingWorkflowSidebar
@@ -176,15 +176,15 @@
           </div>
         </div>
         <div class="metric-chip">
-          <span class="chip-val cyan">3.5<span class="chip-unit">m</span></span>
+          <span class="chip-val cyan">{{ overviewMetrics.advance }}<span class="chip-unit">m</span></span>
           <span class="chip-desc">今日进尺</span>
         </div>
         <div class="metric-chip">
-          <span class="chip-val orange">2<span class="chip-unit">次</span></span>
-          <span class="chip-desc">当班爆破</span>
+          <span class="chip-val orange">{{ overviewMetrics.personnel }}<span class="chip-unit">人</span></span>
+          <span class="chip-desc">在岗人数</span>
         </div>
         <div class="metric-chip">
-          <span class="chip-val green">420<span class="chip-unit">m³</span></span>
+          <span class="chip-val green">{{ overviewMetrics.muck }}<span class="chip-unit">m³</span></span>
           <span class="chip-desc">出渣量</span>
         </div>
       </div>
@@ -194,6 +194,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
 import * as Cesium from 'cesium'; // 引入 Cesium
 import { ScreenSpaceEventHandler, ScreenSpaceEventType } from 'cesium'; // 引入事件处理器
 import DTGlobe from '@/components/DTGlobe/DTGlobe.vue';
@@ -202,7 +203,6 @@ import WorkfaceInfoPanel from '@/views/WorkfaceInfoPanel.vue';
 import SceneDataPanel from '@/views/Overview/SceneDataPanel.vue';
 import SceneControlPanel from '@/views/Overview/SceneControlPanel.vue';
 import type { SceneDef } from '@/views/Overview/OverviewHUD.vue';
-import BlastStation from '@/views/BlastStation/index.vue';
 import Lining from '@/components/SceneManagement/LiningComponents/Lining.vue';
 import DispatchPersonnel from '@/components/SceneManagement/DispatchComponents/DispatchPersonnel.vue';
 import DispatchEquipment from '@/components/SceneManagement/DispatchComponents/DispatchEquipment.vue';
@@ -220,7 +220,7 @@ import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
-import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible } from '@/utils/Common/DrawLine';
+import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible } from '@/utils/Common/DrawLine';
 import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, mergeModelConfigsFromApi } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
@@ -228,8 +228,10 @@ import { removeVectorField } from '@/utils/Common/WindVectorField';
 import { useSceneStore } from '@/stores/sceneStore';
 import { useTunnelStore } from '@/stores/tunnelStore';
 import { useModelStore } from '@/stores/modelStore';
+import { useMonitorStore } from '@/stores/monitorStore';
 
 // ── Stores ──────────────────────────────────────────────
+const router = useRouter();
 const sceneStore = useSceneStore();
 const tunnelStore = useTunnelStore();
 const modelStore = useModelStore();
@@ -268,7 +270,7 @@ const SCENE_DEFS: Record<string, {
     key: 'vent', name: '通风除尘', icon: '≋',
     color: '#44ff88', status: '运行', statusCls: 'dot-green',
     metricVal: '3.2', metricUnit: 'm/s',
-    flyTo: { lon: 94.893239, lat: 29.531875, height: 2965.2, heading: 54.69, pitch: -5.65 },
+    flyTo: { lon: 94.914943, lat: 29.528810, height: 3000.4, heading: 70.61, pitch: -9.83 },
   },
   dispatch: {
     key: 'dispatch', name: '装备调度', icon: '◎',
@@ -299,6 +301,8 @@ const sysStatus = [
   { name: '调度', cls: 'dot-green' },
 ];
 
+const overviewMetrics = reactive({ advance: '--', personnel: '--', muck: '--' });
+
 // ── 工具栏状态 ─────────────────────────────────────────
 const activeTool = ref<string | null>(null);
 
@@ -326,18 +330,6 @@ function handleToolAction(action: string) {
   }
 }
 
-// ── 爆破指挥台状态 ──────────────────────────────────────
-const showBlastStation = ref(false);
-
-const openBlastStation = (site: Worksite) => {
-  selectedWorksite.value = site;
-  showBlastStation.value = true;
-};
-
-const closeBlastStation = () => {
-  showBlastStation.value = false;
-};
-
 // ── 支护 / 通风 / 调度场景状态 ────────────────────────────
 const showLining            = ref(false);
 const showDispatchPersonnel  = ref(false);
@@ -346,36 +338,35 @@ const showDispatchGantt      = ref(false);
 const processingModelKey = ref<string | null>(null);
 
 // ── 工点数据 ─────────────────────────────────────────────
-const worksiteList = [
-  {
-    id: 'worksite_a',
-    name: 'DK工点A',
-    mileage: 'DK279+200',
-    lon: 94.905619,
-    lat: 29.533374,
-    height: 2945.5,
-    rockLevel: 'IV级',
-    area: '76.5 m²',
-    method: '台阶法',
-    hardness: '较硬岩',
-    riskLevel: '中风险',
-  },
-  {
-    id: 'worksite_b',
-    name: 'DK工点B',
-    mileage: 'DK283+100',
-    lon: 94.938499,
-    lat: 29.513774,
-    height: 2965.0,
-    rockLevel: 'V级',
-    area: '82.3 m²',
-    method: '全断面法',
-    hardness: '软岩',
-    riskLevel: '高风险',
-  },
-] as const;
+type Worksite = {
+  id: string; name: string; mileage: string; lon: number; lat: number; height: number;
+  rockLevel: string; area: string; method: string; hardness: string; riskLevel: string;
+};
 
-type Worksite = typeof worksiteList[number];
+// 从 tunnelStore 动态获取工点列表，API 不可用时使用本地默认值
+const worksiteList = computed<Worksite[]>(() => {
+  const store = useTunnelStore();
+  if (store.worksites.length) {
+    return store.worksites.map(w => ({
+      id: w.id,
+      name: w.name,
+      mileage: 'DK' + (w.dk_number / 1000).toFixed(3).replace('.', '+'),
+      lon: w.lon,
+      lat: w.lat,
+      height: w.height,
+      rockLevel: w.rock_classification + '级',
+      area: w.cross_section_area_m2 ? w.cross_section_area_m2 + ' m²' : '--',
+      method: w.excavation_method === 'drill_blast' ? '钻爆法' : w.excavation_method === 'bench_method' ? '台阶法' : w.excavation_method === 'full_face' ? '全断面法' : w.excavation_method,
+      hardness: '--',
+      riskLevel: w.risk_level === 'high' ? '高风险' : w.risk_level === 'medium' ? '中风险' : w.risk_level === 'low' ? '低风险' : w.risk_level,
+    }));
+  }
+  // fallback
+  return [
+    { id: 'worksite_a', name: 'DK工点A', mileage: 'DK279+200', lon: 94.905619, lat: 29.533374, height: 2945.5, rockLevel: 'IV级', area: '76.5 m²', method: '台阶法', hardness: '较硬岩', riskLevel: '中风险' },
+    { id: 'worksite_b', name: 'DK工点B', mileage: 'DK283+100', lon: 94.938499, lat: 29.513774, height: 2965.0, rockLevel: 'V级', area: '82.3 m²', method: '全断面法', hardness: '软岩', riskLevel: '高风险' },
+  ];
+});
 
 // ── 工点交互状态 ─────────────────────────────────────────
 const selectedWorksite = ref<Worksite | null>(null);
@@ -428,7 +419,7 @@ const getViewer = (): any => {
 
 // ── 添加工点实体 ─────────────────────────────────────────
 const addWorksiteEntities = (viewer: any) => {
-  worksiteList.forEach(site => {
+  worksiteList.value.forEach(site => {
     viewer.entities.add({
       id: site.id,
       name: site.name,
@@ -459,7 +450,7 @@ const addWorksiteEntities = (viewer: any) => {
 const setWorksiteVisible = (show: boolean) => {
   const viewer = getViewer();
   if (!viewer) return;
-  worksiteList.forEach(site => {
+  worksiteList.value.forEach(site => {
     const entity = viewer.entities.getById(site.id);
     if (entity) entity.show = show;
   });
@@ -472,9 +463,9 @@ const setupWorksiteClickHandler = (viewer: any) => {
     const picked = viewer.scene.pick(click.position);
     if (Cesium.defined(picked) && picked.id) {
       const entityId = picked.id.id;
-      const site = worksiteList.find(s => s.id === entityId);
+      const site = worksiteList.value.find(s => s.id === entityId);
       if (site) {
-        openBlastStation(site);
+        router.push('/blast-twin');
       }
     }
   }, ScreenSpaceEventType.LEFT_CLICK);
@@ -687,6 +678,7 @@ const onTerrainAlphaInput = (e: Event) => {
   if (!globe.translucency.enabled) return;
   globe.translucency.frontFaceAlphaByDistance.nearValue = val;
   globe.translucency.frontFaceAlphaByDistance.farValue = val;
+  viewer.scene.requestRender();
 };
 
 const startDrag = (e: MouseEvent) => {
@@ -709,20 +701,41 @@ const stopDrag = () => {
 const toggle3DModel = () => {
   setCenterLineVisible(layerState.showModel);
   setWorksiteVisible(layerState.showModel);
+  getViewer()?.scene.requestRender();
 };
 const toggleTunnelModel = () => {
   setTunnelGlbVisible(layerState.showTunnel);
+  getViewer()?.scene.requestRender();
 };
+// ── 隧道透视状态 ──────────────────────────────────────
+const isXray = ref(false);
+
+function toggleXray() {
+  isXray.value = !isXray.value;
+  setTunnelTranslucent(isXray.value);
+  getViewer()?.scene.requestRender();
+}
 const toggleRockModel = () => {
   if (layerState.showRock) {
     loadRockModel(getViewer());
   }
   setRockModelVisible(layerState.showRock);
+  getViewer()?.scene.requestRender();
 };
 
 const toggleWindTunnelModel = () => {
   setWindTunnelVisible(layerState.showWindTunnel);
+  getViewer()?.scene.requestRender();
 };
+
+// ── 通风透视状态 ──────────────────────────────────────
+const isWindXray = ref(false);
+
+function toggleWindXray() {
+  isWindXray.value = !isWindXray.value;
+  setWindTunnelTranslucent(isWindXray.value);
+  getViewer()?.scene.requestRender();
+}
 
 const toggleImagery = () => {
   const v = getViewer();
@@ -739,6 +752,7 @@ const toggleImagery = () => {
   if (v.imageryLayers.length > 0) {
     v.imageryLayers.get(0).show = layerState.showMap;
   }
+  v.scene.requestRender();
 };
 
 /** 复制当前相机视角到剪贴板 */
@@ -759,10 +773,9 @@ const handleSelectScene = (key: string) => {
   const viewer = getViewer();
   if (!viewer) return;
   
-  // 爆破设计：直接打开浮窗，不走场景面板
+  // 开挖爆破：跳转孪生子模块
   if (key === 'blast') {
-    selectedWorksite.value = worksiteList[0];
-    showBlastStation.value = true;
+    router.push('/blast-twin');
     return;
   }
 
@@ -770,13 +783,20 @@ const handleSelectScene = (key: string) => {
 
   // 通风除尘场景：切换为风场模拟隧道模型
   if (key === 'vent') {
+    layerState.showModel = false;
+    setCenterLineVisible(false);
+    setWorksiteVisible(false);
     setTunnelGlbVisible(false);
-    loadWindTunnelGlb(viewer, layerState.showWindTunnel);
+    loadWindTunnelGlb(viewer, true, true);
   } else {
-    // 进入其他场景时恢复原始隧道
+    // 进入其他场景时恢复隧道模型
     removeWindTunnelGlb(viewer);
     removeVectorField(viewer);
+    layerState.showModel = true;
+    setCenterLineVisible(true);
+    setWorksiteVisible(true);
     setTunnelGlbVisible(layerState.showTunnel);
+    setWindTunnelTranslucent(false);
   }
 
   // 关闭所有场景浮层
@@ -821,6 +841,10 @@ const handleBackToOverview = () => {
     isDBH.value = false;
     isTSP.value = false;
     isTEM.value = false;
+    isXray.value = false;
+    isWindXray.value = false;
+    setTunnelTranslucent(false);
+    setWindTunnelTranslucent(false);
     deactivateGeoModel(viewer);
 
     // 如果是从工作流侧边栏返回，也要重置
@@ -838,10 +862,14 @@ const handleBackToOverview = () => {
   removeConduitMeshes(viewer);
   removeLockAnchorMeshes(viewer);
 
-  // 清理风场隧道模型，恢复原始隧道
+  // 清理风场隧道模型，恢复隧道模型
   removeWindTunnelGlb(viewer);
   removeVectorField(viewer);
   setTunnelGlbVisible(layerState.showTunnel);
+  setWindTunnelTranslucent(false);
+  layerState.showModel = true;
+  setCenterLineVisible(true);
+  setWorksiteVisible(true);
 
   // 恢复地球模式
   restoreEarthMode(viewer);
@@ -870,13 +898,22 @@ async function loadApiData() {
     const sceneStore = useSceneStore();
     const tunnelStore = useTunnelStore();
     const modelStore = useModelStore();
+    const monitorStore = useMonitorStore();
     await Promise.all([sceneStore.fetchScenes(), tunnelStore.fetchTunnels()]);
     if (tunnelStore.currentTunnelId) {
-      await modelStore.fetchModels(tunnelStore.currentTunnelId);
+      await Promise.all([
+        modelStore.fetchModels(tunnelStore.currentTunnelId),
+        tunnelStore.fetchWorksites(tunnelStore.currentTunnelId),
+        monitorStore.fetchOverviewMetrics(),
+      ]);
       if (modelStore.models.length) {
         mergeModelConfigsFromApi(modelStore.models);
-        console.log('[API] 场景配置 + 隧道数据 + 地质模型 已加载');
       }
+      const vals = monitorStore.latestByMetricKey;
+      overviewMetrics.advance = vals['daily_advance']?.toString() || '--';
+      overviewMetrics.muck = vals['muck_volume']?.toString() || '--';
+      overviewMetrics.personnel = vals['personnel_count']?.toString() || '--';
+      console.log('[API] 数据加载完成');
     }
   } catch (e) {
     console.warn('[API] 后端不可用，使用本地硬编码数据:', (e as Error).message);
@@ -899,6 +936,8 @@ onBeforeUnmount(() => {
     worksiteClickHandler = null;
   }
   removeTunnelEntities();
+  setTunnelTranslucent(false);
+  setWindTunnelTranslucent(false);
 });
 
 </script>
@@ -1285,6 +1324,21 @@ onBeforeUnmount(() => {
   accent-color: #00eaff;
 }
 .terrain-alpha-value { color: #00eaff; font-size: 12px; min-width: 32px; text-align: right; }
+
+.xray-row {
+  display: flex; align-items: center; margin-top: 4px; margin-bottom: 4px;
+  padding-left: 26px;
+}
+.xray-btn {
+  padding: 4px 12px; border: 1px solid rgba(0, 200, 255, 0.25); border-radius: 3px;
+  background: rgba(0, 200, 255, 0.08); color: rgba(180, 220, 255, 0.7);
+  font-size: 12px; cursor: pointer; transition: .15s;
+}
+.xray-btn:hover { background: rgba(0, 200, 255, 0.18); color: #fff; }
+.xray-btn.active {
+  background: rgba(0, 200, 255, 0.22); border-color: #00eaff;
+  color: #00eaff; box-shadow: 0 0 6px rgba(0, 234, 255, 0.3);
+}
 
 /* ── 快捷侧边栏（地图模式） ────────────────────────────── */
 .quick-sidebar {

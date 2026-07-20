@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Dashboard from '@/views/index.vue'
+import BlastTwinPage from '@/views/BlastTwinPage.vue'
 import AdminLayout from '@/views/admin/AdminLayout.vue'
 import AdminWorksites from '@/views/admin/WorksitesPage.vue'
 import AdminModels from '@/views/admin/ModelsPage.vue'
@@ -10,6 +11,11 @@ const routes = [
     path: '/',
     name: 'Dashboard',
     component: Dashboard
+  },
+  {
+    path: '/blast-twin',
+    name: 'BlastTwin',
+    component: BlastTwinPage
   },
   {
     path: '/admin',

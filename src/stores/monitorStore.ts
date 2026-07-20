@@ -2,16 +2,57 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { monitoringApi } from '@/services/api/client'
 
+export interface MetricConfig {
+  id: string; worksite_id: string; scene_key: string
+  metric_key: string; metric_name_cn: string; unit: string
+}
+
 export const useMonitorStore = defineStore('monitor', () => {
   const latestValues = ref<Record<string, number>>({})
+  const latestByMetricKey = ref<Record<string, number>>({})
+  const sceneConfigs = ref<MetricConfig[]>([])
   const history = ref<{ time: string; value: number }[]>([])
   const loading = ref(false)
+
+  async function fetchConfigs(sceneKey?: string) {
+    const params = new URLSearchParams()
+    if (sceneKey) params.set('scene_key', sceneKey)
+    const res = await fetch(`/api/monitoring/configs?${params}`)
+    sceneConfigs.value = await res.json()
+  }
 
   async function fetchLatest(configIds: string[]) {
     if (!configIds.length) return
     const result = await monitoringApi.latest(configIds)
     for (const [id, data] of Object.entries(result)) {
       latestValues.value[id] = data.value
+    }
+  }
+
+  /** 拉取某场景下所有指标的最新读数，按 metric_key 索引 */
+  async function fetchSceneLatest(sceneKey: string) {
+    await fetchConfigs(sceneKey)
+    const ids = sceneConfigs.value.map(c => c.id)
+    if (!ids.length) return
+    const result = await monitoringApi.latest(ids)
+    latestByMetricKey.value = {}
+    for (const cfg of sceneConfigs.value) {
+      const data = result[cfg.id]
+      if (data) latestByMetricKey.value[cfg.metric_key] = Math.round(data.value * 10) / 10
+    }
+  }
+
+  /** 拉取底部栏关键指标（今日进尺、出渣量、在岗人数） */
+  async function fetchOverviewMetrics() {
+    const keys = ['daily_advance', 'muck_volume', 'personnel_count']
+    await fetchConfigs()
+    const ids = sceneConfigs.value.filter(c => keys.includes(c.metric_key)).map(c => c.id)
+    if (!ids.length) return
+    const result = await monitoringApi.latest(ids)
+    latestByMetricKey.value = {}
+    for (const cfg of sceneConfigs.value) {
+      const data = result[cfg.id]
+      if (data) latestByMetricKey.value[cfg.metric_key] = Math.round(data.value * 10) / 10
     }
   }
 
@@ -28,5 +69,5 @@ export const useMonitorStore = defineStore('monitor', () => {
     return monitoringApi.postReadings(readings)
   }
 
-  return { latestValues, history, loading, fetchLatest, fetchHistory, pushReadings }
+  return { latestValues, latestByMetricKey, sceneConfigs, history, loading, fetchConfigs, fetchLatest, fetchSceneLatest, fetchOverviewMetrics, fetchHistory, pushReadings }
 })

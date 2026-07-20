@@ -22,30 +22,55 @@ let _windTunnelFinalPos: Cesium.Cartesian3 | null = null;
 let _windTunnelHeading: number = 0;
 
 /** 获取风场隧道模型的变换矩阵（ANSYS 局部坐标 → ECEF 世界坐标） */
+let _windTunnelCenterlineDist: number = 0;
+let _windTunnelCenterlinePos: Cesium.Cartesian3 | null = null;
+
 export function getWindTunnelTransform(): {
   modelMatrix: Cesium.Matrix4;
   position: Cesium.Cartesian3;
   heading: number;
+  centerlineDist: number;
+  centerlinePos: Cesium.Cartesian3 | null;
 } | null {
   if (!_windTunnelModelMatrix || !_windTunnelFinalPos) return null;
   return {
     modelMatrix: _windTunnelModelMatrix,
     position: _windTunnelFinalPos,
     heading: _windTunnelHeading,
+    centerlineDist: _windTunnelCenterlineDist,
+    centerlinePos: _windTunnelCenterlinePos,
   };
 }
 
 // ── 隧道混凝土纹理 ─────────────────────────────────────────
 let concreteTextureUrl: string | null = null;
 let concreteImage: HTMLImageElement | null = null;
+let _tunnelOpacity: number = 1.0;
 
-function buildConcreteShader(): Cesium.CustomShader | null {
+function _buildOpacityOnlyShader(opacity: number): Cesium.CustomShader {
+  return new Cesium.CustomShader({
+    uniforms: {
+      u_opacity: { type: Cesium.UniformType.FLOAT, value: opacity },
+    },
+    fragmentShaderText: `
+      void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
+        material.alpha = u_opacity;
+      }
+    `,
+  });
+}
+
+function _buildConcreteWithOpacityShader(opacity: number): Cesium.CustomShader | null {
   if (!concreteImage) return null;
   return new Cesium.CustomShader({
     uniforms: {
       u_concrete: {
         type: Cesium.UniformType.SAMPLER_2D,
         value: new Cesium.TextureUniform(concreteImage),
+      },
+      u_opacity: {
+        type: Cesium.UniformType.FLOAT,
+        value: opacity,
       },
     },
     fragmentShaderText: `
@@ -74,9 +99,24 @@ function buildConcreteShader(): Cesium.CustomShader | null {
         material.diffuse = color.rgb;
         material.specular = vec3(0.03);
         material.roughness = 0.9;
+        material.alpha = u_opacity;
       }
     `,
   });
+}
+
+function _buildCurrentShader(): Cesium.CustomShader | null {
+  const opacity = _tunnelOpacity;
+  if (opacity >= 1.0 && !concreteImage) return null;
+  if (concreteImage) return _buildConcreteWithOpacityShader(opacity);
+  return _buildOpacityOnlyShader(opacity);
+}
+
+function _applyTunnelShader() {
+  const shader = _buildCurrentShader();
+  for (const p of tunnelGlbPrimitives) {
+    p.customShader = shader;
+  }
 }
 
 /** 预加载混凝土纹理，返回 Promise，完成后调用 loadTunnelGlb 即可自动应用 */
@@ -84,7 +124,7 @@ export function loadConcreteTexture(textureUrl: string): Promise<void> {
   concreteTextureUrl = textureUrl || null;
   if (!textureUrl) {
     concreteImage = null;
-    for (const p of tunnelGlbPrimitives) p.customShader = undefined;
+    _applyTunnelShader();
     return Promise.resolve();
   }
   return new Promise((resolve) => {
@@ -93,11 +133,7 @@ export function loadConcreteTexture(textureUrl: string): Promise<void> {
     img.onload = () => {
       concreteImage = img;
       console.log('[混凝土纹理] 加载成功:', textureUrl, img.width + 'x' + img.height);
-      // 如果已有已加载的隧道节，立即应用
-      const shader = buildConcreteShader();
-      if (shader) {
-        for (const p of tunnelGlbPrimitives) p.customShader = shader;
-      }
+      _applyTunnelShader();
       resolve();
     };
     img.onerror = () => {
@@ -113,7 +149,7 @@ export function loadConcreteTexture(textureUrl: string): Promise<void> {
 export function removeTunnelConcreteTexture() {
   concreteTextureUrl = null;
   concreteImage = null;
-  for (const p of tunnelGlbPrimitives) p.customShader = undefined;
+  _applyTunnelShader();
 }
 // =========================================================
 // 地形透视效果（globe.translucency 距离驱动）
@@ -1094,6 +1130,20 @@ export function setTunnelGlbVisible(show: boolean) {
   for (const p of tunnelGlbPrimitives) p.show = show;
 }
 
+export function setTunnelTranslucent(on: boolean, customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  for (const m of tunnelGlbPrimitives) {
+    m.color = on
+      ? Cesium.Color.fromCssColorString('#00eaff').withAlpha(0.30)
+      : Cesium.Color.WHITE;
+    m.colorBlendMode = on
+      ? Cesium.ColorBlendMode.REPLACE
+      : Cesium.ColorBlendMode.HIGHLIGHT;
+  }
+  viewer.scene.requestRender();
+}
+
 // =========================================================
 // 风场模拟专用隧道模型（data/wind/suidao.glb）
 // =========================================================
@@ -1102,98 +1152,30 @@ export function setTunnelGlbVisible(show: boolean) {
  * 检测中线中最长的近乎直线段，并在此处加载风场模拟隧道完整模型
  * 模型是直的，需放在弯曲度最小的位置
  */
-export function loadWindTunnelGlb(customViewer?: any, visible = true) {
+export function loadWindTunnelGlb(customViewer?: any, visible = true, translucent = false) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
 
   removeWindTunnelGlb(viewer);
 
-  const feature = (centerLineData as any).features?.[0];
-  if (!feature) return;
+  const t = _getWindTunnelTransform();
+  if (!t) return;
 
-  const raw: any[] = feature.geometry.coordinates;
+  _windTunnelModelMatrix = t.modelMatrix;
+  _windTunnelFinalPos = t.finalPos;
+  _windTunnelHeading = t.heading;
+  _windTunnelCenterlineDist = t.centerlineDist;
+  _windTunnelCenterlinePos = t.centerlinePos;
 
-  // 过滤过近点
-  const pts: Cesium.Cartesian3[] = [];
-  let last: Cesium.Cartesian3 | null = null;
-  for (const p of raw) {
-    const c = Cesium.Cartesian3.fromDegrees(Number(p[0]), Number(p[1]), Number(p[2]) || 0);
-    if (!last || Cesium.Cartesian3.distance(c, last) > 0.5) {
-      pts.push(c);
-      last = c;
-    }
-  }
-  if (pts.length < 2) return;
-
-  // 计算每段方向（归一化向量）
-  const dirs: Cesium.Cartesian3[] = [];
-  for (let i = 1; i < pts.length; i++) {
-    const d = Cesium.Cartesian3.subtract(pts[i], pts[i - 1], new Cesium.Cartesian3());
-    Cesium.Cartesian3.normalize(d, d);
-    dirs.push(d);
-  }
-
-  // 滑动扫描：找出方向变化 < 3° 的最长连续段
-  const ANGLE_THRESHOLD = Math.cos(Cesium.Math.toRadians(3)); // cos(3°)
-  let bestStart = 0;
-  let bestEnd = 0;
-
-  for (let i = 0; i < dirs.length; i++) {
-    let j = i;
-    while (j < dirs.length) {
-      const dot = Cesium.Cartesian3.dot(dirs[i], dirs[j]);
-      if (dot < ANGLE_THRESHOLD) break;
-      j++;
-    }
-    if (j - i > bestEnd - bestStart) {
-      bestStart = i;
-      bestEnd = j;
-    }
-  }
-
-  // 取直段起始端作为模型放置位，模型首端从中线直线开始处放置
-  const posIdx = Math.min(bestStart, pts.length - 1);
-  const pos = pts[posIdx];
-
-  // 用直段的平均方向计算 heading
-  let avgDir = new Cesium.Cartesian3(0, 0, 0);
-  for (let i = bestStart; i < bestEnd; i++) {
-    avgDir = Cesium.Cartesian3.add(avgDir, dirs[i], avgDir);
-  }
-  Cesium.Cartesian3.normalize(avgDir, avgDir);
-
-  const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
-  const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
-  const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, avgDir, new Cesium.Cartesian3());
-  const heading = Math.atan2(localDir.x, localDir.y) + Math.PI / 2 + Math.PI;
-
-  // 中线为左洞，模型右洞需对齐中线 → 将模型向中线的左侧偏移 30m
-  const leftENU = new Cesium.Cartesian3(-localDir.y, localDir.x, 0);
-  Cesium.Cartesian3.normalize(leftENU, leftENU);
-  const leftECEF = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, leftENU, new Cesium.Cartesian3());
-  const offsetECEF = Cesium.Cartesian3.multiplyByScalar(leftECEF, 100, new Cesium.Cartesian3());
-  const shiftedPos = Cesium.Cartesian3.add(pos, offsetECEF, new Cesium.Cartesian3());
-
-  // 上移 20m
-  const upECEF = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, new Cesium.Cartesian3(0, 0, 1), new Cesium.Cartesian3());
-  const upOffset = Cesium.Cartesian3.multiplyByScalar(upECEF, 5, new Cesium.Cartesian3());
-  const finalPos = Cesium.Cartesian3.add(shiftedPos, upOffset, new Cesium.Cartesian3());
-
-  const hpr = new Cesium.HeadingPitchRoll(heading, 0, 0);
-  const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(finalPos, hpr);
-
-  // 存储变换参数供 WindVectorField 使用
-  _windTunnelModelMatrix = modelMatrix;
-  _windTunnelFinalPos = finalPos;
-  _windTunnelHeading = heading;
-
-  const url = 'data/wind/suidao.glb';
-
-  Cesium.Model.fromGltfAsync({ url, modelMatrix })
+  Cesium.Model.fromGltfAsync({ url: 'data/wind/suidao.glb', modelMatrix: t.modelMatrix })
     .then((model: any) => {
       model.show = visible;
+      if (translucent) {
+        model.color = Cesium.Color.fromCssColorString('#00eaff').withAlpha(0.30);
+        model.colorBlendMode = Cesium.ColorBlendMode.REPLACE;
+      }
       windTunnelGlbPrimitives.push(viewer.scene.primitives.add(model));
-      console.log(`[DrawLine] 风场隧道模型已加载，放置于直段起点（索引 ${posIdx}，直段范围 ${bestStart}-${bestEnd}），可见=${visible}`);
+      console.log('[DrawLine] 风场隧道模型已加载，可见=' + visible);
     })
     .catch((e: any) => console.error('[DrawLine] wind/suidao.glb 加载失败:', e));
 }
@@ -1215,3 +1197,89 @@ export function removeWindTunnelGlb(customViewer?: any) {
 export function setWindTunnelVisible(show: boolean) {
   for (const p of windTunnelGlbPrimitives) p.show = show;
 }
+
+export function setWindTunnelTranslucent(on: boolean, customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  for (const m of windTunnelGlbPrimitives) {
+    m.color = on
+      ? Cesium.Color.fromCssColorString('#00eaff').withAlpha(0.30)
+      : Cesium.Color.WHITE;
+    m.colorBlendMode = on
+      ? Cesium.ColorBlendMode.REPLACE
+      : Cesium.ColorBlendMode.HIGHLIGHT;
+  }
+  viewer.scene.requestRender();
+}
+
+
+function _getWindTunnelTransform(): { modelMatrix: Cesium.Matrix4; finalPos: Cesium.Cartesian3; heading: number; centerlineDist: number; centerlinePos: Cesium.Cartesian3 } | null {
+  const feature = (centerLineData as any).features?.[0];
+  if (!feature) return null;
+
+  const raw: any[] = feature.geometry.coordinates;
+  const pts: Cesium.Cartesian3[] = [];
+  let last: Cesium.Cartesian3 | null = null;
+  for (const p of raw) {
+    const c = Cesium.Cartesian3.fromDegrees(Number(p[0]), Number(p[1]), Number(p[2]) || 0);
+    if (!last || Cesium.Cartesian3.distance(c, last) > 0.5) {
+      pts.push(c);
+      last = c;
+    }
+  }
+  if (pts.length < 2) return null;
+
+  const dirs: Cesium.Cartesian3[] = [];
+  for (let i = 1; i < pts.length; i++) {
+    const d = Cesium.Cartesian3.subtract(pts[i], pts[i - 1], new Cesium.Cartesian3());
+    Cesium.Cartesian3.normalize(d, d);
+    dirs.push(d);
+  }
+
+  const ANGLE_THRESHOLD = Math.cos(Cesium.Math.toRadians(3));
+  let bestStart = 0, bestEnd = 0;
+  for (let i = 0; i < dirs.length; i++) {
+    let j = i;
+    while (j < dirs.length) {
+      if (Cesium.Cartesian3.dot(dirs[i], dirs[j]) < ANGLE_THRESHOLD) break;
+      j++;
+    }
+    if (j - i > bestEnd - bestStart) { bestStart = i; bestEnd = j; }
+  }
+
+  const posIdx = Math.min(bestStart, pts.length - 1);
+  const pos = pts[posIdx];
+
+  let avgDir = new Cesium.Cartesian3(0, 0, 0);
+  for (let i = bestStart; i < bestEnd; i++) {
+    avgDir = Cesium.Cartesian3.add(avgDir, dirs[i], avgDir);
+  }
+  Cesium.Cartesian3.normalize(avgDir, avgDir);
+
+  const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
+  const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
+  const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, avgDir, new Cesium.Cartesian3());
+  const heading = Math.atan2(localDir.x, localDir.y) + Math.PI / 2 + Math.PI;
+
+  const leftENU = new Cesium.Cartesian3(-localDir.y, localDir.x, 0);
+  Cesium.Cartesian3.normalize(leftENU, leftENU);
+  const leftECEF = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, leftENU, new Cesium.Cartesian3());
+  const offsetECEF = Cesium.Cartesian3.multiplyByScalar(leftECEF, 100, new Cesium.Cartesian3());
+  const shiftedPos = Cesium.Cartesian3.add(pos, offsetECEF, new Cesium.Cartesian3());
+
+  const upECEF = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, new Cesium.Cartesian3(0, 0, 1), new Cesium.Cartesian3());
+  const upOffset = Cesium.Cartesian3.multiplyByScalar(upECEF, 5, new Cesium.Cartesian3());
+  const finalPos = Cesium.Cartesian3.add(shiftedPos, upOffset, new Cesium.Cartesian3());
+
+  const hpr = new Cesium.HeadingPitchRoll(heading, 0, 0);
+  const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(finalPos, hpr);
+
+  // 计算 centerlineDist：从中心线起点到 bestStart 的累积距离
+  let centerlineDist = 0;
+  for (let i = 1; i <= bestStart; i++) {
+    centerlineDist += Cesium.Cartesian3.distance(pts[i], pts[i - 1]);
+  }
+
+  return { modelMatrix, finalPos, heading, centerlineDist, centerlinePos: pos };
+}
+

@@ -4,7 +4,7 @@
  */
 import * as Cesium from 'cesium';
 import { DTScopeEngine } from './Viewer';
-import { setCameraViewPoint } from './CameraControl';
+import { getWindTunnelTransform } from './DrawLine';
 
 // ── 类型定义 ──────────────────────────────────────────────
 type LngLatHeight = [number, number, number];
@@ -300,25 +300,11 @@ function renderStreamlines(viewer: Cesium.Viewer, streamlines: StreamlineItem[])
 // ── 公共 API ──────────────────────────────────────────────
 
 /** 射流观察视角 */
-const WIND_VIEWPOINT = {
-  Position: {
-    longitude: 94.868546,
-    latitude: 29.460784,
-    height: 10402.4,
-  },
-  Orientation: {
-    heading: Cesium.Math.toRadians(38.99),
-    pitch:   Cesium.Math.toRadians(-36.85),
-    roll: 0,
-  },
-};
-
 /**
  * 开启射流风场模拟（基于 ANSYS CFD 导出的流线数据）
  * @param viewer Cesium Viewer 实例
  */
 export async function startWind(viewer: Cesium.Viewer) {
-  setCameraViewPoint(viewer, WIND_VIEWPOINT, 1);
   removeFlowLine(viewer);
 
   const data = await loadAnsysData();

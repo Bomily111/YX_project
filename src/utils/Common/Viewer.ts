@@ -39,14 +39,12 @@ export function DTScopeEngine(vueGlobalConfig) {
     timeline: false,
     animation: false,
     shouldAnimate: true,
-    shadows: true,
-    terrainShadows: Cesium.ShadowMode.RECEIVE_ONLY,
     contextOptions: {
       webgl: {
         preserveDrawingBuffer: true,
         alpha: true,
         stencil: true,
-        antialias: true,
+        antialias: false,
         depth: true,
         powerPreference: 'high-performance',
       },
@@ -56,6 +54,15 @@ export function DTScopeEngine(vueGlobalConfig) {
   console.log('DTScopeEngine.viewer初始化');
 
   viewer.scene.globe.enableLighting = true;
+
+  // 调低滚轮缩放倍率 + 限制缩放范围
+  viewer.scene.screenSpaceCameraController.zoomFactor = 1.5;
+  viewer.scene.screenSpaceCameraController.minimumZoomDistance = 5;
+  viewer.scene.screenSpaceCameraController.maximumZoomDistance = 50000;
+
+  // 按需渲染：仅在相机移动或数据变化时绘制新帧
+  viewer.scene.requestRenderMode = true;
+  viewer.scene.maximumRenderTimeChange = Infinity;
 
   // 固定时间为正午，保持场景一直白天
   const noonTime = Cesium.JulianDate.fromIso8601('2024-06-21T04:00:00Z'); // UTC 04:00 = 北京时间 12:00

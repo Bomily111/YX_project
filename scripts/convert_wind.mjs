@@ -78,14 +78,56 @@ for (const curve of curves) {
 const Z_OFFSET = zMin;
 console.log(`Z_OFFSET (auto): ${Z_OFFSET.toFixed(2)}`);
 
-// Find the start heading
-const startInfo = sampleAt(0);
-const startHeading = startInfo.heading;
-console.log(`Start point: (${startInfo.lon.toFixed(6)}, ${startInfo.lat.toFixed(6)}, ${startInfo.h.toFixed(2)})`);
-console.log(`Heading at start: ${(startHeading * 180 / Math.PI).toFixed(2)}°`);
+// ── 查找最长直段（与 DrawLine._getWindTunnelTransform 一致） ──
+function findStraightSegment() {
+  // 过滤过近点
+  const filtered = [pts[0]];
+  for (let i = 1; i < pts.length; i++) {
+    const prev = filtered[filtered.length - 1];
+    const dLon = (pts[i][0] - prev[0]) * (111320 * Math.cos(pts[i][1] * Math.PI / 180));
+    const dLat = (pts[i][1] - prev[1]) * 110940;
+    const dH = pts[i][2] - prev[2];
+    if (Math.sqrt(dLon*dLon + dLat*dLat + dH*dH) > 0.5) filtered.push(pts[i]);
+  }
+  if (filtered.length < 2) return { bestStart: 0, bestEnd: 0, centerlineDist: 0 };
+
+  // 方向向量
+  const dirs = [];
+  for (let i = 1; i < filtered.length; i++) {
+    const dLon = (filtered[i][0] - filtered[i-1][0]) * (111320 * Math.cos(filtered[i][1] * Math.PI / 180));
+    const dLat = (filtered[i][1] - filtered[i-1][1]) * 110940;
+    const dH = filtered[i][2] - filtered[i-1][2];
+    const len = Math.sqrt(dLon*dLon + dLat*dLat + dH*dH);
+    dirs.push([dLon/len, dLat/len, dH/len]);
+  }
+
+  const cos3deg = Math.cos(3 * Math.PI / 180);
+  let bestStart = 0, bestEnd = 0;
+  for (let i = 0; i < dirs.length; i++) {
+    let j = i;
+    while (j < dirs.length) {
+      const dot = dirs[i][0]*dirs[j][0] + dirs[i][1]*dirs[j][1] + dirs[i][2]*dirs[j][2];
+      if (dot < cos3deg) break;
+      j++;
+    }
+    if (j - i > bestEnd - bestStart) { bestStart = i; bestEnd = j; }
+  }
+
+  let cd = 0;
+  for (let i = 1; i <= bestStart; i++) {
+    const dLon = (filtered[i][0] - filtered[i-1][0]) * (111320 * Math.cos(filtered[i][1] * Math.PI / 180));
+    const dLat = (filtered[i][1] - filtered[i-1][1]) * 110940;
+    const dH = filtered[i][2] - filtered[i-1][2];
+    cd += Math.sqrt(dLon*dLon + dLat*dLat + dH*dH);
+  }
+  return { bestStart, bestEnd, centerlineDist: cd };
+}
+
+const { centerlineDist } = findStraightSegment();
+console.log(`Wind tunnel centerlineDist: ${centerlineDist.toFixed(1)}m`);
 
 // ── Convert each streamline ─────────────────────────────────
-// Downsample: every DOWNSAMPLE_CURVE-th curve, every DOWNSAMPLE_PT-th point
+// 流线沿中线放置：Z→中线距离, X→横向偏移, Y→垂直偏移
 const DOWNSAMPLE_CURVE = 1;
 const DOWNSAMPLE_PT   = 2;
 
@@ -101,23 +143,14 @@ for (let ci = 0; ci < curves.length; ci += DOWNSAMPLE_CURVE) {
   for (let pi = 0; pi < curve.length; pi += DOWNSAMPLE_PT) {
     const [x, y, z] = curve[pi];
     sumX += x;
-    const dist = z - Z_OFFSET;
+    const dist = z - Z_OFFSET + centerlineDist;
     const anchor = sampleAt(dist);
 
-    // Use heading at this specific point along the centerLine
     const heading = anchor.heading;
-    const cosH = Math.cos(heading);
-    const sinH = Math.sin(heading);
-
-    // X → lateral offset (perpendicular to tunnel direction, right = positive)
-    // Y → vertical offset (up = positive)
-    const metersPerDegLon = 111320 * Math.cos(anchor.lat * Math.PI / 180);
-    const metersPerDegLat = 110940;
-
-    // Perpendicular direction: heading + 90° (to the right)
     const perpHeading = heading + Math.PI / 2;
-    const plon = anchor.lon + (x * Math.sin(perpHeading)) / metersPerDegLon;
-    const plat = anchor.lat + (x * Math.cos(perpHeading)) / metersPerDegLat;
+    const mLon = 111320 * Math.cos(anchor.lat * Math.PI / 180);
+    const plon = anchor.lon + (x * Math.sin(perpHeading)) / mLon;
+    const plat = anchor.lat + (x * Math.cos(perpHeading)) / 110940;
     const ph = anchor.h + y;
 
     points.push([plon, plat, ph]);

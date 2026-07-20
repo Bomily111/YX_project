@@ -40,6 +40,7 @@ router.get('/:id/worksites', async (req, res) => {
     const { rows } = await query(
       `SELECT id, name, code, dk_number, rock_classification, excavation_method,
               risk_level, current_procedure, cycle_advance_m, status,
+              cross_section_area_m2,
               ST_X(location::geometry) AS lon, ST_Y(location::geometry) AS lat,
               ST_Z(location::geometry) AS height
        FROM worksites WHERE tunnel_id = $1 ORDER BY dk_number`, [req.params.id]

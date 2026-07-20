@@ -3,19 +3,25 @@ import { query } from '../db/pool.js'
 
 const router = Router()
 
-// GET /api/alerts?active=true&tunnel_id=&level=
+// GET /api/alerts?active=true&tunnel_id=&level=&scene_key=
 router.get('/', async (req, res) => {
-  const { active, tunnel_id, level, limit } = req.query
+  const { active, tunnel_id, level, scene_key, limit } = req.query
   const conditions = []
   const params = []
+  let join = ''
 
-  if (active === 'true') conditions.push(`is_active = true`)
-  if (tunnel_id) { conditions.push(`tunnel_id = $${params.length + 1}`); params.push(tunnel_id) }
-  if (level) { conditions.push(`level = $${params.length + 1}`); params.push(level) }
+  if (active === 'true') conditions.push(`a.is_active = true`)
+  if (tunnel_id) { conditions.push(`a.tunnel_id = $${params.length + 1}`); params.push(tunnel_id) }
+  if (level) { conditions.push(`a.level = $${params.length + 1}`); params.push(level) }
+  if (scene_key) {
+    join = `JOIN monitoring_configs mc ON a.entity_type = 'monitoring_config' AND a.entity_id::uuid = mc.id`
+    conditions.push(`mc.scene_key = $${params.length + 1}`)
+    params.push(scene_key)
+  }
 
   const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
   const { rows } = await query(
-    `SELECT * FROM alerts ${where} ORDER BY created_at DESC LIMIT $${params.length + 1}`,
+    `SELECT a.* FROM alerts a ${join} ${where} ORDER BY a.created_at DESC LIMIT $${params.length + 1}`,
     [...params, parseInt(limit) || 50]
   )
   res.json(rows)

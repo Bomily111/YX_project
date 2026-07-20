@@ -64,7 +64,7 @@ onBeforeMount(() => {
     // 只在最后用户停止缩放的时候执行
     const wheelDebounce = debounce(() => {
       cursorTypeStyle.value = ''; // 恢复正常
-    }, 500);
+    }, 300);
 
     // 更新界面的标签
     const positionThrottle = throttle((movement) => {
@@ -76,7 +76,7 @@ onBeforeMount(() => {
         lonlat.lat = latitudeString;
         lonlat.lon = longitudeString;
       }
-    }, 200);
+    }, 300);
 
     handler.setInputAction((movement) => {
       cursorTypeStyle.value = 'zoomStyle';

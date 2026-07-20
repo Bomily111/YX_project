@@ -169,6 +169,8 @@ import { startWind, changePower, removeFlowLine, getCurrentPower } from '@/utils
 import { startVectorField, removeVectorField, changeVectorPower, getVectorPower } from '@/utils/Common/WindVectorField';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 import { useSceneStore } from '@/stores/sceneStore';
+import { useMonitorStore } from '@/stores/monitorStore';
+import { alertsApi } from '@/services/api/client';
 
 export interface LayerItem { key: string; name: string; }
 interface Metric  { label: string; val: string; unit: string; level?: string }
@@ -327,6 +329,85 @@ function apiSceneToSceneData(api: any): Partial<SceneData> {
 }
 
 const sceneStore = useSceneStore();
+const monitorStore = useMonitorStore();
+
+const liveAlerts = ref<Alert[]>([]);
+const liveChartValues = ref<number[]>([]);
+const liveChartLabels = ref<string[]>([]);
+const liveStructureTree = ref<TreeNode[]>([]);
+
+const SCENE_PRIMARY_METRIC: Record<string, string> = {
+  workface: 'daily_advance', support: 'arch_settlement', vent: 'wind_speed', dispatch: 'muck_volume',
+};
+
+// 切换场景时拉取实时监测值 + 告警 + 折线图 + 结构树
+watch(() => props.sceneKey, async (key) => {
+  if (key) {
+    monitorStore.fetchSceneLatest(key);
+
+    // 告警
+    try {
+      const apiAlerts = await alertsApi.list(true, undefined, undefined, key);
+      liveAlerts.value = apiAlerts.map((a: any) => ({
+        id: a.id, text: a.title, level: a.level === 'critical' ? 'warn' as const : (a.level === 'warn' ? 'warn' as const : 'info' as const),
+      }));
+    } catch { liveAlerts.value = []; }
+
+    // 折线图：拉取主指标近 7 天数据
+    const metricKey = SCENE_PRIMARY_METRIC[key];
+    if (metricKey) {
+      try {
+        const configRes = await fetch(`/api/monitoring/configs?scene_key=${key}`);
+        const configs = await configRes.json();
+        const cfg = configs.find((c: any) => c.metric_key === metricKey);
+        if (cfg) {
+          const from = new Date(Date.now() - 7 * 864e5).toISOString();
+          const readRes = await fetch(`/api/monitoring/readings?config_id=${cfg.id}&from=${from}`);
+          const readings = await readRes.json();
+          const daily = new Map<string, number[]>();
+          for (const r of readings) {
+            const day = r.time.slice(5, 10);
+            if (!daily.has(day)) daily.set(day, []);
+            daily.get(day)!.push(r.value);
+          }
+          const labels: string[] = [], values: number[] = [];
+          for (const [day, vals] of [...daily].sort()) {
+            labels.push(day.slice(3));
+            values.push(Math.round(vals.reduce((a: number, b: number) => a + b, 0) / vals.length * 10) / 10);
+          }
+          liveChartLabels.value = labels;
+          liveChartValues.value = values;
+        }
+      } catch { liveChartValues.value = []; }
+    }
+
+    // 结构树：支护场景加载
+    if (key === 'support') {
+      try {
+        const suppRes = await fetch('/api/support');
+        const comps = await suppRes.json();
+        const groups = new Map<string, any[]>();
+        for (const c of comps) {
+          const type = c.component_type;
+          if (!groups.has(type)) groups.set(type, []);
+          groups.get(type)!.push(c);
+        }
+        const TYPE_GROUPS: Record<string, { id: string; label: string; icon: string; types: string[] }> = {
+          advance_support: { id: 'advance_support', label: '超前支护', icon: '⊕', types: ['pipe_shed'] },
+          primary_support: { id: 'primary_support', label: '初支', icon: '◈', types: ['anchor', 'conduit', 'lock_anchor'] },
+          secondary_lining: { id: 'secondary_lining', label: '二衬', icon: '⬡', types: ['rebar', 'lining_rebar', 'steel_frame'] },
+        };
+        liveStructureTree.value = Object.values(TYPE_GROUPS).map(g => ({
+          id: g.id, label: g.label, icon: g.icon, defaultExpanded: true,
+          children: g.types.flatMap(t => (groups.get(t) || []).map(c => {
+            componentTypeMap[c.id] = t;
+            return { id: c.id, label: c.material_spec || t, icon: '⬡', visible: c.is_visible };
+          })),
+        }));
+      } catch { liveStructureTree.value = []; }
+    }
+  }
+}, { immediate: true });
 
 const data = computed(() => {
   if (!props.sceneKey) return null;
@@ -334,15 +415,38 @@ const data = computed(() => {
   const apiScene = sceneStore.getScene(props.sceneKey);
   if (!apiScene) return local;
   const apiPart = apiSceneToSceneData(apiScene);
-  if (!local) return { chartTitle: '', chartLabels: [], chartValues: [], ...apiPart, alerts: [] } as SceneData;
-  return {
+  if (!local) return { chartTitle: '', chartLabels: [], chartValues: [], ...apiPart, alerts: liveAlerts.value } as SceneData;
+  const merged = {
     ...local,
     icon: apiPart.icon ?? local.icon,
     name: apiPart.name ?? local.name,
     color: apiPart.color ?? local.color,
     metrics: apiPart.metrics?.length ? apiPart.metrics : local.metrics,
     statusList: apiPart.statusList?.length ? apiPart.statusList : local.statusList,
+    alerts: liveAlerts.value.length ? liveAlerts.value : local.alerts,
   };
+  // 用 API 实时监测值覆盖硬编码指标值
+  const liveVals = monitorStore.latestByMetricKey;
+  if (Object.keys(liveVals).length) {
+    merged.metrics = merged.metrics.map(m => {
+      const sceneMetric = sceneStore.getScene(props.sceneKey!)?.metrics?.find(sm => sm.label === m.label);
+      const key = sceneMetric?.metric_key;
+      if (key && liveVals[key] !== undefined) {
+        return { ...m, val: String(liveVals[key]), level: m.level };
+      }
+      return m;
+    });
+  }
+  // 用 API 折线图数据覆盖硬编码
+  if (liveChartValues.value.length) {
+    merged.chartValues = liveChartValues.value;
+    merged.chartLabels = liveChartLabels.value;
+  }
+  // 用 API 结构树覆盖硬编码
+  if (liveStructureTree.value.length) {
+    merged.structureTree = liveStructureTree.value;
+  }
+  return merged;
 });
 const sceneIcon  = computed(() => data.value?.icon  ?? '');
 const sceneName  = computed(() => data.value?.name  ?? '');
@@ -429,100 +533,34 @@ function isNodeExpanded(node: TreeNode): boolean {
 
 // 节点高亮状态
 const nodeHighlight = reactive<Record<string, boolean>>({});
+// node UUID → component_type 映射（API 加载时填充）
+const componentTypeMap = reactive<Record<string, string>>({});
+
+type CompHandlers = { load: () => void; show: (v: boolean) => void; highlight: (v: boolean) => void };
+const COMP_HANDLERS: Record<string, CompHandlers> = {
+  rebar:        { load: loadRebarMeshes,        show: setRebarMeshesVisible,    highlight: setRebarHighlight },
+  lining_rebar: { load: loadSecondRebarMeshes,   show: setSecondRebarVisible,    highlight: setSecondRebarHighlight },
+  steel_frame:  { load: loadSteelFrameMeshes,    show: setSteelFrameVisible,     highlight: setSteelFrameHighlight },
+  pipe_shed:    { load: loadPipeShedMeshes,      show: setPipeShedVisible,       highlight: setPipeShedHighlight },
+  anchor:       { load: loadAnchorMeshes,        show: setAnchorVisible,         highlight: setAnchorHighlight },
+  conduit:      { load: loadConduitMeshes,       show: setConduitVisible,        highlight: setConduitHighlight },
+  lock_anchor:  { load: loadLockAnchorMeshes,    show: setLockAnchorVisible,     highlight: setLockAnchorHighlight },
+};
 
 function toggleNodeVisible(nodeId: string) {
   const current = nodeVisible[nodeId] ?? false;
   nodeVisible[nodeId] = !current;
-  if (nodeId === 'rebar') {
-    if (!current) {
-      loadRebarMeshes();
-      setRebarMeshesVisible(true);
-      if (nodeHighlight[nodeId]) setRebarHighlight(true);
-    } else {
-      setRebarMeshesVisible(false);
-      nodeHighlight[nodeId] = false;
-      setRebarHighlight(false);
-    }
-  } else if (nodeId === 'lining_rebar') {
-    if (!current) {
-      loadSecondRebarMeshes();
-      setSecondRebarVisible(true);
-      if (nodeHighlight[nodeId]) setSecondRebarHighlight(true);
-    } else {
-      setSecondRebarVisible(false);
-      nodeHighlight[nodeId] = false;
-      setSecondRebarHighlight(false);
-    }
-  } else if (nodeId === 'steel_frame') {
-    if (!current) {
-      loadSteelFrameMeshes();
-      setSteelFrameVisible(true);
-      if (nodeHighlight[nodeId]) setSteelFrameHighlight(true);
-    } else {
-      setSteelFrameVisible(false);
-      nodeHighlight[nodeId] = false;
-      setSteelFrameHighlight(false);
-    }
-  } else if (nodeId === 'pipe_shed') {
-    if (!current) {
-      loadPipeShedMeshes();
-      setPipeShedVisible(true);
-      if (nodeHighlight[nodeId]) setPipeShedHighlight(true);
-    } else {
-      setPipeShedVisible(false);
-      nodeHighlight[nodeId] = false;
-      setPipeShedHighlight(false);
-    }
-  } else if (nodeId === 'anchor') {
-    if (!current) {
-      loadAnchorMeshes();
-      setAnchorVisible(true);
-      if (nodeHighlight[nodeId]) setAnchorHighlight(true);
-    } else {
-      setAnchorVisible(false);
-      nodeHighlight[nodeId] = false;
-      setAnchorHighlight(false);
-    }
-  } else if (nodeId === 'conduit') {
-    if (!current) {
-      loadConduitMeshes();
-      setConduitVisible(true);
-      if (nodeHighlight[nodeId]) setConduitHighlight(true);
-    } else {
-      setConduitVisible(false);
-      nodeHighlight[nodeId] = false;
-      setConduitHighlight(false);
-    }
-  } else if (nodeId === 'lock_anchor') {
-    if (!current) {
-      loadLockAnchorMeshes();
-      setLockAnchorVisible(true);
-      if (nodeHighlight[nodeId]) setLockAnchorHighlight(true);
-    } else {
-      setLockAnchorVisible(false);
-      nodeHighlight[nodeId] = false;
-      setLockAnchorHighlight(false);
-    }
-  }
+  const type = componentTypeMap[nodeId] || nodeId; // fallback to nodeId for hardcoded IDs
+  const h = COMP_HANDLERS[type];
+  if (!h) return;
+  if (!current) { h.load(); h.show(true); if (nodeHighlight[nodeId]) h.highlight(true); }
+  else { h.show(false); nodeHighlight[nodeId] = false; h.highlight(false); }
 }
 
 function toggleNodeHighlight(nodeId: string) {
   nodeHighlight[nodeId] = !nodeHighlight[nodeId];
-  if (nodeId === 'rebar') {
-    setRebarHighlight(nodeHighlight[nodeId]);
-  } else if (nodeId === 'lining_rebar') {
-    setSecondRebarHighlight(nodeHighlight[nodeId]);
-  } else if (nodeId === 'steel_frame') {
-    setSteelFrameHighlight(nodeHighlight[nodeId]);
-  } else if (nodeId === 'pipe_shed') {
-    setPipeShedHighlight(nodeHighlight[nodeId]);
-  } else if (nodeId === 'anchor') {
-    setAnchorHighlight(nodeHighlight[nodeId]);
-  } else if (nodeId === 'conduit') {
-    setConduitHighlight(nodeHighlight[nodeId]);
-  } else if (nodeId === 'lock_anchor') {
-    setLockAnchorHighlight(nodeHighlight[nodeId]);
-  }
+  const type = componentTypeMap[nodeId] || nodeId;
+  COMP_HANDLERS[type]?.highlight(nodeHighlight[nodeId]);
 }
 
 // SVG 折线坐标
