@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import TunnelModule from '@/../隧道爆破孪生模块/src/tunnel-module/TunnelModule.vue'
+import TunnelModule from '@/views/tunnel-module/TunnelModule.vue'
 
 const ready = ref(false)
 const loadPercent = ref(0)
