@@ -1,0 +1,95 @@
+{
+  "properties": {
+    "background": "rgba(0,0,0,0)",
+    "nogui": true
+  },
+  "objects": [
+    {
+      "volume": {
+        "url": "data/tem_output/opt-v2/tem_volume.raw",
+        "res": [
+          128,
+          128,
+          128
+        ],
+        "scale": [
+          64.44,
+          112.48,
+          52.46
+        ],
+        "autoscale": true,
+        "density": 5.0,
+        "power": 1.5,
+        "isovalue": 0.3,
+        "tricubicfilter": true,
+        "usecolourmap": true
+      },
+      "samples": 256,
+      "colour": [
+        0,
+        70,
+        200
+      ]
+    }
+  ],
+  "colourmaps": [
+    {
+      "colours": [
+        [
+          0.0,
+          [
+            0.0,
+            0.8,
+            1.0,
+            0.0
+          ]
+        ],
+        [
+          0.2,
+          [
+            0.0,
+            0.6,
+            1.0,
+            0.3
+          ]
+        ],
+        [
+          0.4,
+          [
+            0.0,
+            0.4,
+            0.8,
+            0.5
+          ]
+        ],
+        [
+          0.6,
+          [
+            1.0,
+            0.8,
+            0.0,
+            0.6
+          ]
+        ],
+        [
+          0.8,
+          [
+            1.0,
+            0.4,
+            0.0,
+            0.7
+          ]
+        ],
+        [
+          1.0,
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.9
+          ]
+        ]
+      ]
+    }
+  ]
+}

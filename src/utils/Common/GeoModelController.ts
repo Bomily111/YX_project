@@ -72,17 +72,9 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
     lookAtOffset: [265, -357, 84],
   },
-  // 瞬变电磁 (.dat精确数据 + PNG标定补充, build_tem_volume.py 生成)
-  // 物理范围 ~[102, 62, 102]m, 128^3 体素
+  // 瞬变电磁 (TEM 处理管线生成，输出到 tem_output/latest/)
   tem: {
-    volumeUrl: 'data/tem_new/tem_model.json',
-    cesiumConfig: {
-      rotate: [0.0, 1.5, -11.5] as [number, number, number],
-      translate: [35, -35, -30] as [number, number, number],
-      scale: [0.012, 0.012, 0.012] as [number, number, number],
-    },
     tunnelPos: [94.9056136, 29.5333802, 2945.51],
-    tunnelHeading: 100.08,
     flyDest: { x: -475447.3, y: 5536370.3, z: 3126656.9 },
     flyOrientation: { heading: 5.6439, pitch: -0.1861 },
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
@@ -90,7 +82,7 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
   },
   // 瞬变电磁（备选定位参数，同 tem 数据源）
   tem_new: {
-    volumeUrl: 'data/tem_new/tem_model.json',
+    volumeUrl: 'data/tem_output/latest/tem_model.json',
     cesiumConfig: {
       rotate: [0.0, 1.5, -11.5],
       translate: [0, 0, -50] as [number, number, number],
@@ -202,7 +194,7 @@ export function activateGeoModel(key: string, customViewer?: any) {
 
     // ── 体数据渲染（shareVolume WebGL canvas 覆盖层）────────
     if (cfg.volumeUrl) {
-      initVolume(cfg.volumeUrl, cfg.cesiumConfig);
+      try { initVolume(cfg.volumeUrl, cfg.cesiumConfig); } catch (e) { console.warn('[GeoModelController] volume init failed:', e) }
     }
 
     // ── GLB 模型 ──────────────────────────────────────────────
@@ -326,9 +318,9 @@ export function switchTSPLayer(subKey: 'vp' | 'vs' | 'pr' | 'rt' | 'e', customVi
 /** 切换 TEM 子类型（tem / temrt / tem_new） */
 export function switchTEMLayer(subKey: 'tem' | 'temrt' | 'tem_new', customViewer?: any) {
   const urlMap: Record<string, string> = {
-    tem:     'data/tem_new/tem_model.json',
+    tem:     'data/tem_output/latest/tem_model.json',
     temrt:   'scene/data/TEM/TEMRt.raw.json',
-    tem_new: 'data/tem_new/tem_model.json',
+    tem_new: 'data/tem_output/latest/tem_model.json',
   };
   const cesiumMap: Record<string, any> = {
     tem:     MODEL_CONFIGS.tem.cesiumConfig,
@@ -527,4 +519,47 @@ export function getModelConfigKeys(): string[] {
 /** 获取单个模型配置 */
 export function getModelConfig(key: string): ModelConfig | undefined {
   return MODEL_CONFIGS[key];
+}
+
+/** 加载 TEM 异常体 GLB 到 Cesium 场景（独立于体渲染） */
+let temGlbPrimitive: any = null
+
+export function loadTemAnomalyGlb(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer
+  if (!viewer) return
+
+  if (temGlbPrimitive) {
+    temGlbPrimitive.show = true
+    viewer.scene.requestRender()
+    return
+  }
+
+  const pos = Cesium.Cartesian3.fromDegrees(94.9056136, 29.5333802, 2945.51)
+  const hpr = new Cesium.HeadingPitchRoll(1.7467, 0, 0)
+  let modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr)
+  const yRot = Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromRotationY(1.5708))
+  modelMatrix = Cesium.Matrix4.multiply(modelMatrix, yRot, new Cesium.Matrix4())
+
+  const url = 'data/tem_output/latest/anomaly_k570_4x.glb'
+  console.log('[TemGlb] 加载:', url)
+  Cesium.Model.fromGltfAsync({
+    url,
+    modelMatrix,
+    customShader: new Cesium.CustomShader({ lightingModel: Cesium.LightingModel.UNLIT }),
+  }).then(model => {
+    temGlbPrimitive = viewer.scene.primitives.add(model)
+    viewer.camera.flyToBoundingSphere(model.boundingSphere, {
+      duration: 1.0,
+      offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-15), 80),
+    })
+    console.log('[TemGlb] 加载成功')
+  }).catch(e => console.warn('[TemGlb] 加载失败:', e))
+}
+
+export function unloadTemAnomalyGlb(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer
+  if (temGlbPrimitive && viewer) {
+    try { viewer.scene.primitives.remove(temGlbPrimitive) } catch {}
+    temGlbPrimitive = null
+  }
 }

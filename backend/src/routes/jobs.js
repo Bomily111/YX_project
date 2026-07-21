@@ -5,10 +5,12 @@ const router = Router()
 
 // GET /api/jobs?status=
 router.get('/', async (req, res) => {
-  const { status } = req.query
-  let sql = `SELECT * FROM processing_jobs`
+  const { status, model_type_code } = req.query
+  let sql = `SELECT * FROM processing_jobs WHERE 1=1`
   const params = []
-  if (status) { sql += ` WHERE status = $1`; params.push(status) }
+  let n = 1
+  if (model_type_code) { sql += ` AND model_type_code = $${n++}`; params.push(model_type_code) }
+  if (status) { sql += ` AND status = $${n++}`; params.push(status) }
   sql += ` ORDER BY created_at DESC LIMIT 50`
   const { rows } = await query(sql, params)
   res.json(rows)

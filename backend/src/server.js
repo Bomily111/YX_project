@@ -10,6 +10,7 @@ import blastRouter from './routes/blast.js'
 import supportRouter from './routes/support.js'
 import alertsRouter from './routes/alerts.js'
 import jobsRouter from './routes/jobs.js'
+import processRouter from './routes/process.js'
 import scenesRouter from './routes/scenes.js'
 import authRouter from './routes/auth.js'
 import configRouter from './routes/config.js'
@@ -38,6 +39,7 @@ app.use('/api/blast', blastRouter)
 app.use('/api/support', supportRouter)
 app.use('/api/alerts', alertsRouter)
 app.use('/api/jobs', jobsRouter)
+app.use('/api/process', processRouter)
 app.use('/api/scenes', scenesRouter)
 app.use('/api/graph', graphRouter)
 

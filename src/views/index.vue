@@ -52,11 +52,12 @@
     <div class="floating-panel"
          :style="{ left: drag.left + 'px', top: drag.top + 'px' }"
          @mousedown="startDrag">
-      <div class="drag-header">
+      <div class="drag-header" @mousedown="startDrag">
+        <span class="drag-collapse" @click.stop="panelCollapsed = !panelCollapsed">{{ panelCollapsed ? '▸' : '▾' }}</span>
         <span>图层控制</span>
         <span class="drag-handle">✥</span>
       </div>
-      <div class="drag-content">
+      <div v-show="!panelCollapsed" class="drag-content">
         <label class="checkbox-item">
           <input type="checkbox" v-model="layerState.showModel" @change="toggle3DModel">
           <span class="custom-check"></span>
@@ -137,8 +138,16 @@
       @select-layer="handleLayerSelect"
     />
 
-    <!-- 场景右侧操控面板 -->
+    <!-- 场景右侧操控面板：工作面用超报数据中心，其他场景用通用面板 -->
+    <PredictionCenter
+      v-if="activeScene === 'workface'"
+      :show="!!activeScene"
+      :active-action="activeAction"
+      @close="handleBackToOverview"
+      @action="handlePanelAction"
+    />
     <SceneControlPanel
+      v-else-if="activeScene"
       :show="!!activeScene"
       :scene-key="activeScene"
       :is-model-view-mode="isModelViewMode"
@@ -155,8 +164,8 @@
     <DispatchEquipment v-if="showDispatchEquipment" @close="showDispatchEquipment = false" />
     <DispatchGantt v-if="showDispatchGantt" @close="showDispatchGantt = false" />
 
-    <!-- 底部状态与进度栏 -->
-    <div class="bottom-metrics-bar">
+    <!-- 底部状态与进度栏（仅总览模式显示） -->
+    <div class="bottom-metrics-bar" v-show="!activeScene">
       <div class="mileage-progress-wrap">
         <span class="mileage-start">DK278+100</span>
         <div class="mileage-track">
@@ -202,6 +211,7 @@ import OverviewHUD from '@/views/Overview/OverviewHUD.vue';
 import WorkfaceInfoPanel from '@/views/WorkfaceInfoPanel.vue';
 import SceneDataPanel from '@/views/Overview/SceneDataPanel.vue';
 import SceneControlPanel from '@/views/Overview/SceneControlPanel.vue';
+import PredictionCenter from '@/views/Overview/PredictionCenter.vue';
 import type { SceneDef } from '@/views/Overview/OverviewHUD.vue';
 import Lining from '@/components/SceneManagement/LiningComponents/Lining.vue';
 import DispatchPersonnel from '@/components/SceneManagement/DispatchComponents/DispatchPersonnel.vue';
@@ -502,6 +512,7 @@ const flyToOverview = () => {
 
 // --- 悬浮拖拽逻辑与图层状态 ---
 const drag = reactive({ left: window.innerWidth - 550, top: 100, isDragging: false, startX: 0, startY: 0 });
+const panelCollapsed = ref(false);
 const layerState = reactive({ showModel: true, showMap: true, showTunnel: true, showRock: true, showWindTunnel: true });
 
 // ── 核心逻辑：初始化场景数据 ─────────────────────────────
@@ -1270,7 +1281,11 @@ onBeforeUnmount(() => {
 }
 .drag-header {
   padding: 10px 15px; background: rgba(0, 100, 200, 0.6); color: #fff;
-  font-size: 14px; font-weight: bold; cursor: move; display: flex; justify-content: space-between;
+  font-size: 14px; font-weight: bold; cursor: move; display: flex; justify-content: space-between; align-items: center;
+}
+.drag-collapse {
+  cursor: pointer; margin-right: 8px; font-size: 12px;
+  &:hover { color: #00eaff; }
 }
 .drag-content { padding: 15px; }
 .checkbox-item { display: flex; align-items: center; color: #ccc; margin-bottom: 10px; cursor: pointer; }
