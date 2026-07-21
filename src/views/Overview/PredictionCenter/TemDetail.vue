@@ -5,20 +5,25 @@
 
     <!-- Level 1: Dataset List -->
     <div v-if="!selected">
+      <div class="td-toolbar">
+        <input v-model="searchQuery" class="td-search" placeholder="搜索里程段..." @input="doSearch" />
+        <button class="td-refresh" @click="loadIndex()" title="刷新">↻</button>
+      </div>
       <div v-if="loading" class="td-empty">加载中...</div>
-      <div v-else-if="datasets.length === 0" class="td-empty">暂无处理数据</div>
+      <div v-else-if="filteredDatasets.length === 0" class="td-empty">
+        {{ searchQuery ? '无匹配结果' : '暂无处理数据' }}
+      </div>
       <div v-else class="td-list">
-        <div v-for="ds in datasets" :key="ds.jobId" class="td-card" @click="selected = ds">
+        <div v-for="ds in filteredDatasets" :key="ds.jobId" class="td-card" @click="selected = ds">
           <div class="td-card-top">
-            <span class="td-card-time">{{ ds.createdAt ? ds.createdAt.slice(0, 16).replace('T', ' ') : '—' }}</span>
+            <span class="td-card-mileage">{{ ds.mileage || '前向 ' + (ds.xRange?.map((v:number) => v.toFixed(0)).join('~') || '—') + 'm' }}</span>
+            <button class="td-card-del" @click.stop="deleteDataset(ds)">×</button>
+          </div>
+          <div class="td-card-meta">
+            <span>{{ ds.createdAt ? ds.createdAt.slice(0, 16).replace('T', ' ') : '—' }}</span>
             <span class="td-card-badge">{{ ds.anomalyCount }} 异常体</span>
           </div>
           <div class="td-card-meta">
-            <span>X {{ ds.xRange?.map((v:number) => v.toFixed(0)).join('~') || '—' }}m</span>
-            <span>Y {{ ds.yRange?.map((v:number) => v.toFixed(0)).join('~') || '—' }}m</span>
-          </div>
-          <div class="td-card-meta">
-            <span>Z {{ ds.zRange?.map((v:number) => v.toFixed(0)).join('~') || '—' }}m</span>
             <span>k 均值 {{ ds.kMean?.toFixed(1) || '—' }}</span>
           </div>
         </div>
@@ -122,7 +127,7 @@
 import { ref, reactive, watch, computed } from 'vue'
 
 interface Dataset {
-  jobId: string; createdAt: string
+  jobId: string; createdAt: string; mileage?: string
   xRange: number[]; yRange: number[]; zRange: number[]
   anomalyCount: number; kMean: number
 }
@@ -138,6 +143,15 @@ const props = defineProps<{ dataDir: string }>()
 const datasets = ref<Dataset[]>([])
 const loading = ref(true)
 const selected = ref<Dataset | null>(null)
+const searchQuery = ref('')
+const filteredDatasets = ref<Dataset[]>([])
+
+function doSearch() {
+  const q = searchQuery.value.toLowerCase()
+  filteredDatasets.value = q
+    ? datasets.value.filter(ds => (ds.mileage || '').toLowerCase().includes(q))
+    : datasets.value
+}
 const baseUrl = computed(() => selected.value ? `${props.dataDir}/${selected.value.jobId}` : '')
 
 const open = reactive({
@@ -153,6 +167,7 @@ async function loadIndex() {
     const r = await fetch(`${props.dataDir}/index.json`)
     datasets.value = await r.json()
   } catch { datasets.value = [] }
+  doSearch()
   loading.value = false
 }
 
@@ -170,6 +185,15 @@ async function loadDataset(ds: Dataset) {
   } catch { anomalies.value = []; contourImages.value = [] }
 }
 
+async function deleteDataset(ds: Dataset) {
+  if (!confirm(`删除数据集 ${ds.createdAt?.slice(0,16).replace('T',' ') || ds.jobId}？`)) return
+  try {
+    await fetch(`/api/process/tem/${ds.jobId}`, { method: 'DELETE' })
+    if (selected.value?.jobId === ds.jobId) selected.value = null
+    loadIndex()
+  } catch (e) { console.warn('删除失败:', e) }
+}
+
 watch(() => props.dataDir, val => { if (val) loadIndex() }, { immediate: true })
 watch(selected, ds => { if (ds) loadDataset(ds) })
 
@@ -183,6 +207,20 @@ function kColor(k: number): string {
 
 <style scoped lang="scss">
 .td-root { font-size: 13px; }
+
+.td-toolbar { display: flex; gap: 6px; margin-bottom: 8px; }
+.td-search {
+  flex: 1; padding: 6px 10px; border: 1px solid rgba(0,180,255,.15); border-radius: 4px;
+  background: rgba(0,20,40,.6); color: #c7d5ea; font-size: 12px; outline: none;
+  &::placeholder { color: #4a6a8a; }
+  &:focus { border-color: rgba(0,234,255,.4); }
+}
+.td-refresh {
+  background: none; border: 1px solid rgba(0,180,255,.15);
+  color: #7dd3fc; font-size: 16px; cursor: pointer; padding: 2px 10px; border-radius: 4px;
+  flex-shrink: 0; transition: .15s;
+  &:hover { background: rgba(0,200,255,.1); color: #fff; }
+}
 
 .td-back {
   background: none; border: none; color: #7dd3fc; font-size: 14px;
@@ -200,8 +238,14 @@ function kColor(k: number): string {
   &:hover { background: rgba(0, 200, 255, 0.08); border-color: rgba(0, 200, 255, 0.2); }
 }
 .td-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-.td-card-time { font-size: 13px; color: #c7d5ea; font-weight: 600; }
+.td-card-mileage { font-size: 13px; color: #c7d5ea; font-weight: 600; }
+.td-card-time { font-size: 11px; color: #5a7a9a; }
 .td-card-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: rgba(0,200,255,.12); color: #7dd3fc; }
+.td-card-del {
+  background: none; border: none; color: #5a3a3a; font-size: 18px; cursor: pointer;
+  padding: 0 4px; line-height: 1; transition: .15s;
+  &:hover { color: #f87171; }
+}
 .td-card-meta { display: flex; gap: 12px; font-size: 11px; color: #5a7a9a; }
 
 .td-section {

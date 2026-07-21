@@ -122,6 +122,41 @@ router.post('/tem', upload.array('files', 20), async (req, res) => {
   }
 })
 
+// DELETE /api/process/tem/:jobId — 删除数据集
+router.delete('/tem/:jobId', async (req, res) => {
+  try {
+    const { jobId } = req.params
+    const dataDir = path.join(PUBLIC_DATA, jobId)
+
+    // 删除数据目录
+    try { fs.rmSync(dataDir, { recursive: true, force: true }) } catch (e) {
+      return res.status(404).json({ error: '目录不存在' })
+    }
+
+    // 同步删除 latest（如果 latest 指向该 jobId）
+    const latestDir = path.join(PUBLIC_DATA, 'latest')
+    try {
+      const latestMeta = JSON.parse(fs.readFileSync(path.join(latestDir, 'meta.json'), 'utf-8'))
+      const idxMeta = JSON.parse(fs.readFileSync(path.join(dataDir, 'meta.json'), 'utf-8'))
+      if (JSON.stringify(latestMeta) === JSON.stringify(idxMeta)) {
+        fs.rmSync(latestDir, { recursive: true, force: true })
+      }
+    } catch {}
+
+    // 更新 index.json
+    const indexPath = path.join(PUBLIC_DATA, 'index.json')
+    try {
+      let index = JSON.parse(fs.readFileSync(indexPath, 'utf-8'))
+      index = index.filter((e: any) => e.jobId !== jobId)
+      fs.writeFileSync(indexPath, JSON.stringify(index, null, 2))
+    } catch {}
+
+    res.json({ ok: true })
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message })
+  }
+})
+
 // GET /api/process/status/:jobId — 查询任务状态
 router.get('/status/:jobId', async (req, res) => {
   try {
@@ -193,6 +228,7 @@ async function handleComplete(jobId, outputDir, logs) {
     index.unshift({
       jobId,
       createdAt: new Date().toISOString(),
+      mileage: `前向 ${(meta.x_range || [0, 0]).map((v: number) => v.toFixed(0)).join('~')}m`,
       xRange: meta.x_range || [],
       yRange: meta.y_range || [],
       zRange: meta.z_range || [],
