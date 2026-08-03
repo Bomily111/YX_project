@@ -10,6 +10,22 @@ let allLineEntity: Cesium.Entity | null | undefined = null;
 let tunnelGlbPrimitives: any[] = [];
 let windTunnelGlbPrimitives: any[] = [];
 
+export interface DesignRockGradeSegment {
+  modelIndex: number;
+  startMileage: string;
+  endMileage: string;
+  grade: 'II' | 'III' | 'IV' | 'V';
+}
+
+interface DesignRockGradeData {
+  gradeColors: Record<DesignRockGradeSegment['grade'], string>;
+  segments: DesignRockGradeSegment[];
+}
+
+let designRockGradeData: DesignRockGradeData | null = null;
+let designRockGradeEnabled = false;
+let designRockGradeLabels: Cesium.Entity[] = [];
+
 // ── globe 原始状态暂存（enableBlackModelMode 修改前保存，restoreEarthMode 恢复） ──
 let _savedGlobeShow: boolean | null = null;
 let _savedGlobeLighting: boolean | null = null;
@@ -115,6 +131,7 @@ function _buildCurrentShader(): Cesium.CustomShader | null {
 function _applyTunnelShader() {
   const shader = _buildCurrentShader();
   for (const p of tunnelGlbPrimitives) {
+    if (!p) continue;
     p.customShader = shader;
   }
 }
@@ -1058,6 +1075,145 @@ export function removeGeoModel(customViewer?: any) {
  * 使用手动调好的位置和朝向
  */
 const SEGMENT_COUNT = 17;
+const TUNNEL_END_CONFIG = { lon: 94.9649024057, lat: 29.495231546299998, height: 2958.408 };
+
+function applyDesignRockGradeAppearance(model: any, modelIndex: number) {
+  const segment = designRockGradeData?.segments.find(item => item.modelIndex === modelIndex);
+  if (!designRockGradeEnabled || !segment || !designRockGradeData) {
+    model.color = Cesium.Color.WHITE;
+    model.colorBlendMode = Cesium.ColorBlendMode.HIGHLIGHT;
+    model.colorBlendAmount = 0;
+    return;
+  }
+
+  const color = designRockGradeData.gradeColors[segment.grade] || '#ffffff';
+  model.color = Cesium.Color.fromCssColorString(color).withAlpha(0.88);
+  model.colorBlendMode = Cesium.ColorBlendMode.REPLACE;
+  model.colorBlendAmount = 1;
+}
+
+function removeDesignRockGradeLabels(viewer: any) {
+  for (const label of designRockGradeLabels) {
+    try { viewer.entities.remove(label); } catch (_) {}
+  }
+  designRockGradeLabels = [];
+}
+
+function addDesignRockGradeLabels(viewer: any) {
+  if (!designRockGradeData) return;
+  removeDesignRockGradeLabels(viewer);
+
+  for (const segment of designRockGradeData.segments) {
+    const startCfg = SEGMENT_CONFIGS[segment.modelIndex];
+    const endCfg = SEGMENT_CONFIGS[segment.modelIndex + 1] || TUNNEL_END_CONFIG;
+    if (!startCfg || !endCfg) continue;
+
+    const start = Cesium.Cartesian3.fromDegrees(startCfg.lon, startCfg.lat, startCfg.height);
+    const end = Cesium.Cartesian3.fromDegrees(endCfg.lon, endCfg.lat, endCfg.height);
+    const midpoint = Cesium.Cartesian3.midpoint(start, end, new Cesium.Cartesian3());
+    const color = Cesium.Color.fromCssColorString(designRockGradeData.gradeColors[segment.grade]);
+
+    designRockGradeLabels.push(viewer.entities.add({
+      id: `design-rock-grade-${segment.modelIndex}`,
+      position: midpoint,
+      point: {
+        pixelSize: 8,
+        color,
+        outlineColor: Cesium.Color.WHITE,
+        outlineWidth: 1,
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+      },
+      label: {
+        text: `${segment.startMileage}～${segment.endMileage}\n${segment.grade}级围岩`,
+        font: 'bold 12px Microsoft YaHei',
+        fillColor: color,
+        outlineColor: Cesium.Color.BLACK,
+        outlineWidth: 3,
+        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        pixelOffset: new Cesium.Cartesian2(0, -14),
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 6500),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+      },
+    }));
+  }
+}
+
+/** 加载设计围岩分级文件，并将等级颜色映射到当前17段隧道模型。 */
+export async function setDesignRockGradeModelEnabled(enabled: boolean, customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+
+  if (enabled && !designRockGradeData) {
+    const response = await fetch('/data/tunnel/design-rock-grades.json');
+    if (!response.ok) throw new Error(`设计围岩分级文件加载失败: ${response.status}`);
+    designRockGradeData = await response.json();
+  }
+
+  designRockGradeEnabled = enabled;
+  for (let i = 0; i < tunnelGlbPrimitives.length; i++) {
+    const model = tunnelGlbPrimitives[i];
+    if (model) {
+      applyDesignRockGradeAppearance(model, i);
+      if (!enabled) model.silhouetteSize = 0;
+    }
+  }
+
+  if (enabled) addDesignRockGradeLabels(viewer);
+  else removeDesignRockGradeLabels(viewer);
+  viewer.scene.requestRender();
+}
+
+/** 飞行到指定设计围岩区段，并以白色轮廓标出当前区段。 */
+export async function flyToDesignRockGradeSegment(modelIndex: number, customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  const startCfg = SEGMENT_CONFIGS[modelIndex];
+  const endCfg = SEGMENT_CONFIGS[modelIndex + 1] || TUNNEL_END_CONFIG;
+  if (!viewer || !startCfg || !endCfg) return;
+
+  await setDesignRockGradeModelEnabled(true, viewer);
+
+  for (let i = 0; i < tunnelGlbPrimitives.length; i++) {
+    const model = tunnelGlbPrimitives[i];
+    if (!model) continue;
+    model.silhouetteColor = Cesium.Color.WHITE;
+    model.silhouetteSize = i === modelIndex ? 2.5 : 0;
+  }
+
+  const start = Cesium.Cartesian3.fromDegrees(startCfg.lon, startCfg.lat, startCfg.height);
+  const end = Cesium.Cartesian3.fromDegrees(endCfg.lon, endCfg.lat, endCfg.height);
+  const midpoint = Cesium.Cartesian3.midpoint(start, end, new Cesium.Cartesian3());
+  const forward = Cesium.Cartesian3.normalize(
+    Cesium.Cartesian3.subtract(end, start, new Cesium.Cartesian3()),
+    new Cesium.Cartesian3(),
+  );
+  const up = Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(midpoint, new Cesium.Cartesian3());
+  const destination = Cesium.Cartesian3.add(
+    Cesium.Cartesian3.add(
+      midpoint,
+      Cesium.Cartesian3.multiplyByScalar(forward, -240, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    ),
+    Cesium.Cartesian3.multiplyByScalar(up, 110, new Cesium.Cartesian3()),
+    new Cesium.Cartesian3(),
+  );
+
+  const midpointLat = Cesium.Math.toRadians((startCfg.lat + endCfg.lat) / 2);
+  const east = (endCfg.lon - startCfg.lon) * Math.cos(midpointLat);
+  const north = endCfg.lat - startCfg.lat;
+  const heading = Math.atan2(east, north);
+
+  viewer.camera.flyTo({
+    destination,
+    orientation: {
+      heading,
+      pitch: Cesium.Math.toRadians(-23),
+      roll: 0,
+    },
+    duration: 1.6,
+    easingFunction: Cesium.EasingFunction.QUINTIC_OUT,
+  });
+}
 
 // 手动调整的每段位置和朝向
 const SEGMENT_CONFIGS: { lon: number; lat: number; height: number; headingDeg: number }[] = [
@@ -1099,7 +1255,9 @@ export function loadTunnelGlb(customViewer?: any) {
 
     Cesium.Model.fromGltfAsync({ url, modelMatrix })
       .then((model: any) => {
-        tunnelGlbPrimitives.push(viewer.scene.primitives.add(model));
+        const primitive = viewer.scene.primitives.add(model);
+        tunnelGlbPrimitives[i] = primitive;
+        applyDesignRockGradeAppearance(primitive, i);
         loadedCount++;
         if (loadedCount === SEGMENT_COUNT) {
           console.log(`[DrawLine] 分段隧道 GLB 全部 ${SEGMENT_COUNT} 段加载完成`);
@@ -1118,22 +1276,30 @@ export function removeTunnelGlb(customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const p of tunnelGlbPrimitives) {
+    if (!p) continue;
     try { viewer.scene.primitives.remove(p); } catch (_) {}
   }
   tunnelGlbPrimitives = [];
+  removeDesignRockGradeLabels(viewer);
 }
 
 /**
  * 控制 GLB 隧道节显示/隐藏
  */
 export function setTunnelGlbVisible(show: boolean) {
-  for (const p of tunnelGlbPrimitives) p.show = show;
+  for (const p of tunnelGlbPrimitives) if (p) p.show = show;
 }
 
 export function setTunnelTranslucent(on: boolean, customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const m of tunnelGlbPrimitives) {
+    if (!m) continue;
+    if (!on && designRockGradeEnabled) {
+      const index = tunnelGlbPrimitives.indexOf(m);
+      applyDesignRockGradeAppearance(m, index);
+      continue;
+    }
     m.color = on
       ? Cesium.Color.fromCssColorString('#00eaff').withAlpha(0.30)
       : Cesium.Color.WHITE;

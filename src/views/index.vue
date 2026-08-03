@@ -145,6 +145,8 @@
       :active-action="activeAction"
       @close="handleBackToOverview"
       @action="handlePanelAction"
+      @version-change="handleRockVersionChange"
+      @segment-select="handleRockSegmentSelect"
     />
     <SceneControlPanel
       v-else-if="activeScene"
@@ -230,7 +232,7 @@ import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
-import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible } from '@/utils/Common/DrawLine';
+import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
 import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, mergeModelConfigsFromApi } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
@@ -654,6 +656,30 @@ const handlePanelAction = (action: { key: string }, type: 'view' | 'process' = '
   }
 };
 
+const handleRockVersionChange = async (version: 'design' | 'forecast') => {
+  const viewer = getViewer();
+  if (!viewer) return;
+  layerState.showTunnel = true;
+  setTunnelGlbVisible(true);
+  try {
+    await setDesignRockGradeModelEnabled(version === 'design', viewer);
+  } catch (error) {
+    console.error('[围岩分级] 设计版模型加载失败:', error);
+  }
+};
+
+const handleRockSegmentSelect = async (segment: DesignRockGradeSegment) => {
+  const viewer = getViewer();
+  if (!viewer) return;
+  layerState.showTunnel = true;
+  setTunnelGlbVisible(true);
+  try {
+    await flyToDesignRockGradeSegment(segment.modelIndex, viewer);
+  } catch (error) {
+    console.error('[围岩分级] 里程区段跳转失败:', error);
+  }
+};
+
 const handleProcessingComplete = () => {
   console.log(`自动化处理完成，准备展示结果...`);
 
@@ -810,6 +836,10 @@ const handleSelectScene = (key: string) => {
     setWindTunnelTranslucent(false);
   }
 
+  setDesignRockGradeModelEnabled(key === 'workface', viewer).catch((error) => {
+    console.error('[围岩分级] 设计版模型加载失败:', error);
+  });
+
   // 关闭所有场景浮层
   showLining.value = false;
   showDispatchPersonnel.value = false;
@@ -840,6 +870,7 @@ const handleBackToOverview = () => {
 
   const viewer = getViewer();
   if (!viewer) return;
+  setDesignRockGradeModelEnabled(false, viewer);
 
   // 如果是从模型视图返回，需要清理状态
   if (isModelViewMode.value) {

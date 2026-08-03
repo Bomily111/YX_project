@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0",
+  "source": {
+    "type": "survey_design_longitudinal_profile",
+    "name": "勘察设计报告纵断面图",
+    "modelMileageRange": ["YK1+116", "YK9+400"],
+    "mappingNote": "按当前17段隧道GLB模型的实际里程边界归一化整理；可在获得高清报告图后直接修订segments，无需修改建模代码。"
+  },
+  "gradeColors": {
+    "II": "#44ff88",
+    "III": "#33b5ff",
+    "IV": "#ffcc00",
+    "V": "#ff4d4f"
+  },
+  "segments": [
+    { "modelIndex": 0,  "startMileage": "YK1+116", "endMileage": "YK1+616", "grade": "V" },
+    { "modelIndex": 1,  "startMileage": "YK1+616", "endMileage": "YK2+116", "grade": "IV" },
+    { "modelIndex": 2,  "startMileage": "YK2+116", "endMileage": "YK2+616", "grade": "IV" },
+    { "modelIndex": 3,  "startMileage": "YK2+616", "endMileage": "YK3+116", "grade": "III" },
+    { "modelIndex": 4,  "startMileage": "YK3+116", "endMileage": "YK3+616", "grade": "III" },
+    { "modelIndex": 5,  "startMileage": "YK3+616", "endMileage": "YK4+116", "grade": "IV" },
+    { "modelIndex": 6,  "startMileage": "YK4+116", "endMileage": "YK4+616", "grade": "V" },
+    { "modelIndex": 7,  "startMileage": "YK4+616", "endMileage": "YK5+116", "grade": "IV" },
+    { "modelIndex": 8,  "startMileage": "YK5+116", "endMileage": "YK5+616", "grade": "III" },
+    { "modelIndex": 9,  "startMileage": "YK5+616", "endMileage": "YK6+116", "grade": "III" },
+    { "modelIndex": 10, "startMileage": "YK6+116", "endMileage": "YK6+616", "grade": "IV" },
+    { "modelIndex": 11, "startMileage": "YK6+616", "endMileage": "YK7+116", "grade": "V" },
+    { "modelIndex": 12, "startMileage": "YK7+116", "endMileage": "YK7+616", "grade": "IV" },
+    { "modelIndex": 13, "startMileage": "YK7+616", "endMileage": "YK8+116", "grade": "III" },
+    { "modelIndex": 14, "startMileage": "YK8+116", "endMileage": "YK8+616", "grade": "IV" },
+    { "modelIndex": 15, "startMileage": "YK8+616", "endMileage": "YK9+116", "grade": "V" },
+    { "modelIndex": 16, "startMileage": "YK9+116", "endMileage": "YK9+400", "grade": "V" }
+  ]
+}
