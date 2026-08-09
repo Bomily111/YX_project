@@ -210,6 +210,7 @@ const SCENE_CFG: Record<string, {
   support: {
     color: '#aa88ff', name: '支护监测', 
     actions: [
+      { key: 'experiment', label: '钢架试验', icon: '⛏', type: 'primary' },
       { key: 'monitor', label: '属性面板', icon: '◈', type: 'primary' },
       { key: 'anchor', label: '锚杆状态', icon: '⊙', type: 'primary' },
       { key: 'shotcrete', label: '喷混记录', icon: '≋', type: 'secondary' },

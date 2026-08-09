@@ -147,13 +147,13 @@ router.delete('/tem/:jobId', async (req, res) => {
     const indexPath = path.join(PUBLIC_DATA, 'index.json')
     try {
       let index = JSON.parse(fs.readFileSync(indexPath, 'utf-8'))
-      index = index.filter((e: any) => e.jobId !== jobId)
+      index = index.filter(e => e.jobId !== jobId)
       fs.writeFileSync(indexPath, JSON.stringify(index, null, 2))
     } catch {}
 
     res.json({ ok: true })
   } catch (err) {
-    res.status(500).json({ error: (err as Error).message })
+    res.status(500).json({ error: err.message })
   }
 })
 
@@ -228,7 +228,7 @@ async function handleComplete(jobId, outputDir, logs) {
     index.unshift({
       jobId,
       createdAt: new Date().toISOString(),
-      mileage: `前向 ${(meta.x_range || [0, 0]).map((v: number) => v.toFixed(0)).join('~')}m`,
+      mileage: `前向 ${(meta.x_range || [0, 0]).map(v => v.toFixed(0)).join('~')}m`,
       xRange: meta.x_range || [],
       yRange: meta.y_range || [],
       zRange: meta.z_range || [],

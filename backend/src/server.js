@@ -15,6 +15,7 @@ import scenesRouter from './routes/scenes.js'
 import authRouter from './routes/auth.js'
 import configRouter from './routes/config.js'
 import graphRouter from './routes/graph.js'
+import aiAgentRouter from './ai-agent/index.js'
 import { authRequired } from './middleware/auth.js'
 
 const app = express()
@@ -42,6 +43,7 @@ app.use('/api/jobs', jobsRouter)
 app.use('/api/process', processRouter)
 app.use('/api/scenes', scenesRouter)
 app.use('/api/graph', graphRouter)
+app.use('/api/ai-agent', aiAgentRouter)
 
 // ---- 健康检查 ----
 app.get('/api/health', async (req, res) => {

@@ -43,7 +43,7 @@
         <div v-show="open.anomaly" class="td-body">
           <div class="td-kv"><span>模型</span><b>anomaly_k570_4x.glb</b></div>
           <div class="td-kv"><span>三角面</span><b>860 顶点 / 1,664 面</b></div>
-          <button class="td-view-btn" @click="$emit('viewInScene')">
+          <button class="td-view-btn" @click="$emit('viewInScene', selected?.jobId)">
             <span>📍</span> 在场景中查看
           </button>
           <div class="td-section-divider"></div>
@@ -136,7 +136,7 @@ interface Anomaly {
   id: number; voxels: number; cx: number; cy: number; cz: number; k_mean: number
 }
 
-defineEmits<{ viewInScene: [] }>()
+defineEmits<{ viewInScene: [jobId: string] }>()
 
 const props = defineProps<{ dataDir: string }>()
 

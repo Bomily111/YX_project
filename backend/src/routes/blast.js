@@ -54,4 +54,27 @@ router.put('/:id', async (req, res) => {
   res.json(rows[0])
 })
 
+// GET /api/blast/stats?tunnel_id= — 爆破统计汇总
+router.get('/stats', async (req, res) => {
+  const { tunnel_id } = req.query
+  const params = []
+  let whereSql = ''
+  if (tunnel_id) {
+    whereSql = 'WHERE tunnel_id = $1'
+    params.push(tunnel_id)
+  }
+  const { rows } = await query(
+    `SELECT
+      AVG(hole_depth_m)::numeric(5,2) as avg_hole_depth,
+      AVG(total_holes)::int as avg_holes,
+      AVG(charge_weight_kg)::numeric(5,2) as avg_charge,
+      AVG(specific_charge_kgm3)::numeric(5,2) as avg_specific_charge,
+      AVG(risk_eval_score)::numeric(4,2) as avg_risk_score,
+      COUNT(*)::int as design_count
+    FROM blast_designs ${whereSql}`,
+    params,
+  )
+  res.json(rows[0] || {})
+})
+
 export default router

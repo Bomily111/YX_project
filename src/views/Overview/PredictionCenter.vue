@@ -168,7 +168,7 @@
             :key="`${selectedMethod.key}-${refreshKey}`"
             :method="selectedMethod"
             :data-dir="selectedMethod.key === 'tem' ? '/data/tem_output/latest' : undefined"
-            @view-in-scene="handleViewInScene"
+            @view-in-scene="(jobId: string) => handleViewInScene(jobId)"
           />
           <div v-else class="pc-preview-empty">
             <div class="pc-empty-icon">📊</div>
@@ -331,9 +331,10 @@ const methodGroups = computed(() => {
   return groups
 })
 
-function handleViewInScene() {
+function handleViewInScene(jobId?: string) {
   if (selectedMethod.value?.key === 'tem') {
-    loadTemAnomalyGlb()
+    const dir = jobId ? `data/tem_output/${jobId}` : 'data/tem_output/latest'
+    loadTemAnomalyGlb(undefined, dir)
   } else if (selectedMethod.value) {
     emit('action', { key: selectedMethod.value.key, label: selectedMethod.value.label, icon: selectedMethod.value.icon }, 'view')
   }

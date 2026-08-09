@@ -6,7 +6,7 @@
   "objects": [
     {
       "volume": {
-        "url": "data/tem_output/opt-v2/tem_volume.raw",
+        "url": "data/tem_output/1cf406b2-7f32-4b4d-a876-de7677149f3e/tem_volume.raw",
         "res": [
           128,
           128,

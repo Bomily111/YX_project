@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Dashboard from '@/views/index.vue'
 import BlastTwinPage from '@/views/BlastTwinPage.vue'
+import SupportTwinPage from '@/views/SupportTwinPage.vue'
 import AdminLayout from '@/views/admin/AdminLayout.vue'
 import AdminWorksites from '@/views/admin/WorksitesPage.vue'
 import AdminModels from '@/views/admin/ModelsPage.vue'
@@ -16,6 +17,11 @@ const routes = [
     path: '/blast-twin',
     name: 'BlastTwin',
     component: BlastTwinPage
+  },
+  {
+    path: '/support-experiment',
+    name: 'SupportTwin',
+    component: SupportTwinPage
   },
   {
     path: '/admin',

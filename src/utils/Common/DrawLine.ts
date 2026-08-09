@@ -1449,3 +1449,28 @@ function _getWindTunnelTransform(): { modelMatrix: Cesium.Matrix4; finalPos: Ces
   return { modelMatrix, finalPos, heading, centerlineDist, centerlinePos: pos };
 }
 
+// ── 里程刻度尺（MileageRuler 包装）─────────────────────────
+import { createMileageRuler, getMileageRuler, destroyMileageRuler } from './MileageRuler';
+
+/** 初始化里程刻度尺（默认隐藏） */
+export function loadMileageRuler(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return null;
+  const ruler = createMileageRuler(viewer);
+  ruler.hide();
+  return ruler;
+}
+
+/** 设置里程刻度尺可见性 */
+export function setMileageRulerVisible(show: boolean) {
+  const ruler = getMileageRuler();
+  if (!ruler) return;
+  if (show) ruler.show();
+  else ruler.hide();
+}
+
+/** 移除里程刻度尺 */
+export function removeMileageRuler() {
+  destroyMileageRuler();
+}
+

@@ -89,6 +89,11 @@
         <div v-show="layerState.showWindTunnel" class="xray-row">
           <button class="xray-btn" :class="{ active: isWindXray }" @click="toggleWindXray">👁 透视</button>
         </div>
+        <label class="checkbox-item">
+          <input type="checkbox" v-model="layerState.showMileageRuler" @change="toggleMileageRuler">
+          <span class="custom-check"></span>
+          里程刻度
+        </label>
 
         <div v-show="layerState.showMap" class="terrain-alpha-row">
           <span class="terrain-alpha-label">地形透视</span>
@@ -200,6 +205,12 @@
         </div>
       </div>
     </div>
+
+    <!-- AI 智能助手 -->
+    <AgentChat
+      :context="{ scene: activeScene || undefined }"
+      @scene-open="handleAgentSceneOpen"
+    />
   </div>
 </template>
 
@@ -233,10 +244,12 @@ import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
+import { createMileageRuler, getMileageRuler } from '@/utils/Common/MileageRuler';
 import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, mergeModelConfigsFromApi } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
 import { removeVectorField } from '@/utils/Common/WindVectorField';
+import { AgentChat } from '@/ai-agent';
 import { useSceneStore } from '@/stores/sceneStore';
 import { useTunnelStore } from '@/stores/tunnelStore';
 import { useModelStore } from '@/stores/modelStore';
@@ -515,7 +528,7 @@ const flyToOverview = () => {
 // --- 悬浮拖拽逻辑与图层状态 ---
 const drag = reactive({ left: window.innerWidth - 550, top: 100, isDragging: false, startX: 0, startY: 0 });
 const panelCollapsed = ref(false);
-const layerState = reactive({ showModel: true, showMap: true, showTunnel: true, showRock: true, showWindTunnel: true });
+const layerState = reactive({ showModel: true, showMap: true, showTunnel: true, showRock: true, showWindTunnel: true, showMileageRuler: false });
 
 // ── 核心逻辑：初始化场景数据 ─────────────────────────────
 const initSceneData = () => {
@@ -542,6 +555,13 @@ const initSceneData = () => {
       loadTunnelGlb();
     } catch (e) {
       console.warn('⚠️ 隧道模型加载失败，跳过：', e);
+    }
+
+    // 初始化里程刻度尺（默认隐藏，通过图层面板开关控制）
+    try {
+      createMileageRuler(viewer).hide();
+    } catch (e) {
+      console.warn('⚠️ 里程刻度尺初始化失败：', e);
     }
 
     // 默认进入总览视角
@@ -627,6 +647,12 @@ const handleLayerSelect = (item: any) => {
 
 const handlePanelAction = (action: { key: string }, type: 'view' | 'process' = 'view') => {
   const isWorkflowAction = activeScene.value === 'workface';
+
+  // 支护场景的"钢架试验"按钮 → 跳转参数化试验子模块
+  if (activeScene.value === 'support' && action.key === 'experiment') {
+    router.push('/support-experiment');
+    return;
+  }
 
   // 支护场景的"属性面板"按钮 → 切换可拖放支护参数面板
   if (activeScene.value === 'support' && action.key === 'monitor') {
@@ -792,6 +818,16 @@ const toggleImagery = () => {
   v.scene.requestRender();
 };
 
+const toggleMileageRuler = () => {
+  const ruler = getMileageRuler();
+  if (!ruler) return;
+  if (layerState.showMileageRuler) {
+    ruler.show();
+  } else {
+    ruler.hide();
+  }
+};
+
 /** 复制当前相机视角到剪贴板 */
 const copyCurrentView = () => {
   const viewer = getViewer();
@@ -802,6 +838,22 @@ const copyCurrentView = () => {
     `📷 当前视角:\ndestination: Cesium.Cartesian3.fromDegrees(${Cesium.Math.toDegrees(pos.longitude).toFixed(6)}, ${Cesium.Math.toDegrees(pos.latitude).toFixed(6)}, ${pos.height.toFixed(1)}),\norientation: {\n  heading: Cesium.Math.toRadians(${Cesium.Math.toDegrees(cam.heading).toFixed(2)}),\n  pitch:   Cesium.Math.toRadians(${Cesium.Math.toDegrees(cam.pitch).toFixed(2)}),\n  roll:    0,\n},`
   );
 };
+
+// ── AI Agent 场景跳转处理 ───────────────────────────────
+const handleAgentSceneOpen = (scene: string) => {
+  if (scene === 'blast') {
+    router.push('/blast-twin')
+    return
+  }
+  if (scene === 'support') {
+    router.push('/support-experiment')
+    return
+  }
+  // 其他场景：在主 Viewer 上激活
+  if (SCENE_DEFS[scene]) {
+    handleSelectScene(scene)
+  }
+}
 
 // ── 选择场景：相机飞向近景 + 打开双侧面板 ───────────────
 const handleSelectScene = (key: string) => {

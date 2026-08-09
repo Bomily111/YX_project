@@ -11,12 +11,16 @@
 
     <TunnelModule v-show="ready" />
     <button v-show="ready" class="back-btn" @click="$router.push('/')">← 返回平台</button>
+
+    <!-- AI 智能助手（爆破场景） -->
+    <AgentChat :context="{ scene: 'blast' }" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import TunnelModule from '@/views/tunnel-module/TunnelModule.vue'
+import { AgentChat } from '@/ai-agent'
 
 const ready = ref(false)
 const loadPercent = ref(0)

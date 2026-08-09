@@ -53,7 +53,7 @@
     <TemDetail
       v-else-if="method.key === 'tem'"
       :data-dir="'/data/tem_output'"
-      @view-in-scene="$emit('viewInScene')"
+      @view-in-scene="(jobId: string) => $emit('viewInScene', jobId)"
     />
 
     <!-- 掌子面素描 -->
@@ -105,7 +105,7 @@ interface MethodCard {
 import TemDetail from './TemDetail.vue'
 
 defineProps<{ method: MethodCard; dataDir?: string }>()
-defineEmits<{ viewInScene: [] }>()
+defineEmits<{ viewInScene: [jobId: string] }>()
 
 const tspActive = ref('vs')
 const tspTypes = [

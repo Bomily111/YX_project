@@ -523,15 +523,24 @@ export function getModelConfig(key: string): ModelConfig | undefined {
 
 /** 加载 TEM 异常体 GLB 到 Cesium 场景（独立于体渲染） */
 let temGlbPrimitive: any = null
+let temGlbCurrentUrl: string = ''
 
-export function loadTemAnomalyGlb(customViewer?: any) {
+export function loadTemAnomalyGlb(customViewer?: any, dataDir?: string) {
   const viewer = customViewer || DTScopeEngine.viewer
   if (!viewer) return
 
-  if (temGlbPrimitive) {
+  const url = (dataDir || 'data/tem_output/latest') + '/anomaly_k570_4x.glb'
+
+  if (temGlbPrimitive && temGlbCurrentUrl === url) {
     temGlbPrimitive.show = true
     viewer.scene.requestRender()
     return
+  }
+
+  // 切换到不同数据集时清理旧模型
+  if (temGlbPrimitive) {
+    try { viewer.scene.primitives.remove(temGlbPrimitive) } catch {}
+    temGlbPrimitive = null
   }
 
   const pos = Cesium.Cartesian3.fromDegrees(94.9056136, 29.5333802, 2945.51)
@@ -540,7 +549,6 @@ export function loadTemAnomalyGlb(customViewer?: any) {
   const yRot = Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromRotationY(1.5708))
   modelMatrix = Cesium.Matrix4.multiply(modelMatrix, yRot, new Cesium.Matrix4())
 
-  const url = 'data/tem_output/latest/anomaly_k570_4x.glb'
   console.log('[TemGlb] 加载:', url)
   Cesium.Model.fromGltfAsync({
     url,
@@ -548,9 +556,15 @@ export function loadTemAnomalyGlb(customViewer?: any) {
     customShader: new Cesium.CustomShader({ lightingModel: Cesium.LightingModel.UNLIT }),
   }).then(model => {
     temGlbPrimitive = viewer.scene.primitives.add(model)
-    viewer.camera.flyToBoundingSphere(model.boundingSphere, {
+    temGlbCurrentUrl = url
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(94.907628, 29.531351, 3001.2),
+      orientation: {
+        heading: Cesium.Math.toRadians(319.04),
+        pitch: Cesium.Math.toRadians(-10.61),
+        roll: 0,
+      },
       duration: 1.0,
-      offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-15), 80),
     })
     console.log('[TemGlb] 加载成功')
   }).catch(e => console.warn('[TemGlb] 加载失败:', e))
