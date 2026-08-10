@@ -3,8 +3,8 @@
 import type { AgentConfig, LLMProviderType } from './types'
 
 const DEFAULT_CONFIG: AgentConfig = {
-  provider: (import.meta.env.VITE_LLM_PROVIDER as LLMProviderType) || 'deepseek',
-  model: import.meta.env.VITE_LLM_MODEL || 'deepseek-chat',
+  provider: (import.meta.env.VITE_LLM_PROVIDER as LLMProviderType) || '' as LLMProviderType,
+  model: import.meta.env.VITE_LLM_MODEL || '',
   baseUrl: import.meta.env.VITE_LLM_BASE_URL || '',
 }
 

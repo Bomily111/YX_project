@@ -58,6 +58,7 @@ import { createViewer, enableOnDemandRender, installOrbitControls } from './scen
 import { loadTunnel, setTunnelVisible, setTunnelTranslucent } from './tunnel'
 import { loadBlast, setBlastVisible, flyToBlast, flyToTunnelOverview, getBlastModel, BLAST_INFO } from './blast'
 import Design2DPanel from './Design2DPanel.vue'
+import { aiEvents } from '@/ai-agent'
 
 const host = ref<HTMLElement>()
 const info = BLAST_INFO
@@ -86,9 +87,17 @@ onMounted(async () => {
     loading.value = false
     setTimeout(() => enableOnDemandRender(viewer), 2500)
   })
+
+  // 监听 AI Agent 指令
+  aiEvents.on('blast:adjust-view', onAdjustView)
+  aiEvents.on('blast:toggle-diagram', onToggleDiagram)
 })
 
-onBeforeUnmount(() => { try { viewer?.destroy() } catch {} })
+onBeforeUnmount(() => {
+  aiEvents.off('blast:adjust-view', onAdjustView)
+  aiEvents.off('blast:toggle-diagram', onToggleDiagram)
+  try { viewer?.destroy() } catch {}
+})
 
 function onToggleTunnel() { setTunnelVisible(viewer, showTunnel.value) }
 function onToggleBlast() { setBlastVisible(viewer, showBlast.value) }
@@ -99,6 +108,16 @@ function fly(v: 'persp' | 'front' | 'side' | 'top') {
 // 退出: 恢复带纹理整体隧道 + 总览视角
 function exit() {
   orbit?.resetFocus(); setTunnelTranslucent(viewer, false); flyToTunnelOverview(viewer)
+}
+
+// ── AI Agent 事件响应 ─────────────────────────────────────
+function onAdjustView(view: string) {
+  if (!viewer) return
+  if (view === 'overview') exit()
+  else fly(view as 'persp' | 'front' | 'side' | 'top')
+}
+function onToggleDiagram(visible: boolean) {
+  showDesign2D.value = visible
 }
 </script>
 

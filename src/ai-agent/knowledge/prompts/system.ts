@@ -1,6 +1,7 @@
 // ── 基础系统提示词 ───────────────────────────────────────
 
 import type { AgentContext } from '../../types'
+import { searchBlastKb, type KbChunk } from '../blast'
 
 const BASE_SYSTEM_PROMPT = `你是"隧道施工数字孪生平台"的智能助手，专注于辅助隧道钻爆法施工管理。
 
@@ -27,7 +28,18 @@ const BASE_SYSTEM_PROMPT = `你是"隧道施工数字孪生平台"的智能助�
 /**
  * 构建完整的 system prompt（基础 + 领域知识 + RAG 上下文）
  */
-export function buildSystemPrompt(context?: AgentContext, ragContext?: string[]): string {
+/**
+ * 从知识库检索与用户问题相关的内容
+ */
+function searchKnowledge(query: string, scene?: string): KbChunk[] {
+  if (scene === 'blast') {
+    return searchBlastKb(query, 3)
+  }
+  // 后续其他模块的知识库在此扩展
+  return []
+}
+
+export function buildSystemPrompt(context?: AgentContext, userQuery?: string): string {
   let prompt = BASE_SYSTEM_PROMPT
 
   if (context?.scene) {
@@ -50,12 +62,14 @@ export function buildSystemPrompt(context?: AgentContext, ragContext?: string[])
   }
 
   // 注入 RAG 检索到的知识片段
-  if (ragContext && ragContext.length > 0) {
-    prompt += '\n\n## 参考文档知识\n以下是从平台技术文档中检索到的相关信息，请参考回答：\n\n'
-    for (let i = 0; i < ragContext.length; i++) {
-      prompt += `[参考 ${i + 1}]\n${ragContext[i]}\n\n`
+  if (userQuery) {
+    const ragResults = searchKnowledge(userQuery, context?.scene)
+    if (ragResults.length > 0) {
+      prompt += '\n\n## 参考知识库\n以下是从知识库中检索到的与当前问题相关的信息，请参考回答：\n\n'
+      for (let i = 0; i < ragResults.length; i++) {
+        prompt += `--- [${ragResults[i].title}] ---\n${ragResults[i].content}\n\n`
+      }
     }
-    prompt += '---\n'
   }
 
   return prompt

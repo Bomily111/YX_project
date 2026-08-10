@@ -26,31 +26,27 @@ router.post('/chat', async (req, res) => {
   res.setHeader('X-Accel-Buffering', 'no')
 
   try {
-    // 动态加载适配器
-    const { getChatStream } = await import('../engine/LLMFactory.js')
-    const { response, streamToSSE } = await getChatStream({
-      messages,
-      tools,
-      system: system || '你是隧道施工数字孪生平台的智能助手，使用中文回答。',
-      provider,
-    })
+    const { getStreamHandler } = await import('../engine/LLMFactory.js')
+    const { streamChat } = await getStreamHandler({ provider })
 
-    const decoder = new TextDecoder()
-    const reader = response.body.getReader()
+    await streamChat(
+      {
+        messages,
+        tools,
+        system: system || '你是隧道施工数字孪生平台的智能助手，使用中文回答。',
+        provider,
+        model,
+      },
+      (event) => {
+        res.write(`data: ${JSON.stringify(event)}\n\n`)
+        if (event.type === 'message_stop') {
+          res.write('data: [DONE]\n\n')
+          res.end()
+        }
+      },
+    )
 
-    // 根据 provider 类型选择合适的 SSE 解析器
-    await streamToSSE(response, (event) => {
-      const line = `data: ${JSON.stringify(event)}\n\n`
-      res.write(line)
-
-      // 消息结束时关闭连接
-      if (event.type === 'message_stop') {
-        res.write('data: [DONE]\n\n')
-        res.end()
-      }
-    })
-
-    // 确保连接关闭
+    // 兜底：确保连接关闭
     if (!res.writableEnded) {
       res.write('data: [DONE]\n\n')
       res.end()
@@ -60,7 +56,6 @@ router.post('/chat', async (req, res) => {
     if (!res.headersSent) {
       return res.status(500).json({ error: err.message })
     }
-    // 如果已经发送了 headers，通过 SSE 返回错误
     if (!res.writableEnded) {
       res.write(`data: ${JSON.stringify({ type: 'error', error: err.message })}\n\n`)
       res.write('data: [DONE]\n\n')
@@ -69,7 +64,6 @@ router.post('/chat', async (req, res) => {
   }
 })
 
-// 健康检查
 router.get('/health', (req, res) => {
   const config = getLLMConfig()
   res.json({

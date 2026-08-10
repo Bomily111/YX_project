@@ -41,7 +41,23 @@
             :class="msg.role"
           >
             <div class="msg-avatar">{{ msg.role === 'user' ? '👷' : '🤖' }}</div>
-            <div class="msg-bubble" v-html="renderMarkdown(msg.content)"></div>
+            <div class="msg-block">
+              <div class="msg-bubble" v-html="renderMarkdown(msg.content)"></div>
+              <div v-if="msg.role === 'assistant'" class="feedback-row">
+                <button
+                  class="fb-btn"
+                  :class="{ active: feedbackMap[i] === 'up' }"
+                  title="有用"
+                  @click="toggleFeedback(i, 'up')"
+                >👍</button>
+                <button
+                  class="fb-btn"
+                  :class="{ active: feedbackMap[i] === 'down' }"
+                  title="没用"
+                  @click="toggleFeedback(i, 'down')"
+                >👎</button>
+              </div>
+            </div>
           </div>
 
           <!-- 流式输出中 -->
@@ -163,8 +179,31 @@ const welcomeText = computed(() =>
   props.welcomeText || '你好！我是隧道施工数字孪生平台的智能助手。<br>你可以问我查看地质模型、打开场景、查询施工进度等。'
 )
 
+// ── 反馈机制 ──────────────────────────────────────────────
+const FEEDBACK_KEY = 'ai-agent-feedback'
+const feedbackMap = ref<Record<number, 'up' | 'down'>>({})
+
+function loadFeedback() {
+  try {
+    const saved = localStorage.getItem(FEEDBACK_KEY)
+    if (saved) feedbackMap.value = JSON.parse(saved)
+  } catch { /* ignore */ }
+}
+
+function toggleFeedback(msgIndex: number, rating: 'up' | 'down') {
+  if (feedbackMap.value[msgIndex] === rating) {
+    delete feedbackMap.value[msgIndex]
+  } else {
+    feedbackMap.value[msgIndex] = rating
+  }
+  feedbackMap.value = { ...feedbackMap.value }
+  localStorage.setItem(FEEDBACK_KEY, JSON.stringify(feedbackMap.value))
+}
+
 // ── 初始化 ────────────────────────────────────────────────
 onMounted(() => {
+  loadFeedback()
+
   // 注册通用工具
   registerTools('common', commonTools)
 
@@ -297,12 +336,12 @@ const renderMarkdown = (text: string): string => {
 <style scoped lang="scss">
 .agent-root {
   position: fixed;
-  right: 20px;
+  left: 20px;
   bottom: 20px;
   z-index: 60;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   pointer-events: none;
 }
 
@@ -419,6 +458,20 @@ const renderMarkdown = (text: string): string => {
 .msg-row { display: flex; gap: 8px; align-items: flex-start; }
 .msg-row.user { flex-direction: row-reverse; }
 .msg-avatar { font-size: 18px; flex-shrink: 0; padding-top: 2px; }
+
+.msg-block { max-width: 82%; display: flex; flex-direction: column; }
+
+.feedback-row {
+  display: flex; gap: 4px; padding-top: 4px; padding-left: 2px;
+}
+
+.fb-btn {
+  background: transparent; border: none; font-size: 13px; cursor: pointer;
+  padding: 2px 4px; border-radius: 4px; opacity: 0.4; transition: all 0.15s;
+  line-height: 1;
+  &:hover { opacity: 0.8; background: rgba(255,255,255,0.06); }
+  &.active { opacity: 1; }
+}
 
 .msg-bubble {
   max-width: 82%;

@@ -1,11 +1,12 @@
 // ── 模型工厂 ──────────────────────────────────────────────
-// 根据配置创建对应的 LLM 适配器
 
 import { getLLMConfig } from '../config.js'
 
-export function createProvider(providerOverride) {
+/**
+ * 根据 provider 加载对应的适配器模块
+ */
+async function loadProvider(providerOverride) {
   const config = getLLMConfig(providerOverride)
-
   switch (config.provider) {
     case 'claude':
       return import('../providers/claude.js')
@@ -14,19 +15,17 @@ export function createProvider(providerOverride) {
     case 'deepseek':
     case 'qwen':
     default:
-      // OpenAI 兼容格式（DeepSeek、通义千问等）
       return import('../providers/openai-compatible.js')
   }
 }
 
 /**
- * 获取流式聊天响应
+ * 获取流式聊天处理器
+ * 所有 provider 统一导出 streamChat(params, onEvent) 函数
  */
-export async function getChatStream(params) {
-  const providerModule = await createProvider(params.provider)
-  const response = await providerModule.chatStream(params)
+export async function getStreamHandler(params) {
+  const providerModule = await loadProvider(params.provider)
   return {
-    response,
-    streamToSSE: providerModule.streamToSSE,
+    streamChat: providerModule.streamChat,
   }
 }

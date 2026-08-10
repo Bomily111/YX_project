@@ -3,28 +3,22 @@
 import { getLLMConfig } from '../config.js'
 
 /**
- * 发送流式聊天请求到 Ollama API
+ * 发送流式聊天到 Ollama，通过回调输出标准化 SSE 事件
  */
-export async function chatStream(params) {
+export async function streamChat(params, onEvent) {
   const llmConfig = getLLMConfig('ollama')
   const { messages, tools, system } = params
 
-  // Ollama 格式
-  const ollamaMessages = [
-    { role: 'system', content: system },
-    ...messages.map(m => ({ role: m.role, content: m.content })),
-  ]
-
   const body = {
     model: llmConfig.model,
-    messages: ollamaMessages,
+    messages: [
+      { role: 'system', content: system },
+      ...messages.map(m => ({ role: m.role, content: m.content })),
+    ],
     stream: true,
-    options: {
-      temperature: 0.3,
-    },
+    options: { temperature: 0.3 },
   }
 
-  // 如果有工具，添加到请求
   if (tools && tools.length > 0) {
     body.tools = tools.map(t => ({
       type: 'function',
@@ -47,18 +41,9 @@ export async function chatStream(params) {
     throw new Error(`Ollama API error (${response.status}): ${errText}`)
   }
 
-  return response
-}
-
-/**
- * 将 Ollama SSE 格式转换为统一的 SSE 事件格式
- * Ollama 的流式输出是每行一个 JSON 对象
- */
-export async function streamToSSE(response, onEvent) {
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
-  let currentToolCall = null
 
   while (true) {
     const { done, value } = await reader.read()
@@ -87,9 +72,7 @@ export async function streamToSSE(response, onEvent) {
           onEvent({ type: 'message_stop' })
           return
         }
-      } catch {
-        // 忽略非 JSON 行
-      }
+      } catch { /* 跳过非 JSON 行 */ }
     }
   }
 

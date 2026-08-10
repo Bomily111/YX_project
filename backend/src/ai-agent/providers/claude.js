@@ -3,10 +3,9 @@
 import { getLLMConfig } from '../config.js'
 
 /**
- * 发送流式聊天请求到 Anthropic API
- * 需要安装 @anthropic-ai/sdk，此文件作为可选适配器
+ * 发送流式聊天到 Anthropic API，通过回调输出标准化 SSE 事件
  */
-export async function chatStream(params) {
+export async function streamChat(params, onEvent) {
   const llmConfig = getLLMConfig('claude')
 
   if (!llmConfig.apiKey) {
@@ -15,7 +14,6 @@ export async function chatStream(params) {
 
   const { messages, tools, system } = params
 
-  // 将工具转换为 Anthropic 格式
   const anthropicTools = tools?.map(t => ({
     name: t.name,
     description: t.description,
@@ -46,14 +44,6 @@ export async function chatStream(params) {
     throw new Error(`Claude API error (${response.status}): ${errText}`)
   }
 
-  return response
-}
-
-/**
- * 将 Anthropic SSE 格式转换为统一的 SSE 事件格式
- * Anthropic 本身的事件格式已经和我们定义的一致，直接透传
- */
-export async function streamToSSE(response, onEvent) {
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
@@ -70,14 +60,10 @@ export async function streamToSSE(response, onEvent) {
       const trimmed = line.trim()
       if (!trimmed || !trimmed.startsWith('data: ')) continue
       const data = trimmed.slice(6)
-      if (data === '[DONE]') {
-        onEvent({ type: 'message_stop' })
-        continue
-      }
+      if (data === '[DONE]') continue
 
       try {
         const event = JSON.parse(data)
-        // Anthropic SSE 事件直接映射
         switch (event.type) {
           case 'content_block_start':
           case 'content_block_delta':
@@ -86,12 +72,9 @@ export async function streamToSSE(response, onEvent) {
             break
           case 'message_stop':
             onEvent({ type: 'message_stop' })
-            break
-          // 忽略其他事件类型（ping 等）
+            return
         }
-      } catch {
-        // 忽略解析错误
-      }
+      } catch { /* 忽略解析错误 */ }
     }
   }
 

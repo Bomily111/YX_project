@@ -18,14 +18,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import TunnelModule from '@/views/tunnel-module/TunnelModule.vue'
-import { AgentChat } from '@/ai-agent'
+import { AgentChat, registerTools, unregisterModule } from '@/ai-agent'
+import { blastTools } from '@/ai-agent/tools/blast.tools'
 
 const ready = ref(false)
 const loadPercent = ref(0)
 
 onMounted(() => {
+  // 注册爆破专项工具到 AI Agent
+  registerTools('blast', blastTools)
+
   const interval = setInterval(() => {
     if (loadPercent.value < 90) {
       loadPercent.value += Math.floor(Math.random() * 15) + 5
@@ -42,6 +46,10 @@ onMounted(() => {
       }, 150)
     })
   })
+})
+
+onBeforeUnmount(() => {
+  unregisterModule('blast')
 })
 </script>
 

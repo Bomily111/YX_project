@@ -4,6 +4,7 @@
 import type { Message, ToolUseBlock, AgentContext, AgentTool } from './types'
 import { getAgentConfig, getApiBase } from './config'
 import { getAllTools, getToolsForModule, executeTool } from './ToolRegistry'
+import { buildSystemPrompt } from './knowledge/prompts/system'
 
 interface StreamCallbacks {
   onText: (delta: string) => void
@@ -26,17 +27,20 @@ async function sendChatRequest(
   const config = getAgentConfig()
   const apiBase = getApiBase()
 
+  const body: Record<string, any> = {
+    messages,
+    tools,
+    system,
+    stream: true,
+  }
+  // 只在显式配置时才发送 provider/model，否则由后端 .env 决定
+  if (config.provider) body.provider = config.provider
+  if (config.model) body.model = config.model
+
   const response = await fetch(`${apiBase}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messages,
-      tools,
-      system,
-      provider: config.provider,
-      model: config.model,
-      stream: true,
-    }),
+    body: JSON.stringify(body),
     signal,
   })
 
@@ -147,7 +151,7 @@ export class AgentEngine {
         : getAllTools()
 
       // 3. 构建增强的 system prompt（包含 RAG 上下文）
-      const system = this.buildSystemPrompt(context)
+      const system = buildSystemPrompt(context, userMessage)
 
       // 4. Agent 循环（最多 maxToolRounds 轮）
       let round = 0
@@ -183,18 +187,6 @@ export class AgentEngine {
     }
   }
 
-  private buildSystemPrompt(context: AgentContext): string {
-    let prompt = this.systemPrompt
-
-    if (context.scene) {
-      prompt += `\n\n当前场景：${context.scene}`
-    }
-    if (context.worksiteId) {
-      prompt += `\n当前工点 ID：${context.worksiteId}`
-    }
-
-    return prompt
-  }
 }
 
 /** 创建默认的 AgentEngine 实例 */
