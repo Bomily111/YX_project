@@ -5,6 +5,7 @@
  */
 import * as Cesium from 'cesium';
 import { DTScopeEngine } from './Viewer';
+import { unloadTemVoxelCloud } from './TemVoxelCloud';
 // @ts-ignore
 import { initVolume, clearVolume } from '@/utils/AllPrevious/All/ShareVolume01.js';
 // @ts-ignore
@@ -19,6 +20,7 @@ interface ModelConfig {
     scale: [number, number, number];
   };
   glbUrl?: string;                      // GLB 模型路径（单个）
+  envelopeUrl?: string;                  // 包络 GLB 模型路径（与 glbUrl 共用锚点/朝向，默认隐藏，供开关控制）
   glbItems?: { url: string; mileage: number; heightOffset?: number }[]; // GLB 模型路径（多个，按里程定位）
   glbHeading?: number;                  // GLB 模型朝向（弧度，从正北顺时针）；不填则用 localFrame('up','east')
   glbRoll?: number;                     // GLB 模型绕自身X轴滚转（弧度）
@@ -173,11 +175,25 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
     lookAtOffset: [265, -357, 84],
   },
+  // 凿岩台车（三臂凿岩台车 ZYS113，Creo → GLB；实体 + 半透明工作包络）
+  // 定位参数为占位值，先复用软弱围岩锚点，后续按实际隧道里程回填
+  jumbo_rig: {
+    glbUrl: 'data/jumbo/jumbo_solid.glb',
+    envelopeUrl: 'data/jumbo/jumbo_envelope.glb',
+    glbHeading: 1.5708,  // 90° 占位，需按台车朝向校准
+    tunnelPos: [94.9044380, 29.5323360, 2978.00],
+    flyDest: { x: -475111.5, y: 5536216.1, z: 3126872.5 },
+    flyOrientation: { heading: 0.5322, pitch: -0.3723 },
+    lookAtPos: [94.9044380, 29.5323360, 2978.00],
+    lookAtOffset: [125, -150, 125],
+    skipLookAt: true,
+  },
 };
 
 // ── 运行时状态 ────────────────────────────────────────────
 let tunnelEntity: any = null;
 let glbPrimitives: any[] = [];
+let jumboEnvelopePrimitive: any = null;
 
 /** 激活指定 key 的地质模型：加载体数据/GLB + 摆放随道参考 + 飞相机 */
 export function activateGeoModel(key: string, customViewer?: any) {
@@ -200,7 +216,7 @@ export function activateGeoModel(key: string, customViewer?: any) {
     // ── GLB 模型 ──────────────────────────────────────────────
     const glbHeading = cfg.glbHeading;
     const LocalFrameToFixedFrame = Cesium.Transforms.localFrameToFixedFrameGenerator('up', 'east');
-    const loadGlb = (url: string, pos: [number, number, number]) => {
+    const computeMatrix = (pos: [number, number, number]): Cesium.Matrix4 => {
       const cartPos = Cesium.Cartesian3.fromDegrees(pos[0], pos[1], pos[2]);
       let modelMatrix: Cesium.Matrix4;
       if (glbHeading !== undefined) {
@@ -222,6 +238,11 @@ export function activateGeoModel(key: string, customViewer?: any) {
       } else {
         modelMatrix = LocalFrameToFixedFrame(cartPos);
       }
+      return modelMatrix;
+    };
+
+    const loadGlb = (url: string, pos: [number, number, number]) => {
+      const modelMatrix = computeMatrix(pos);
       console.log('[GeoModelController] 加载 GLB:', url, '位置:', pos);
       Cesium.Model.fromGltfAsync({ url, modelMatrix })
         .then((model) => {
@@ -252,6 +273,21 @@ export function activateGeoModel(key: string, customViewer?: any) {
       }
     } else if (cfg.glbUrl) {
       loadGlb(cfg.glbUrl, cfg.tunnelPos);
+    }
+
+    // ── 包络模型（与实体共用锚点/朝向，默认隐藏，供工作包络图层开关控制）──
+    if (cfg.envelopeUrl) {
+      const modelMatrix = computeMatrix(cfg.tunnelPos);
+      Cesium.Model.fromGltfAsync({ url: cfg.envelopeUrl, modelMatrix })
+        .then((model) => {
+          model.show = false;
+          viewer.scene.primitives.add(model);
+          jumboEnvelopePrimitive = model;
+          console.log('[GeoModelController] 包络 GLB 加载成功:', cfg.envelopeUrl);
+        })
+        .catch((e) => {
+          console.error('[GeoModelController] 包络 GLB 加载失败:', cfg.envelopeUrl, e);
+        });
     }
 
     // ── 随道参考模型（体数据类共用）──────────────────────────
@@ -377,6 +413,16 @@ export function setRockModelVisible(show: boolean) {
 }
 
 /**
+ * 显示 / 隐藏凿岩台车工作包络（半透明图层）
+ */
+export function setJumboEnvelopeVisible(show: boolean) {
+  if (jumboEnvelopePrimitive) {
+    jumboEnvelopePrimitive.show = show;
+    DTScopeEngine.viewer?.scene.requestRender();
+  }
+}
+
+/**
  * 从场景中移除主界面围岩模型
  */
 export function removeRockModel(customViewer?: any) {
@@ -430,6 +476,9 @@ function _cleanup(viewer: any) {
     viewer.scene.primitives.remove(p);
   }
   glbPrimitives = [];
+  if (jumboEnvelopePrimitive) { viewer.scene.primitives.remove(jumboEnvelopePrimitive); jumboEnvelopePrimitive = null; }
+  if (temGlbPrimitive) { viewer.scene.primitives.remove(temGlbPrimitive); temGlbPrimitive = null; }
+  unloadTemVoxelCloud();
   // 清除体数据 canvas（从体数据模型切换到纯 GLB 模型时需要）
   clearVolume();
 }
@@ -575,5 +624,12 @@ export function unloadTemAnomalyGlb(customViewer?: any) {
   if (temGlbPrimitive && viewer) {
     try { viewer.scene.primitives.remove(temGlbPrimitive) } catch {}
     temGlbPrimitive = null
+  }
+}
+
+export function setTemGlbVisible(show: boolean) {
+  if (temGlbPrimitive) {
+    temGlbPrimitive.show = show
+    DTScopeEngine.viewer?.scene.requestRender()
   }
 }

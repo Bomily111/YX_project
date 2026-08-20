@@ -54,6 +54,7 @@
       v-else-if="method.key === 'tem'"
       :data-dir="'/data/tem_output'"
       @view-in-scene="(jobId: string) => $emit('viewInScene', jobId)"
+      @view-voxel-cloud="(jobId: string) => $emit('viewVoxelCloud', jobId)"
     />
 
     <!-- 掌子面素描 -->
@@ -75,6 +76,32 @@
         <div class="mp-kv"><span>里程范围</span><b>D3K278+100 ~ DK300+800</b></div>
         <div class="mp-kv"><span>开挖宽度</span><b>~12.4 m</b></div>
         <div class="mp-kv"><span>开挖高度</span><b>~9.0 m</b></div>
+      </div>
+    </template>
+
+    <!-- 凿岩台车（实体 + 工作包络） -->
+    <template v-else-if="method.key === 'jumbo_rig'">
+      <div class="mp-section">
+        <div class="mp-section-title">设备模型</div>
+        <div class="mp-model-grid">
+          <div class="mp-model-card">
+            <div class="mp-model-icon">⛏</div>
+            <div class="mp-model-name">三臂凿岩台车 ZYS113</div>
+            <div class="mp-model-src">jumbo_solid.glb</div>
+          </div>
+        </div>
+      </div>
+      <div class="mp-section">
+        <div class="mp-section-title">工作包络</div>
+        <div class="mp-kv"><span>姿态</span><b>支腿降落 + 臂架收缩</b></div>
+        <button
+          class="mp-env-toggle"
+          :class="{ on: envVisible }"
+          @click="toggleEnvelope"
+        >
+          <span class="mp-env-knob"></span>
+          <span class="mp-env-label">{{ envVisible ? '包络已显示' : '包络已隐藏' }}</span>
+        </button>
       </div>
     </template>
 
@@ -105,7 +132,13 @@ interface MethodCard {
 import TemDetail from './TemDetail.vue'
 
 defineProps<{ method: MethodCard; dataDir?: string }>()
-defineEmits<{ viewInScene: [jobId: string] }>()
+const emit = defineEmits<{ viewInScene: [jobId: string]; toggleEnvelope: [show: boolean] }>()
+
+const envVisible = ref(false)
+function toggleEnvelope() {
+  envVisible.value = !envVisible.value
+  emit('toggleEnvelope', envVisible.value)
+}
 
 const tspActive = ref('vs')
 const tspTypes = [
@@ -165,4 +198,26 @@ const tspTypes = [
 .mp-empty { text-align: center; padding: 30px 20px; }
 .mp-empty-icon { font-size: 32px; margin-bottom: 8px; }
 .mp-empty-text { font-size: 13px; color: #5a7a9a; }
+
+.mp-env-toggle {
+  margin-top: 8px; width: 100%; padding: 8px 10px; border-radius: 6px;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0, 30, 70, 0.4); border: 1px solid rgba(0, 120, 220, 0.3);
+  color: #8aa0bd; font-size: 12px; cursor: pointer; transition: .15s;
+  &:hover { border-color: rgba(0, 200, 255, 0.4); }
+  &.on { background: rgba(0, 100, 200, 0.25); border-color: #00eaff; color: #00eaff; }
+}
+.mp-env-knob {
+  width: 26px; height: 14px; border-radius: 7px; background: rgba(100, 140, 180, 0.4);
+  position: relative; flex-shrink: 0; transition: background .15s;
+  &::after {
+    content: ''; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px;
+    border-radius: 50%; background: #cfe4fb; transition: left .15s;
+  }
+}
+.mp-env-toggle.on .mp-env-knob {
+  background: rgba(0, 200, 255, 0.6);
+  &::after { left: 14px; background: #00eaff; }
+}
+.mp-env-label { flex: 1; text-align: left; }
 </style>

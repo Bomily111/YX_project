@@ -249,6 +249,7 @@ import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisibl
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
 import { removeVectorField } from '@/utils/Common/WindVectorField';
+import { removeProceduralWind } from '@/utils/Common/TunnelWindSimulation';
 import { AgentChat } from '@/ai-agent';
 import { useSceneStore } from '@/stores/sceneStore';
 import { useTunnelStore } from '@/stores/tunnelStore';
@@ -433,6 +434,7 @@ const keyNameMap: Record<string, string> = {
   deep_hole: '加深炮孔',
   tsp: 'TSP反演',
   tem: '瞬变电磁',
+  jumbo_rig: '凿岩台车',
 };
 
 // --- 辅助函数：安全获取 Viewer 实例 ---
@@ -618,7 +620,7 @@ const handleLayerSelect = (item: any) => {
   selectedValue.value = '';
 
   // 加载对应地质模型（体数据 / GLB 统一由 GeoModelController 处理）
-  const VOLUME_KEYS = ['weak_rock', 'water_zone', 'fracture_zone', 'tsp', 'tem', 'face_sketch', 'horiz_drill', 'gpr'];
+  const VOLUME_KEYS = ['weak_rock', 'water_zone', 'fracture_zone', 'tsp', 'tem', 'face_sketch', 'horiz_drill', 'gpr', 'jumbo_rig'];
   if (VOLUME_KEYS.includes(item.key)) {
     activateGeoModel(item.key);
   } else {
@@ -881,6 +883,7 @@ const handleSelectScene = (key: string) => {
     // 进入其他场景时恢复隧道模型
     removeWindTunnelGlb(viewer);
     removeVectorField(viewer);
+    removeProceduralWind(viewer);
     layerState.showModel = true;
     setCenterLineVisible(true);
     setWorksiteVisible(true);
@@ -959,6 +962,7 @@ const handleBackToOverview = () => {
   // 清理风场隧道模型，恢复隧道模型
   removeWindTunnelGlb(viewer);
   removeVectorField(viewer);
+  removeProceduralWind(viewer);
   setTunnelGlbVisible(layerState.showTunnel);
   setWindTunnelTranslucent(false);
   layerState.showModel = true;

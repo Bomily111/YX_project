@@ -8,9 +8,28 @@ const fs = require('fs');
 const readline = require('readline');
 const path = require('path');
 
-const objSrc = path.join(__dirname, '..', 'model.obj');
-const mtlSrc = path.join(__dirname, '..', 'model.mtl');
-const outPath = path.join(__dirname, '..', 'public', 'data', 'ROCK', 'model.glb');
+// ── 命令行参数 ──────────────────────────────────────────────
+// 用法: node scripts/obj2glb.cjs [--input x.obj] [--mtl x.mtl] [--output x.glb] [--scale 0.001] [--alpha 0.35]
+// 不传参数时保持原有行为（model.obj → public/data/ROCK/model.glb）
+function parseArgv() {
+  const a = process.argv.slice(2);
+  const o = {};
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] === '--input') o.input = a[++i];
+    else if (a[i] === '--mtl') o.mtl = a[++i];
+    else if (a[i] === '--output') o.output = a[++i];
+    else if (a[i] === '--scale') o.scale = parseFloat(a[++i]);
+    else if (a[i] === '--alpha') o.alpha = parseFloat(a[++i]);
+  }
+  return o;
+}
+const opts = parseArgv();
+const projectRoot = path.join(__dirname, '..');
+const objSrc = opts.input ? path.resolve(projectRoot, opts.input) : path.join(projectRoot, 'model.obj');
+const mtlSrc = opts.mtl ? path.resolve(projectRoot, opts.mtl) : objSrc.replace(/\.obj$/i, '.mtl');
+const outPath = opts.output ? path.resolve(projectRoot, opts.output) : path.join(projectRoot, 'public', 'data', 'ROCK', 'model.glb');
+const SCALE = opts.scale || 1;          // 单位缩放：Creo 导出 mm 时传 0.001 转米
+const ALPHA = opts.alpha != null ? opts.alpha : 1.0; // 材质不透明度：<1 时输出半透明（包络体用）
 
 // ── 解析 MTL ─────────────────────────────────────────────────
 function parseMtl(mtlPath) {
@@ -75,8 +94,8 @@ async function parseObj() {
       const x = parseFloat(p[1]);
       const y = parseFloat(p[2]);
       const z = parseFloat(p[3]);
-      // OBJ is Z-up; convert to glTF Y-up: new_x=x, new_y=z, new_z=-y
-      gPositions.push(isFinite(x) ? x : 0, isFinite(z) ? z : 0, isFinite(y) ? -y : 0);
+      // OBJ is Z-up; convert to glTF Y-up: new_x=x, new_y=z, new_z=-y (并应用单位缩放)
+      gPositions.push(isFinite(x) ? x * SCALE : 0, isFinite(z) ? z * SCALE : 0, isFinite(y) ? -y * SCALE : 0);
     } else if (line[0] === 'v' && line[1] === 'n') {
       const p = line.split(/\s+/);
       const nx = parseFloat(p[1]);
@@ -143,6 +162,7 @@ async function parseObj() {
   const cy = (minY + maxY) / 2;
   const cz = (minZ + maxZ) / 2;
   console.log('包围盒中心:', cx.toFixed(2), cy.toFixed(2), cz.toFixed(2));
+  console.log('包围盒尺寸 (x,y,z):', (maxX - minX).toFixed(3), (maxY - minY).toFixed(3), (maxZ - minZ).toFixed(3));
 
   // Apply centering
   for (const g of groups) {
@@ -219,9 +239,9 @@ function buildGlb(groups, materials) {
                   : [0.5, 0.5, 0.5, 1.0];
       matList.push({
         name: g.mat || 'default',
-        pbrMetallicRoughness: { baseColorFactor: col, metallicFactor: 0, roughnessFactor: 1 },
-        alphaMode: 'OPAQUE',
-        doubleSided: false
+        pbrMetallicRoughness: { baseColorFactor: [col[0], col[1], col[2], ALPHA], metallicFactor: 0, roughnessFactor: 1 },
+        alphaMode: ALPHA < 1 ? 'BLEND' : 'OPAQUE',
+        doubleSided: ALPHA < 1
       });
     }
 

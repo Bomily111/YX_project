@@ -87,7 +87,7 @@ export function getFlylineAnimating(): boolean {
   return flylineAnimating;
 }
 
-function getFlylineMaterial(): Cesium.PolylineMaterialAppearance {
+export function getFlylineMaterial(respectAlpha = false): Cesium.PolylineMaterialAppearance {
   const material = Cesium.Material.fromType('Color');
   material.uniforms.color = Cesium.Color.ORANGE;
 
@@ -110,7 +110,7 @@ function getFlylineMaterial(): Cesium.PolylineMaterialAppearance {
         if (xx > 0.8) { a = 0.0; }
         else { a = xx; }
         ` : ''}
-        fragColor = vec4(v_color.rgb, a);
+        fragColor = vec4(v_color.rgb, ${respectAlpha ? 'v_color.a' : 'a'});
     }`;
 
   return new Cesium.PolylineMaterialAppearance({

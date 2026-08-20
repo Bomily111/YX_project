@@ -92,7 +92,18 @@
             <div class="wind-mode-tabs">
               <button :class="{ active: windMode === 'streamline' }" @click="setWindMode('streamline')">流线</button>
               <button :class="{ active: windMode === 'vectorField' }" @click="setWindMode('vectorField')">矢量</button>
+              <button :class="{ active: windMode === 'procedural' }" @click="setWindMode('procedural')">模拟</button>
             </div>
+          </div>
+          <div v-if="windMode === 'procedural'" class="wind-mode-row">
+            <span class="wind-mode-label">流动开关</span>
+            <el-switch
+              v-model="windFlow"
+              active-color="#1b91ff"
+              inactive-color="#406a9b"
+              size="small"
+              @change="onWindFlowToggle"
+            />
           </div>
           <div class="wind-power-row">
             <input
@@ -167,6 +178,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { setRebarMeshesVisible, loadRebarMeshes, setRebarHighlight, setSecondRebarVisible, setSecondRebarHighlight, loadSecondRebarMeshes, setSteelFrameVisible, setSteelFrameHighlight, loadSteelFrameMeshes, setPipeShedVisible, setPipeShedHighlight, loadPipeShedMeshes, setAnchorVisible, setAnchorHighlight, loadAnchorMeshes, setConduitVisible, setConduitHighlight, loadConduitMeshes, setLockAnchorVisible, setLockAnchorHighlight, loadLockAnchorMeshes } from '@/utils/Common/DrawLine';
 import { startWind, changePower, removeFlowLine, getCurrentPower } from '@/utils/Common/WindFieldSimulation';
 import { startVectorField, removeVectorField, changeVectorPower, getVectorPower } from '@/utils/Common/WindVectorField';
+import { startProceduralWind, removeProceduralWind, changeProceduralPower, setProceduralFlow } from '@/utils/Common/TunnelWindSimulation';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 import { useSceneStore } from '@/stores/sceneStore';
 import { useMonitorStore } from '@/stores/monitorStore';
@@ -467,19 +479,24 @@ const nodeVisible = reactive<Record<string, boolean>>({});
 // ── 风场模拟状态 ─────────────────────────────────────────
 const windEnabled = ref(false);
 const windPower = ref(getCurrentPower() + 1);
-const windMode = ref<'streamline' | 'vectorField'>('streamline');
+const windFlow = ref(false);
+const windMode = ref<'streamline' | 'vectorField' | 'procedural'>('streamline');
 
-const setWindMode = (mode: 'streamline' | 'vectorField') => {
+const setWindMode = (mode: 'streamline' | 'vectorField' | 'procedural') => {
   if (mode === windMode.value) return;
   windMode.value = mode;
   const viewer = DTScopeEngine.viewer;
   if (!viewer) return;
   removeFlowLine(viewer);
   removeVectorField(viewer);
+  removeProceduralWind(viewer);
   if (mode === 'streamline') {
     startWind(viewer);
-  } else {
+  } else if (mode === 'vectorField') {
     startVectorField(viewer);
+  } else {
+    startProceduralWind(viewer);
+    setProceduralFlow(windFlow.value);
   }
 };
 
@@ -489,13 +506,22 @@ const onWindToggle = (val: boolean) => {
   if (val) {
     if (windMode.value === 'vectorField') {
       startVectorField(viewer);
+    } else if (windMode.value === 'procedural') {
+      startProceduralWind(viewer);
+      setProceduralFlow(windFlow.value);
     } else {
       startWind(viewer);
     }
   } else {
     removeFlowLine(viewer);
     removeVectorField(viewer);
+    removeProceduralWind(viewer);
   }
+};
+
+const onWindFlowToggle = (val: boolean) => {
+  windFlow.value = val;
+  setProceduralFlow(val);
 };
 
 const onWindPowerChange = (e: Event) => {
@@ -503,6 +529,7 @@ const onWindPowerChange = (e: Event) => {
   windPower.value = val;
   changePower(val - 1);
   changeVectorPower(val - 1);
+  changeProceduralPower(val - 1);
 };
 
 // 场景切换时清理风场
@@ -512,8 +539,10 @@ watch(() => props.sceneKey, (key) => {
     if (viewer) {
       removeFlowLine(viewer);
       removeVectorField(viewer);
+      removeProceduralWind(viewer);
     }
     windEnabled.value = false;
+    windFlow.value = false;
   }
 });
 

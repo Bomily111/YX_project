@@ -32,7 +32,6 @@
 
     <!-- Level 2: Dataset Detail -->
     <div v-else>
-      <a :href="`${baseUrl}/tem_voxel_full.csv`" download class="td-download-btn">⬇ 下载结果数据</a>
 
       <!-- k≈570 等值面 & 异常体 -->
       <div class="td-section">
@@ -108,9 +107,12 @@
         </button>
         <div v-show="open.voxelCsv" class="td-body">
           <div class="td-kv"><span>文件</span><b>tem_voxel_full.csv</b></div>
-          <a :href="`${baseUrl}/tem_voxel_full.csv`" download class="td-download-btn">⬇ 下载完整数据</a>
+          <button class="td-view-btn" @click="$emit('viewVoxelCloud', selected?.jobId)">
+            <span>📍</span> 在场景中查看体素点云
+          </button>
         </div>
       </div>
+
     </div>
 
     <!-- Zoom Modal -->
@@ -136,7 +138,7 @@ interface Anomaly {
   id: number; voxels: number; cx: number; cy: number; cz: number; k_mean: number
 }
 
-defineEmits<{ viewInScene: [jobId: string] }>()
+defineEmits<{ viewInScene: [jobId: string]; viewVoxelCloud: [jobId: string] }>()
 
 const props = defineProps<{ dataDir: string }>()
 

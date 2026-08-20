@@ -138,11 +138,7 @@
           >
             <span class="pc-card-icon">{{ m.icon }}</span>
             <div class="pc-card-info">
-              <div class="pc-card-label">{{ m.label }}</div>
-              <div class="pc-card-meta">
-                <span class="pc-card-status" :class="m.dataStatus">{{ statusText[m.dataStatus] }}</span>
-                <span v-if="m.latestResult" class="pc-card-time">{{ m.latestResult }}</span>
-              </div>
+              <div class="pc-card-label">{{ m.label }}<span v-if="m.dataStatus === 'available'" class="pc-card-dot"></span></div>
             </div>
             <span class="pc-card-arrow">›</span>
           </div>
@@ -169,6 +165,8 @@
             :method="selectedMethod"
             :data-dir="selectedMethod.key === 'tem' ? '/data/tem_output/latest' : undefined"
             @view-in-scene="(jobId: string) => handleViewInScene(jobId)"
+            @view-voxel-cloud="(jobId: string) => handleViewVoxelCloud(jobId)"
+            @toggle-envelope="(show: boolean) => setJumboEnvelopeVisible(show)"
           />
           <div v-else class="pc-preview-empty">
             <div class="pc-empty-icon">📊</div>
@@ -206,10 +204,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import ProcessTab from './PredictionCenter/ProcessTab.vue'
 import MethodPreview from './PredictionCenter/MethodPreview.vue'
-import { loadTemAnomalyGlb } from '@/utils/Common/GeoModelController'
+import { loadTemAnomalyGlb, deactivateGeoModel, setJumboEnvelopeVisible } from '@/utils/Common/GeoModelController'
+import { loadTemVoxelCloud } from '@/utils/Common/TemVoxelCloud'
 import type { DesignRockGradeSegment } from '@/utils/Common/DrawLine'
 
 interface MethodCard {
@@ -301,22 +300,18 @@ const tabs = [
   { key: 'history' as const, label: '历史记录' },
 ]
 
-const statusText: Record<string, string> = {
-  available: '已有数据',
-  pending: '待处理',
-}
-
 const METHODS: MethodCard[] = [
-  { key: 'face_sketch', label: '掌子面素描', icon: '⬡', category: '超前预报', dataStatus: 'available', latestResult: 'D3K278+100~DK300+800' },
+  { key: 'face_sketch', label: '掌子面素描', icon: '⬡', category: '超前预报', dataStatus: 'pending' },
   { key: 'gpr', label: '地质雷达', icon: '≋', category: '超前预报', dataStatus: 'pending' },
-  { key: 'horiz_drill', label: '超前水平钻', icon: '⊕', category: '超前预报', dataStatus: 'available', latestResult: 'D3K278+100~DK300+800' },
+  { key: 'horiz_drill', label: '超前水平钻', icon: '⊕', category: '超前预报', dataStatus: 'pending' },
   { key: 'deep_hole', label: '加深炮孔', icon: '⦿', category: '超前预报', dataStatus: 'pending' },
-  { key: 'tsp', label: 'TSP反演', icon: '▦', category: '超前预报', dataStatus: 'available', latestResult: 'D3K278+100~DK300+800' },
+  { key: 'tsp', label: 'TSP反演', icon: '▦', category: '超前预报', dataStatus: 'pending' },
   { key: 'tem', label: '瞬变电磁', icon: '⚡', category: '超前预报', dataStatus: 'pending' },
   { key: 'weak_rock', label: '软弱围岩', icon: '◈', category: '不良地质', dataStatus: 'pending' },
   { key: 'high_stress', label: '高地应力', icon: '♨', category: '不良地质', dataStatus: 'pending' },
   { key: 'water_zone', label: '富水带', icon: '💧', category: '不良地质', dataStatus: 'pending' },
   { key: 'fracture_zone', label: '破碎带', icon: '▓', category: '不良地质', dataStatus: 'pending' },
+  { key: 'jumbo_rig', label: '凿岩台车', icon: '⛏', category: '施工设备', dataStatus: 'pending' },
 ]
 
 const methodGroups = computed(() => {
@@ -334,10 +329,17 @@ const methodGroups = computed(() => {
 function handleViewInScene(jobId?: string) {
   if (selectedMethod.value?.key === 'tem') {
     const dir = jobId ? `data/tem_output/${jobId}` : 'data/tem_output/latest'
+    deactivateGeoModel()
     loadTemAnomalyGlb(undefined, dir)
   } else if (selectedMethod.value) {
     emit('action', { key: selectedMethod.value.key, label: selectedMethod.value.label, icon: selectedMethod.value.icon }, 'view')
   }
+}
+
+function handleViewVoxelCloud(jobId?: string) {
+  const dir = jobId ? `data/tem_output/${jobId}` : 'data/tem_output/latest'
+  deactivateGeoModel()
+  loadTemVoxelCloud(dir)
 }
 
 function selectMethod(m: MethodCard) {
@@ -378,6 +380,29 @@ watch(activeTab, (tab) => {
 })
 
 loadDesignSegments()
+
+async function checkDataAvailability() {
+  const checks: Record<string, string> = {
+    face_sketch: '/data/tfs_new/tfs1/2322509.glb',
+    gpr: '/data/gpr/gpr1/1665832_1.glb',
+    horiz_drill: '/data/ahd/ahd1/2320835.glb',
+    tsp: '/data/tsp_new/vs_3.json',
+    tem: '/data/tem_output/index.json',
+    jumbo_rig: '/data/jumbo/jumbo_solid.glb',
+  }
+  for (const m of METHODS) {
+    const url = checks[m.key]
+    if (!url) continue
+    try {
+      const r = await fetch(url, { method: 'HEAD' })
+      if (r.ok) m.dataStatus = 'available'
+    } catch { /* no data, stays pending */ }
+  }
+}
+
+onMounted(() => {
+  checkDataAvailability()
+})
 </script>
 
 <style scoped lang="scss">
@@ -568,13 +593,11 @@ loadDesignSegments()
 .pc-card-icon { font-size: 20px; width: 32px; text-align: center; flex-shrink: 0; }
 .pc-card-info { flex: 1; min-width: 0; }
 .pc-card-label { font-size: 14px; color: #d7e3f5; margin-bottom: 2px; }
-.pc-card-meta { display: flex; align-items: center; gap: 8px; }
-.pc-card-status {
-  font-size: 11px; padding: 1px 6px; border-radius: 8px;
-  &.available { background: rgba(68, 255, 136, 0.15); color: #44ff88; }
-  &.pending  { background: rgba(160, 180, 200, 0.12); color: #8aa0bd; }
+.pc-card-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: #44ff88; margin-left: 6px; vertical-align: middle;
+  box-shadow: 0 0 6px rgba(68, 255, 136, 0.5);
 }
-.pc-card-time { font-size: 11px; color: #5a7a9a; }
 .pc-card-arrow { font-size: 18px; color: #3b5573; flex-shrink: 0; }
 
 .pc-tabs {
