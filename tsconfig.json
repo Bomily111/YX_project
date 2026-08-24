@@ -11,6 +11,7 @@
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
+    "noEmit": true, // 只做类型检查，不向 src/ 输出 .js 产物（构建由 vite 完成）
     "paths": {
       "@/*": ["./src/*"] // 让 TS 认识 @ 符号
     }

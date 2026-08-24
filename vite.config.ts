@@ -32,6 +32,8 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['cesium'],
+    // 只扫描 index.html，避免扫描 public/ 下的 gpr_viewer.html 等静态 HTML 导致依赖扫描失败
+    entries: ['index.html'],
   },
   server: {
     proxy: {

@@ -182,6 +182,7 @@
           </div>
         </div>
         <span class="mileage-end">DK286+400</span>
+        <button class="workface-locate-btn" @click="flyToWorkFace" title="定位到当前工作面">📍 当前掌子面</button>
       </div>
       <div class="header-metrics">
         <!-- 系统状态灯 -->
@@ -211,6 +212,14 @@
       :context="{ scene: activeScene || undefined }"
       @scene-open="handleAgentSceneOpen"
     />
+
+    <!-- 隧道加载动画 -->
+    <Transition name="tunnel-loading-fade">
+      <div v-if="tunnelLoading" class="tunnel-loading-overlay">
+        <div class="tunnel-loading-spinner"></div>
+        <div class="tunnel-loading-text">隧道模型加载中…</div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -243,9 +252,9 @@ import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
-import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
+import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
 import { createMileageRuler, getMileageRuler } from '@/utils/Common/MileageRuler';
-import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, mergeModelConfigsFromApi } from '@/utils/Common/GeoModelController';
+import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, loadJumboModel, mergeModelConfigsFromApi } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
 import { removeVectorField } from '@/utils/Common/WindVectorField';
@@ -527,10 +536,32 @@ const flyToOverview = () => {
   viewer.scene.camera.flyTo({ ...OVERVIEW_VIEW, duration: 2 });
 };
 
+// ── 定位到当前工作面（DK281+500）──────────────────────────
+const flyToWorkFace = () => {
+  activeScene.value = null;
+  const viewer = getViewer();
+  if (!viewer) return;
+  // 飞行过程中预加载目标段，减少到达后的等待
+  prepareTunnelSegmentsAt(94.924554, 29.522403, 2980.4, viewer);
+  viewer.scene.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(94.924554, 29.522403, 2980.4),
+    orientation: {
+      heading: Cesium.Math.toRadians(80.33),
+      pitch: Cesium.Math.toRadians(-8.85),
+      roll: 0,
+    },
+    duration: 2,
+  });
+};
+
+// ── 隧道加载动画状态 ──────────────────────────────────────
+const tunnelLoading = ref(false);
+onTunnelLoadingChange((loading) => { tunnelLoading.value = loading; });
+
 // --- 悬浮拖拽逻辑与图层状态 ---
 const drag = reactive({ left: window.innerWidth - 550, top: 100, isDragging: false, startX: 0, startY: 0 });
 const panelCollapsed = ref(false);
-const layerState = reactive({ showModel: true, showMap: true, showTunnel: true, showRock: true, showWindTunnel: true, showMileageRuler: false });
+const layerState = reactive({ showModel: true, showMap: true, showTunnel: true, showRock: true, showWindTunnel: true, showMileageRuler: true });
 
 // ── 核心逻辑：初始化场景数据 ─────────────────────────────
 const initSceneData = () => {
@@ -559,9 +590,10 @@ const initSceneData = () => {
       console.warn('⚠️ 隧道模型加载失败，跳过：', e);
     }
 
-    // 初始化里程刻度尺（默认隐藏，通过图层面板开关控制）
+    // 初始化里程刻度尺（默认显示，通过图层面板开关控制）
     try {
-      createMileageRuler(viewer).hide();
+      const ruler = createMileageRuler(viewer);
+      if (layerState.showMileageRuler) ruler.show(); else ruler.hide();
     } catch (e) {
       console.warn('⚠️ 里程刻度尺初始化失败：', e);
     }
@@ -583,6 +615,9 @@ const initSceneData = () => {
     }
 
     if (layerState.showRock) loadRockModel(viewer);
+
+    // 台车常开，加载到主页面施工面
+    loadJumboModel(viewer);
 
     addWorksiteEntities(viewer);
     setupWorksiteClickHandler(viewer);
@@ -901,6 +936,9 @@ const handleSelectScene = (key: string) => {
   showDispatchEquipment.value = false;
   showDispatchGantt.value = false;
 
+  // 飞行过程中预加载目标段
+  prepareTunnelSegmentsAt(def.flyTo.lon, def.flyTo.lat, def.flyTo.height, viewer);
+
   viewer.scene.camera.flyTo({
     destination: Cesium.Cartesian3.fromDegrees(def.flyTo.lon, def.flyTo.lat, def.flyTo.height),
     orientation: {
@@ -1131,13 +1169,32 @@ onBeforeUnmount(() => {
   flex: 1;
 }
 
-.bottom-metrics-bar .mileage-start, 
+.bottom-metrics-bar .mileage-start,
 .bottom-metrics-bar .mileage-end {
   font-size: 11px;
   color: rgba(0, 200, 255, 0.6);
   font-family: 'Consolas', monospace;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+.bottom-metrics-bar .workface-locate-btn {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #00eaff;
+  background: rgba(0, 150, 255, 0.12);
+  border: 1px solid rgba(0, 200, 255, 0.35);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: "Microsoft YaHei", sans-serif;
+  transition: all 0.15s;
+}
+.bottom-metrics-bar .workface-locate-btn:hover {
+  background: rgba(0, 200, 255, 0.25);
+  border-color: #00eaff;
+  box-shadow: 0 0 8px rgba(0, 200, 255, 0.3);
 }
 
 .bottom-metrics-bar .mileage-track {
@@ -1586,5 +1643,53 @@ onBeforeUnmount(() => {
   }
 
   .back-icon { font-size: 15px; }
+}
+
+// ── 隧道加载动画 ──────────────────────────────────────────
+.tunnel-loading-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 30px;
+  background: rgba(0, 8, 22, 0.85);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+.tunnel-loading-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(0, 170, 255, 0.2);
+  border-top-color: #00eaff;
+  border-radius: 50%;
+  animation: tunnel-loading-spin 0.8s linear infinite;
+}
+
+@keyframes tunnel-loading-spin {
+  to { transform: rotate(360deg); }
+}
+
+.tunnel-loading-text {
+  font-size: 13px;
+  color: rgba(180, 220, 255, 0.85);
+  font-family: "Microsoft YaHei", sans-serif;
+  letter-spacing: 1px;
+}
+
+.tunnel-loading-fade-enter-active,
+.tunnel-loading-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.tunnel-loading-fade-enter-from,
+.tunnel-loading-fade-leave-to {
+  opacity: 0;
 }
 </style>

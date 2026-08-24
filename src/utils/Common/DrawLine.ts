@@ -10,6 +10,24 @@ let allLineEntity: Cesium.Entity | null | undefined = null;
 let tunnelGlbPrimitives: any[] = [];
 let windTunnelGlbPrimitives: any[] = [];
 
+// ── 隧道按需加载状态 ──────────────────────────────────────
+const TUNNEL_LAZY_RADIUS = 1500;                       // 相机周围加载半径（米）
+const TUNNEL_LAZY_UNLOAD_MARGIN = 500;                 // 卸载滞回余量（米），避免边界反复加载/卸载
+let tunnelLazyCameraHandler: (() => void) | null = null; // 相机 moveEnd 监听句柄
+const tunnelLoadingSet = new Set<number>();             // 正在加载中的段，防止重复加载
+let tunnelGlbVisibleFlag = true;                        // 隧道整体显隐状态，懒加载段需遵循
+let tunnelLoadingCount = 0;                             // 正在加载中的段数
+let tunnelLoadingListener: ((loading: boolean) => void) | null = null; // 加载状态回调（供 UI 显示加载动画）
+
+function notifyTunnelLoading() {
+  if (tunnelLoadingListener) tunnelLoadingListener(tunnelLoadingCount > 0);
+}
+
+/** 注册隧道加载状态回调（传 null 取消），回调参数 = 是否正在加载 */
+export function onTunnelLoadingChange(fn: ((loading: boolean) => void) | null) {
+  tunnelLoadingListener = fn;
+}
+
 export interface DesignRockGradeSegment {
   modelIndex: number;
   startMileage: string;
@@ -1236,6 +1254,103 @@ const SEGMENT_CONFIGS: { lon: number; lat: number; height: number; headingDeg: n
   { lon: 94.9626185833, lat: 29.496835823399998, height: 2965.48, headingDeg: 90 },
 ];
 
+/** 加载单段隧道 */
+function loadTunnelSegment(i: number, viewer: any) {
+  if (tunnelGlbPrimitives[i] || tunnelLoadingSet.has(i)) return;
+  const cfg = SEGMENT_CONFIGS[i];
+  if (!cfg) return;
+
+  const pos = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height);
+  const hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(cfg.headingDeg), 0, 0);
+  const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr);
+  const idx = String(i).padStart(3, '0');
+  const url = `data/tunnel/tunnel${idx}.glb`;
+
+  tunnelLoadingSet.add(i);
+  tunnelLoadingCount++;
+  notifyTunnelLoading();
+  Cesium.Model.fromGltfAsync({ url, modelMatrix })
+    .then((model: any) => {
+      const primitive = viewer.scene.primitives.add(model);
+      primitive.show = tunnelGlbVisibleFlag;
+      tunnelGlbPrimitives[i] = primitive;
+      applyDesignRockGradeAppearance(primitive, i);
+      console.log(`[DrawLine] 隧道段 ${i} 加载完成`);
+    })
+    .catch((e: any) => console.error(`[DrawLine] tunnel${idx}.glb 加载失败:`, e))
+    .finally(() => {
+      tunnelLoadingSet.delete(i);
+      tunnelLoadingCount--;
+      notifyTunnelLoading();
+    });
+}
+
+/** 卸载单段隧道 */
+function unloadTunnelSegment(i: number, viewer: any) {
+  const p = tunnelGlbPrimitives[i];
+  if (!p) return;
+  try { viewer.scene.primitives.remove(p); } catch (_) {}
+  tunnelGlbPrimitives[i] = undefined;
+}
+
+/** 根据相机位置按需加载/卸载隧道段 */
+function updateTunnelLazyLoad(viewer: any) {
+  if (!viewer || !viewer.camera) return;
+  const carto = viewer.camera.positionCartographic;
+  if (!carto) return;
+  const cameraCart = Cesium.Cartesian3.fromRadians(carto.longitude, carto.latitude, carto.height);
+
+  for (let i = 0; i < SEGMENT_COUNT; i++) {
+    const cfg = SEGMENT_CONFIGS[i];
+    const segCart = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height);
+    const dist = Cesium.Cartesian3.distance(cameraCart, segCart);
+    if (dist <= TUNNEL_LAZY_RADIUS) {
+      if (!tunnelGlbPrimitives[i]) loadTunnelSegment(i, viewer);
+    } else if (dist > TUNNEL_LAZY_RADIUS + TUNNEL_LAZY_UNLOAD_MARGIN) {
+      if (tunnelGlbPrimitives[i]) unloadTunnelSegment(i, viewer);
+    }
+  }
+}
+
+/** 预加载指定位置附近的隧道段（用于相机跳转前，让飞行过程中提前加载，减少跳转后的等待） */
+export function prepareTunnelSegmentsAt(lon: number, lat: number, height: number, customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  const target = Cesium.Cartesian3.fromDegrees(lon, lat, height);
+  for (let i = 0; i < SEGMENT_COUNT; i++) {
+    const cfg = SEGMENT_CONFIGS[i];
+    const segCart = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height);
+    if (Cesium.Cartesian3.distance(target, segCart) <= TUNNEL_LAZY_RADIUS && !tunnelGlbPrimitives[i]) {
+      loadTunnelSegment(i, viewer);
+    }
+  }
+}
+
+export function loadTunnelGlb(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+
+  removeTunnelGlb(viewer);
+
+  // 相机移动结束后按需加载/卸载
+  let timer: any = null;
+  const onCameraMove = () => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => updateTunnelLazyLoad(viewer), 300);
+  };
+  tunnelLazyCameraHandler = onCameraMove;
+  viewer.camera.moveEnd.addEventListener(onCameraMove);
+
+  // 首帧加载
+  updateTunnelLazyLoad(viewer);
+
+  console.log(`[DrawLine] 分段隧道按需加载已启用（半径 ${TUNNEL_LAZY_RADIUS}m，共 ${SEGMENT_COUNT} 段）`);
+}
+
+// =========================================================
+// 旧版：全量加载 17 段隧道（保留备用，如需恢复删除下方注释即可）
+// =========================================================
+/*
 export function loadTunnelGlb(customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
@@ -1268,6 +1383,7 @@ export function loadTunnelGlb(customViewer?: any) {
 
   console.log(`[DrawLine] 分段隧道 GLB 共 ${SEGMENT_COUNT} 段待加载`);
 }
+*/
 
 /**
  * 移除所有 GLB 隧道节
@@ -1275,6 +1391,10 @@ export function loadTunnelGlb(customViewer?: any) {
 export function removeTunnelGlb(customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
+  if (tunnelLazyCameraHandler) {
+    viewer.camera.moveEnd.removeEventListener(tunnelLazyCameraHandler);
+    tunnelLazyCameraHandler = null;
+  }
   for (const p of tunnelGlbPrimitives) {
     if (!p) continue;
     try { viewer.scene.primitives.remove(p); } catch (_) {}
@@ -1287,6 +1407,7 @@ export function removeTunnelGlb(customViewer?: any) {
  * 控制 GLB 隧道节显示/隐藏
  */
 export function setTunnelGlbVisible(show: boolean) {
+  tunnelGlbVisibleFlag = show;
   for (const p of tunnelGlbPrimitives) if (p) p.show = show;
 }
 

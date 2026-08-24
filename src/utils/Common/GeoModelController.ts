@@ -26,6 +26,7 @@ interface ModelConfig {
   glbRoll?: number;                     // GLB 模型绕自身X轴滚转（弧度）
   glbYRot?: number;                     // GLB 模型额外绕Y轴旋转（弧度）
   glbZRot?: number;                     // GLB 模型额外绕Z轴（上方）旋转（弧度）
+  glbScale?: number;                    // GLB 模型统一缩放（默认 1）
   tunnelPos: [number, number, number];  // 模型锚点 [lon, lat, h]；glbItems 模式下作为参考里程的位置
   tunnelHeading: number;                // 随道参考模型朝向（弧度，与 Layue-master 原始值一致）
   referenceMileage?: number;            // glbItems 模式下的参考里程（DK 数字），其他里程相对此偏移
@@ -176,16 +177,17 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
     lookAtOffset: [265, -357, 84],
   },
   // 凿岩台车（三臂凿岩台车 ZYS113，Creo → GLB；实体 + 半透明工作包络）
-  // 定位参数为占位值，先复用软弱围岩锚点，后续按实际隧道里程回填
+  // 凿岩台车（三臂凿岩台车 ZYS113）—— 主页面施工面 DK281+500
   jumbo_rig: {
     glbUrl: 'data/jumbo/jumbo_solid.glb',
-    envelopeUrl: 'data/jumbo/jumbo_envelope.glb',
-    glbHeading: 1.5708,  // 90° 占位，需按台车朝向校准
-    tunnelPos: [94.9044380, 29.5323360, 2978.00],
-    flyDest: { x: -475111.5, y: 5536216.1, z: 3126872.5 },
-    flyOrientation: { heading: 0.5322, pitch: -0.3723 },
-    lookAtPos: [94.9044380, 29.5323360, 2978.00],
-    lookAtOffset: [125, -150, 125],
+    glbHeading: 2.248,   // 128.8°（台车长轴是 Z 轴，需视觉校准 ±π/2）
+    glbScale: 0.1,       // 包围盒 168m → 16.8m
+    tunnelPos: [94.925617, 29.522815, 2957.0],
+    tunnelHeading: 128.80,
+    flyDest: { x: -477144.7, y: 5536564.0, z: 3125912.7 },
+    flyOrientation: { heading: 5.6439, pitch: -0.1861 },
+    lookAtPos: [94.925617, 29.522815, 2957.0],
+    lookAtOffset: [265, -357, 84],
     skipLookAt: true,
   },
 };
@@ -237,6 +239,10 @@ export function activateGeoModel(key: string, customViewer?: any) {
         }
       } else {
         modelMatrix = LocalFrameToFixedFrame(cartPos);
+      }
+      if (cfg.glbScale && cfg.glbScale !== 1) {
+        const scaleM = Cesium.Matrix4.fromUniformScale(cfg.glbScale);
+        modelMatrix = Cesium.Matrix4.multiply(modelMatrix, scaleM, new Cesium.Matrix4());
       }
       return modelMatrix;
     };
@@ -452,6 +458,49 @@ export function updateRockMatrix(lon: number, lat: number, height: number, headi
     Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr),
     rockPrimitive.modelMatrix,
   );
+}
+
+// ── 主界面凿岩台车模型（直接叠加在主页面施工面处，不切场景、不飞相机）────
+let jumboPrimitive: any = null;
+
+/**
+ * 在主页面施工面（DK281+500）加载凿岩台车 GLB 模型
+ */
+export function loadJumboModel(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+
+  const cfg = MODEL_CONFIGS.jumbo_rig;
+  if (!cfg?.glbUrl) return;
+  if (jumboPrimitive) return;
+
+  const pos = Cesium.Cartesian3.fromDegrees(cfg.tunnelPos[0], cfg.tunnelPos[1], cfg.tunnelPos[2]);
+  const hpr = new Cesium.HeadingPitchRoll(cfg.glbHeading ?? 0, 0, cfg.glbRoll ?? 0);
+  let modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr);
+  if (cfg.glbScale && cfg.glbScale !== 1) {
+    const scaleM = Cesium.Matrix4.fromUniformScale(cfg.glbScale);
+    modelMatrix = Cesium.Matrix4.multiply(modelMatrix, scaleM, new Cesium.Matrix4());
+  }
+
+  Cesium.Model.fromGltfAsync({ url: cfg.glbUrl, modelMatrix })
+    .then((model) => {
+      jumboPrimitive = viewer.scene.primitives.add(model);
+      console.log('[GeoModel] 凿岩台车已加载到主页面施工面:', cfg.tunnelPos);
+    })
+    .catch((e) => console.error('[GeoModel] 凿岩台车加载失败:', e));
+}
+
+/** 显示 / 隐藏主界面凿岩台车模型 */
+export function setJumboModelVisible(show: boolean) {
+  if (jumboPrimitive) jumboPrimitive.show = show;
+}
+
+/** 从场景中移除主界面凿岩台车模型 */
+export function removeJumboModel(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer || !jumboPrimitive) return;
+  viewer.scene.primitives.remove(jumboPrimitive);
+  jumboPrimitive = null;
 }
 
 /** 退出模型视图时清理所有地质模型 */
