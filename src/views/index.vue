@@ -886,6 +886,10 @@ const handleAgentSceneOpen = (scene: string) => {
     router.push('/support-experiment')
     return
   }
+  if (scene === 'vent') {
+    router.push('/ventilation-twin')
+    return
+  }
   // 其他场景：在主 Viewer 上激活
   if (SCENE_DEFS[scene]) {
     handleSelectScene(scene)
@@ -905,26 +909,23 @@ const handleSelectScene = (key: string) => {
     return;
   }
 
+  // 通风除尘：进入独立 Cesium 数字孪生模块
+  if (key === 'vent') {
+    router.push('/ventilation-twin');
+    return;
+  }
+
   activeScene.value = key;
 
-  // 通风除尘场景：切换为风场模拟隧道模型
-  if (key === 'vent') {
-    layerState.showModel = false;
-    setCenterLineVisible(false);
-    setWorksiteVisible(false);
-    setTunnelGlbVisible(false);
-    loadWindTunnelGlb(viewer, true, true);
-  } else {
-    // 进入其他场景时恢复隧道模型
-    removeWindTunnelGlb(viewer);
-    removeVectorField(viewer);
-    removeProceduralWind(viewer);
-    layerState.showModel = true;
-    setCenterLineVisible(true);
-    setWorksiteVisible(true);
-    setTunnelGlbVisible(layerState.showTunnel);
-    setWindTunnelTranslucent(false);
-  }
+  // 其他场景继续复用主 Viewer
+  removeWindTunnelGlb(viewer);
+  removeVectorField(viewer);
+  removeProceduralWind(viewer);
+  layerState.showModel = true;
+  setCenterLineVisible(true);
+  setWorksiteVisible(true);
+  setTunnelGlbVisible(layerState.showTunnel);
+  setWindTunnelTranslucent(false);
 
   setDesignRockGradeModelEnabled(key === 'workface', viewer).catch((error) => {
     console.error('[围岩分级] 设计版模型加载失败:', error);

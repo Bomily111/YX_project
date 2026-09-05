@@ -1,13 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Dashboard from '@/views/index.vue'
 import BlastTwinPage from '@/views/BlastTwinPage.vue'
 import SupportTwinPage from '@/views/SupportTwinPage.vue'
+import VentilationTwinPage from '@/views/VentilationTwinPage.vue'
 import AdminLayout from '@/views/admin/AdminLayout.vue'
 import AdminWorksites from '@/views/admin/WorksitesPage.vue'
 import AdminModels from '@/views/admin/ModelsPage.vue'
 import AdminAlerts from '@/views/admin/AlertsPage.vue'
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Dashboard',
@@ -22,6 +23,11 @@ const routes = [
     path: '/support-experiment',
     name: 'SupportTwin',
     component: SupportTwinPage
+  },
+  {
+    path: '/ventilation-twin',
+    name: 'VentilationTwin',
+    component: VentilationTwinPage
   },
   {
     path: '/admin',
