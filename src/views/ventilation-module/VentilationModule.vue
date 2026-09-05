@@ -5,7 +5,7 @@
         <h1>隧道通风仿真平台 · 三管隧道系统</h1>
         <div class="badges"><span>几何模型</span><span>1D Hardy-Cross</span><span>3D CFD Thermal</span></div>
       </div>
-      <div class="meta">马蹄形 9m × 7.66m · 线间距 30m · DDK 22.5°斜交<br>Left 4.0km · Right 8.2km · DDK 7.2km</div>
+      <div class="meta">马蹄形 9m × 7.66m · 主洞中心距 32m · DDK 22.5°斜交<br>Left 4.0km · Right 8.2km · DDK 7.2km</div>
     </header>
 
     <div class="vent-layout">
@@ -30,15 +30,15 @@
               <span><i style="background:#2e7d32"></i>中速 1–5 m/s</span>
               <span><i style="background:#f9a825"></i>高速 5–10 m/s</span>
               <span><i style="background:#e53935"></i>极速 &gt;10 m/s</span>
-              <em>拖拽旋转 · 滚轮缩放 · 右键平移 · 点击采样点查看详情</em>
+              <em>左键旋转 · 右键/中键平移 · 滚轮平滑缩放 · 点击采样点查看详情</em>
             </div>
             <div v-if="view === 'flow'" class="flow-toolbar">
               <button :class="{ on: visibility.points }" @click="toggleLayer('points')">● CFD 点云</button>
               <button :class="{ on: visibility.arrows }" @click="toggleLayer('arrows')">◈ 矢量</button>
               <button :class="{ on: visibility.streamlines }" @click="toggleLayer('streamlines')">〰 流线</button>
               <button :class="{ on: visibility.particles }" @click="toggleLayer('particles')">• 粒子</button>
-              <button @click="focusOverview">⌂ 隧道全景</button>
-              <button @click="focusCfd">◎ CFD 区间</button>
+              <button title="恢复完整隧道鸟瞰视角" @click="focusOverview">⌂ 隧道全景</button>
+              <button title="快速定位到 K3+805～K4+005 风场区间" @click="focusCfd">◎ CFD 区间</button>
             </div>
             <div v-if="view === 'flow'" class="display-controls">
               <label>透明度 <input type="range" min="0.15" max="1" step="0.05" v-model.number="modelOpacity" @input="changeOpacity"></label>
@@ -94,7 +94,7 @@
           <span class="preview-heading"><b>二维通风设计图</b><em>点击展开 ↗</em></span>
           <TunnelGeometryView compact />
           <span class="preview-metrics">
-            <span><small>标准断面</small><b>9m × 7.66m</b></span><span><small>线间距</small><b>30m</b></span>
+            <span><small>标准断面</small><b>9m × 7.66m</b></span><span><small>主洞中心距</small><b>32m</b></span>
             <span><small>DDK 接入角</small><b>22.5°</b></span><span><small>横通道</small><b>4 处</b></span>
           </span>
         </button>
@@ -102,7 +102,7 @@
         <template v-if="view === 'geometry'">
           <article class="info-card geometry-info"><h3>隧道断面</h3>
             <p><span>截面形状</span><b>马蹄形</b></p><p><span>净宽 × 净高</span><b>9.0m × 7.66m</b></p>
-            <p><span>截面积</span><b>58.5 m²</b></p><p><span>主洞-探洞线间距</span><b>30m</b></p><p><span>DDK 接入角</span><b>22.5°</b></p>
+            <p><span>截面积</span><b>58.5 m²</b></p><p><span>主洞中心距 / 净岩柱</span><b>32m / 约19.6m</b></p><p><span>DDK 接入角</span><b>22.5°</b></p>
           </article>
           <article class="info-card geometry-info"><h3>三管隧道</h3>
             <div class="geo-box"><h4>左主洞 (主洞)</h4>
@@ -132,6 +132,10 @@
           </article>
         </template>
         <template v-else-if="view === 'flow'">
+          <article class="info-card model-composition"><h3>三维隧道装配</h3>
+            <p><span>左主洞</span><b>TBM · 6,800m · 68段</b></p><p><span>右主洞</span><b>钻爆 · 7,800m · 78段</b></p>
+            <p><span>横通道</span><b>4处 · 4m×4m</b></p><p><span>附属通道</span><b>DDK + A线 + D线</b></p>
+          </article>
           <article class="info-card"><h3>稳态 CFD 风场</h3><p><span>计算点</span><b>{{ cfdCells?.meta.n || 0 }}</b></p><p><span>矢量样本</span><b>{{ cfdArrows?.meta.n || 0 }}</b></p><p><span>数据区间</span><b>K3+805～K4+005</b></p><p><span>当前着色</span><b>{{ colorMode === 'velocity' ? '风速' : '温度' }}</b></p></article>
           <article v-if="pickedInfo" class="info-card highlight"><h3>选中 CFD 采样点</h3><p><span>里程</span><b>{{ formatMileage(pickedInfo.chainage) }}</b></p><p><span>风速</span><b>{{ pickedInfo.velocity.toFixed(3) }} m/s</b></p><p><span>温度</span><b>{{ pickedInfo.temperature.toFixed(2) }} K / {{ (pickedInfo.temperature - 273.15).toFixed(1) }}°C</b></p></article>
           <article class="info-card gallery"><h3>CFD 分析图</h3><div v-for="img in analysisImages" :key="img.src"><img :src="img.src" :alt="img.label" @click="modalImage = img.src"><small>{{ img.label }}</small></div></article>
@@ -171,7 +175,7 @@ const cesiumHost = ref<HTMLElement>()
 const loading3d = ref(false)
 const loadingText = ref('加载 Cesium 场景…')
 const colorMode = ref<ColorMode>('velocity')
-const modelOpacity = ref(0.42)
+const modelOpacity = ref(0.82)
 const visibility = ref({ points: true, arrows: true, streamlines: true, particles: true })
 const renderedField = ref<'steady' | 'thermal' | null>(null)
 const pickedInfo = ref<any>(null)
@@ -262,13 +266,15 @@ function focusOverview() {
   if (!viewer) return
   orbit?.reset()
   Cesium.Cartesian3.clone(overviewFocus, orbitFocus)
-  lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(overviewRadius * 1.18, overviewRadius * 0.83, overviewRadius * -0.71))
+  // The GLB is assembled in plan order (left/TBM on positive local X). This
+  // camera keeps that alignment above the right/drill tunnel, matching the 2D plan.
+  lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(overviewRadius * -1.18, overviewRadius * 0.83, overviewRadius * 0.71))
 }
 function focusCfd() {
   if (!viewer) return
   orbit?.reset()
-  Cesium.Cartesian3.fromElements(-50, 3.5, 3905, orbitFocus)
-  lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(180, 100, -260))
+  Cesium.Cartesian3.fromElements(16, 3.5, 3905, orbitFocus)
+  lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(-180, 100, 260))
 }
 function formatMileage(z: number) { const n = Math.abs(Math.round(z)); return `K${Math.floor(n/1000)}+${String(n%1000).padStart(3,'0')}` }
 

@@ -66,42 +66,66 @@ export function installLocalOrbit(
   let mode: 'orbit' | 'pan' | null = null
 
   const focusNow = () => Cesium.Cartesian3.add(getFocus(), panOffset, new Cesium.Cartesian3())
+  const setLocalView = (position: Cesium.Cartesian3, focus: Cesium.Cartesian3) => {
+    const direction = Cesium.Cartesian3.normalize(
+      Cesium.Cartesian3.subtract(focus, position, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    )
+    camera.setView({ destination: position, orientation: { direction, up: Cesium.Cartesian3.UNIT_Y } })
+  }
   const move = (movement: any) => {
     if (!mode) return
     const dx = movement.endPosition.x - movement.startPosition.x
     const dy = movement.endPosition.y - movement.startPosition.y
     const focus = focusNow()
     if (mode === 'orbit') {
-      const transform = Cesium.Transforms.eastNorthUpToFixedFrame(focus)
-      camera.lookAtTransform(transform)
-      camera.rotateLeft(dx * 0.005)
-      camera.rotateUp(-dy * 0.005)
-      camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
+      // Work entirely in the tunnel's local Y-up frame. Cesium's normal
+      // east/north/up orbit is unstable for engineering models near (0,0,0).
+      const offset = Cesium.Cartesian3.subtract(camera.position, focus, new Cesium.Cartesian3())
+      const distance = Math.max(Cesium.Cartesian3.magnitude(offset), 0.001)
+      const horizontal = Math.hypot(offset.x, offset.z)
+      const yaw = Math.atan2(offset.x, offset.z) - dx * 0.0045
+      const currentPitch = Math.atan2(offset.y, horizontal)
+      const pitch = Cesium.Math.clamp(currentPitch + dy * 0.004, -1.47, 1.47)
+      const projected = Math.cos(pitch) * distance
+      const position = new Cesium.Cartesian3(
+        focus.x + Math.sin(yaw) * projected,
+        focus.y + Math.sin(pitch) * distance,
+        focus.z + Math.cos(yaw) * projected,
+      )
+      setLocalView(position, focus)
     } else {
       const distance = Cesium.Cartesian3.distance(camera.position, focus)
-      const scale = distance * 0.0012
+      const scale = Math.max(distance * 0.001, 0.02)
       const right = Cesium.Cartesian3.multiplyByScalar(camera.right, -dx * scale, new Cesium.Cartesian3())
       const up = Cesium.Cartesian3.multiplyByScalar(camera.up, dy * scale, new Cesium.Cartesian3())
       const delta = Cesium.Cartesian3.add(right, up, new Cesium.Cartesian3())
-      camera.move(delta, 1)
       Cesium.Cartesian3.add(panOffset, delta, panOffset)
+      const position = Cesium.Cartesian3.add(camera.position, delta, new Cesium.Cartesian3())
+      setLocalView(position, Cesium.Cartesian3.add(focus, delta, new Cesium.Cartesian3()))
     }
     scene.requestRender()
   }
   const wheel = (delta: number) => {
     const focus = focusNow()
-    const distance = Cesium.Cartesian3.distance(camera.position, focus)
-    const step = Math.min(Math.max(distance * 0.1, 2), 800)
-    if (delta > 0 && distance > 5) camera.zoomIn(Math.min(step, distance - 4))
-    else if (delta < 0 && distance < 20000) camera.zoomOut(step)
+    const offset = Cesium.Cartesian3.subtract(camera.position, focus, new Cesium.Cartesian3())
+    const distance = Cesium.Cartesian3.magnitude(offset)
+    const nextDistance = Cesium.Math.clamp(distance * (delta > 0 ? 0.86 : 1.16), 4, 26000)
+    Cesium.Cartesian3.multiplyByScalar(offset, nextDistance / Math.max(distance, 0.001), offset)
+    setLocalView(Cesium.Cartesian3.add(focus, offset, new Cesium.Cartesian3()), focus)
     scene.requestRender()
   }
 
   const T = Cesium.ScreenSpaceEventType
-  handler.setInputAction(() => { mode = 'orbit' }, T.LEFT_DOWN)
-  handler.setInputAction(() => { mode = 'pan' }, T.RIGHT_DOWN)
-  handler.setInputAction(() => { mode = null }, T.LEFT_UP)
-  handler.setInputAction(() => { mode = null }, T.RIGHT_UP)
+  const begin = (nextMode: 'orbit' | 'pan') => { mode = nextMode; scene.canvas.style.cursor = 'grabbing' }
+  const end = () => { mode = null; scene.canvas.style.cursor = 'grab' }
+  scene.canvas.style.cursor = 'grab'
+  handler.setInputAction(() => begin('orbit'), T.LEFT_DOWN)
+  handler.setInputAction(() => begin('pan'), T.RIGHT_DOWN)
+  handler.setInputAction(() => begin('pan'), T.MIDDLE_DOWN)
+  handler.setInputAction(end, T.LEFT_UP)
+  handler.setInputAction(end, T.RIGHT_UP)
+  handler.setInputAction(end, T.MIDDLE_UP)
   handler.setInputAction(move, T.MOUSE_MOVE)
   handler.setInputAction(wheel, T.WHEEL)
 

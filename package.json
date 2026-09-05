@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vue-tsc -b && vite build",
+    "build:ventilation-model": "node scripts/build_ventilation_tunnel.cjs",
     "preview": "vite preview",
     "convert:obj": "node scripts/obj2glb.cjs"
   },

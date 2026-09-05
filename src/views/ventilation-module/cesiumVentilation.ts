@@ -11,6 +11,7 @@ export interface CfdData {
 
 export interface VentilationLayers {
   model?: any
+  tunnelLabels?: Cesium.LabelCollection
   points?: Cesium.PointPrimitiveCollection
   arrows?: Cesium.PolylineCollection
   arrowHeads?: Cesium.PointPrimitiveCollection
@@ -65,8 +66,8 @@ function createMapper(data: CfdData): Mapper {
     point(i: number) {
       const x = data.x[i]
       const mappedX = x <= gap
-        ? remap(x, lx0, lx1, -4, 4)
-        : remap(x, rx0, rx1, -104, -96)
+        ? remap(x, lx0, lx1, 26.5, 37.5)
+        : remap(x, rx0, rx1, -5.5, 5.5)
       return new Cesium.Cartesian3(mappedX, remap(data.y[i], yMin, yMax, 0.2, 6.8), data.z[i])
     },
   }
@@ -74,18 +75,20 @@ function createMapper(data: CfdData): Mapper {
 
 export async function loadTunnelModel(viewer: Cesium.Viewer) {
   layers.model = await Cesium.Model.fromGltfAsync({
-    url: '/data/ventilation/tunnel-main.glb',
+    url: '/data/ventilation/tunnel-assembled.glb',
     modelMatrix: Cesium.Matrix4.IDENTITY,
     // The migrated model uses project-local coordinates (Y is elevation and Z
     // is tunnel chainage). Prevent Cesium's normal geospatial Y-up conversion
     // so the GLB, CFD samples and local camera stay in the same frame.
     upAxis: Cesium.Axis.Z,
+    forwardAxis: Cesium.Axis.X,
   })
   viewer.scene.primitives.add(layers.model)
-  layers.model.color = Cesium.Color.fromCssColorString('#7896aa').withAlpha(0.42)
-  // A replacement tint keeps the tunnel envelope readable on Cesium's dark
-  // background while retaining the translucent look of the source viewer.
-  layers.model.colorBlendMode = Cesium.ColorBlendMode.REPLACE
+  layers.model.color = Cesium.Color.WHITE.withAlpha(0.82)
+  // Preserve the Blender materials; only add a slight cool tint so TBM,
+  // drill-and-blast and auxiliary linings remain visually distinguishable.
+  layers.model.colorBlendMode = Cesium.ColorBlendMode.MIX
+  layers.model.colorBlendAmount = 0.08
   if (!layers.model.ready) {
     await new Promise<void>((resolve, reject) => {
       const removeReady = layers.model.readyEvent.addEventListener(() => {
@@ -100,13 +103,25 @@ export async function loadTunnelModel(viewer: Cesium.Viewer) {
       })
     })
   }
+  const labels = viewer.scene.primitives.add(new Cesium.LabelCollection())
+  const labelStyle = {
+    font: '600 15px Microsoft YaHei',
+    showBackground: true,
+    backgroundColor: Cesium.Color.fromCssColorString('#07131f').withAlpha(0.78),
+    pixelOffset: new Cesium.Cartesian2(0, -12),
+    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    scaleByDistance: new Cesium.NearFarScalar(100, 1, 9000, 0.55),
+  }
+  labels.add({ ...labelStyle, position: new Cesium.Cartesian3(32, 10, 3905), text: '左主洞 · TBM' })
+  labels.add({ ...labelStyle, position: new Cesium.Cartesian3(0, 10, 3905), text: '右主洞 · 钻爆' })
+  layers.tunnelLabels = labels
   viewer.scene.requestRender()
   return layers.model
 }
 
 export function setModelOpacity(viewer: Cesium.Viewer, opacity: number) {
   if (!layers.model) return
-  layers.model.color = Cesium.Color.fromCssColorString('#7896aa').withAlpha(opacity)
+  layers.model.color = Cesium.Color.WHITE.withAlpha(opacity)
   viewer.scene.requestRender()
 }
 
@@ -179,7 +194,7 @@ export function buildSteadyLayers(
   layers.particleState = []
   for (let i = 0; i < 180; i++) {
     const tube = Math.random() < 0.5 ? 'left' : 'right'
-    const x = tube === 'left' ? (Math.random() - 0.5) * 7 : -100 + (Math.random() - 0.5) * 7
+    const x = tube === 'left' ? 32 + (Math.random() - 0.5) * 10 : (Math.random() - 0.5) * 10
     const point = particles.add({
       position: new Cesium.Cartesian3(x, 0.5 + Math.random() * 5.8, 3805 + Math.random() * 200),
       color: velocityColor(0.5, 0.82), pixelSize: 5,

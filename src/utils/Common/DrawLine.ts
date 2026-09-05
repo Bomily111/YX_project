@@ -1254,6 +1254,68 @@ const SEGMENT_CONFIGS: { lon: number; lat: number; height: number; headingDeg: n
   { lon: 94.9626185833, lat: 29.496835823399998, height: 2965.48, headingDeg: 90 },
 ];
 
+const CENTERLINE_COORDINATES = (centerLineData as any).features[0].geometry.coordinates as [number, number, number][];
+const SEGMENT_CENTERLINE_INDICES = SEGMENT_CONFIGS.map((cfg) => {
+  let bestIndex = 0;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < CENTERLINE_COORDINATES.length; i++) {
+    const c = CENTERLINE_COORDINATES[i];
+    const dx = (c[0] - cfg.lon) * Math.cos(Cesium.Math.toRadians(cfg.lat));
+    const dy = c[1] - cfg.lat;
+    const distance = dx * dx + dy * dy;
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestIndex = i;
+    }
+  }
+  return bestIndex;
+});
+
+/**
+ * 每个导出段在首尾保留了数米重叠网格。用公共中线断面裁掉重复渲染区，
+ * 避免两个几乎共面的衬砌同时显示造成黑缝、闪烁和看似错位。
+ */
+function createTunnelSegmentClippingPlanes(segmentIndex: number, modelMatrix: Cesium.Matrix4) {
+  const inverse = Cesium.Matrix4.inverse(modelMatrix, new Cesium.Matrix4());
+  const planes: Cesium.ClippingPlane[] = [];
+
+  const addBoundaryPlane = (boundaryIndex: number, keepForward: boolean) => {
+    const cfg = boundaryIndex < SEGMENT_CONFIGS.length
+      ? SEGMENT_CONFIGS[boundaryIndex]
+      : TUNNEL_END_CONFIG;
+    const centerIndex = boundaryIndex < SEGMENT_CENTERLINE_INDICES.length
+      ? SEGMENT_CENTERLINE_INDICES[boundaryIndex]
+      : CENTERLINE_COORDINATES.length - 1;
+    const before = CENTERLINE_COORDINATES[Math.max(0, centerIndex - 1)];
+    const after = CENTERLINE_COORDINATES[Math.min(CENTERLINE_COORDINATES.length - 1, centerIndex + 1)];
+    const beforeWorld = Cesium.Cartesian3.fromDegrees(before[0], before[1], before[2] + 3);
+    const afterWorld = Cesium.Cartesian3.fromDegrees(after[0], after[1], after[2] + 3);
+    const tangentWorld = Cesium.Cartesian3.normalize(
+      Cesium.Cartesian3.subtract(afterWorld, beforeWorld, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    );
+    const tangentLocal = Cesium.Cartesian3.normalize(
+      Cesium.Matrix4.multiplyByPointAsVector(inverse, tangentWorld, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    );
+    const boundaryWorld = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height);
+    const boundaryLocal = Cesium.Matrix4.multiplyByPoint(inverse, boundaryWorld, new Cesium.Cartesian3());
+    const normal = keepForward
+      ? tangentLocal
+      : Cesium.Cartesian3.negate(tangentLocal, new Cesium.Cartesian3());
+    planes.push(new Cesium.ClippingPlane(normal, -Cesium.Cartesian3.dot(normal, boundaryLocal)));
+  };
+
+  if (segmentIndex > 0) addBoundaryPlane(segmentIndex, true);
+  if (segmentIndex < SEGMENT_COUNT - 1) addBoundaryPlane(segmentIndex + 1, false);
+
+  return new Cesium.ClippingPlaneCollection({
+    planes,
+    unionClippingRegions: true,
+    edgeWidth: 0,
+  });
+}
+
 /** 加载单段隧道 */
 function loadTunnelSegment(i: number, viewer: any) {
   if (tunnelGlbPrimitives[i] || tunnelLoadingSet.has(i)) return;
@@ -1263,13 +1325,14 @@ function loadTunnelSegment(i: number, viewer: any) {
   const pos = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height);
   const hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(cfg.headingDeg), 0, 0);
   const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr);
+  const clippingPlanes = createTunnelSegmentClippingPlanes(i, modelMatrix);
   const idx = String(i).padStart(3, '0');
   const url = `data/tunnel/tunnel${idx}.glb`;
 
   tunnelLoadingSet.add(i);
   tunnelLoadingCount++;
   notifyTunnelLoading();
-  Cesium.Model.fromGltfAsync({ url, modelMatrix })
+  Cesium.Model.fromGltfAsync({ url, modelMatrix, clippingPlanes })
     .then((model: any) => {
       const primitive = viewer.scene.primitives.add(model);
       primitive.show = tunnelGlbVisibleFlag;
