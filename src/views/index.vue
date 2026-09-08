@@ -1486,7 +1486,7 @@ onBeforeUnmount(() => {
 .terrain-alpha-value { color: #00eaff; font-size: 12px; min-width: 32px; text-align: right; }
 
 .xray-row {
-  display: flex; align-items: center; margin-top: 4px; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 5px; margin-top: 4px; margin-bottom: 4px;
   padding-left: 26px;
 }
 .xray-btn {
@@ -1499,7 +1499,6 @@ onBeforeUnmount(() => {
   background: rgba(0, 200, 255, 0.22); border-color: #00eaff;
   color: #00eaff; box-shadow: 0 0 6px rgba(0, 234, 255, 0.3);
 }
-
 /* ── 快捷侧边栏（地图模式） ────────────────────────────── */
 .quick-sidebar {
   position: absolute;

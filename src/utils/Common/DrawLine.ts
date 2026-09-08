@@ -1094,6 +1094,14 @@ export function removeGeoModel(customViewer?: any) {
  */
 const SEGMENT_COUNT = 17;
 const TUNNEL_END_CONFIG = { lon: 94.9649024057, lat: 29.495231546299998, height: 2958.408 };
+const TUNNEL_VERTICAL_OFFSET_M = -0.05;
+// 按 tunnel000 ~ tunnel016 顺序固化的分段旋转校准值（度）。
+const TUNNEL_SEGMENT_ROTATION_DEGREES = [
+  -0.07, 0, 0, 0.13, 0.09, 0.19, 0.09, 0.19, 0.09,
+  0.19, 0.10, 0.18, 0.10, 0.19, 0.09, 0.19, 0.13,
+] as const;
+const tunnelSegmentBaseMatrices: Array<Cesium.Matrix4 | undefined> = [];
+const tunnelSegmentPivotCenters: Array<Cesium.Cartesian3 | undefined> = [];
 
 function applyDesignRockGradeAppearance(model: any, modelIndex: number) {
   const segment = designRockGradeData?.segments.find(item => item.modelIndex === modelIndex);
@@ -1298,7 +1306,11 @@ function createTunnelSegmentClippingPlanes(segmentIndex: number, modelMatrix: Ce
       Cesium.Matrix4.multiplyByPointAsVector(inverse, tangentWorld, new Cesium.Cartesian3()),
       new Cesium.Cartesian3(),
     );
-    const boundaryWorld = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height);
+    const boundaryWorld = Cesium.Cartesian3.fromDegrees(
+      cfg.lon,
+      cfg.lat,
+      cfg.height + TUNNEL_VERTICAL_OFFSET_M,
+    );
     const boundaryLocal = Cesium.Matrix4.multiplyByPoint(inverse, boundaryWorld, new Cesium.Cartesian3());
     const normal = keepForward
       ? tangentLocal
@@ -1316,13 +1328,47 @@ function createTunnelSegmentClippingPlanes(segmentIndex: number, modelMatrix: Ce
   });
 }
 
+function applyTunnelSegmentRotation(segmentIndex: number) {
+  const model = tunnelGlbPrimitives[segmentIndex];
+  const baseMatrix = tunnelSegmentBaseMatrices[segmentIndex];
+  const pivot = tunnelSegmentPivotCenters[segmentIndex];
+  if (!model || !baseMatrix || !pivot) return;
+
+  const angle = Cesium.Math.toRadians(TUNNEL_SEGMENT_ROTATION_DEGREES[segmentIndex] || 0);
+  if (Math.abs(angle) < Cesium.Math.EPSILON12) {
+    model.modelMatrix = Cesium.Matrix4.clone(baseMatrix, new Cesium.Matrix4());
+    return;
+  }
+
+  const axis = Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(pivot, new Cesium.Cartesian3());
+  const rotation3 = Cesium.Matrix3.fromQuaternion(
+    Cesium.Quaternion.fromAxisAngle(axis, angle),
+    new Cesium.Matrix3(),
+  );
+  const rotation4 = Cesium.Matrix4.fromRotationTranslation(rotation3);
+  const toOrigin = Cesium.Matrix4.fromTranslation(
+    Cesium.Cartesian3.negate(pivot, new Cesium.Cartesian3()),
+  );
+  const fromOrigin = Cesium.Matrix4.fromTranslation(pivot);
+  const aroundPivot = Cesium.Matrix4.multiply(
+    fromOrigin,
+    Cesium.Matrix4.multiply(rotation4, toOrigin, new Cesium.Matrix4()),
+    new Cesium.Matrix4(),
+  );
+  model.modelMatrix = Cesium.Matrix4.multiply(aroundPivot, baseMatrix, new Cesium.Matrix4());
+}
+
 /** 加载单段隧道 */
 function loadTunnelSegment(i: number, viewer: any) {
   if (tunnelGlbPrimitives[i] || tunnelLoadingSet.has(i)) return;
   const cfg = SEGMENT_CONFIGS[i];
   if (!cfg) return;
 
-  const pos = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height);
+  const pos = Cesium.Cartesian3.fromDegrees(
+    cfg.lon,
+    cfg.lat,
+    cfg.height + TUNNEL_VERTICAL_OFFSET_M,
+  );
   const hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(cfg.headingDeg), 0, 0);
   const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr);
   const clippingPlanes = createTunnelSegmentClippingPlanes(i, modelMatrix);
@@ -1337,10 +1383,21 @@ function loadTunnelSegment(i: number, viewer: any) {
       const primitive = viewer.scene.primitives.add(model);
       primitive.show = tunnelGlbVisibleFlag;
       tunnelGlbPrimitives[i] = primitive;
+      tunnelSegmentBaseMatrices[i] = Cesium.Matrix4.clone(modelMatrix, new Cesium.Matrix4());
+      const initializeRotationPivot = () => {
+        tunnelSegmentPivotCenters[i] = Cesium.Cartesian3.clone(
+          primitive.boundingSphere.center,
+          new Cesium.Cartesian3(),
+        );
+        applyTunnelSegmentRotation(i);
+        viewer.scene.requestRender();
+      };
+      if (primitive.ready) initializeRotationPivot();
+      else primitive.readyEvent.addEventListener(initializeRotationPivot);
       applyDesignRockGradeAppearance(primitive, i);
       console.log(`[DrawLine] 隧道段 ${i} 加载完成`);
     })
-    .catch((e: any) => console.error(`[DrawLine] tunnel${idx}.glb 加载失败:`, e))
+    .catch((e: any) => console.error(`[DrawLine] tunnel${idx}.glb 加载失败:`, e?.message || e))
     .finally(() => {
       tunnelLoadingSet.delete(i);
       tunnelLoadingCount--;
@@ -1354,6 +1411,8 @@ function unloadTunnelSegment(i: number, viewer: any) {
   if (!p) return;
   try { viewer.scene.primitives.remove(p); } catch (_) {}
   tunnelGlbPrimitives[i] = undefined;
+  tunnelSegmentBaseMatrices[i] = undefined;
+  tunnelSegmentPivotCenters[i] = undefined;
 }
 
 /** 根据相机位置按需加载/卸载隧道段 */
@@ -1463,6 +1522,8 @@ export function removeTunnelGlb(customViewer?: any) {
     try { viewer.scene.primitives.remove(p); } catch (_) {}
   }
   tunnelGlbPrimitives = [];
+  tunnelSegmentBaseMatrices.length = 0;
+  tunnelSegmentPivotCenters.length = 0;
   removeDesignRockGradeLabels(viewer);
 }
 
