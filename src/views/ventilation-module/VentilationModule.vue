@@ -30,7 +30,7 @@
               <span><i style="background:#2e7d32"></i>中速 1–5 m/s</span>
               <span><i style="background:#f9a825"></i>高速 5–10 m/s</span>
               <span><i style="background:#e53935"></i>极速 &gt;10 m/s</span>
-              <em>左键旋转 · 右键/中键平移 · 滚轮平滑缩放 · 点击采样点查看详情</em>
+              <em>左键指向旋转 · 中键/右键平移 · 滚轮指向缩放 · Shift+左键平移</em>
             </div>
             <div v-if="view === 'flow'" class="flow-toolbar">
               <button :class="{ on: visibility.points }" @click="toggleLayer('points')">● CFD 点云</button>
@@ -165,7 +165,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 import * as echarts from 'echarts'
 import TunnelGeometryView from './TunnelGeometryView.vue'
-import { createVentilationViewer, installLocalOrbit, lookAtLocal } from './scene'
+import { createVentilationViewer, installModelControls, lookAtLocal } from './scene'
 import { buildSteadyLayers, destroyVentilation, layers, loadTunnelModel, recolorSteady, setLayerVisible, setModelOpacity, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
 
 type ViewKey = 'geometry' | 'flow' | 'co' | 'transient' | 'thermal'
@@ -183,10 +183,12 @@ const modalImage = ref('')
 const cfdCells = ref<CfdData>()
 const cfdArrows = ref<CfdData>()
 let viewer: Cesium.Viewer | undefined
-let orbit: ReturnType<typeof installLocalOrbit> | undefined
+let cameraControls: ReturnType<typeof installModelControls> | undefined
 let pickHandler: Cesium.ScreenSpaceEventHandler | undefined
-const orbitFocus = new Cesium.Cartesian3(-589.8, 3.8, 3604.5)
-const overviewFocus = new Cesium.Cartesian3(-589.8, 3.8, 3604.5)
+// CFD 数据包围盒中心：X[-5.4846,45.4880]、Y[0,7.5292]、Z[3805.1509,4005.1511]。
+// 视角复位以该点（K3+905.151）为默认中心；交互时旋转中心随鼠标落点更新。
+const CFD_FOCUS = new Cesium.Cartesian3(20.001704, 3.764577, 3905.151001)
+const orbitFocus = Cesium.Cartesian3.clone(CFD_FOCUS)
 let overviewRadius = 3650
 
 const analysisImages = [
@@ -206,20 +208,23 @@ async function ensureScene() {
   if (viewer || !cesiumHost.value) return
   loading3d.value = true
   viewer = createVentilationViewer(cesiumHost.value)
-  orbit = installLocalOrbit(viewer, () => orbitFocus)
+  cameraControls = installModelControls(viewer, () => orbitFocus)
   loadingText.value = '加载隧道 GLB 模型…'
   const model = await loadTunnelModel(viewer)
-  Cesium.Cartesian3.clone(model.boundingSphere.center, orbitFocus)
-  Cesium.Cartesian3.clone(model.boundingSphere.center, overviewFocus)
   overviewRadius = model.boundingSphere.radius
-  // Match the source package's Box3 auto-fit: center the complete three-tunnel
-  // model and place the camera at 0.5 / 0.35 / -0.3 of 1.2× its max span.
-  focusOverview()
+  // 首次进入直接观察 CFD 计算区间，不再从完整隧道远景开始。
+  focusCfd()
   pickHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
   pickHandler.setInputAction((event: any) => {
+    if (cameraControls?.isInteracting()) return
     const picked = viewer?.scene.pick(event.position)
     if (picked?.id?.kind) pickedInfo.value = picked.id
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+  pickHandler.setInputAction((event: any) => {
+    if (!viewer || cameraControls?.isInteracting()) return
+    const picked = viewer.scene.pick(event.endPosition)
+    viewer.scene.canvas.style.cursor = Cesium.defined(picked) ? 'pointer' : 'grab'
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
   loading3d.value = false
 }
 
@@ -264,17 +269,18 @@ function toggleColorMode() {
 function changeOpacity() { if (viewer) setModelOpacity(viewer, modelOpacity.value) }
 function focusOverview() {
   if (!viewer) return
-  orbit?.reset()
-  Cesium.Cartesian3.clone(overviewFocus, orbitFocus)
+  cameraControls?.reset()
+  Cesium.Cartesian3.clone(CFD_FOCUS, orbitFocus)
   // The GLB is assembled in plan order (left/TBM on positive local X). This
   // camera keeps that alignment above the right/drill tunnel, matching the 2D plan.
   lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(overviewRadius * -1.18, overviewRadius * 0.83, overviewRadius * 0.71))
 }
 function focusCfd() {
   if (!viewer) return
-  orbit?.reset()
-  Cesium.Cartesian3.fromElements(16, 3.5, 3905, orbitFocus)
-  lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(-180, 100, 260))
+  cameraControls?.reset()
+  Cesium.Cartesian3.clone(CFD_FOCUS, orbitFocus)
+  // 同时容纳两条主洞和 200m CFD 区间的近景斜视，相机距中心约 240m。
+  lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(-135, 82, 182))
 }
 function formatMileage(z: number) { const n = Math.abs(Math.round(z)); return `K${Math.floor(n/1000)}+${String(n%1000).padStart(3,'0')}` }
 
@@ -358,7 +364,7 @@ function darkLineOption(x:number[],series:Array<{name:string;data:number[];color
 
 function resizeAll(){viewer?.resize();[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.resize())}
 onMounted(()=>{window.addEventListener('resize',resizeAll);selectView('flow')})
-onBeforeUnmount(()=>{window.removeEventListener('resize',resizeAll);pickHandler?.destroy();orbit?.handler.destroy();if(viewer){destroyVentilation(viewer);viewer.destroy()}[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
+onBeforeUnmount(()=>{window.removeEventListener('resize',resizeAll);pickHandler?.destroy();cameraControls?.destroy();if(viewer){destroyVentilation(viewer);viewer.destroy()}[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
 </script>
 
 <style scoped lang="scss">
@@ -397,5 +403,281 @@ onBeforeUnmount(()=>{window.removeEventListener('resize',resizeAll);pickHandler?
   .flow-toolbar{left:10px;right:10px;flex-wrap:wrap}.display-controls{top:94px;left:10px;right:auto}
   .flow-toolbar button,.display-controls button{padding:5px 7px}.flow-legend{padding:0 10px;gap:8px}.flow-legend em{display:none}
   .charts-page{padding:7px;gap:6px}.control-line{gap:8px;flex-wrap:wrap}
+}
+
+/* 主界面视觉体系：仅覆盖外观，不改变模块结构、尺寸计算和交互逻辑。 */
+.vent-root{
+  --vent-cyan:#00eaff;
+  --vent-blue:#1e90ff;
+  --vent-text:#d7efff;
+  --vent-muted:#72a2bc;
+  --vent-line:rgba(0,234,255,.28);
+  --vent-panel:rgba(0,15,30,.82);
+  --vent-panel-strong:rgba(0,20,40,.94);
+  background:
+    radial-gradient(circle at 48% 18%,rgba(0,102,153,.16),transparent 38%),
+    linear-gradient(145deg,#000b16 0%,#001326 48%,#000912 100%);
+  color:var(--vent-text);
+  font-family:"Microsoft YaHei",system-ui,sans-serif;
+}
+.vent-header{
+  position:relative;
+  padding-left:160px;
+  background:linear-gradient(to bottom,rgba(0,20,40,.98),rgba(0,20,40,.72));
+  border-bottom:1px solid var(--vent-line);
+  box-shadow:0 0 18px rgba(0,234,255,.18);
+}
+.vent-header::after{
+  content:"";
+  position:absolute;
+  left:160px;
+  bottom:-1px;
+  width:230px;
+  height:2px;
+  background:linear-gradient(90deg,var(--vent-cyan),rgba(0,234,255,0));
+  box-shadow:0 0 8px var(--vent-cyan);
+  pointer-events:none;
+}
+.vent-header h1{
+  margin-bottom:5px;
+  color:#fff;
+  font-size:20px;
+  font-weight:600;
+  letter-spacing:2px;
+  background:linear-gradient(180deg,#fff 12%,#87cefa 92%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 6px rgba(0,234,255,.42));
+}
+.badges{gap:6px}
+.badges span{
+  padding:2px 8px;
+  border:1px solid rgba(0,234,255,.3);
+  border-radius:2px;
+  background:rgba(0,86,130,.2);
+  color:#69dcff;
+  letter-spacing:.4px;
+  box-shadow:inset 0 0 7px rgba(0,234,255,.08);
+}
+.badges span:nth-child(2){border-color:rgba(55,224,157,.3);background:rgba(27,116,80,.16);color:#6ee7a7}
+.badges span:nth-child(3){border-color:rgba(255,166,64,.34);background:rgba(135,75,18,.17);color:#ffb768}
+.meta{color:#6d9ab4;letter-spacing:.25px;text-shadow:0 0 7px rgba(0,174,255,.2)}
+.tabs{
+  background:linear-gradient(90deg,rgba(0,25,48,.96),rgba(0,14,28,.92));
+  border-bottom:1px solid rgba(0,234,255,.2);
+  box-shadow:0 3px 12px rgba(0,0,0,.24);
+}
+.tabs button{
+  position:relative;
+  color:#79a7be;
+  font-weight:500;
+  letter-spacing:1px;
+  transition:color .2s,background .2s,text-shadow .2s;
+}
+.tabs button:hover{background:rgba(0,174,255,.08);color:#c9f5ff}
+.tabs button.active{
+  color:var(--vent-cyan);
+  border-color:var(--vent-cyan);
+  background:linear-gradient(180deg,rgba(0,234,255,.13),rgba(0,234,255,.025));
+  text-shadow:0 0 8px rgba(0,234,255,.55);
+}
+.subtabs{
+  background:rgba(0,15,30,.9);
+  border-bottom:1px solid rgba(0,234,255,.22);
+  box-shadow:0 4px 14px rgba(0,0,0,.25);
+  backdrop-filter:blur(10px);
+}
+.subtabs button{
+  border-color:rgba(0,234,255,.2);
+  background:rgba(0,40,70,.18);
+  color:#719db6;
+  transition:all .2s ease;
+}
+.subtabs button:first-child{border-radius:2px 0 0 2px}
+.subtabs button:last-child{border-right-color:rgba(0,234,255,.2);border-radius:0 2px 2px 0}
+.subtabs button:hover{color:#d5f8ff;background:rgba(0,174,255,.1)}
+.subtabs button.active{
+  color:var(--vent-cyan);
+  border-color:var(--vent-cyan);
+  background:linear-gradient(180deg,rgba(0,234,255,.2),rgba(0,102,153,.12));
+  box-shadow:inset 0 0 10px rgba(0,234,255,.12),0 0 8px rgba(0,234,255,.14);
+  text-shadow:0 0 7px rgba(0,234,255,.55);
+}
+.subtabs button.active+button{border-left-color:var(--vent-cyan)}
+.stage,.cesium-section{background:#000914}
+.flow-legend{
+  background:rgba(0,15,30,.86);
+  border-bottom:1px solid rgba(0,234,255,.2);
+  color:#87aec3;
+  box-shadow:0 4px 14px rgba(0,0,0,.22);
+  backdrop-filter:blur(10px);
+}
+.flow-legend i{box-shadow:0 0 7px currentColor}
+.flow-legend em{color:#6594af}
+.flow-toolbar,.display-controls{
+  border:1px solid rgba(0,234,255,.32);
+  border-radius:3px;
+  background:rgba(0,15,30,.84);
+  box-shadow:0 0 18px rgba(0,174,255,.15),inset 0 0 12px rgba(0,102,153,.08);
+  backdrop-filter:blur(12px);
+}
+.flow-toolbar button,.display-controls button{
+  border:1px solid rgba(0,174,255,.3);
+  border-radius:2px;
+  background:rgba(0,46,79,.5);
+  color:#83aec4;
+  transition:all .2s ease;
+}
+.flow-toolbar button.on,.flow-toolbar button:hover,.display-controls button:hover{
+  color:var(--vent-cyan);
+  border-color:var(--vent-cyan);
+  background:linear-gradient(180deg,rgba(0,234,255,.22),rgba(0,91,145,.28));
+  box-shadow:0 0 10px rgba(0,234,255,.22),inset 0 0 8px rgba(0,234,255,.1);
+  text-shadow:0 0 6px rgba(0,234,255,.5);
+}
+.flow-toolbar button:active,.display-controls button:active{transform:translateY(1px)}
+.display-controls label{color:#8bb6ca}
+.display-controls input,.control-line input,.inline-slider input{accent-color:var(--vent-cyan)}
+.colorbar{
+  border:1px solid rgba(0,234,255,.32);
+  border-radius:3px;
+  background:rgba(0,15,30,.86);
+  box-shadow:0 0 16px rgba(0,174,255,.15);
+  backdrop-filter:blur(10px);
+}
+.colorbar b{color:#bcefff;font-weight:500;letter-spacing:.4px}
+.colorbar .gradient{box-shadow:0 0 7px rgba(0,234,255,.3)}
+.colorbar>div:last-child{color:#72a6bf}
+.scene-loading{
+  border:1px solid var(--vent-cyan);
+  border-radius:2px;
+  background:rgba(0,15,30,.94);
+  color:var(--vent-cyan);
+  box-shadow:0 0 20px rgba(0,234,255,.24),inset 0 0 12px rgba(0,234,255,.08);
+  text-shadow:0 0 7px rgba(0,234,255,.6);
+}
+.charts-page{
+  background:
+    linear-gradient(rgba(0,234,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,234,255,.018) 1px,transparent 1px),
+    #000e1c;
+  background-size:28px 28px;
+}
+.control-line{
+  padding:0 12px;
+  border:1px solid rgba(0,234,255,.2);
+  border-radius:2px;
+  background:rgba(0,22,42,.7);
+  color:#7da8bd;
+}
+.control-line b{color:var(--vent-cyan);text-shadow:0 0 6px rgba(0,234,255,.38)}
+.control-line select{
+  border:1px solid rgba(0,234,255,.32);
+  border-radius:2px;
+  background:#00213a;
+  color:#ccefff;
+  outline:none;
+}
+.control-line select:focus{border-color:var(--vent-cyan);box-shadow:0 0 8px rgba(0,234,255,.22)}
+.chart-card{
+  border:1px solid rgba(0,234,255,.22);
+  border-radius:2px;
+  background:rgba(0,15,30,.78);
+  box-shadow:inset 0 0 18px rgba(0,102,153,.08),0 5px 16px rgba(0,0,0,.2);
+}
+.chart-card h3{color:#7de5ff;letter-spacing:.5px;text-shadow:0 0 6px rgba(0,234,255,.28)}
+.thermal-overlay{
+  background:rgba(0,14,28,.96);
+  border-top:1px solid rgba(0,234,255,.32);
+  box-shadow:0 -5px 18px rgba(0,174,255,.12);
+}
+.thermal-overlay .chart{border-color:rgba(0,234,255,.2);border-radius:2px;background:rgba(0,18,35,.8)}
+.info-panel{
+  padding:16px;
+  background:linear-gradient(180deg,rgba(0,20,40,.95),rgba(0,12,25,.96));
+  border-left:1px solid rgba(0,234,255,.26);
+  box-shadow:inset 5px 0 18px rgba(0,174,255,.05);
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,234,255,.48) rgba(0,20,38,.8);
+}
+.info-panel::-webkit-scrollbar{width:5px}
+.info-panel::-webkit-scrollbar-track{background:rgba(0,20,38,.8)}
+.info-panel::-webkit-scrollbar-thumb{background:rgba(0,234,255,.48);border-radius:3px}
+.info-panel h2{
+  position:relative;
+  padding:0 0 10px 12px;
+  border-bottom:1px solid rgba(0,234,255,.24);
+  color:#b8f2ff;
+  font-weight:500;
+  letter-spacing:.5px;
+  text-shadow:0 0 7px rgba(0,234,255,.38);
+}
+.info-panel h2::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:2px;
+  width:3px;
+  height:14px;
+  background:var(--vent-cyan);
+  box-shadow:0 0 8px var(--vent-cyan);
+}
+.info-card{
+  position:relative;
+  border:1px solid rgba(0,174,255,.22);
+  border-left:2px solid rgba(0,234,255,.65);
+  border-radius:2px;
+  background:linear-gradient(135deg,rgba(0,33,58,.78),rgba(0,18,34,.82));
+  box-shadow:inset 0 0 16px rgba(0,102,153,.06),0 5px 14px rgba(0,0,0,.13);
+  transition:border-color .2s,box-shadow .2s,background .2s;
+}
+.info-card:hover{
+  border-color:rgba(0,234,255,.42);
+  border-left-color:var(--vent-cyan);
+  background:linear-gradient(135deg,rgba(0,43,72,.82),rgba(0,20,38,.86));
+  box-shadow:0 0 13px rgba(0,174,255,.1),inset 0 0 15px rgba(0,102,153,.08);
+}
+.info-card h3{color:#72ddff;font-weight:500;letter-spacing:.35px;text-shadow:0 0 6px rgba(0,234,255,.25)}
+.info-card h3 small{color:#6e9bb3}
+.info-card p{border-bottom-color:rgba(0,174,255,.1);color:#78a3ba}
+.info-card p b{color:#d2eaf6;font-weight:500}
+.info-card.highlight{border-color:var(--vent-cyan);box-shadow:0 0 15px rgba(0,234,255,.18),inset 0 0 12px rgba(0,234,255,.07)}
+.info-card.note{border-left-color:#ff9f43;color:#d0a76f;background:linear-gradient(135deg,rgba(75,47,15,.3),rgba(0,18,34,.82))}
+.geometry-info .geo-box{
+  border-color:rgba(0,174,255,.18);
+  border-radius:2px;
+  background:rgba(0,13,27,.62);
+}
+.geometry-info .geo-box h4{color:#77dcf8}
+.design-preview{
+  border:1px solid rgba(0,234,255,.34);
+  border-radius:2px;
+  background:rgba(0,15,30,.78);
+  box-shadow:0 0 14px rgba(0,174,255,.1);
+}
+.design-preview:hover{
+  border-color:var(--vent-cyan);
+  box-shadow:0 0 20px rgba(0,234,255,.2),inset 0 0 12px rgba(0,234,255,.06);
+}
+.preview-heading{
+  border-bottom:1px solid rgba(0,234,255,.2);
+  background:linear-gradient(90deg,rgba(0,86,130,.35),rgba(0,28,52,.76));
+}
+.preview-heading b{color:#9aeaff;text-shadow:0 0 6px rgba(0,234,255,.35)}
+.preview-heading em{color:#6fa8c0}
+.preview-metrics{border-top-color:rgba(0,234,255,.18);background:rgba(0,234,255,.18)}
+.preview-metrics>span{background:rgba(0,25,47,.96)}
+.preview-metrics small{color:#6798b1}.preview-metrics b{color:#c9efff}
+.gallery img{border-color:rgba(0,234,255,.25);border-radius:2px;transition:border-color .2s,box-shadow .2s}
+.gallery img:hover{border-color:var(--vent-cyan);box-shadow:0 0 12px rgba(0,234,255,.2)}
+.image-modal{background:rgba(0,7,15,.94);backdrop-filter:blur(8px)}
+.image-modal img{border:1px solid rgba(0,234,255,.4);box-shadow:0 0 30px rgba(0,234,255,.2)}
+.image-modal button{color:var(--vent-cyan);text-shadow:0 0 10px rgba(0,234,255,.65)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:1px solid var(--vent-cyan);outline-offset:2px}
+@media(max-width:900px){
+  .vent-header{padding-left:150px}
+  .vent-header::after{left:150px}
+  .info-panel{border-top-color:rgba(0,234,255,.26)}
 }
 </style>
