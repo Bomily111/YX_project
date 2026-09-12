@@ -183,7 +183,6 @@ const drillCenterY = ((-12.152948379516602 + 21.9676456451416) / 2) * drillScale
 const tunnelCenterY = (-3.9000000953674316 + 8.675000190734863) / 2
 const leftHalfWidth = (6.3981242179870605 - (-6.25177001953125)) / 2
 const rightHalfWidth = (33.50743865966797 - (-6.190725326538086)) * drillScaleXY / 2
-const mainFloorY = -3.9000000953674316
 for (let i = 0; i < 78; i++) {
   addNode(`右主洞 钻爆 K${i * 100}-${(i + 1) * 100}`, right.mesh,
     [rightCenterX - drillCenterX, tunnelCenterY - drillCenterY, (i + 1) * 100],
@@ -191,26 +190,45 @@ for (let i = 0; i < 78; i++) {
     { kind: 'main-tunnel', tunnel: 'Right', method: '钻爆', start: i * 100, end: (i + 1) * 100 })
 }
 
+// Align every secondary heading by its section centre instead of reusing the
+// left-tunnel invert.  The old mainFloorY translation put the 4–5.5m-high
+// headings roughly four metres too low relative to both main-tunnel axes.
+const sectionCenterTranslationY = (clearHeight, liningThickness) =>
+  tunnelCenterY - (clearHeight - liningThickness) / 2
+const crossCenterY = sectionCenterTranslationY(4, 0.3)
+const auxiliaryCenterY = sectionCenterTranslationY(4.5, 0.35)
+const ddkCenterY = sectionCenterTranslationY(5.5, 0.35)
+
+// Keep only a 5cm lining engagement at orthogonal junctions.  This closes
+// floating-point seams without allowing the secondary shells to run visibly
+// through the main tunnels.
+const orthogonalJunctionEngagement = 0.05
+
 // Four 4m×4m transverse passages, matching the 2D design chainages.
-const connectorStartX = rightCenterX + rightHalfWidth - 0.15
-const connectorEndX = leftCenterX - leftHalfWidth + 0.15
+const connectorStartX = rightCenterX + rightHalfWidth - orthogonalJunctionEngagement
+const connectorEndX = leftCenterX - leftHalfWidth + orthogonalJunctionEngagement
 const connectorLength = connectorEndX - connectorStartX
 for (const chainage of [2300, 4000, 5400, 6800]) {
-  addNode(`横通道 K${chainage}`, crossMesh, [(connectorStartX + connectorEndX) / 2, mainFloorY, chainage], [1, 1, connectorLength], Math.PI / 2,
+  addNode(`横通道 K${chainage}`, crossMesh, [(connectorStartX + connectorEndX) / 2, crossCenterY, chainage], [1, 1, connectorLength], Math.PI / 2,
     { kind: 'cross-passage', chainage, size: '4m×4m', clearLength: connectorLength, connects: ['Left', 'Right'] })
 }
 
 // YS 2# auxiliary A/D headings extend 100m outward from both main tunnels.
-const dStartX = leftCenterX + leftHalfWidth - 0.15; const dEndX = dStartX + 100
-const aEndX = rightCenterX - rightHalfWidth + 0.15; const aStartX = aEndX - 100
-addNode('D线辅助通道 K4000', auxiliaryMesh, [(dStartX + dEndX) / 2, mainFloorY, 4000], [1, 1, dEndX - dStartX], Math.PI / 2,
+const dStartX = leftCenterX + leftHalfWidth - orthogonalJunctionEngagement; const dEndX = dStartX + 100
+const aEndX = rightCenterX - rightHalfWidth + orthogonalJunctionEngagement; const aStartX = aEndX - 100
+addNode('D线辅助通道 K4000', auxiliaryMesh, [(dStartX + dEndX) / 2, auxiliaryCenterY, 4000], [1, 1, dEndX - dStartX], Math.PI / 2,
   { kind: 'auxiliary', id: 'D', chainage: 4000, length: 100, fromX: dStartX, toX: dEndX })
-addNode('A线辅助通道 K4000', auxiliaryMesh, [(aStartX + aEndX) / 2, mainFloorY, 4000], [1, 1, aEndX - aStartX], Math.PI / 2,
+addNode('A线辅助通道 K4000', auxiliaryMesh, [(aStartX + aEndX) / 2, auxiliaryCenterY, 4000], [1, 1, aEndX - aStartX], Math.PI / 2,
   { kind: 'auxiliary', id: 'A', chainage: 4000, length: 100, fromX: aStartX, toX: aEndX })
 
 // DDK follows the 2D design: portal K1+050, merges at K2+370, 22.5° to the main alignment.
 const ddkAngle = 22.5 * Math.PI / 180
-const ddkEnd = [rightCenterX - rightHalfWidth - 0.15, 2370]
+// At the oblique junction the heading's outer corner reaches the main-tunnel
+// lining first.  Stop the DDK axis accordingly and engage only one lining
+// thickness, instead of driving its complete 6m section through the main tube.
+const ddkOuterHalfWidth = (6 + 0.35 * 2) / 2
+const ddkLiningEngagement = 0.35
+const ddkEnd = [rightCenterX - rightHalfWidth - ddkOuterHalfWidth * Math.cos(ddkAngle) + ddkLiningEngagement, 2370]
 const ddkStart = [ddkEnd[0] - Math.tan(ddkAngle) * (ddkEnd[1] - 1050), 1050]
 const dx = ddkEnd[0] - ddkStart[0]; const dz = ddkEnd[1] - ddkStart[1]
 const ddkLength = Math.hypot(dx, dz); const ddkSegments = Math.ceil(ddkLength / 100)
@@ -219,7 +237,7 @@ for (let i = 0; i < ddkSegments; i++) {
   const t0 = i / ddkSegments; const t1 = (i + 1) / ddkSegments; const tm = (t0 + t1) / 2
   const segmentLength = ddkLength / ddkSegments
   addNode(`DDK 探洞 ${i + 1}/${ddkSegments}`, ddkMesh,
-    [ddkStart[0] + dx * tm, mainFloorY, ddkStart[1] + dz * tm],
+    [ddkStart[0] + dx * tm, ddkCenterY, ddkStart[1] + dz * tm],
     [1, 1, segmentLength], ddkYaw,
     { kind: 'exploration-tunnel', tunnel: 'DDK', startRatio: t0, endRatio: t1 })
 }
@@ -246,6 +264,14 @@ const metadata = {
   left: { method: 'TBM', length: 6800, moduleLength: 100, instances: 68 },
   right: { method: '钻爆', length: 7800, normalizedModuleLength: 100, instances: 78 },
   crossPassages: [2300, 4000, 5400, 6800],
+  junctionAlignment: {
+    mainAxisY: tunnelCenterY,
+    crossTranslationY: crossCenterY,
+    auxiliaryTranslationY: auxiliaryCenterY,
+    ddkTranslationY: ddkCenterY,
+    orthogonalEngagement: orthogonalJunctionEngagement,
+    ddkLiningEngagement,
+  },
   auxiliary: [{ id: 'D', chainage: 4000, length: 100, fromX: dStartX, toX: dEndX }, { id: 'A', chainage: 4000, length: 100, fromX: aStartX, toX: aEndX }],
   ddk: { from: { x: ddkStart[0], chainage: ddkStart[1] }, to: { x: ddkEnd[0], chainage: ddkEnd[1] }, angleDegrees: 22.5, length: ddkLength, instances: ddkSegments },
   nodeCount: out.nodes.length, meshCount: out.meshes.length, byteLength: glb.length,

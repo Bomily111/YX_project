@@ -21,7 +21,8 @@
             <button :class="{ active: view === 'transient' }" @click="selectView('transient')">瞬态通风</button>
             <button :class="{ active: view === 'thermal' }" @click="selectView('thermal')">热瞬态</button>
           </nav>
-          <TunnelGeometryView v-show="view === 'geometry'" />
+          <TunnelGeometryView v-show="view === 'geometry'" :active-chainage="activeChainage"
+            :active-tunnel="activeTunnel" @locate="locateFromPlan" />
 
           <section v-show="view === 'flow' || view === 'thermal'" class="cesium-section" :class="{ thermal: view === 'thermal' }">
             <div ref="cesiumHost" class="cesium-host"></div>
@@ -32,13 +33,53 @@
               <span><i style="background:#e53935"></i>极速 &gt;10 m/s</span>
               <em>左键指向旋转 · 中键/右键平移 · 滚轮指向缩放 · Shift+左键平移</em>
             </div>
-            <div v-if="view === 'flow'" class="flow-toolbar">
-              <button :class="{ on: visibility.points }" @click="toggleLayer('points')">● CFD 点云</button>
-              <button :class="{ on: visibility.arrows }" @click="toggleLayer('arrows')">◈ 矢量</button>
-              <button :class="{ on: visibility.streamlines }" @click="toggleLayer('streamlines')">〰 流线</button>
-              <button :class="{ on: visibility.particles }" @click="toggleLayer('particles')">• 粒子</button>
-              <button title="恢复完整隧道鸟瞰视角" @click="focusOverview">⌂ 隧道全景</button>
-              <button title="快速定位到 K3+805～K4+005 风场区间" @click="focusCfd">◎ CFD 区间</button>
+            <div v-if="view === 'flow'" class="vent-layer-panel"
+              :class="{ collapsed: layerPanelCollapsed }"
+              :style="{ left: `${layerPanelPosition.left}px`, top: `${layerPanelPosition.top}px` }">
+              <div class="vent-layer-header" @mousedown="startLayerPanelDrag">
+                <button class="vent-layer-collapse" type="button" title="展开或收起图层控制"
+                  @mousedown.stop @click.stop="layerPanelCollapsed = !layerPanelCollapsed">
+                  {{ layerPanelCollapsed ? '▸' : '▾' }}
+                </button>
+                <span>图层控制</span>
+                <span class="vent-layer-drag">✥</span>
+              </div>
+              <div v-show="!layerPanelCollapsed" class="vent-layer-content">
+                <label class="vent-checkbox-item">
+                  <input type="checkbox" :checked="visibility.points" @change="toggleLayer('points')">
+                  <span class="vent-custom-check"></span><span>CFD 点云</span>
+                </label>
+                <label class="vent-checkbox-item">
+                  <input type="checkbox" :checked="visibility.arrows" @change="toggleLayer('arrows')">
+                  <span class="vent-custom-check"></span><span>风向矢量</span>
+                </label>
+                <label class="vent-checkbox-item">
+                  <input type="checkbox" :checked="visibility.streamlines" @change="toggleLayer('streamlines')">
+                  <span class="vent-custom-check"></span><span>风场流线</span>
+                </label>
+                <label class="vent-checkbox-item">
+                  <input type="checkbox" :checked="visibility.particles" @change="toggleLayer('particles')">
+                  <span class="vent-custom-check"></span><span>动态粒子</span>
+                </label>
+              </div>
+            </div>
+            <div v-if="view === 'flow'" class="tool-dock">
+              <div class="tool-row">
+                <div class="tool-group">
+                  <span class="tool-group-title">定位</span>
+                  <button title="恢复完整隧道鸟瞰视角" @click="focusOverview">⌂ 全景</button>
+                  <button title="快速定位到 K3+805～K4+005 风场区间" @click="focusCfd">◎ CFD 区间</button>
+                </div>
+                <div class="tool-group">
+                  <span class="tool-group-title">视角</span>
+                  <button title="正对双洞查看横断面" @click="focusStandard('section')">断面</button>
+                  <button title="从隧道侧面查看纵断面" @click="focusStandard('side')">侧视</button>
+                  <button title="从上方向下查看平面" @click="focusStandard('top')">俯视</button>
+                </div>
+              </div>
+              <div class="tool-row">
+                <VentilationMileageSearch :active-tunnel="activeTunnel" @locate="locateFromPlan" />
+              </div>
             </div>
             <div v-if="view === 'flow'" class="display-controls">
               <label>透明度 <input type="range" min="0.15" max="1" step="0.05" v-model.number="modelOpacity" @input="changeOpacity"></label>
@@ -50,6 +91,10 @@
               <div><span>{{ view === 'thermal' || colorMode === 'temperature' ? '293' : '0.03' }}</span><span>{{ view === 'thermal' || colorMode === 'temperature' ? '318' : '1.03' }}</span></div>
             </div>
             <div v-if="loading3d" class="scene-loading">{{ loadingText }}</div>
+            <div v-if="view === 'flow'" class="location-status">
+              <span>{{ tunnelLabel(activeTunnel) }}</span><b>{{ formatMileage(activeChainage) }}</b>
+              <small>双击模型聚焦 · 二维图可选里程</small>
+            </div>
 
             <div v-if="view === 'thermal'" class="thermal-overlay charts-grid">
               <div class="control-line">
@@ -92,7 +137,7 @@
       <aside class="info-panel">
         <button v-if="view === 'flow'" class="design-preview" type="button" @click="selectView('geometry')">
           <span class="preview-heading"><b>二维通风设计图</b><em>点击展开 ↗</em></span>
-          <TunnelGeometryView compact />
+          <TunnelGeometryView compact :active-chainage="activeChainage" :active-tunnel="activeTunnel" />
           <span class="preview-metrics">
             <span><small>标准断面</small><b>9m × 7.66m</b></span><span><small>主洞中心距</small><b>32m</b></span>
             <span><small>DDK 接入角</small><b>22.5°</b></span><span><small>横通道</small><b>4 处</b></span>
@@ -165,8 +210,9 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 import * as echarts from 'echarts'
 import TunnelGeometryView from './TunnelGeometryView.vue'
-import { createVentilationViewer, installModelControls, lookAtLocal } from './scene'
-import { buildSteadyLayers, destroyVentilation, layers, loadTunnelModel, recolorSteady, setLayerVisible, setModelOpacity, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
+import VentilationMileageSearch from './VentilationMileageSearch.vue'
+import { createVentilationViewer, flyToLocal, installModelControls, lookAtLocal } from './scene'
+import { buildSteadyLayers, destroyVentilation, layers, loadTunnelModel, recolorSteady, setLayerVisible, setModelOpacity, setTunnelSectionClip, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
 
 type ViewKey = 'geometry' | 'flow' | 'co' | 'transient' | 'thermal'
 const ASSET = '/data/ventilation/'
@@ -177,14 +223,22 @@ const loadingText = ref('加载 Cesium 场景…')
 const colorMode = ref<ColorMode>('velocity')
 const modelOpacity = ref(0.82)
 const visibility = ref({ points: true, arrows: true, streamlines: true, particles: true })
+const layerPanelCollapsed = ref(false)
+const layerPanelPosition = ref({ left: 14, top: 45 })
 const renderedField = ref<'steady' | 'thermal' | null>(null)
 const pickedInfo = ref<any>(null)
+type TunnelKey = 'left' | 'right' | 'ddk'
+const activeChainage = ref(3905.151)
+const activeTunnel = ref<TunnelKey>('left')
 const modalImage = ref('')
 const cfdCells = ref<CfdData>()
 const cfdArrows = ref<CfdData>()
 let viewer: Cesium.Viewer | undefined
 let cameraControls: ReturnType<typeof installModelControls> | undefined
 let pickHandler: Cesium.ScreenSpaceEventHandler | undefined
+let mileageMarker: Cesium.Entity | undefined
+let mileageMarkerTimer: ReturnType<typeof setTimeout> | undefined
+let stopLayerPanelDrag: (() => void) | undefined
 // CFD 数据包围盒中心：X[-5.4846,45.4880]、Y[0,7.5292]、Z[3805.1509,4005.1511]。
 // 视角复位以该点（K3+905.151）为默认中心；交互时旋转中心随鼠标落点更新。
 const CFD_FOCUS = new Cesium.Cartesian3(20.001704, 3.764577, 3905.151001)
@@ -208,7 +262,7 @@ async function ensureScene() {
   if (viewer || !cesiumHost.value) return
   loading3d.value = true
   viewer = createVentilationViewer(cesiumHost.value)
-  cameraControls = installModelControls(viewer, () => orbitFocus)
+  cameraControls = installModelControls(viewer, () => orbitFocus, updateActiveFocus)
   loadingText.value = '加载隧道 GLB 模型…'
   const model = await loadTunnelModel(viewer)
   overviewRadius = model.boundingSphere.radius
@@ -218,7 +272,17 @@ async function ensureScene() {
   pickHandler.setInputAction((event: any) => {
     if (cameraControls?.isInteracting()) return
     const picked = viewer?.scene.pick(event.position)
-    if (picked?.id?.kind) pickedInfo.value = picked.id
+    if (picked?.id?.kind) {
+      pickedInfo.value = picked.id
+      activeChainage.value = picked.id.chainage
+      activeTunnel.value = picked.id.tunnel || activeTunnel.value
+      if (viewer?.scene.pickPositionSupported) {
+        try {
+          const position = viewer.scene.pickPosition(event.position)
+          if (Cesium.defined(position)) placeMileageMarker(position, activeTunnel.value, activeChainage.value)
+        } catch { /* 深度拾取未就绪时保留信息卡反馈。 */ }
+      }
+    }
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
   pickHandler.setInputAction((event: any) => {
     if (!viewer || cameraControls?.isInteracting()) return
@@ -267,22 +331,142 @@ function toggleColorMode() {
   viewer?.scene.requestRender()
 }
 function changeOpacity() { if (viewer) setModelOpacity(viewer, modelOpacity.value) }
+function showTunnelLabels(show: boolean) {
+  if (layers.tunnelLabels) layers.tunnelLabels.show = show
+}
+function startLayerPanelDrag(event: MouseEvent) {
+  if (event.button !== 0) return
+  const panel = (event.currentTarget as HTMLElement).closest('.vent-layer-panel') as HTMLElement | null
+  const stage = panel?.parentElement
+  if (!panel || !stage) return
+  event.preventDefault()
+  const startX = event.clientX
+  const startY = event.clientY
+  const origin = { ...layerPanelPosition.value }
+  const move = (moveEvent: MouseEvent) => {
+    const maxLeft = Math.max(6, stage.clientWidth - panel.offsetWidth - 6)
+    const maxTop = Math.max(38, stage.clientHeight - panel.offsetHeight - 6)
+    layerPanelPosition.value = {
+      left: Cesium.Math.clamp(origin.left + moveEvent.clientX - startX, 6, maxLeft),
+      top: Cesium.Math.clamp(origin.top + moveEvent.clientY - startY, 38, maxTop),
+    }
+  }
+  const stop = () => {
+    window.removeEventListener('mousemove', move)
+    window.removeEventListener('mouseup', stop)
+    stopLayerPanelDrag = undefined
+  }
+  stopLayerPanelDrag?.()
+  stopLayerPanelDrag = stop
+  window.addEventListener('mousemove', move)
+  window.addEventListener('mouseup', stop)
+}
 function focusOverview() {
   if (!viewer) return
-  cameraControls?.reset()
+  setTunnelSectionClip()
+  showSteadyLayers(true)
+  showTunnelLabels(true)
   Cesium.Cartesian3.clone(CFD_FOCUS, orbitFocus)
+  cameraControls?.reset()
+  updateActiveFocus(orbitFocus)
   // The GLB is assembled in plan order (left/TBM on positive local X). This
   // camera keeps that alignment above the right/drill tunnel, matching the 2D plan.
   lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(overviewRadius * -1.18, overviewRadius * 0.83, overviewRadius * 0.71))
 }
 function focusCfd() {
   if (!viewer) return
-  cameraControls?.reset()
+  setTunnelSectionClip()
+  showSteadyLayers(true)
+  showTunnelLabels(true)
   Cesium.Cartesian3.clone(CFD_FOCUS, orbitFocus)
-  // 同时容纳两条主洞和 200m CFD 区间的近景斜视，相机距中心约 240m。
-  lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(-135, 82, 182))
+  cameraControls?.reset()
+  updateActiveFocus(orbitFocus)
+  // 以 CFD 包围盒中心为观察中心，完整容纳双洞和 200m 计算区间。
+  cameraControls?.setFocus(orbitFocus)
+  flyToLocal(viewer, orbitFocus, new Cesium.Cartesian3(-155, 105, 255), 0.95)
 }
+function updateActiveFocus(focus: Cesium.Cartesian3) {
+  Cesium.Cartesian3.clone(focus, orbitFocus)
+  activeChainage.value = Cesium.Math.clamp(focus.z, 0, 8200)
+  activeTunnel.value = focus.x >= 16 ? 'left' : 'right'
+}
+function tunnelLabel(tunnel: TunnelKey) { return ({ left: '左主洞', right: '右主洞', ddk: 'DDK 探洞' })[tunnel] }
 function formatMileage(z: number) { const n = Math.abs(Math.round(z)); return `K${Math.floor(n/1000)}+${String(n%1000).padStart(3,'0')}` }
+function placeMileageMarker(position: Cesium.Cartesian3, tunnel: TunnelKey, chainage: number) {
+  if (!viewer) return
+  if (mileageMarker) viewer.entities.remove(mileageMarker)
+  if (mileageMarkerTimer) clearTimeout(mileageMarkerTimer)
+  mileageMarker = viewer.entities.add({
+    position,
+    point: {
+      pixelSize: 13,
+      color: Cesium.Color.YELLOW,
+      outlineColor: Cesium.Color.fromCssColorString('#ff5722'),
+      outlineWidth: 2,
+      disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    },
+    label: {
+      text: `${tunnelLabel(tunnel)}  ${formatMileage(chainage)}`,
+      font: '600 13px Microsoft YaHei',
+      fillColor: Cesium.Color.YELLOW,
+      outlineColor: Cesium.Color.BLACK,
+      outlineWidth: 3,
+      style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+      verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+      pixelOffset: new Cesium.Cartesian2(0, -18),
+      disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    },
+  })
+  mileageMarkerTimer = setTimeout(() => {
+    if (viewer && mileageMarker) viewer.entities.remove(mileageMarker)
+    mileageMarker = undefined
+    viewer?.scene.requestRender()
+  }, 10000)
+}
+function focusStandard(kind: 'section' | 'side' | 'top') {
+  if (!viewer) return
+  const selectedTunnel = activeTunnel.value
+  const chainage = activeChainage.value
+  // 标准视图统一以两条主洞的中线为中心，使用固定取景距离，避免受当前缩放影响。
+  const target = new Cesium.Cartesian3(16, 3.5, chainage)
+  const offsets = {
+    section: new Cesium.Cartesian3(0, 0, -82),
+    // 保留侧向关系并加入少量轴向夹角，使两条平行主洞不再完全重合。
+    side: new Cesium.Cartesian3(-115, 35, -70),
+    top: new Cesium.Cartesian3(0, 245, 0.001),
+  }
+  Cesium.Cartesian3.clone(target, orbitFocus)
+  setTunnelSectionClip(kind === 'section' ? chainage : undefined)
+  // 断面模式暂时收起轴向场数据，防止切面外的点线遮挡断面轮廓；离开后按图层栏状态恢复。
+  showSteadyLayers(kind !== 'section')
+  // 纯侧向观察时双洞标签会重叠，其他视角保持名称反馈。
+  showTunnelLabels(kind !== 'side')
+  cameraControls?.reset()
+  cameraControls?.setFocus(target)
+  activeTunnel.value = selectedTunnel
+  activeChainage.value = chainage
+  flyToLocal(viewer, target, offsets[kind], 0.85)
+}
+async function locateFromPlan(payload: { tunnel: TunnelKey; chainage: number }) {
+  activeTunnel.value = payload.tunnel
+  activeChainage.value = payload.chainage
+  view.value = 'flow'
+  await nextTick()
+  await ensureSteadyData()
+  if (!viewer) return
+  setTunnelSectionClip()
+  showSteadyLayers(true)
+  showTunnelLabels(true)
+  const ddkEndX = -6.2
+  const x = payload.tunnel === 'left' ? 32 : payload.tunnel === 'right' ? 0
+    : ddkEndX - Math.tan(Cesium.Math.toRadians(22.5)) * (2370 - payload.chainage)
+  const focus = new Cesium.Cartesian3(x, 3.8, payload.chainage)
+  Cesium.Cartesian3.clone(focus, orbitFocus)
+  cameraControls?.setFocus(focus)
+  placeMileageMarker(focus, payload.tunnel, payload.chainage)
+  flyToLocal(viewer, focus, new Cesium.Cartesian3(-105, 62, 138))
+  viewer.resize()
+}
 
 const coFace = ref('Right'); const coSnapshot = ref(0); const coData = ref<any>()
 const coTimeEl = ref<HTMLElement>(); const coProfileEl = ref<HTMLElement>()
@@ -363,8 +547,8 @@ function darkLineOption(x:number[],series:Array<{name:string;data:number[];color
 }
 
 function resizeAll(){viewer?.resize();[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.resize())}
-onMounted(()=>{window.addEventListener('resize',resizeAll);selectView('flow')})
-onBeforeUnmount(()=>{window.removeEventListener('resize',resizeAll);pickHandler?.destroy();cameraControls?.destroy();if(viewer){destroyVentilation(viewer);viewer.destroy()}[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
+onMounted(()=>{if(window.innerWidth<=900)layerPanelCollapsed.value=true;window.addEventListener('resize',resizeAll);selectView('flow')})
+onBeforeUnmount(()=>{window.removeEventListener('resize',resizeAll);stopLayerPanelDrag?.();if(mileageMarkerTimer)clearTimeout(mileageMarkerTimer);if(viewer&&mileageMarker)viewer.entities.remove(mileageMarker);pickHandler?.destroy();cameraControls?.destroy();if(viewer){destroyVentilation(viewer);viewer.destroy()}[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
 </script>
 
 <style scoped lang="scss">
@@ -675,9 +859,178 @@ onBeforeUnmount(()=>{window.removeEventListener('resize',resizeAll);pickHandler?
 .image-modal img{border:1px solid rgba(0,234,255,.4);box-shadow:0 0 30px rgba(0,234,255,.2)}
 .image-modal button{color:var(--vent-cyan);text-shadow:0 0 10px rgba(0,234,255,.65)}
 button:focus-visible,select:focus-visible,input:focus-visible{outline:1px solid var(--vent-cyan);outline-offset:2px}
+.view-toolbar{
+  position:absolute;
+  top:88px;
+  left:14px;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 6px;
+  border:1px solid rgba(0,234,255,.28);
+  border-radius:3px;
+  background:rgba(0,15,30,.82);
+  box-shadow:0 0 15px rgba(0,174,255,.12);
+  backdrop-filter:blur(10px);
+}
+.view-toolbar span{padding:0 5px;color:#659bb4;font-size:10px;letter-spacing:.5px}
+.view-toolbar button{
+  padding:5px 9px;
+  border:1px solid rgba(0,174,255,.28);
+  border-radius:2px;
+  background:rgba(0,46,79,.48);
+  color:#83aec4;
+  font-size:11px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.view-toolbar button:hover{
+  color:var(--vent-cyan);
+  border-color:var(--vent-cyan);
+  background:rgba(0,174,255,.18);
+  box-shadow:0 0 9px rgba(0,234,255,.2);
+}
+.tool-dock{
+  position:absolute;
+  top:45px;
+  left:246px;
+  z-index:5;
+  display:flex;
+  max-width:calc(100% - 500px);
+  flex-direction:column;
+  align-items:flex-start;
+  gap:6px;
+}
+.vent-layer-panel{
+  position:absolute;
+  z-index:7;
+  width:220px;
+  overflow:hidden;
+  border:1px solid var(--vent-cyan);
+  border-radius:4px;
+  background:rgba(0,15,30,.88);
+  box-shadow:0 0 20px rgba(0,200,255,.2);
+  backdrop-filter:blur(10px);
+  user-select:none;
+}
+.vent-layer-panel.collapsed{width:142px}
+.vent-layer-header{
+  min-height:36px;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#fff;
+  background:rgba(0,100,200,.6);
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.4px;
+  cursor:move;
+}
+.vent-layer-collapse{
+  width:18px;
+  height:24px;
+  padding:0;
+  border:0;
+  color:#d8f8ff;
+  background:transparent;
+  font-size:13px;
+  cursor:pointer;
+}
+.vent-layer-collapse:hover{color:var(--vent-cyan);text-shadow:0 0 7px rgba(0,234,255,.65)}
+.vent-layer-drag{margin-left:auto;color:rgba(210,247,255,.72);font-size:13px}
+.vent-layer-content{padding:14px 15px 12px}
+.vent-checkbox-item{
+  display:flex;
+  align-items:center;
+  margin-bottom:11px;
+  color:#bdd3df;
+  font-size:12px;
+  cursor:pointer;
+}
+.vent-checkbox-item:last-child{margin-bottom:0}
+.vent-checkbox-item input{display:none}
+.vent-custom-check{
+  width:16px;
+  height:16px;
+  margin-right:10px;
+  display:flex;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--vent-cyan);
+  background:rgba(0,46,79,.42);
+  box-shadow:inset 0 0 6px rgba(0,234,255,.08);
+}
+.vent-checkbox-item input:checked + .vent-custom-check::after{
+  content:'✓';
+  color:var(--vent-cyan);
+  font-size:12px;
+  font-weight:700;
+  text-shadow:0 0 6px rgba(0,234,255,.65);
+}
+.vent-checkbox-item:hover{color:#fff}
+.vent-checkbox-item:hover .vent-custom-check{box-shadow:0 0 8px rgba(0,234,255,.3)}
+.tool-row{display:flex;align-items:center;gap:6px;max-width:100%}
+.tool-group{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 6px;
+  border:1px solid rgba(0,234,255,.28);
+  border-radius:3px;
+  background:rgba(0,15,30,.84);
+  box-shadow:0 0 15px rgba(0,174,255,.12),inset 0 0 10px rgba(0,102,153,.06);
+  backdrop-filter:blur(10px);
+}
+.tool-group-title{padding:0 4px;color:#659bb4;font-size:10px;letter-spacing:.5px;white-space:nowrap}
+.tool-group button{
+  height:27px;
+  padding:0 9px;
+  border:1px solid rgba(0,174,255,.3);
+  border-radius:2px;
+  background:rgba(0,46,79,.5);
+  color:#83aec4;
+  font-size:11px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.tool-group button.on,.tool-group button:hover{
+  color:var(--vent-cyan);
+  border-color:var(--vent-cyan);
+  background:linear-gradient(180deg,rgba(0,234,255,.22),rgba(0,91,145,.28));
+  box-shadow:0 0 9px rgba(0,234,255,.2),inset 0 0 7px rgba(0,234,255,.08);
+  text-shadow:0 0 6px rgba(0,234,255,.45);
+}
+.location-status{
+  position:absolute;
+  left:158px;
+  bottom:14px;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border:1px solid rgba(0,234,255,.3);
+  border-radius:2px;
+  background:rgba(0,15,30,.84);
+  box-shadow:0 0 15px rgba(0,174,255,.12);
+  backdrop-filter:blur(10px);
+  color:#80aec4;
+  font-size:10px;
+  pointer-events:none;
+}
+.location-status span{color:#a5dced}.location-status b{color:var(--vent-cyan);font:500 12px Consolas,monospace;text-shadow:0 0 6px rgba(0,234,255,.45)}
+.location-status small{padding-left:8px;border-left:1px solid rgba(0,234,255,.22);color:#618da4;font-size:9px}
 @media(max-width:900px){
   .vent-header{padding-left:150px}
   .vent-header::after{left:150px}
   .info-panel{border-top-color:rgba(0,234,255,.26)}
+  .view-toolbar{top:137px;left:10px}
+  .tool-dock{top:45px;left:246px;right:10px;max-width:none;overflow:visible;padding-bottom:4px}
+  .display-controls{top:129px;left:246px;right:auto}
+  .tool-row{width:max-content}
+  .location-status{left:10px;bottom:10px}.location-status small{display:none}
 }
 </style>

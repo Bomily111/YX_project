@@ -12,7 +12,8 @@
     </div>
 
     <div class="svg-wrap">
-      <svg viewBox="0 0 1050 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="三管隧道二维几何模型">
+      <svg ref="svgEl" viewBox="0 0 1050 480" xmlns="http://www.w3.org/2000/svg" role="img"
+        aria-label="三管隧道二维几何模型" @click="handleSvgClick">
         <defs>
           <pattern id="vent-p-drill" width="14" height="14" patternUnits="userSpaceOnUse">
             <rect width="14" height="14" fill="#3e2723"/><rect width="7" height="7" fill="#4e342e"/>
@@ -91,6 +92,14 @@
           <text class="shaft-label" :x="cx(4000)+7" y="302">A线 钻爆 (YS 2#)</text>
         </g>
 
+        <!-- 二维/三维联动定位标记 -->
+        <g v-if="activeChainage != null" class="location-marker" pointer-events="none">
+          <line :x1="cx(activeChainage)" :x2="cx(activeChainage)" y1="72" y2="344"/>
+          <circle :cx="cx(activeChainage)" :cy="markerY" r="8"/>
+          <circle :cx="cx(activeChainage)" :cy="markerY" r="3" class="marker-core"/>
+          <text :x="cx(activeChainage)" :y="markerY - 13">{{ mileageLabel }}</text>
+        </g>
+
         <!-- 标准断面 -->
         <g class="section-shape">
           <rect x="900" y="395" width="60" height="50" rx="4"/>
@@ -103,7 +112,18 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{ compact?: boolean }>(), { compact: false })
+import { computed, ref } from 'vue'
+
+type TunnelKey = 'left' | 'right' | 'ddk'
+const props = withDefaults(defineProps<{
+  compact?: boolean
+  activeChainage?: number | null
+  activeTunnel?: TunnelKey
+}>(), { compact: false, activeChainage: null, activeTunnel: 'left' })
+const emit = defineEmits<{
+  locate: [payload: { tunnel: TunnelKey; chainage: number }]
+}>()
+const svgEl = ref<SVGSVGElement>()
 
 const ML = 135
 const PLOT_WIDTH = 875
@@ -112,6 +132,25 @@ const cx = (z: number) => ML + z / TOTAL_LEN * PLOT_WIDTH
 const ticks = Array.from({ length: 17 }, (_, i) => i * 500)
 const jetFans = Array.from({ length: 7 }, (_, i) => 500 + i * 500)
 const crossPassages = [2300, 4000, 5400, 6800]
+const markerY = computed(() => props.activeTunnel === 'left' ? 125 : props.activeTunnel === 'right' ? 245 : 330)
+const mileageLabel = computed(() => {
+  const value = Math.max(0, Math.round(props.activeChainage ?? 0))
+  return `K${Math.floor(value / 1000)}+${String(value % 1000).padStart(3, '0')}`
+})
+
+function handleSvgClick(event: MouseEvent) {
+  if (props.compact || !svgEl.value) return
+  const rect = svgEl.value.getBoundingClientRect()
+  const x = (event.clientX - rect.left) / rect.width * 1050
+  const y = (event.clientY - rect.top) / rect.height * 480
+  if (x < ML || x > ML + PLOT_WIDTH || y < 70 || y > 365) return
+  const tunnel: TunnelKey = y < 190 ? 'left' : y < 290 ? 'right' : 'ddk'
+  const rawChainage = (x - ML) / PLOT_WIDTH * TOTAL_LEN
+  const chainage = tunnel === 'ddk'
+    ? Math.min(2370, Math.max(1050, rawChainage))
+    : Math.min(tunnel === 'left' ? 6800 : 7800, Math.max(0, rawChainage))
+  emit('locate', { tunnel, chainage })
+}
 
 function facePoints(z: number, y1: number, y2: number) {
   const x = cx(z); const teeth = 5; const toothW = 8; const toothH = (y2-y1)/(teeth*2-1)
@@ -145,7 +184,7 @@ const ddkDuctPoints = [
 .legend-row{display:flex;gap:14px;align-items:center;min-height:42px;padding:0 20px;border-bottom:1px solid #1a2a3a;flex-wrap:wrap;flex-shrink:0;font-size:11px;color:#6a8aaa}
 .legend-row span{white-space:nowrap}.legend-row i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
 .legend-row .built{background:#1b3240;border:1px solid #2d5060}.jet-legend{margin-left:auto;font-size:10px;color:#5a7a9a}
-.svg-wrap{flex:1;overflow:auto}svg{width:100%;min-height:480px}
+.svg-wrap{flex:1;overflow:auto}svg{width:100%;min-height:480px;cursor:crosshair}
 .chainage-axis line{stroke:#1a2a3a}.chainage-axis text{fill:#5a7a9a;font-size:9px;font-weight:700;text-anchor:middle}
 .tunnel-label{fill:#c0d8f0;font-size:12px;font-weight:600;text-anchor:end}.ddk-label{fill:#c0d8f0;font-size:10px;font-weight:600;text-anchor:end}
 .built-tunnel{fill:#1b3240;stroke:#2d5060;stroke-width:2}.design-outline{fill:#152432;stroke:#5a7a9a;stroke-width:1.5;stroke-dasharray:8 5}
@@ -156,7 +195,11 @@ const ddkDuctPoints = [
 .jet-fan{fill:#ff9800;stroke:#fff;stroke-width:.5}.fan-note{fill:#ffa726;font-size:7px;font-weight:700}
 .ddk-envelope{fill:#1b3240;fill-opacity:.45;stroke:#2d5060;stroke-opacity:.5;stroke-width:1.5;stroke-dasharray:6 3}.portal-text{fill:#ffa726;fill-opacity:.5;font-size:8px;font-weight:700;text-anchor:end}
 .shaft-line{fill:url(#vent-p-drill);stroke:#8e6fc4;stroke-width:1.5}.shaft-label{fill:#c58af9;font-size:8px;font-weight:700}
+.location-marker line{stroke:#00eaff;stroke-width:1;stroke-dasharray:4 3;filter:url(#vent-glow)}
+.location-marker circle{fill:rgba(0,234,255,.18);stroke:#00eaff;stroke-width:1.5;filter:url(#vent-glow)}
+.location-marker .marker-core{fill:#fff;stroke:#00eaff;stroke-width:1}
+.location-marker text{fill:#9af3ff;font-size:8px;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:#07131f;stroke-width:3px}
 .section-shape rect{fill:#152432;stroke:#2a3a4a}.section-shape path{fill:none;stroke:#78909c;stroke-width:1.5}.section-shape text{fill:#78909c;font-size:8px;text-anchor:middle}
 .tunnel-geometry.compact{position:relative;inset:auto;width:100%;height:178px;background:#091722;pointer-events:none}
-.compact .legend-row{display:none}.compact .svg-wrap{height:100%;overflow:hidden}.compact svg{width:100%;height:100%;min-height:0}
+.compact .legend-row{display:none}.compact .svg-wrap{height:100%;overflow:hidden}.compact svg{width:100%;height:100%;min-height:0;cursor:pointer}
 </style>

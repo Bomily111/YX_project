@@ -105,18 +105,44 @@ export async function loadTunnelModel(viewer: Cesium.Viewer) {
   }
   const labels = viewer.scene.primitives.add(new Cesium.LabelCollection())
   const labelStyle = {
-    font: '600 15px Microsoft YaHei',
+    font: '600 13px Microsoft YaHei',
     showBackground: true,
-    backgroundColor: Cesium.Color.fromCssColorString('#07131f').withAlpha(0.78),
-    pixelOffset: new Cesium.Cartesian2(0, -12),
+    backgroundColor: Cesium.Color.fromCssColorString('#07131f').withAlpha(0.68),
+    fillColor: Cesium.Color.fromCssColorString('#d9f7ff'),
+    outlineColor: Cesium.Color.fromCssColorString('#001018'),
+    outlineWidth: 2,
+    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+    pixelOffset: new Cesium.Cartesian2(0, -8),
     disableDepthTestDistance: Number.POSITIVE_INFINITY,
     scaleByDistance: new Cesium.NearFarScalar(100, 1, 9000, 0.55),
   }
-  labels.add({ ...labelStyle, position: new Cesium.Cartesian3(32, 10, 3905), text: '左主洞 · TBM' })
-  labels.add({ ...labelStyle, position: new Cesium.Cartesian3(0, 10, 3905), text: '右主洞 · 钻爆' })
+  // 标签放到双洞外侧并抬高，避免压住 CFD 点云和洞身轮廓。
+  labels.add({ ...labelStyle, position: new Cesium.Cartesian3(43, 18, 3825), text: '左主洞 · TBM' })
+  labels.add({
+    ...labelStyle,
+    position: new Cesium.Cartesian3(-11, 28, 3985),
+    pixelOffset: new Cesium.Cartesian2(0, -16),
+    text: '右主洞 · 钻爆',
+  })
   layers.tunnelLabels = labels
   viewer.scene.requestRender()
   return layers.model
+}
+
+export function setTunnelSectionClip(chainage?: number) {
+  const model = layers.model
+  if (!model) return
+  const previous = model.clippingPlanes as Cesium.ClippingPlaneCollection | undefined
+  model.clippingPlanes = undefined
+  if (previous && !previous.isDestroyed()) previous.destroy()
+  if (chainage == null) return
+  model.clippingPlanes = new Cesium.ClippingPlaneCollection({
+    // 保留当前断面之后的洞身，从较小里程一侧正对切面观察。
+    planes: [new Cesium.ClippingPlane(Cesium.Cartesian3.UNIT_Z, -chainage)],
+    edgeWidth: 1.5,
+    edgeColor: Cesium.Color.fromCssColorString('#00eaff'),
+  })
 }
 
 export function setModelOpacity(viewer: Cesium.Viewer, opacity: number) {
@@ -141,7 +167,7 @@ export function buildSteadyLayers(
       position: cellMapper.point(i),
       color: valueColor(mode, cells.vel[i], cells.temp[i], 0.72),
       pixelSize: 4,
-      id: { kind: 'cfd', index: i, velocity: cells.vel[i], temperature: cells.temp[i], chainage: cells.z[i] },
+      id: { kind: 'cfd', index: i, velocity: cells.vel[i], temperature: cells.temp[i], chainage: cells.z[i], tunnel: cells.x[i] <= (cells.meta.x_gap ?? 20) ? 'left' : 'right' },
       disableDepthTestDistance: Number.POSITIVE_INFINITY,
     })
   }
@@ -234,7 +260,7 @@ export function updateThermalPoints(viewer: Cesium.Viewer, data: CfdData) {
       position: mapper.point(i),
       color: temperatureColor(data.temp[i], 0.78),
       pixelSize: 4,
-      id: { kind: 'thermal', index: i, velocity: data.vel[i], temperature: data.temp[i], chainage: data.z[i] },
+      id: { kind: 'thermal', index: i, velocity: data.vel[i], temperature: data.temp[i], chainage: data.z[i], tunnel: data.x[i] <= (data.meta.x_gap ?? 20) ? 'left' : 'right' },
       disableDepthTestDistance: Number.POSITIVE_INFINITY,
     })
   }

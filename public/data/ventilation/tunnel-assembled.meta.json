@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-05T08:43:35.673Z",
+  "generatedAt": "2026-09-12T03:53:18.976Z",
   "output": "tunnel-assembled.glb",
   "coordinateSystem": "local Y-up, Z-chainage, Left/TBM X=32m, Right/Drill X=0m",
   "mainTunnelSpacing": {
@@ -24,29 +24,37 @@
     5400,
     6800
   ],
+  "junctionAlignment": {
+    "mainAxisY": 2.387500047683716,
+    "crossTranslationY": 0.5375000476837157,
+    "auxiliaryTranslationY": 0.31250004768371564,
+    "ddkTranslationY": -0.18749995231628436,
+    "orthogonalEngagement": 0.05,
+    "ddkLiningEngagement": 0.35
+  },
   "auxiliary": [
     {
       "id": "D",
       "chainage": 4000,
       "length": 100,
-      "fromX": 38.17494711875916,
-      "toX": 138.17494711875915
+      "fromX": 38.27494711875916,
+      "toX": 138.27494711875914
     },
     {
       "id": "A",
       "chainage": 4000,
       "length": 100,
-      "fromX": -105.90000026626956,
-      "toX": -5.900000266269563
+      "fromX": -106.00000026626957,
+      "toX": -6.000000266269564
     }
   ],
   "ddk": {
     "from": {
-      "x": -552.9619025987549,
+      "x": -555.5568990326678,
       "chainage": 1050
     },
     "to": {
-      "x": -6.200000266269564,
+      "x": -8.794996700182375,
       "chainage": 2370
     },
     "angleDegrees": 22.5,
@@ -55,5 +63,5 @@
   },
   "nodeCount": 167,
   "meshCount": 5,
-  "byteLength": 162700
+  "byteLength": 162736
 }

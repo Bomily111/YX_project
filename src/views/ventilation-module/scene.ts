@@ -1,5 +1,7 @@
 import * as Cesium from 'cesium'
 
+const localFlightTokens = new WeakMap<Cesium.Viewer, object>()
+
 export function createVentilationViewer(container: HTMLElement): Cesium.Viewer {
   const viewer = new Cesium.Viewer(container, {
     baseLayer: false as any,
@@ -53,11 +55,64 @@ export function lookAtLocal(
     Cesium.Cartesian3.subtract(target, destination, new Cesium.Cartesian3()),
     new Cesium.Cartesian3(),
   )
+  const up = Math.abs(Cesium.Cartesian3.dot(direction, Cesium.Cartesian3.UNIT_Y)) > 0.98
+    ? Cesium.Cartesian3.UNIT_Z
+    : Cesium.Cartesian3.UNIT_Y
   viewer.camera.setView({
     destination,
-    orientation: { direction, up: Cesium.Cartesian3.UNIT_Y },
+    orientation: { direction, up },
   })
   viewer.scene.requestRender()
+}
+
+export function flyToLocal(
+  viewer: Cesium.Viewer,
+  target: Cesium.Cartesian3,
+  offset: Cesium.Cartesian3,
+  duration = 1.15,
+) {
+  const destination = Cesium.Cartesian3.add(target, offset, new Cesium.Cartesian3())
+  const endDirection = Cesium.Cartesian3.normalize(
+    Cesium.Cartesian3.subtract(target, destination, new Cesium.Cartesian3()),
+    new Cesium.Cartesian3(),
+  )
+  const endUp = Math.abs(Cesium.Cartesian3.dot(endDirection, Cesium.Cartesian3.UNIT_Y)) > 0.98
+    ? Cesium.Cartesian3.UNIT_Z
+    : Cesium.Cartesian3.UNIT_Y
+  const camera = viewer.camera
+  const flightToken = {}
+  localFlightTokens.set(viewer, flightToken)
+  const startPosition = Cesium.Cartesian3.clone(camera.positionWC)
+  const startDirection = Cesium.Cartesian3.clone(camera.directionWC)
+  const startUp = Cesium.Cartesian3.clone(camera.upWC)
+  const startedAt = performance.now()
+  const durationMs = Math.max(1, duration * 1000)
+  const animate = (now: number) => {
+    if (viewer.isDestroyed() || localFlightTokens.get(viewer) !== flightToken) return
+    const progress = Cesium.Math.clamp((now - startedAt) / durationMs, 0, 1)
+    const eased = progress < 0.5 ? 16 * progress ** 5 : 1 - ((-2 * progress + 2) ** 5) / 2
+    const position = Cesium.Cartesian3.lerp(startPosition, destination, eased, new Cesium.Cartesian3())
+    const direction = Cesium.Cartesian3.normalize(
+      Cesium.Cartesian3.lerp(startDirection, endDirection, eased, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    )
+    const interpolatedUp = Cesium.Cartesian3.normalize(
+      Cesium.Cartesian3.lerp(startUp, endUp, eased, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    )
+    const right = Cesium.Cartesian3.normalize(
+      Cesium.Cartesian3.cross(direction, interpolatedUp, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    )
+    const up = Cesium.Cartesian3.normalize(
+      Cesium.Cartesian3.cross(right, direction, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    )
+    camera.setView({ destination: position, orientation: { direction, up } })
+    viewer.scene.requestRender()
+    if (progress < 1) requestAnimationFrame(animate)
+  }
+  requestAnimationFrame(animate)
 }
 
 /**
@@ -73,6 +128,7 @@ export function lookAtLocal(
 export function installModelControls(
   viewer: Cesium.Viewer,
   getDefaultFocus: () => Cesium.Cartesian3,
+  onFocusChange?: (focus: Cesium.Cartesian3) => void,
 ) {
   const scene = viewer.scene
   const camera = viewer.camera
@@ -95,8 +151,34 @@ export function installModelControls(
   const pivot = Cesium.Cartesian3.clone(getDefaultFocus())
   const lastPointer = new Cesium.Cartesian2(canvas.clientWidth / 2, canvas.clientHeight / 2)
   const handler = new Cesium.ScreenSpaceEventHandler(canvas)
+  const pivotPoints = scene.primitives.add(new Cesium.PointPrimitiveCollection())
+  const pivotPoint = pivotPoints.add({
+    position: pivot,
+    pixelSize: 14,
+    color: Cesium.Color.fromCssColorString('#00eaff').withAlpha(0.92),
+    outlineColor: Cesium.Color.fromCssColorString('#00101f').withAlpha(0.95),
+    outlineWidth: 3,
+    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+    show: false,
+  })
   let mode: 'orbit' | 'pan' | null = null
   let pinching = false
+  let hidePivotTimer: ReturnType<typeof setTimeout> | undefined
+
+  const publishFocus = (focus: Cesium.Cartesian3, hold = 700) => {
+    Cesium.Cartesian3.clone(focus, pivot)
+    pivotPoint.position = Cesium.Cartesian3.clone(focus)
+    pivotPoint.show = true
+    if (hidePivotTimer) clearTimeout(hidePivotTimer)
+    if (hold > 0) {
+      hidePivotTimer = setTimeout(() => {
+        pivotPoint.show = false
+        scene.requestRender()
+      }, hold)
+    }
+    onFocusChange?.(Cesium.Cartesian3.clone(focus))
+    scene.requestRender()
+  }
 
   const copyPointer = (position?: Cesium.Cartesian2) => {
     if (position) Cesium.Cartesian2.clone(position, lastPointer)
@@ -150,7 +232,7 @@ export function installModelControls(
     copyPointer(event.position)
     if (nextMode === 'orbit') {
       const nextPivot = pickWorld(event.position)
-      if (nextPivot) Cesium.Cartesian3.clone(nextPivot, pivot)
+      if (nextPivot) publishFocus(nextPivot, 0)
     }
     canvas.style.cursor = nextMode === 'orbit' ? 'grabbing' : 'move'
   }
@@ -158,6 +240,7 @@ export function installModelControls(
   const end = () => {
     mode = null
     canvas.style.cursor = 'grab'
+    if (pivotPoint.show) publishFocus(pivot, 500)
   }
 
   const panByPixels = (dx: number, dy: number, target = pivot) => {
@@ -230,7 +313,7 @@ export function installModelControls(
     const center = midpoint(event.position1, event.position2)
     copyPointer(center)
     const nextPivot = pickWorld(center)
-    if (nextPivot) Cesium.Cartesian3.clone(nextPivot, pivot)
+    if (nextPivot) publishFocus(nextPivot, 0)
   }
 
   const pinchMove = (event: Cesium.ScreenSpaceEventHandler.TwoPointMotionEvent) => {
@@ -264,6 +347,21 @@ export function installModelControls(
   handler.setInputAction(pinchStart, T.PINCH_START)
   handler.setInputAction(pinchMove, T.PINCH_MOVE)
   handler.setInputAction(() => { pinching = false; end() }, T.PINCH_END)
+  handler.setInputAction((event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+    const target = pickWorld(event.position, false)
+    if (!target) return
+    const currentDistance = Cesium.Cartesian3.distance(camera.positionWC, target)
+    const focusDistance = Cesium.Math.clamp(currentDistance * 0.42, 18, 900)
+    const direction = Cesium.Cartesian3.clone(camera.directionWC)
+    const position = Cesium.Cartesian3.subtract(
+      target,
+      Cesium.Cartesian3.multiplyByScalar(direction, focusDistance, new Cesium.Cartesian3()),
+      new Cesium.Cartesian3(),
+    )
+    publishFocus(target, 1300)
+    setLookAt(position, target)
+    scene.requestRender()
+  }, T.LEFT_DOUBLE_CLICK)
 
   const preventContextMenu = (event: Event) => event.preventDefault()
   canvas.addEventListener('contextmenu', preventContextMenu)
@@ -272,13 +370,23 @@ export function installModelControls(
 
   return {
     isInteracting: () => mode !== null || pinching,
+    getDistance: () => Cesium.Cartesian3.distance(camera.positionWC, pivot),
+    setFocus(focus: Cesium.Cartesian3, showMarker = true) {
+      if (showMarker) publishFocus(focus, 900)
+      else {
+        Cesium.Cartesian3.clone(focus, pivot)
+        onFocusChange?.(Cesium.Cartesian3.clone(focus))
+      }
+    },
     reset() {
       Cesium.Cartesian3.clone(getDefaultFocus(), pivot)
       camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
       canvas.style.cursor = 'grab'
     },
     destroy() {
+      if (hidePivotTimer) clearTimeout(hidePivotTimer)
       handler.destroy()
+      scene.primitives.remove(pivotPoints)
       canvas.removeEventListener('contextmenu', preventContextMenu)
       canvas.style.cursor = ''
       canvas.style.touchAction = ''
