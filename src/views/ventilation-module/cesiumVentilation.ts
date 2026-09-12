@@ -130,19 +130,14 @@ export async function loadTunnelModel(viewer: Cesium.Viewer) {
   return layers.model
 }
 
-export function setTunnelSectionClip(chainage?: number) {
+export function setTunnelSectionView(viewer: Cesium.Viewer) {
   const model = layers.model
   if (!model) return
   const previous = model.clippingPlanes as Cesium.ClippingPlaneCollection | undefined
   model.clippingPlanes = undefined
   if (previous && !previous.isDestroyed()) previous.destroy()
-  if (chainage == null) return
-  model.clippingPlanes = new Cesium.ClippingPlaneCollection({
-    // 保留当前断面之后的洞身，从较小里程一侧正对切面观察。
-    planes: [new Cesium.ClippingPlane(Cesium.Cartesian3.UNIT_Z, -chainage)],
-    edgeWidth: 1.5,
-    edgeColor: Cesium.Color.fromCssColorString('#00eaff'),
-  })
+  model.show = true
+  viewer.scene.requestRender()
 }
 
 export function setModelOpacity(viewer: Cesium.Viewer, opacity: number) {
@@ -290,6 +285,8 @@ export function removeFlowLayers(viewer: Cesium.Viewer) {
 
 export function destroyVentilation(viewer: Cesium.Viewer) {
   removeFlowLayers(viewer)
+  if (layers.tunnelLabels) viewer.scene.primitives.remove(layers.tunnelLabels)
+  layers.tunnelLabels = undefined
   if (layers.model) viewer.scene.primitives.remove(layers.model)
   layers.model = undefined
 }

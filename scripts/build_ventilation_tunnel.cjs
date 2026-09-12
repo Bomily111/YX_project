@@ -223,12 +223,12 @@ addNode('A线辅助通道 K4000', auxiliaryMesh, [(aStartX + aEndX) / 2, auxilia
 
 // DDK follows the 2D design: portal K1+050, merges at K2+370, 22.5° to the main alignment.
 const ddkAngle = 22.5 * Math.PI / 180
-// At the oblique junction the heading's outer corner reaches the main-tunnel
-// lining first.  Stop the DDK axis accordingly and engage only one lining
-// thickness, instead of driving its complete 6m section through the main tube.
-const ddkOuterHalfWidth = (6 + 0.35 * 2) / 2
+// Let the DDK centreline enter one lining thickness beyond the main tunnel's
+// outer wall.  Ending at the first tangent corner left a visible ~3m wedge gap
+// across most of the oblique portal; this controlled engagement closes it
+// without extending the branch all the way through the main tunnel.
 const ddkLiningEngagement = 0.35
-const ddkEnd = [rightCenterX - rightHalfWidth - ddkOuterHalfWidth * Math.cos(ddkAngle) + ddkLiningEngagement, 2370]
+const ddkEnd = [rightCenterX - rightHalfWidth + ddkLiningEngagement, 2370]
 const ddkStart = [ddkEnd[0] - Math.tan(ddkAngle) * (ddkEnd[1] - 1050), 1050]
 const dx = ddkEnd[0] - ddkStart[0]; const dz = ddkEnd[1] - ddkStart[1]
 const ddkLength = Math.hypot(dx, dz); const ddkSegments = Math.ceil(ddkLength / 100)

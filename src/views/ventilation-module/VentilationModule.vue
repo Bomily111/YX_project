@@ -212,7 +212,7 @@ import * as echarts from 'echarts'
 import TunnelGeometryView from './TunnelGeometryView.vue'
 import VentilationMileageSearch from './VentilationMileageSearch.vue'
 import { createVentilationViewer, flyToLocal, installModelControls, lookAtLocal } from './scene'
-import { buildSteadyLayers, destroyVentilation, layers, loadTunnelModel, recolorSteady, setLayerVisible, setModelOpacity, setTunnelSectionClip, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
+import { buildSteadyLayers, destroyVentilation, layers, loadTunnelModel, recolorSteady, setLayerVisible, setModelOpacity, setTunnelSectionView, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
 
 type ViewKey = 'geometry' | 'flow' | 'co' | 'transient' | 'thermal'
 const ASSET = '/data/ventilation/'
@@ -334,6 +334,9 @@ function changeOpacity() { if (viewer) setModelOpacity(viewer, modelOpacity.valu
 function showTunnelLabels(show: boolean) {
   if (layers.tunnelLabels) layers.tunnelLabels.show = show
 }
+function usePerspectiveProjection() {
+  viewer?.camera.switchToPerspectiveFrustum()
+}
 function startLayerPanelDrag(event: MouseEvent) {
   if (event.button !== 0) return
   const panel = (event.currentTarget as HTMLElement).closest('.vent-layer-panel') as HTMLElement | null
@@ -363,7 +366,8 @@ function startLayerPanelDrag(event: MouseEvent) {
 }
 function focusOverview() {
   if (!viewer) return
-  setTunnelSectionClip()
+  usePerspectiveProjection()
+  setTunnelSectionView(viewer)
   showSteadyLayers(true)
   showTunnelLabels(true)
   Cesium.Cartesian3.clone(CFD_FOCUS, orbitFocus)
@@ -375,7 +379,8 @@ function focusOverview() {
 }
 function focusCfd() {
   if (!viewer) return
-  setTunnelSectionClip()
+  usePerspectiveProjection()
+  setTunnelSectionView(viewer)
   showSteadyLayers(true)
   showTunnelLabels(true)
   Cesium.Cartesian3.clone(CFD_FOCUS, orbitFocus)
@@ -430,17 +435,19 @@ function focusStandard(kind: 'section' | 'side' | 'top') {
   // 标准视图统一以两条主洞的中线为中心，使用固定取景距离，避免受当前缩放影响。
   const target = new Cesium.Cartesian3(16, 3.5, chainage)
   const offsets = {
-    section: new Cesium.Cartesian3(0, 0, -82),
+    // 位于当前切面的大里程侧近距离回望，形成参考图中的双洞汇聚效果。
+    section: new Cesium.Cartesian3(0, 0, 48),
     // 保留侧向关系并加入少量轴向夹角，使两条平行主洞不再完全重合。
     side: new Cesium.Cartesian3(-115, 35, -70),
     top: new Cesium.Cartesian3(0, 245, 0.001),
   }
   Cesium.Cartesian3.clone(target, orbitFocus)
-  setTunnelSectionClip(kind === 'section' ? chainage : undefined)
-  // 断面模式暂时收起轴向场数据，防止切面外的点线遮挡断面轮廓；离开后按图层栏状态恢复。
-  showSteadyLayers(kind !== 'section')
-  // 纯侧向观察时双洞标签会重叠，其他视角保持名称反馈。
-  showTunnelLabels(kind !== 'side')
+  usePerspectiveProjection()
+  if (kind !== 'section') {
+    setTunnelSectionView(viewer)
+    showSteadyLayers(true)
+    showTunnelLabels(kind !== 'side')
+  }
   cameraControls?.reset()
   cameraControls?.setFocus(target)
   activeTunnel.value = selectedTunnel
@@ -454,10 +461,12 @@ async function locateFromPlan(payload: { tunnel: TunnelKey; chainage: number }) 
   await nextTick()
   await ensureSteadyData()
   if (!viewer) return
-  setTunnelSectionClip()
+  usePerspectiveProjection()
+  setTunnelSectionView(viewer)
   showSteadyLayers(true)
   showTunnelLabels(true)
-  const ddkEndX = -6.2
+  // 与组装模型的 DDK 接入端点一致（进入右主洞衬砌 0.35m）。
+  const ddkEndX = -5.700000266269564
   const x = payload.tunnel === 'left' ? 32 : payload.tunnel === 'right' ? 0
     : ddkEndX - Math.tan(Cesium.Math.toRadians(22.5)) * (2370 - payload.chainage)
   const focus = new Cesium.Cartesian3(x, 3.8, payload.chainage)

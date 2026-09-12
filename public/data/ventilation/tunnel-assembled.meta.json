@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-12T03:53:18.976Z",
+  "generatedAt": "2026-09-12T04:19:35.595Z",
   "output": "tunnel-assembled.glb",
   "coordinateSystem": "local Y-up, Z-chainage, Left/TBM X=32m, Right/Drill X=0m",
   "mainTunnelSpacing": {
@@ -50,11 +50,11 @@
   ],
   "ddk": {
     "from": {
-      "x": -555.5568990326678,
+      "x": -552.4619025987549,
       "chainage": 1050
     },
     "to": {
-      "x": -8.794996700182375,
+      "x": -5.700000266269564,
       "chainage": 2370
     },
     "angleDegrees": 22.5,
