@@ -43,6 +43,7 @@ interface DesignRockGradeData {
 let designRockGradeData: DesignRockGradeData | null = null;
 let designRockGradeEnabled = false;
 let designRockGradeLabels: Cesium.Entity[] = [];
+let designRockGradeSavedGlobeShow: boolean | null = null;
 
 // ── globe 原始状态暂存（enableBlackModelMode 修改前保存，restoreEarthMode 恢复） ──
 let _savedGlobeShow: boolean | null = null;
@@ -1125,6 +1126,20 @@ function removeDesignRockGradeLabels(viewer: any) {
   designRockGradeLabels = [];
 }
 
+function setDesignRockGradeOverviewEnvironment(viewer: any, enabled: boolean) {
+  const globe = viewer.scene.globe;
+  if (enabled) {
+    if (designRockGradeSavedGlobeShow === null) designRockGradeSavedGlobeShow = globe.show;
+    // 隧洞位于山体内，全局拉远时地形半透明仍会遮挡整体分级。
+    // 只在全局围岩分级视图隐藏 globe，进入局部区段或退出时精确恢复。
+    globe.show = false;
+  } else if (designRockGradeSavedGlobeShow !== null) {
+    globe.show = designRockGradeSavedGlobeShow;
+    designRockGradeSavedGlobeShow = null;
+  }
+  viewer.scene.requestRender();
+}
+
 function addDesignRockGradeLabels(viewer: any) {
   if (!designRockGradeData) return;
   removeDesignRockGradeLabels(viewer);
@@ -1175,7 +1190,6 @@ export async function setDesignRockGradeModelEnabled(enabled: boolean, customVie
     if (!response.ok) throw new Error(`设计围岩分级文件加载失败: ${response.status}`);
     designRockGradeData = await response.json();
   }
-
   designRockGradeEnabled = enabled;
   for (let i = 0; i < tunnelGlbPrimitives.length; i++) {
     const model = tunnelGlbPrimitives[i];
@@ -1185,9 +1199,44 @@ export async function setDesignRockGradeModelEnabled(enabled: boolean, customVie
     }
   }
 
-  if (enabled) addDesignRockGradeLabels(viewer);
-  else removeDesignRockGradeLabels(viewer);
+  if (enabled) {
+    addDesignRockGradeLabels(viewer);
+    // 设计版直接加载并上色全部17段精细 GLB，不再使用轻量替代模型。
+    for (let i = 0; i < SEGMENT_COUNT; i++) {
+      if (!tunnelGlbPrimitives[i]) loadTunnelSegment(i, viewer);
+    }
+  } else {
+    setDesignRockGradeOverviewEnvironment(viewer, false);
+    removeDesignRockGradeLabels(viewer);
+    // 退出设计版后立即按当前相机位置恢复原有分段加载/卸载策略。
+    updateTunnelLazyLoad(viewer);
+  }
   viewer.scene.requestRender();
+}
+
+/** 从全局视角容纳整条精细围岩分级隧洞。 */
+export async function flyToDesignRockGradeOverview(customViewer?: any) {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) return;
+  await setDesignRockGradeModelEnabled(true, viewer);
+  setDesignRockGradeOverviewEnvironment(viewer, true);
+  const positions = CENTERLINE_COORDINATES
+    .filter((_, index) => index % 24 === 0 || index === CENTERLINE_COORDINATES.length - 1)
+    .map(coordinate => Cesium.Cartesian3.fromDegrees(
+      coordinate[0],
+      coordinate[1],
+      coordinate[2] + 3 + TUNNEL_VERTICAL_OFFSET_M,
+    ));
+  if (!positions.length) return;
+  const sphere = Cesium.BoundingSphere.fromPoints(positions);
+  viewer.camera.flyToBoundingSphere(sphere, {
+    offset: new Cesium.HeadingPitchRange(
+      Cesium.Math.toRadians(42),
+      Cesium.Math.toRadians(-34),
+      sphere.radius * 1.85,
+    ),
+    duration: 1.8,
+  });
 }
 
 /** 飞行到指定设计围岩区段，并以白色轮廓标出当前区段。 */
@@ -1198,6 +1247,7 @@ export async function flyToDesignRockGradeSegment(modelIndex: number, customView
   if (!viewer || !startCfg || !endCfg) return;
 
   await setDesignRockGradeModelEnabled(true, viewer);
+  setDesignRockGradeOverviewEnvironment(viewer, false);
 
   for (let i = 0; i < tunnelGlbPrimitives.length; i++) {
     const model = tunnelGlbPrimitives[i];
@@ -1402,6 +1452,8 @@ function loadTunnelSegment(i: number, viewer: any) {
       tunnelLoadingSet.delete(i);
       tunnelLoadingCount--;
       notifyTunnelLoading();
+      // 若全量加载过程中已经退出设计版，立即清退刚完成的远距离模型。
+      if (!designRockGradeEnabled) updateTunnelLazyLoad(viewer);
     });
 }
 
@@ -1418,6 +1470,12 @@ function unloadTunnelSegment(i: number, viewer: any) {
 /** 根据相机位置按需加载/卸载隧道段 */
 function updateTunnelLazyLoad(viewer: any) {
   if (!viewer || !viewer.camera) return;
+  if (designRockGradeEnabled) {
+    for (let i = 0; i < SEGMENT_COUNT; i++) {
+      if (!tunnelGlbPrimitives[i]) loadTunnelSegment(i, viewer);
+    }
+    return;
+  }
   const carto = viewer.camera.positionCartographic;
   if (!carto) return;
   const cameraCart = Cesium.Cartesian3.fromRadians(carto.longitude, carto.latitude, carto.height);
@@ -1524,6 +1582,7 @@ export function removeTunnelGlb(customViewer?: any) {
   tunnelGlbPrimitives = [];
   tunnelSegmentBaseMatrices.length = 0;
   tunnelSegmentPivotCenters.length = 0;
+  setDesignRockGradeOverviewEnvironment(viewer, false);
   removeDesignRockGradeLabels(viewer);
 }
 

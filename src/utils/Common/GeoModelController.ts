@@ -622,6 +622,41 @@ export function getModelConfig(key: string): ModelConfig | undefined {
 /** 加载 TEM 异常体 GLB 到 Cesium 场景（独立于体渲染） */
 let temGlbPrimitive: any = null
 let temGlbCurrentUrl: string = ''
+let temGlbPickHandler: Cesium.ScreenSpaceEventHandler | null = null
+let temGlbSelected = false
+
+const TEM_GLB_DEFAULT_COLOR = Cesium.Color.fromCssColorString('#ff6b2c').withAlpha(0.62)
+const TEM_GLB_SELECTED_COLOR = Cesium.Color.fromCssColorString('#ff3030').withAlpha(0.86)
+const TEM_GLB_OUTLINE_COLOR = Cesium.Color.fromCssColorString('#ffd166').withAlpha(0.96)
+
+/**
+ * k=570 GLB 只表示一个等值边界，因此统一着色，不在表面上伪造数值渐变。
+ * 运行时颜色覆盖也能让历史数据中没有材质的白色 GLB 立即正常显示。
+ */
+function applyTemGlbAppearance(selected = false) {
+  if (!temGlbPrimitive) return
+  temGlbSelected = selected
+  temGlbPrimitive.color = selected ? TEM_GLB_SELECTED_COLOR : TEM_GLB_DEFAULT_COLOR
+  temGlbPrimitive.colorBlendMode = Cesium.ColorBlendMode.REPLACE
+  temGlbPrimitive.colorBlendAmount = 1.0
+  temGlbPrimitive.silhouetteColor = selected
+    ? Cesium.Color.WHITE.withAlpha(0.98)
+    : TEM_GLB_OUTLINE_COLOR
+  temGlbPrimitive.silhouetteSize = selected ? 2.5 : 1.5
+  temGlbPrimitive.backFaceCulling = false
+}
+
+function installTemGlbSelection(viewer: Cesium.Viewer) {
+  temGlbPickHandler?.destroy()
+  temGlbPickHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+  temGlbPickHandler.setInputAction((event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+    const picked = viewer.scene.pick(event.position) as { primitive?: unknown } | undefined
+    const pickedTemSurface = picked?.primitive === temGlbPrimitive
+    if (!pickedTemSurface && !temGlbSelected) return
+    applyTemGlbAppearance(pickedTemSurface ? !temGlbSelected : false)
+    viewer.scene.requestRender()
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+}
 
 export function loadTemAnomalyGlb(customViewer?: any, dataDir?: string) {
   const viewer = customViewer || DTScopeEngine.viewer
@@ -640,6 +675,9 @@ export function loadTemAnomalyGlb(customViewer?: any, dataDir?: string) {
     try { viewer.scene.primitives.remove(temGlbPrimitive) } catch {}
     temGlbPrimitive = null
   }
+  temGlbPickHandler?.destroy()
+  temGlbPickHandler = null
+  temGlbSelected = false
 
   const pos = Cesium.Cartesian3.fromDegrees(94.9056136, 29.5333802, 2945.51)
   const hpr = new Cesium.HeadingPitchRoll(1.7467, 0, 0)
@@ -651,10 +689,11 @@ export function loadTemAnomalyGlb(customViewer?: any, dataDir?: string) {
   Cesium.Model.fromGltfAsync({
     url,
     modelMatrix,
-    customShader: new Cesium.CustomShader({ lightingModel: Cesium.LightingModel.UNLIT }),
   }).then(model => {
     temGlbPrimitive = viewer.scene.primitives.add(model)
     temGlbCurrentUrl = url
+    applyTemGlbAppearance(false)
+    installTemGlbSelection(viewer)
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(94.907628, 29.531351, 3001.2),
       orientation: {
@@ -674,6 +713,10 @@ export function unloadTemAnomalyGlb(customViewer?: any) {
     try { viewer.scene.primitives.remove(temGlbPrimitive) } catch {}
     temGlbPrimitive = null
   }
+  temGlbPickHandler?.destroy()
+  temGlbPickHandler = null
+  temGlbSelected = false
+  temGlbCurrentUrl = ''
 }
 
 export function setTemGlbVisible(show: boolean) {

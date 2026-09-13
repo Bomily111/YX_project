@@ -457,9 +457,27 @@ def main():
             verts, faces, _, _ = measure.marching_cubes(gk_ds, level=570, spacing=(dx, dy, dz))
             verts[:, 0] += gx_ds[0]; verts[:, 1] += gy_ds[0]; verts[:, 2] += gz_ds[0]
             import trimesh
-            mesh = trimesh.Trimesh(vertices=verts, faces=faces)
+            # k=570 is a single-value boundary. Keep one semantic surface color
+            # instead of implying a value gradient that does not exist, and
+            # export normals so Cesium can reveal the shape with soft lighting.
+            material = trimesh.visual.material.PBRMaterial(
+                name="TEM_k570_anomaly_boundary",
+                baseColorFactor=[255, 107, 44, 158],
+                emissiveFactor=[0.12, 0.025, 0.008],
+                metallicFactor=0.0,
+                roughnessFactor=0.58,
+                alphaMode="BLEND",
+                doubleSided=True,
+            )
+            mesh = trimesh.Trimesh(
+                vertices=verts,
+                faces=faces,
+                process=True,
+                visual=trimesh.visual.TextureVisuals(material=material),
+            )
+            _ = mesh.vertex_normals
             glb_path = job_output_dir / "anomaly_k570_4x.glb"
-            mesh.export(str(glb_path))
+            mesh.export(str(glb_path), include_normals=True)
             log(f"GLB: {glb_path} ({len(verts)} 顶点, {len(faces)} 面)")
         except Exception as e:
             log(f"等值面 GLB 生成失败（可忽略）: {e}")
