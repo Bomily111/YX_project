@@ -1904,10 +1904,14 @@ var state = {};
 var reset;
 var filename;
 var mobile;
+// Only the most recently requested volume may update the shared renderer state.
+// Each request also carries its own Cesium transform so concurrent JSON loads
+// cannot overwrite one another's positioning information.
+var volumeLoadGeneration = 0;
 
 function initVolume(jsonfile, cesiumOverride) {
   if (!jsonfile) return;
-  window._volumeCesiumOverride = cesiumOverride || null;
+  var generation = ++volumeLoadGeneration;
 
   window.onresize = autoResize;
   //Create tool windows  工具窗口
@@ -1938,7 +1942,10 @@ function initVolume(jsonfile, cesiumOverride) {
   }
 
   $('status').innerHTML = 'Loading params...';
-  ajaxReadFile(decodeURI(jsonfile), loadData, true);
+  ajaxReadFile(decodeURI(jsonfile), function (src, fn) {
+    if (generation !== volumeLoadGeneration) return;
+    loadData(src, fn, cesiumOverride || null, generation);
+  }, true);
 }
 
 function loadStoredData(key) {
@@ -1955,9 +1962,16 @@ function loadStoredData(key) {
   }
 }
 
-function loadData(src, fn) {
+function loadData(src, fn, cesiumOverride, generation) {
+  if (generation !== volumeLoadGeneration) return;
   console.log(src);
-  var parsed = JSON.parse(src);
+  var parsed;
+  try {
+    parsed = JSON.parse(src);
+  } catch (error) {
+    console.warn('[ShareVolume] 体数据配置加载失败:', fn, error);
+    return;
+  }
   if (parsed.volume) {
     //Old data format
     state = {};
@@ -2016,8 +2030,8 @@ function loadData(src, fn) {
   }
 
   // 若 JSON 中没有 cesium 字段，用外部传入的 override 补全
-  if (state.objects && state.objects[0] && !state.objects[0].cesium && window._volumeCesiumOverride) {
-    state.objects[0].cesium = window._volumeCesiumOverride;
+  if (state.objects && state.objects[0] && !state.objects[0].cesium && cesiumOverride) {
+    state.objects[0].cesium = cesiumOverride;
   }
 
   // 将 volume.url 中的相对路径解析为相对于 JSON 文件目录的路径
@@ -2047,7 +2061,7 @@ function loadData(src, fn) {
   if (!state.objects[0].volume.scale) state.objects[0].volume.scale = [1.0, 1.0, 1.0];
 
   //Load the image
-  loadTexture();
+  loadTexture(generation);
 }
 
 function saveData() {
@@ -2124,28 +2138,32 @@ function resetFromData(src) {
   }
 }
 
-function loadTexture() {
+function loadTexture(generation) {
+  if (generation !== volumeLoadGeneration) return;
   $('status').innerHTML = 'Loading image data... ';
   var image;
 
-  loadImage(state.objects[0].volume.url, function () {
+  loadImage(state.objects[0].volume.url, function (loadedRequest) {
+    if (generation !== volumeLoadGeneration) return;
     image = new Image();
 
-    var headers = request.getAllResponseHeaders();
+    var headers = loadedRequest.getAllResponseHeaders();
     var match = headers.match(/^Content-Type\:\s*(.*?)$/im);
-    var mimeType = match[1] || 'image/png';
-    var blob = new Blob([request.response], { type: mimeType });
+    var mimeType = (match && match[1]) || 'image/png';
+    var blob = new Blob([loadedRequest.response], { type: mimeType });
     image.src = window.URL.createObjectURL(blob);
     var imageElement = document.createElement('img');
 
     image.onload = function () {
+      if (generation !== volumeLoadGeneration) return;
       // console.log("Loaded image: " + image.width + " x " + image.height);
-      imageLoaded(image);
+      imageLoaded(image, generation);
     };
   });
 }
 
-function imageLoaded(image) {
+function imageLoaded(image, generation) {
+  if (generation !== volumeLoadGeneration) return;
   if (slicer) {
     slicer.clear();
     slicer = null;
@@ -2169,7 +2187,15 @@ function imageLoaded(image) {
     // var widget = document.getElementsByClassName("cesium-widget").item(0);
     // var minWGS84 = [115.23, 39.55], maxWGS84 = [116.23, 41.55];
     // var position = Cesium.Cartesian3.fromDegrees((minWGS84[0] + maxWGS84[0]) / 2, (minWGS84[1] + maxWGS84[1]) / 2, 2500);
-    volume = new Volume(state.objects[0], image, interactive, $('volume-container'));
+    try {
+      volume = new Volume(state.objects[0], image, interactive, $('volume-container'));
+    } catch (error) {
+      // 构造失败时移除已插入的黑色画布，避免遮挡 Cesium 主场景。
+      var failedCanvas = document.getElementById('volume-canvas');
+      if (failedCanvas) failedCanvas.remove();
+      console.error('[ShareVolume] 体数据渲染器初始化失败:', error);
+      return;
+    }
     volume.slicer = slicer; //For axis position
   }
 
@@ -2280,34 +2306,27 @@ function updateColourmap() {
   }
 }
 
-var request, progressBar;
-
 function loadImage(imageURI, callback) {
-  request = new XMLHttpRequest();
-  request.onloadstart = showProgressBar;
-  request.onprogress = updateProgressBar;
-  request.onload = callback;
-  request.onloadend = hideProgressBar;
-  request.open('GET', imageURI, true);
-  request.responseType = 'arraybuffer';
-  request.send(null);
-}
-
-function showProgressBar() {
-  progressBar = document.createElement('progress');
+  var imageRequest = new XMLHttpRequest();
+  var progressBar = document.createElement('progress');
   progressBar.value = 0;
   progressBar.max = 100;
   progressBar.removeAttribute('value');
-  document.getElementById('status').appendChild(progressBar);
-}
-
-function updateProgressBar(e) {
-  if (e.lengthComputable) progressBar.value = (e.loaded / e.total) * 100;
-  else progressBar.removeAttribute('value');
-}
-
-function hideProgressBar() {
-  document.getElementById('status').removeChild(progressBar);
+  imageRequest.onloadstart = function () {
+    var status = document.getElementById('status');
+    if (status) status.appendChild(progressBar);
+  };
+  imageRequest.onprogress = function (event) {
+    if (event.lengthComputable) progressBar.value = (event.loaded / event.total) * 100;
+    else progressBar.removeAttribute('value');
+  };
+  imageRequest.onload = function () { callback(imageRequest); };
+  imageRequest.onloadend = function () {
+    if (progressBar.parentNode) progressBar.parentNode.removeChild(progressBar);
+  };
+  imageRequest.open('GET', imageURI, true);
+  imageRequest.responseType = 'arraybuffer';
+  imageRequest.send(null);
 }
 
 /**
@@ -2811,15 +2830,22 @@ function Volume(props, image, interactive, parentEl) {
 
   //console.log(props.cesium);
 
-  var rotat = quat.create();
-  var cesium = props.cesium || window._volumeCesiumOverride || { rotate: [0, 0, 0], translate: [0, 0, 0], scale: [1, 1, 1] };
-  quat.rotateZ(rotat, rotat, (cesium['rotate'][2] * Math.PI) / 180);
-  quat.rotateY(rotat, rotat, (cesium['rotate'][1] * Math.PI) / 180);
-  var scale = cesium['scale'];
-  var trans = cesium['translate'];
-  this.modelMatrix = mat4.create();
-  // mat4.fromRotationTranslationScaleOrigin()
-  mat4.fromRotationTranslationScale(this.modelMatrix, rotat, trans, scale);
+  var cesium = props.cesium || { rotate: [0, 0, 0], translate: [0, 0, 0], scale: [1, 1, 1] };
+  if (Array.isArray(cesium.matrix) && cesium.matrix.length === 16) {
+    // Cesium.Matrix4 与 gl-matrix 都使用列主序，可直接传递完整 ECEF 变换矩阵。
+    this.cesiumModelMatrix = Cesium.Matrix4.fromArray(cesium.matrix);
+    this.modelMatrix = mat4.fromValues.apply(null, cesium.matrix);
+  } else {
+    // 兼容原有体数据中的欧拉角、平移和缩放配置。
+    var rotat = quat.create();
+    var rotate = cesium.rotate || [0, 0, 0];
+    var scale = cesium.scale || [1, 1, 1];
+    var trans = cesium.translate || [0, 0, 0];
+    quat.rotateZ(rotat, rotat, (rotate[2] * Math.PI) / 180);
+    quat.rotateY(rotat, rotat, (rotate[1] * Math.PI) / 180);
+    this.modelMatrix = mat4.create();
+    mat4.fromRotationTranslationScale(this.modelMatrix, rotat, trans, scale);
+  }
 
   // mat4.identity(this.modelMatrix);
   // mat4.translate(this.modelMatrix, this.modelMatrix, trans);
@@ -2949,6 +2975,7 @@ function Volume(props, image, interactive, parentEl) {
       'uIsoSmooth',
       'uIsoWalls',
       'uInvPMatrix',
+      'uInvMVMatrix',
     ]
   );
 
@@ -3120,6 +3147,8 @@ var frames = 0;
 var testtime;
 
 Volume.prototype.draw = function (lowquality, testmode) {
+  var viewer = Previous.SVData[0];
+  if (!viewer || (typeof viewer.isDestroyed === 'function' && viewer.isDestroyed())) return;
   if (!Previous.SVData.showVolume) {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     if (slicer) slicer.hide();
@@ -3128,12 +3157,12 @@ Volume.prototype.draw = function (lowquality, testmode) {
 
   let updateViewMatrix = false,
     updateProjMatrix = false;
-  if (!this.viewMatrix.equals(Previous.SVData[0].camera.viewMatrix)) {
-    this.viewMatrix = Cesium.Matrix4.clone(Previous.SVData[0].camera.viewMatrix, new Cesium.Matrix4());
+  if (!this.viewMatrix.equals(viewer.camera.viewMatrix)) {
+    this.viewMatrix = Cesium.Matrix4.clone(viewer.camera.viewMatrix, new Cesium.Matrix4());
     updateViewMatrix = true;
   }
-  if (!this.projMatrix.equals(Previous.SVData[0].camera.frustum.projectionMatrix)) {
-    this.viewMatrix = Cesium.Matrix4.clone(Previous.SVData[0].camera.frustum.projectionMatrix, new Cesium.Matrix4());
+  if (!this.projMatrix.equals(viewer.camera.frustum.projectionMatrix)) {
+    this.projMatrix = Cesium.Matrix4.clone(viewer.camera.frustum.projectionMatrix, new Cesium.Matrix4());
     updateProjMatrix = true;
   }
 
@@ -3225,6 +3254,7 @@ Volume.prototype.draw = function (lowquality, testmode) {
     //Draw two triangles
     this.webgl.initDraw2d(); //This sends the matrices, uNMatrix may not be correct here though
     this.gl.uniformMatrix4fv(this.program.uniforms['uInvPMatrix'], false, this.invPMatrix);
+    this.gl.uniformMatrix4fv(this.program.uniforms['uInvMVMatrix'], false, this.invMVMatrix);
     //this.gl.enableVertexAttribArray(this.program.attributes["aVertexPosition"]);
     //this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.webgl.vertexPositionBuffer);
     //this.gl.vertexAttribPointer(this.program.attributes["aVertexPosition"], this.webgl.vertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
@@ -3274,25 +3304,24 @@ Volume.prototype.draw = function (lowquality, testmode) {
 };
 
 Volume.prototype.copyCamera = function () {
-  // Copy viewMatrix from cesium camera
-  // var cvm = Previous.SVData[0].camera.viewMatrix;
-  // this.webgl.modelView.matrix = mat4.fromValues(
-  //   cvm[0 ], cvm[1 ], cvm[2 ], cvm[3 ],
-  //   cvm[4 ], cvm[5 ], cvm[6 ], cvm[7 ],
-  //   cvm[8 ], cvm[9 ], cvm[10], cvm[11],
-  //   cvm[12], cvm[13], cvm[14], cvm[15]
-  // );
-
   var camera = Previous.SVData[0].camera;
-  mat4.lookAt(
-    this.webgl.modelView.matrix,
-    vec3.fromValues(camera.position.x, camera.position.y, camera.position.z),
-    vec3.fromValues(0.0, 0.0, 0.0),
-    vec3.fromValues(camera.up.x, camera.up.y, camera.up.z)
-  );
+  var cvm = camera.viewMatrix;
+  if (this.cesiumModelMatrix) {
+    // 先以 Cesium 的双精度矩阵完成 ECEF 大坐标消减，再交给 WebGL。
+    var cesiumModelView = Cesium.Matrix4.multiply(cvm, this.cesiumModelMatrix, new Cesium.Matrix4());
+    this.webgl.modelView.matrix = mat4.fromValues.apply(null, Array.from(cesiumModelView));
+  } else {
+    this.webgl.modelView.matrix = mat4.fromValues(
+      cvm[0], cvm[1], cvm[2], cvm[3],
+      cvm[4], cvm[5], cvm[6], cvm[7],
+      cvm[8], cvm[9], cvm[10], cvm[11],
+      cvm[12], cvm[13], cvm[14], cvm[15]
+    );
+    this.webgl.modelView.mult(this.modelMatrix);
+  }
 
-  // model-view matrix = viewMatrix * modelMatrix
-  this.webgl.modelView.mult(this.modelMatrix);
+  this.invMVMatrix = mat4.create();
+  mat4.invert(this.invMVMatrix, this.webgl.modelView.matrix);
 
   //Perspective matrix
   //var frustum = Previous.SVData[0].camera.frustum;
@@ -3321,6 +3350,7 @@ Volume.prototype.copyCamera = function () {
   //Get inverted matrix for volume shader
   this.invPMatrix = mat4.create();
   mat4.invert(this.invPMatrix, this.webgl.perspective.matrix);
+
 };
 
 Volume.prototype.camera = function () {
@@ -3556,6 +3586,7 @@ Volume.prototype.clear = function () {
 };
 
 function clearVolume() {
+  ++volumeLoadGeneration;
   if (slicer) {
     slicer.clear();
     slicer = null;

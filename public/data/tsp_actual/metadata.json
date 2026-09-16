@@ -1,0 +1,362 @@
+{
+  "schemaVersion": "1.0",
+  "source": "地震波反射.html / Vp.csv / Vs.csv",
+  "report": {
+    "projectName": "康定2号隧道2#斜井",
+    "forecastDate": "2022-06-05",
+    "faceMileage": "X1DK2+937.0",
+    "forecastRange": "X1DK2+937.0～X1DK2+837.0",
+    "detectionLength": 100.0,
+    "device": "TSP303",
+    "shotSpacing": 2.5,
+    "shotCount": 24,
+    "summary": "预报段围岩总体为较完整～较破碎，节理裂隙较发育，存在沿裂隙线状或股状出水。"
+  },
+  "channels": {
+    "vp": {
+      "configUrl": "/data/tsp_actual/vp.json",
+      "textureUrl": "/data/tsp_actual/vp_volume.png",
+      "valueRange": [
+        3819.420654296875,
+        5631.61865234375
+      ],
+      "unit": "m/s",
+      "shape": [
+        101,
+        401,
+        101
+      ],
+      "voxelCount": 4090601,
+      "sourceSampleCount": 4045305,
+      "filledVoxelCount": 45296,
+      "coordinateRange": {
+        "x": [
+          -25.0,
+          25.0
+        ],
+        "y": [
+          26.0,
+          226.0
+        ],
+        "z": [
+          -25.0,
+          25.0
+        ]
+      },
+      "voxelSize": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "vs": {
+      "configUrl": "/data/tsp_actual/vs.json",
+      "textureUrl": "/data/tsp_actual/vs_volume.png",
+      "valueRange": [
+        1924.45166015625,
+        2963.5263671875
+      ],
+      "unit": "m/s",
+      "shape": [
+        101,
+        401,
+        101
+      ],
+      "voxelCount": 4090601,
+      "sourceSampleCount": 4045305,
+      "filledVoxelCount": 45296,
+      "coordinateRange": {
+        "x": [
+          -25.0,
+          25.0
+        ],
+        "y": [
+          26.0,
+          226.0
+        ],
+        "z": [
+          -25.0,
+          25.0
+        ]
+      },
+      "voxelSize": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "hardness": {
+      "configUrl": "/data/tsp_actual/hardness.json?v=2",
+      "textureUrl": "/data/tsp_actual/hardness_volume.png?v=2",
+      "valueRange": [
+        52.780555725097656,
+        80.40226745605469
+      ],
+      "unit": "MPa",
+      "shape": [
+        101,
+        401,
+        101
+      ],
+      "voxelCount": 4090601,
+      "voxelSize": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "coordinateRange": {
+        "x": [
+          -25.0,
+          25.0
+        ],
+        "y": [
+          26.0,
+          226.0
+        ],
+        "z": [
+          -25.0,
+          25.0
+        ]
+      },
+      "densityRange": [
+        2.510470390319824,
+        2.6157236099243164
+      ],
+      "dynamicModulusRange": [
+        26.913284301757812,
+        53.889976501464844
+      ],
+      "categories": [
+        {
+          "key": "very_soft",
+          "label": "极软岩",
+          "rule": "Rc ≤ 5 MPa",
+          "color": "#d73027",
+          "voxelCount": 0,
+          "percentage": 0.0
+        },
+        {
+          "key": "soft",
+          "label": "软岩",
+          "rule": "5 < Rc ≤ 15 MPa",
+          "color": "#fc8d59",
+          "voxelCount": 0,
+          "percentage": 0.0
+        },
+        {
+          "key": "relatively_soft",
+          "label": "较软岩",
+          "rule": "15 < Rc ≤ 30 MPa",
+          "color": "#fee08b",
+          "voxelCount": 0,
+          "percentage": 0.0
+        },
+        {
+          "key": "hard",
+          "label": "硬岩",
+          "rule": "30 < Rc ≤ 60 MPa",
+          "color": "#66c2a5",
+          "voxelCount": 60342,
+          "percentage": 1.48
+        },
+        {
+          "key": "very_hard",
+          "label": "极硬岩",
+          "rule": "Rc > 60 MPa",
+          "color": "#4575b4",
+          "voxelCount": 4030259,
+          "percentage": 98.52
+        }
+      ],
+      "formula": {
+        "density": "ρ = 0.7(VpVs)^0.08",
+        "dynamicModulus": "ED = ρVs²(3Vp²−4Vs²)/(Vp²−Vs²)",
+        "ucs": "Rc = 7.1718ED^0.6062"
+      },
+      "note": "经验关系用于估计空间变化，不能代替岩样试验。"
+    },
+    "ratio": {
+      "shape": [
+        101,
+        401,
+        101
+      ],
+      "voxelCount": 4090601,
+      "voxelSize": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "coordinateRange": {
+        "x": [
+          -25.0,
+          25.0
+        ],
+        "y": [
+          26.0,
+          226.0
+        ],
+        "z": [
+          -25.0,
+          25.0
+        ]
+      },
+      "configUrl": "/data/tsp_actual/vp_vs_ratio.json?v=1",
+      "textureUrl": "/data/tsp_actual/vp_vs_ratio_volume.png?v=1",
+      "valueRange": [
+        1.419547438621521,
+        2.868170976638794
+      ],
+      "unit": "VP/VS",
+      "description": "纵横波速度组合指标 VP/VS。"
+    },
+    "anomaly": {
+      "shape": [
+        101,
+        401,
+        101
+      ],
+      "voxelCount": 4090601,
+      "voxelSize": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "coordinateRange": {
+        "x": [
+          -25.0,
+          25.0
+        ],
+        "y": [
+          26.0,
+          226.0
+        ],
+        "z": [
+          -25.0,
+          25.0
+        ]
+      },
+      "configUrl": "/data/tsp_actual/tsp_anomaly.json?v=1",
+      "textureUrl": "/data/tsp_actual/tsp_anomaly_volume.png?v=1",
+      "valueRange": [
+        0.0,
+        1.0
+      ],
+      "unit": "异常指数",
+      "description": "低波速、波速突变、强速度梯度和VP/VS异常的加权组合。",
+      "weights": {
+        "lowVelocity": 0.4,
+        "velocityMutation": 0.25,
+        "strongGradient": 0.25,
+        "ratioAnomaly": 0.1
+      },
+      "anomalyZones": [
+        {
+          "id": "TSP-A01",
+          "type": "波速突变区",
+          "startMileage": "YK2+269.25",
+          "endMileage": "YK2+276.25",
+          "distanceFromFace": [
+            25.25,
+            32.25
+          ],
+          "spatialRange": {
+            "x": [
+              -25.0,
+              25.0
+            ],
+            "z": [
+              -25.0,
+              22.5
+            ]
+          },
+          "intensity": 0.695,
+          "peakIntensity": 0.9,
+          "componentScores": {
+            "lowVelocity": 0.759,
+            "velocityMutation": 0.782,
+            "strongGradient": 0.773,
+            "ratioAnomaly": 0.026
+          }
+        }
+      ]
+    },
+    "integrity": {
+      "shape": [
+        101,
+        401,
+        101
+      ],
+      "voxelCount": 4090601,
+      "voxelSize": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "coordinateRange": {
+        "x": [
+          -25.0,
+          25.0
+        ],
+        "y": [
+          26.0,
+          226.0
+        ],
+        "z": [
+          -25.0,
+          25.0
+        ]
+      },
+      "configUrl": "/data/tsp_actual/integrity.json?v=1",
+      "textureUrl": "/data/tsp_actual/integrity_volume.png?v=1",
+      "valueRange": [
+        0.10000002384185791,
+        1.0
+      ],
+      "unit": "完整程度指示 I",
+      "description": "I=1−异常指数；属于TSP波速解释指标，不等同于规范岩体完整性系数Kv。",
+      "categories": [
+        {
+          "key": "extremely_fractured",
+          "label": "极破碎",
+          "rule": "I < 0.2",
+          "color": "#d73027",
+          "voxelCount": 10661,
+          "percentage": 0.26
+        },
+        {
+          "key": "fractured",
+          "label": "破碎",
+          "rule": "0.2 ≤ I < 0.4",
+          "color": "#fc8d59",
+          "voxelCount": 54696,
+          "percentage": 1.34
+        },
+        {
+          "key": "relatively_fractured",
+          "label": "较破碎",
+          "rule": "0.4 ≤ I < 0.6",
+          "color": "#fee08b",
+          "voxelCount": 192706,
+          "percentage": 4.71
+        },
+        {
+          "key": "relatively_intact",
+          "label": "较完整",
+          "rule": "0.6 ≤ I < 0.8",
+          "color": "#66c2a5",
+          "voxelCount": 1586180,
+          "percentage": 38.78
+        },
+        {
+          "key": "intact",
+          "label": "完整",
+          "rule": "I ≥ 0.8",
+          "color": "#2b83ba",
+          "voxelCount": 2246358,
+          "percentage": 54.92
+        }
+      ]
+    }
+  }
+}

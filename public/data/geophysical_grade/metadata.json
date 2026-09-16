@@ -1,0 +1,27 @@
+{
+  "sources": [
+    "data/tem_voxel_full.csv",
+    "data/Vp.csv",
+    "data/Vs.csv"
+  ],
+  "shape": [
+    80,
+    100,
+    80
+  ],
+  "classified": 245100,
+  "rejectedDuringAlignment": 394900,
+  "gradeCounts": {
+    "2": 892,
+    "3": 21971,
+    "4": 144818,
+    "5": 77419
+  },
+  "rule": "Vp/Vs < 1.7 => II; < 2.0 => III; otherwise IV; rho < 570 Ω·m degrades one class",
+  "colours": {
+    "2": "#5a9fc6",
+    "3": "#244b78",
+    "4": "#e8bd35",
+    "5": "#8f3f20"
+  }
+}

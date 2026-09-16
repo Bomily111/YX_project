@@ -6,6 +6,7 @@
 import * as Cesium from 'cesium';
 import { DTScopeEngine } from './Viewer';
 import { unloadTemVoxelCloud } from './TemVoxelCloud';
+import { FACE_SKETCH_RECORDS, FACE_SKETCH_REFERENCE } from '@/modules/face-sketch/data';
 // @ts-ignore
 import { initVolume, clearVolume } from '@/utils/AllPrevious/All/ShareVolume01.js';
 // @ts-ignore
@@ -15,9 +16,10 @@ import Previous from '@/utils/AllPrevious/index.js';
 interface ModelConfig {
   volumeUrl?: string;                   // 体数据 JSON 路径（public/ 根目录相对）
   cesiumConfig?: {                      // 体数据在 Cesium 场景中的变换（JSON 无 cesium 字段时使用）
-    rotate: [number, number, number];
-    translate: [number, number, number];
-    scale: [number, number, number];
+    rotate?: [number, number, number];
+    translate?: [number, number, number];
+    scale?: [number, number, number];
+    matrix?: number[];                  // 完整 ECEF 模型矩阵，优先级高于欧拉角/平移/缩放
   };
   glbUrl?: string;                      // GLB 模型路径（单个）
   envelopeUrl?: string;                  // 包络 GLB 模型路径（与 glbUrl 共用锚点/朝向，默认隐藏，供开关控制）
@@ -28,13 +30,111 @@ interface ModelConfig {
   glbZRot?: number;                     // GLB 模型额外绕Z轴（上方）旋转（弧度）
   glbScale?: number;                    // GLB 模型统一缩放（默认 1）
   tunnelPos: [number, number, number];  // 模型锚点 [lon, lat, h]；glbItems 模式下作为参考里程的位置
-  tunnelHeading: number;                // 随道参考模型朝向（弧度，与 Layue-master 原始值一致）
+  tunnelHeading?: number;               // 隧道参考模型朝向（度，从正北顺时针）
+  tunnelPitch?: number;                 // 隧道纵坡角（度）
   referenceMileage?: number;            // glbItems 模式下的参考里程（DK 数字），其他里程相对此偏移
   flyDest: { x: number; y: number; z: number }; // 飞行目标（ECEF）
   flyOrientation: { heading: number; pitch: number };
   lookAtPos: [number, number, number];  // lookAt 目标点
   lookAtOffset: [number, number, number];
   skipLookAt?: boolean;                 // 设为 true 时跳过 flyTo 后的 lookAt，保留 flyTo 视角
+}
+
+/**
+ * 将 TSP 局部坐标体映射到隧道中心线。
+ * 数据轴定义：x=横向、y=里程前进方向、z=高程；range 单位均为米。
+ */
+function buildTunnelAlignedVolumeMatrix(
+  anchor: [number, number, number],
+  headingDeg: number,
+  pitchDeg: number,
+  range: { x: [number, number]; y: [number, number]; z: [number, number] },
+): number[] {
+  const heading = Cesium.Math.toRadians(headingDeg);
+  const pitch = Cesium.Math.toRadians(pitchDeg);
+  const sinH = Math.sin(heading);
+  const cosH = Math.cos(heading);
+  const sinP = Math.sin(pitch);
+  const cosP = Math.cos(pitch);
+
+  // ENU 局部坐标中的三个正交轴：横向、里程方向、隧道法向。
+  const lateral = new Cesium.Cartesian3(cosH, -sinH, 0);
+  const forward = new Cesium.Cartesian3(sinH * cosP, cosH * cosP, sinP);
+  const vertical = new Cesium.Cartesian3(-sinH * sinP, -cosH * sinP, cosP);
+  const xLength = range.x[1] - range.x[0];
+  const yLength = range.y[1] - range.y[0];
+  const zLength = range.z[1] - range.z[0];
+
+  const localOrigin = new Cesium.Cartesian3();
+  Cesium.Cartesian3.multiplyByScalar(lateral, range.x[0], localOrigin);
+  Cesium.Cartesian3.add(
+    localOrigin,
+    Cesium.Cartesian3.multiplyByScalar(forward, range.y[0], new Cesium.Cartesian3()),
+    localOrigin,
+  );
+  Cesium.Cartesian3.add(
+    localOrigin,
+    Cesium.Cartesian3.multiplyByScalar(vertical, range.z[0], new Cesium.Cartesian3()),
+    localOrigin,
+  );
+
+  // ShareVolume 的采样立方体是 [0,1]^3，因此三列分别直接写入三个物理边向量。
+  const localMatrix = Cesium.Matrix4.fromArray([
+    lateral.x * xLength, lateral.y * xLength, lateral.z * xLength, 0,
+    forward.x * yLength, forward.y * yLength, forward.z * yLength, 0,
+    vertical.x * zLength, vertical.y * zLength, vertical.z * zLength, 0,
+    localOrigin.x, localOrigin.y, localOrigin.z, 1,
+  ]);
+  const anchorMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+    Cesium.Cartesian3.fromDegrees(anchor[0], anchor[1], anchor[2]),
+  );
+  const worldMatrix = Cesium.Matrix4.multiply(anchorMatrix, localMatrix, new Cesium.Matrix4());
+  return Array.from(worldMatrix);
+}
+
+/** TEM 局部坐标为 X=前向、Y=横向、Z=高程，轴序与 TSP 不同。 */
+function buildTemAlignedVolumeMatrix(
+  anchor: [number, number, number],
+  headingDeg: number,
+  pitchDeg: number,
+  range: { x: [number, number]; y: [number, number]; z: [number, number] },
+  reverseHorizontal = false,
+): number[] {
+  const heading = Cesium.Math.toRadians(headingDeg);
+  const pitch = Cesium.Math.toRadians(pitchDeg);
+  const sinH = Math.sin(heading);
+  const cosH = Math.cos(heading);
+  const sinP = Math.sin(pitch);
+  const cosP = Math.cos(pitch);
+  // ShareVolume 的射线盒求交要求右手坐标；TEM 的 X=前向，
+  // 因此 Y 轴取隧道左向，避免生成镜像（负行列式）矩阵。
+  const lateral = new Cesium.Cartesian3(-cosH, sinH, 0);
+  const forward = new Cesium.Cartesian3(sinH * cosP, cosH * cosP, sinP);
+  const vertical = new Cesium.Cartesian3(-sinH * sinP, -cosH * sinP, cosP);
+  // TEM 成果纹理的水平朝向与场景里程方向相反时，将 X/Y 两轴同时
+  // 翻转，相当于绕体数据中心旋转 180°，且不改变模型中心与包围范围。
+  const xAxis = reverseHorizontal
+    ? Cesium.Cartesian3.negate(forward, new Cesium.Cartesian3())
+    : forward;
+  const yAxis = reverseHorizontal
+    ? Cesium.Cartesian3.negate(lateral, new Cesium.Cartesian3())
+    : lateral;
+  const xLength = range.x[1] - range.x[0];
+  const yLength = range.y[1] - range.y[0];
+  const zLength = range.z[1] - range.z[0];
+  const xOrigin = reverseHorizontal ? range.x[1] : range.x[0];
+  const yOrigin = reverseHorizontal ? range.y[1] : range.y[0];
+  const localOrigin = Cesium.Cartesian3.multiplyByScalar(forward, xOrigin, new Cesium.Cartesian3());
+  Cesium.Cartesian3.add(localOrigin, Cesium.Cartesian3.multiplyByScalar(lateral, yOrigin, new Cesium.Cartesian3()), localOrigin);
+  Cesium.Cartesian3.add(localOrigin, Cesium.Cartesian3.multiplyByScalar(vertical, range.z[0], new Cesium.Cartesian3()), localOrigin);
+  const localMatrix = Cesium.Matrix4.fromArray([
+    xAxis.x * xLength, xAxis.y * xLength, xAxis.z * xLength, 0,
+    yAxis.x * yLength, yAxis.y * yLength, yAxis.z * yLength, 0,
+    vertical.x * zLength, vertical.y * zLength, vertical.z * zLength, 0,
+    localOrigin.x, localOrigin.y, localOrigin.z, 1,
+  ]);
+  const anchorMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(anchor[0], anchor[1], anchor[2]));
+  return Array.from(Cesium.Matrix4.multiply(anchorMatrix, localMatrix, new Cesium.Matrix4()));
 }
 
 const MODEL_CONFIGS: Record<string, ModelConfig> = {
@@ -58,41 +158,58 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
     lookAtPos: [94.9417636, 29.5114813, 2967.04],
     lookAtOffset: [125, -150, 125],
   },
-  // TSP 反演（默认显示 VS，新数据由外部软件导出，cesium 配置在此维护）
+  // 地震波反射 / TSP 三维体素场（默认显示本项目实测 VS 数据）
   tsp: {
-    volumeUrl: 'data/tsp_new/vs_3.json',
+    volumeUrl: 'data/tsp_actual/vs.json',
     cesiumConfig: {
-      rotate: [0.0, -1.5, 168.5] as [number, number, number],
-      translate: [25, 45, -50] as [number, number, number],
-      // autoscale=true 已按 res=[241,162,162] 处理形状（x 方向偏长 1.488:1:1）
-      // cesium scale 用均匀值，不叠加额外变形
-      scale: [0.0065, 0.00921, 0.00921] as [number, number, number],
+      // 将源数据 y=26 的首个断面对准 YK2+244，并按报告的 100m 有效预报长度
+      // 沿 YK2+244～YK2+344 的中心线弦向展开。
+      matrix: buildTunnelAlignedVolumeMatrix(
+        [94.9058769996, 29.533338106, 2945.641],
+        101.833672597,
+        0.286420559,
+        { x: [-25, 25], y: [0, 100], z: [-25, 25] },
+      ),
     },
     tunnelPos: [94.9056136, 29.5333802, 2945.51],
-    tunnelHeading: 100.08,
+    tunnelHeading: 100.066437959,
+    tunnelPitch: 0.287239726,
     flyDest: { x: -475447.3, y: 5536370.3, z: 3126656.9 },
     flyOrientation: { heading: 5.6439, pitch: -0.1861 },
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
     lookAtOffset: [265, -357, 84],
   },
-  // 瞬变电磁 (TEM 处理管线生成，输出到 tem_output/latest/)
+  // 瞬变电磁：综合物探视电阻率成果及其富水阈值结果。
   tem: {
+    volumeUrl: 'data/geophysical_tem/resistivity_contrast.json',
+    cesiumConfig: {
+      // 掌子面锚点与 TSP 一致；TEM X 前向、Y 横向、Z 高程。
+      matrix: buildTemAlignedVolumeMatrix(
+        [94.9058769996, 29.533338106, 2945.641],
+        101.833672597,
+        0.286420559,
+        { x: [-2.797, 58.545], y: [-50.913, 50.913], z: [-17.064, 30.467] },
+        true,
+      ),
+    },
     tunnelPos: [94.9056136, 29.5333802, 2945.51],
     flyDest: { x: -475447.3, y: 5536370.3, z: 3126656.9 },
     flyOrientation: { heading: 5.6439, pitch: -0.1861 },
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
     lookAtOffset: [265, -357, 84],
   },
-  // 瞬变电磁（备选定位参数，同 tem 数据源）
-  tem_new: {
-    volumeUrl: 'data/tem_output/latest/tem_model.json',
+  // 综合物探融合围岩分级：与 TEM 共用体素网格及隧道空间锚点。
+  geophysical_grade: {
+    volumeUrl: 'data/geophysical_grade/fused_rock_grade_2345.json',
     cesiumConfig: {
-      rotate: [0.0, 1.5, -11.5],
-      translate: [0, 0, -50] as [number, number, number],
-      scale: [0.01567, 0.01567, 0.01567],
+      matrix: buildTemAlignedVolumeMatrix(
+        [94.9058769996, 29.533338106, 2945.641],
+        101.833672597,
+        0.286420559,
+        { x: [-2.797, 58.545], y: [-50.913, 50.913], z: [-17.064, 30.467] },
+      ),
     },
     tunnelPos: [94.9056136, 29.5333802, 2945.51],
-    tunnelHeading: 100.08,
     flyDest: { x: -475447.3, y: 5536370.3, z: 3126656.9 },
     flyOrientation: { heading: 5.6439, pitch: -0.1861 },
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
@@ -138,15 +255,11 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
     lookAtOffset: [265, -357, 84],
   },
-  // 超前水平钻 + 掌子面素描（AHD + TFS 叠加显示）
+  // 超前水平钻（保留 AHD 模型；掌子面照片由 face_sketch 独立生成）
   horiz_drill: {
     glbItems: [
       { url: 'data/ahd/ahd1/2320835.glb', mileage: 5, heightOffset: 5 },
       { url: 'data/ahd/ahd2/2336197.glb', mileage: 15, heightOffset: 5 },
-      { url: 'data/tfs_new/tfs3/2322196.glb', mileage: 0 },
-      { url: 'data/tfs_new/tfs1/2322509.glb', mileage: 10 },
-      { url: 'data/tfs_new/tfs2/2322518.glb', mileage: 20 },
-      { url: 'data/tfs_new/tfs4/2326775.glb', mileage: 25 },
     ],
     tunnelPos: [94.9056136, 29.5333802, 2945.51],
     referenceMileage: 0,
@@ -158,19 +271,11 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
     lookAtOffset: [265, -357, 84],
   },
-  // 掌子面素描（TFS GLB 模型 - 4切片沿中线排列）
+  // 掌子面照片与素描：照片平面由新里程数据直接生成，不再使用旧 TFS GLB。
   face_sketch: {
-    glbItems: [
-      { url: 'data/tfs_new/tfs3/2322196.glb', mileage: 0 },
-      { url: 'data/tfs_new/tfs1/2322509.glb', mileage: 10 },
-      { url: 'data/tfs_new/tfs2/2322518.glb', mileage: 20 },
-      { url: 'data/tfs_new/tfs4/2326775.glb', mileage: 30 },
-    ],
-    tunnelPos: [94.9056136, 29.5333802, 2945.51],
-    referenceMileage: 0,
-    glbHeading: 1.7467,
-    glbYRot: -1.5708,
-    tunnelHeading: 100.08,
+    tunnelPos: FACE_SKETCH_REFERENCE.anchor,
+    tunnelHeading: FACE_SKETCH_REFERENCE.headingDeg,
+    tunnelPitch: FACE_SKETCH_REFERENCE.pitchDeg,
     flyDest: { x: -475447.3, y: 5536370.3, z: 3126656.9 },
     flyOrientation: { heading: 5.6439, pitch: -0.1861 },
     lookAtPos: [94.9056136, 29.5333802, 2945.51],
@@ -192,27 +297,298 @@ const MODEL_CONFIGS: Record<string, ModelConfig> = {
   },
 };
 
+// 属性维度直接复用 TSP 已生成的解释体素，但使用独立入口，避免打开原数据源面板。
+MODEL_CONFIGS.tsp_hardness = {
+  ...MODEL_CONFIGS.tsp,
+  volumeUrl: 'data/tsp_actual/hardness.json?v=2',
+};
+MODEL_CONFIGS.tsp_integrity = {
+  ...MODEL_CONFIGS.tsp,
+  volumeUrl: 'data/tsp_actual/integrity.json?v=1',
+};
+
 // ── 运行时状态 ────────────────────────────────────────────
 let tunnelEntity: any = null;
 let glbPrimitives: any[] = [];
 let jumboEnvelopePrimitive: any = null;
+let differenceHighlightEnabled = false;
+let temVolumeOpacity = 0.4;
+let temSliceAxis: 'none' | 'x' | 'y' | 'z' = 'none';
+let temSliceFraction = 1;
+type FusedRockGrade = 2 | 3 | 4 | 5;
+const fusedGradeVisibility: Record<FusedRockGrade, boolean> = { 2: true, 3: true, 4: true, 5: true };
+let fusedGradeOpacity = 0.68;
+let fusedGradeContrast = 1.25;
+let fusedGradeReloadTimer: number | null = null;
+let tspAttributeOpacity = 0.68;
+let tspAttributeContrast = 1.2;
+let activeGeoModelKey: string | null = null;
+const FACE_SKETCH_VERTICAL_OFFSET = 5;
+let selectedFaceSketchMileage = FACE_SKETCH_RECORDS[FACE_SKETCH_RECORDS.length - 1].mileage;
+let faceSketchSceneItems: Array<{ mileage: string; entity: any; material: any; centre: Cesium.Cartesian3 }> = [];
+
+function removeFaceSketchPhotos(viewer: any) {
+  for (const item of faceSketchSceneItems) viewer.entities.remove(item.entity);
+  faceSketchSceneItems = [];
+}
+
+function updateFaceSketchPhotoStyle(viewer: any) {
+  for (const item of faceSketchSceneItems) {
+    const active = item.mileage === selectedFaceSketchMileage;
+    item.entity.show = active;
+    item.material.color = new Cesium.ConstantProperty(Cesium.Color.WHITE);
+    item.entity.label.show = active;
+  }
+  viewer.scene.requestRender();
+}
+
+function loadFaceSketchPhotos(viewer: any) {
+  removeFaceSketchPhotos(viewer);
+  const reference = FACE_SKETCH_REFERENCE;
+  const heading = Cesium.Math.toRadians(reference.headingDeg);
+  const pitch = Cesium.Math.toRadians(reference.pitchDeg);
+  const metresPerDegreeLon = 111320 * Math.cos(Cesium.Math.toRadians(reference.anchor[1]));
+  const metresPerDegreeLat = 110940;
+
+  for (const record of FACE_SKETCH_RECORDS) {
+    // 新数据里程小于 X1DK2+937.0，沿超前方向由参考掌子面向前布置。
+    const forwardOffset = reference.mileageValue - record.mileageValue;
+    const centreLon = reference.anchor[0] + forwardOffset * Math.sin(heading) / metresPerDegreeLon;
+    const centreLat = reference.anchor[1] + forwardOffset * Math.cos(heading) / metresPerDegreeLat;
+    const centreHeight = reference.anchor[2]
+      + forwardOffset * Math.sin(pitch)
+      + FACE_SKETCH_VERTICAL_OFFSET;
+    const fittedWidth = record.width * 0.96;
+    const fittedHeight = record.height * 0.96;
+    const halfWidth = fittedWidth / 2;
+    const lateralEast = Math.cos(heading);
+    const lateralNorth = -Math.sin(heading);
+    const left = Cesium.Cartesian3.fromDegrees(
+      centreLon - halfWidth * lateralEast / metresPerDegreeLon,
+      centreLat - halfWidth * lateralNorth / metresPerDegreeLat,
+    );
+    const right = Cesium.Cartesian3.fromDegrees(
+      centreLon + halfWidth * lateralEast / metresPerDegreeLon,
+      centreLat + halfWidth * lateralNorth / metresPerDegreeLat,
+    );
+    const material = new Cesium.ImageMaterialProperty({
+      image: record.textureUrl,
+      color: Cesium.Color.WHITE,
+      transparent: false,
+    });
+    const centre = Cesium.Cartesian3.fromDegrees(centreLon, centreLat, centreHeight);
+    const entity = viewer.entities.add({
+      id: `face-sketch-photo-${record.mileage.replace(/[^a-zA-Z0-9]/g, '-')}`,
+      name: `掌子面照片 ${record.mileage}`,
+      position: Cesium.Cartesian3.fromDegrees(centreLon, centreLat, centreHeight + fittedHeight / 2 + 1.2),
+      properties: { type: 'face-sketch-photo', mileage: record.mileage },
+      wall: {
+        // 交换端点顺序，使从已开挖侧观看时纹理保持照片原始左右方向。
+        positions: [right, left],
+        minimumHeights: [centreHeight - fittedHeight / 2, centreHeight - fittedHeight / 2],
+        maximumHeights: [centreHeight + fittedHeight / 2, centreHeight + fittedHeight / 2],
+        material,
+        outline: false,
+      },
+      label: {
+        text: record.mileage,
+        show: false,
+        font: '600 13px Microsoft YaHei',
+        fillColor: Cesium.Color.fromCssColorString('#dffaff'),
+        outlineColor: Cesium.Color.fromCssColorString('#061522'),
+        outlineWidth: 3,
+        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+        pixelOffset: new Cesium.Cartesian2(0, -8),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+      },
+    });
+    faceSketchSceneItems.push({ mileage: record.mileage, entity, material, centre });
+  }
+  updateFaceSketchPhotoStyle(viewer);
+}
+
+export function selectFaceSketchMileage(mileage: string, flyTo = true, customViewer?: any) {
+  if (FACE_SKETCH_RECORDS.some(record => record.mileage === mileage)) selectedFaceSketchMileage = mileage;
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer || activeGeoModelKey !== 'face_sketch') return;
+  updateFaceSketchPhotoStyle(viewer);
+  const selected = faceSketchSceneItems.find(item => item.mileage === selectedFaceSketchMileage);
+  if (selected && flyTo) {
+    const viewHeading = Cesium.Math.zeroToTwoPi(Cesium.Math.toRadians(FACE_SKETCH_REFERENCE.headingDeg) + Math.PI);
+    viewer.camera.flyToBoundingSphere(new Cesium.BoundingSphere(selected.centre, 5), {
+      duration: 0.8,
+      offset: new Cesium.HeadingPitchRange(viewHeading, -0.03, 24),
+    });
+  }
+}
+
+function applyTemVolumeControls(): boolean {
+  if (activeGeoModelKey !== 'tem') return false;
+  const volume = Previous.SVData?.[1] as any;
+  if (!volume?.properties || typeof volume.draw !== 'function') return false;
+  volume.properties.density = Math.max(0.1, temVolumeOpacity * 7);
+  volume.properties.xmin = volume.properties.ymin = volume.properties.zmin = 0.01;
+  volume.properties.xmax = volume.properties.ymax = volume.properties.zmax = 0.99;
+  if (temSliceAxis !== 'none') {
+    volume.properties[`${temSliceAxis}max`] = 0.01 + 0.98 * temSliceFraction;
+  }
+  // ShareVolume 静止相机时会跳过重绘，显式恢复首帧标记以同步侧栏操作。
+  volume.properties.firstLoop = true;
+  volume.draw(false);
+  return true;
+}
+
+function scheduleTemVolumeControlApply(attempt = 0) {
+  if (applyTemVolumeControls() || attempt >= 40) return;
+  window.setTimeout(() => scheduleTemVolumeControlApply(attempt + 1), 100);
+}
+
+export function setTemVolumeOpacity(opacity: number) {
+  temVolumeOpacity = Cesium.Math.clamp(opacity, 0.02, 1);
+  scheduleTemVolumeControlApply();
+}
+
+export function setTemVolumeSlice(axis: 'none' | 'x' | 'y' | 'z', fraction: number) {
+  temSliceAxis = axis;
+  temSliceFraction = Cesium.Math.clamp(fraction, 0, 1);
+  scheduleTemVolumeControlApply();
+}
+
+function fusedGradeVolumeUrl() {
+  const suffix = ([2, 3, 4, 5] as FusedRockGrade[])
+    .filter(grade => fusedGradeVisibility[grade])
+    .join('') || 'none';
+  return `data/geophysical_grade/fused_rock_grade_${suffix}.json`;
+}
+
+function applyFusedGradeControls(): boolean {
+  if (activeGeoModelKey !== 'geophysical_grade') return false;
+  const volume = Previous.SVData?.[1] as any;
+  if (!volume?.properties || typeof volume.draw !== 'function') return false;
+  volume.properties.density = Math.max(0.1, fusedGradeOpacity * 7);
+  volume.properties.contrast = fusedGradeContrast;
+  volume.properties.firstLoop = true;
+  volume.draw(false);
+  return true;
+}
+
+function scheduleFusedGradeControlApply(attempt = 0) {
+  if (applyFusedGradeControls() || attempt >= 40) return;
+  window.setTimeout(() => scheduleFusedGradeControlApply(attempt + 1), 100);
+}
+
+function reloadFusedGradeVolume() {
+  if (activeGeoModelKey !== 'geophysical_grade') return;
+  if (fusedGradeReloadTimer !== null) window.clearTimeout(fusedGradeReloadTimer);
+  // Coalesce rapid multi-select changes so only the final grade combination is loaded.
+  fusedGradeReloadTimer = window.setTimeout(() => {
+    fusedGradeReloadTimer = null;
+    initVolume(fusedGradeVolumeUrl(), MODEL_CONFIGS.geophysical_grade.cesiumConfig);
+    // JSON and atlas loading is asynchronous; reapply display tuning after replacement.
+    for (const delay of [120, 400, 900]) {
+      window.setTimeout(() => scheduleFusedGradeControlApply(), delay);
+    }
+  }, 60);
+}
+
+/** 独立显示/隐藏融合围岩等级；重新加载同一融合结果的轻量掩膜体素。 */
+export function setFusedGradeVisibility(grade: FusedRockGrade, visible: boolean) {
+  fusedGradeVisibility[grade] = visible;
+  reloadFusedGradeVolume();
+}
+
+export function setFusedGradeOpacity(opacity: number) {
+  fusedGradeOpacity = Cesium.Math.clamp(opacity, 0.08, 1);
+  scheduleFusedGradeControlApply();
+}
+
+export function setFusedGradeContrast(contrast: number) {
+  fusedGradeContrast = Cesium.Math.clamp(contrast, 0.6, 2.4);
+  scheduleFusedGradeControlApply();
+}
+
+function applyTspAttributeControls(): boolean {
+  if (!['tsp_hardness', 'tsp_integrity'].includes(activeGeoModelKey || '')) return false;
+  const volume = Previous.SVData?.[1] as any;
+  if (!volume?.properties || typeof volume.draw !== 'function') return false;
+  volume.properties.density = Math.max(0.1, tspAttributeOpacity * 7);
+  volume.properties.contrast = tspAttributeContrast;
+  volume.properties.firstLoop = true;
+  volume.draw(false);
+  return true;
+}
+
+function scheduleTspAttributeControlApply(attempt = 0) {
+  if (applyTspAttributeControls() || attempt >= 40) return;
+  window.setTimeout(() => scheduleTspAttributeControlApply(attempt + 1), 100);
+}
+
+export function setTspAttributeOpacity(opacity: number) {
+  tspAttributeOpacity = Cesium.Math.clamp(opacity, 0.08, 1);
+  scheduleTspAttributeControlApply();
+}
+
+export function setTspAttributeContrast(contrast: number) {
+  tspAttributeContrast = Cesium.Math.clamp(contrast, 0.6, 2.4);
+  scheduleTspAttributeControlApply();
+}
+
+function applyDifferenceHighlight(model: any) {
+  if (!model) return;
+  model.silhouetteColor = Cesium.Color.fromCssColorString('#ffcc00');
+  model.silhouetteSize = differenceHighlightEnabled ? 3 : 0;
+}
 
 /** 激活指定 key 的地质模型：加载体数据/GLB + 摆放随道参考 + 飞相机 */
-export function activateGeoModel(key: string, customViewer?: any) {
+export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface') {
   const cfg = MODEL_CONFIGS[key];
   if (!cfg) return;
+
+  if (key === 'tem' && volumeSubKey === 'isosurface') {
+    const showIsosurface = (viewer: any) => {
+      _cleanup(viewer);
+      activeGeoModelKey = 'tem_isosurface';
+      loadTemAnomalyGlb(viewer);
+    };
+    if (customViewer) showIsosurface(customViewer);
+    else DTScopeEngine.getViewer(() => showIsosurface(DTScopeEngine.viewer));
+    return;
+  }
+  const tspVolumeUrls: Record<string, string> = {
+    vp: 'data/tsp_actual/vp.json',
+    vs: 'data/tsp_actual/vs.json',
+    hardness: 'data/tsp_actual/hardness.json?v=2',
+    ratio: 'data/tsp_actual/vp_vs_ratio.json?v=1',
+    anomaly: 'data/tsp_actual/tsp_anomaly.json?v=1',
+    integrity: 'data/tsp_actual/integrity.json?v=1',
+  };
+  const temVolumeUrls: Record<string, string> = {
+    resistivity: 'data/geophysical_tem/resistivity_contrast.json',
+    water: 'data/geophysical_tem/water.json',
+  };
+  const volumeUrl = key === 'tsp'
+    ? (tspVolumeUrls[volumeSubKey || 'vs'] || cfg.volumeUrl)
+    : key === 'tem'
+      ? (temVolumeUrls[volumeSubKey || 'resistivity'] || cfg.volumeUrl)
+    : key === 'geophysical_grade'
+      ? fusedGradeVolumeUrl()
+      : cfg.volumeUrl;
 
   const doActivate = (viewer: any) => {
     // 清理上一个模型
     _cleanup(viewer);
+    activeGeoModelKey = key;
 
     // ── 启动体数据渲染循环（Previous 构造器会重置 SVData 并 start drawVolume）──
     new (Previous as any)(viewer);
     Previous.SVData.showVolume = true;
 
     // ── 体数据渲染（shareVolume WebGL canvas 覆盖层）────────
-    if (cfg.volumeUrl) {
-      try { initVolume(cfg.volumeUrl, cfg.cesiumConfig); } catch (e) { console.warn('[GeoModelController] volume init failed:', e) }
+    if (volumeUrl) {
+      try { initVolume(volumeUrl, cfg.cesiumConfig); } catch (e) { console.warn('[GeoModelController] volume init failed:', e) }
+      if (key === 'tem') scheduleTemVolumeControlApply();
+      if (key === 'geophysical_grade') scheduleFusedGradeControlApply();
+      if (key === 'tsp_hardness' || key === 'tsp_integrity') scheduleTspAttributeControlApply();
     }
 
     // ── GLB 模型 ──────────────────────────────────────────────
@@ -252,6 +628,7 @@ export function activateGeoModel(key: string, customViewer?: any) {
       console.log('[GeoModelController] 加载 GLB:', url, '位置:', pos);
       Cesium.Model.fromGltfAsync({ url, modelMatrix })
         .then((model) => {
+          applyDifferenceHighlight(model);
           viewer.scene.primitives.add(model);
           glbPrimitives.push(model);
           console.log('[GeoModelController] GLB 加载成功:', url);
@@ -280,6 +657,7 @@ export function activateGeoModel(key: string, customViewer?: any) {
     } else if (cfg.glbUrl) {
       loadGlb(cfg.glbUrl, cfg.tunnelPos);
     }
+    if (key === 'face_sketch') loadFaceSketchPhotos(viewer);
 
     // ── 包络模型（与实体共用锚点/朝向，默认隐藏，供工作包络图层开关控制）──
     if (cfg.envelopeUrl) {
@@ -296,26 +674,14 @@ export function activateGeoModel(key: string, customViewer?: any) {
         });
     }
 
-    // ── 随道参考模型（体数据类共用）──────────────────────────
-    if (cfg.volumeUrl) {
-      const pos = Cesium.Cartesian3.fromDegrees(cfg.tunnelPos[0], cfg.tunnelPos[1], cfg.tunnelPos[2]);
-      const orientation = (Cesium as any).Transforms.headingPitchRollQuaternion(
-        pos, new Cesium.HeadingPitchRoll(cfg.tunnelHeading, 0, 0)
-      );
-      tunnelEntity = viewer.entities.add({
-        position: pos,
-        orientation,
-        model: {
-          uri: 'data/finaltunnel1.glb',
-          minimumPixelSize: 100,
-          maximumScale: 10000,
-          show: true,
-        },
-      });
-    }
+    // 隧道背景统一使用主场景已加载的分段模型，避免叠加一套不同原点的参考 GLB。
 
     // ── 相机飞行 ──────────────────────────────────────────────
     viewer.scene.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+    if (key === 'face_sketch') {
+      selectFaceSketchMileage(selectedFaceSketchMileage, true, viewer);
+      return;
+    }
     const useLookAt = !cfg.skipLookAt;
     viewer.scene.camera.flyTo({
       destination: new Cesium.Cartesian3(cfg.flyDest.x, cfg.flyDest.y, cfg.flyDest.z),
@@ -339,34 +705,36 @@ export function activateGeoModel(key: string, customViewer?: any) {
   }
 }
 
-/** 切换 TSP 子类型（vp / vs / pr / rt / e） */
-export function switchTSPLayer(subKey: 'vp' | 'vs' | 'pr' | 'rt' | 'e', customViewer?: any) {
+/** 切换 TSP 子类型。 */
+export function switchTSPLayer(subKey: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity', customViewer?: any) {
   const urlMap: Record<string, string> = {
-    vp:  'data/tsp_new/vp_2.json',
-    vs:  'data/tsp_new/vs_3.json',
-    pr:  'scene/data/TSP/Pr.raw.json',
-    rt:  'scene/data/TSP/Rt.raw.json',
-    e:   'data/tsp_new/depth_1.json',
+    vp:  'data/tsp_actual/vp.json',
+    vs:  'data/tsp_actual/vs.json',
+    hardness: 'data/tsp_actual/hardness.json?v=2',
+    ratio: 'data/tsp_actual/vp_vs_ratio.json?v=1',
+    anomaly: 'data/tsp_actual/tsp_anomaly.json?v=1',
+    integrity: 'data/tsp_actual/integrity.json?v=1',
   };
-  // vp/vs/depth 使用新数据，需要传入 cesiumConfig；pr/rt 的 JSON 自带 cesium 字段
   const cesiumMap: Record<string, any> = {
     vp: MODEL_CONFIGS.tsp.cesiumConfig,
     vs: MODEL_CONFIGS.tsp.cesiumConfig,
-    e:  MODEL_CONFIGS.tsp.cesiumConfig,
+    hardness: MODEL_CONFIGS.tsp.cesiumConfig,
+    ratio: MODEL_CONFIGS.tsp.cesiumConfig,
+    anomaly: MODEL_CONFIGS.tsp.cesiumConfig,
+    integrity: MODEL_CONFIGS.tsp.cesiumConfig,
   };
   initVolume(urlMap[subKey], cesiumMap[subKey]);
 }
 
-/** 切换 TEM 子类型（tem / temrt / tem_new） */
-export function switchTEMLayer(subKey: 'tem' | 'temrt' | 'tem_new', customViewer?: any) {
+/** 切换综合物探 TEM 体素子类型。 */
+export function switchTEMLayer(subKey: 'resistivity' | 'water', customViewer?: any) {
   const urlMap: Record<string, string> = {
-    tem:     'data/tem_output/latest/tem_model.json',
-    temrt:   'scene/data/TEM/TEMRt.raw.json',
-    tem_new: 'data/tem_output/latest/tem_model.json',
+    resistivity: 'data/geophysical_tem/resistivity_contrast.json',
+    water: 'data/geophysical_tem/water.json',
   };
   const cesiumMap: Record<string, any> = {
-    tem:     MODEL_CONFIGS.tem.cesiumConfig,
-    tem_new: MODEL_CONFIGS.tem_new.cesiumConfig,
+    resistivity: MODEL_CONFIGS.tem.cesiumConfig,
+    water: MODEL_CONFIGS.tem.cesiumConfig,
   };
   initVolume(urlMap[subKey], cesiumMap[subKey]);
 }
@@ -510,13 +878,23 @@ export function deactivateGeoModel(customViewer?: any) {
   _cleanup(viewer);
   // 停止体数据渲染循环
   if (Previous.SVData) Previous.SVData.showVolume = false;
+  (Previous as any).stopVolumeLoop?.();
   // 移除 WebGL canvas 覆盖层（volume + slicer）
   clearVolume();
   // 释放相机 lookAt 锁定
   viewer.scene.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
 }
 
+/** 高亮当前超报/揭露修正层，用于与长期保留的设计基准层进行差异对比。 */
+export function setGeoModelDifferenceHighlight(enabled: boolean) {
+  differenceHighlightEnabled = enabled;
+  for (const model of glbPrimitives) applyDifferenceHighlight(model);
+  applyTemGlbAppearance(temGlbSelected);
+  DTScopeEngine.viewer?.scene.requestRender();
+}
+
 function _cleanup(viewer: any) {
+  activeGeoModelKey = null;
   if (tunnelEntity) {
     viewer.entities.remove(tunnelEntity);
     tunnelEntity = null;
@@ -525,8 +903,13 @@ function _cleanup(viewer: any) {
     viewer.scene.primitives.remove(p);
   }
   glbPrimitives = [];
+  removeFaceSketchPhotos(viewer);
   if (jumboEnvelopePrimitive) { viewer.scene.primitives.remove(jumboEnvelopePrimitive); jumboEnvelopePrimitive = null; }
   if (temGlbPrimitive) { viewer.scene.primitives.remove(temGlbPrimitive); temGlbPrimitive = null; }
+  temGlbPickHandler?.destroy();
+  temGlbPickHandler = null;
+  temGlbSelected = false;
+  temGlbCurrentUrl = '';
   unloadTemVoxelCloud();
   // 清除体数据 canvas（从体数据模型切换到纯 GLB 模型时需要）
   clearVolume();
@@ -535,7 +918,7 @@ function _cleanup(viewer: any) {
 // ── API 数据加载 ─────────────────────────────────────────
 /**
  * 从后端 API 返回的模型实例数组合并到 MODEL_CONFIGS。
- * API 数据 > 本地硬编码默认值，实现热切换。
+ * 普通模型允许 API 配置覆盖；集成包模型保留本地精确矩阵与运行时生成逻辑。
  *
  * 调用方式：应用启动时 fetch /api/tunnels/:id/models 后调用此函数。
  */
@@ -556,10 +939,16 @@ export function mergeModelConfigsFromApi(instances: Array<{
   skip_look_at?: boolean;
   sub_type?: string;
 }>) {
+  // 这些配置依赖集成包中的矩阵、体素和运行时照片平面，不能被旧数据库中的
+  // 欧拉角/缩放或 TFS GLB 配置覆盖。
+  const integratedLocalKeys = new Set([
+    'tsp', 'tem', 'geophysical_grade', 'tsp_hardness', 'tsp_integrity', 'face_sketch', 'horiz_drill',
+  ]);
   for (const inst of instances) {
     const key = inst.sub_type && inst.model_type_code === 'tsp'
       ? `tsp_${inst.sub_type}` as string
       : inst.model_type_code;
+    if (integratedLocalKeys.has(key)) continue;
 
     const config: ModelConfig = {
       tunnelPos: [
@@ -629,20 +1018,19 @@ const TEM_GLB_DEFAULT_COLOR = Cesium.Color.fromCssColorString('#ff6b2c').withAlp
 const TEM_GLB_SELECTED_COLOR = Cesium.Color.fromCssColorString('#ff3030').withAlpha(0.86)
 const TEM_GLB_OUTLINE_COLOR = Cesium.Color.fromCssColorString('#ffd166').withAlpha(0.96)
 
-/**
- * k=570 GLB 只表示一个等值边界，因此统一着色，不在表面上伪造数值渐变。
- * 运行时颜色覆盖也能让历史数据中没有材质的白色 GLB 立即正常显示。
- */
+/** k=570 仅表示一个等值边界，统一着色以避免伪造数值渐变。 */
 function applyTemGlbAppearance(selected = false) {
   if (!temGlbPrimitive) return
   temGlbSelected = selected
   temGlbPrimitive.color = selected ? TEM_GLB_SELECTED_COLOR : TEM_GLB_DEFAULT_COLOR
   temGlbPrimitive.colorBlendMode = Cesium.ColorBlendMode.REPLACE
   temGlbPrimitive.colorBlendAmount = 1.0
-  temGlbPrimitive.silhouetteColor = selected
-    ? Cesium.Color.WHITE.withAlpha(0.98)
-    : TEM_GLB_OUTLINE_COLOR
-  temGlbPrimitive.silhouetteSize = selected ? 2.5 : 1.5
+  temGlbPrimitive.silhouetteColor = differenceHighlightEnabled
+    ? Cesium.Color.fromCssColorString('#ffcc00')
+    : selected
+      ? Cesium.Color.WHITE.withAlpha(0.98)
+      : TEM_GLB_OUTLINE_COLOR
+  temGlbPrimitive.silhouetteSize = differenceHighlightEnabled ? 3 : selected ? 2.5 : 1.5
   temGlbPrimitive.backFaceCulling = false
 }
 

@@ -1,6 +1,18 @@
 <template>
-  <div class="out_rectangle">
-    <div class="jojo"></div>
+  <div v-if="activeType === 'hardness'" class="hardness-legend">
+    <div class="hardness-title">坚硬程度（Rc / MPa）</div>
+    <div v-for="item in hardnessClasses" :key="item.label" class="hardness-item">
+      <i :style="{ background: item.color }"></i><span>{{ item.label }}</span><small>{{ item.rule }}</small>
+    </div>
+  </div>
+  <div v-else-if="activeType === 'integrity'" class="hardness-legend">
+    <div class="hardness-title">完整程度指示 I</div>
+    <div v-for="item in integrityClasses" :key="item.label" class="hardness-item">
+      <i :style="{ background: item.color }"></i><span>{{ item.label }}</span><small>{{ item.rule }}</small>
+    </div>
+  </div>
+  <div v-else class="out_rectangle">
+    <div class="jojo" :class="{ anomaly: activeType === 'anomaly' }"></div>
     <div class="triangle1"></div>
     <div class="triangle2"></div>
     <div class="triangle3"></div>
@@ -16,6 +28,8 @@ import { computed, defineProps } from 'vue';
 
 const props = defineProps({
   activeType: { type: String, default: 'vs' },
+  valueRange: { type: Array, default: null },
+  unit: { type: String, default: 'm/s' },
 });
 
 const LABELS = {
@@ -23,20 +37,53 @@ const LABELS = {
   vs: { min: '2217', mid: '2562', max: '2692', unit: 'm/s' },
   e:  { min: '0',    mid: '150',  max: '300',  unit: 'm' },
 };
+const hardnessClasses = [
+  { label: '极软岩', rule: '≤ 5', color: '#d73027' },
+  { label: '软岩', rule: '(5, 15]', color: '#fc8d59' },
+  { label: '较软岩', rule: '(15, 30]', color: '#fee08b' },
+  { label: '硬岩', rule: '(30, 60]', color: '#66c2a5' },
+  { label: '极硬岩', rule: '> 60', color: '#4575b4' },
+];
+const integrityClasses = [
+  { label: '极破碎', rule: 'I < 0.2', color: '#d73027' },
+  { label: '破碎', rule: '[0.2, 0.4)', color: '#fc8d59' },
+  { label: '较破碎', rule: '[0.4, 0.6)', color: '#fee08b' },
+  { label: '较完整', rule: '[0.6, 0.8)', color: '#66c2a5' },
+  { label: '完整', rule: 'I ≥ 0.8', color: '#2b83ba' },
+];
 
-const minVal   = computed(() => LABELS[props.activeType]?.min  ?? '');
-const midVal   = computed(() => LABELS[props.activeType]?.mid  ?? '');
-const maxVal   = computed(() => LABELS[props.activeType]?.max  ?? '');
-const unitLabel = computed(() => LABELS[props.activeType]?.unit ?? '');
+const formatValue = (value) => Number(value).toFixed(['ratio', 'anomaly'].includes(props.activeType) ? 2 : 0);
+const minVal = computed(() => props.valueRange?.length === 2
+  ? formatValue(props.valueRange[0])
+  : (LABELS[props.activeType]?.min ?? ''));
+const maxVal = computed(() => props.valueRange?.length === 2
+  ? formatValue(props.valueRange[1])
+  : (LABELS[props.activeType]?.max ?? ''));
+const midVal = computed(() => props.valueRange?.length === 2
+  ? formatValue((Number(props.valueRange[0]) + Number(props.valueRange[1])) / 2)
+  : (LABELS[props.activeType]?.mid ?? ''));
+const unitLabel = computed(() => props.unit || LABELS[props.activeType]?.unit || '');
 </script>
 
 <style lang="scss" scoped>
+.hardness-legend {
+  position: fixed; left: 320px; bottom: 35px; z-index: 100;
+  width: 260px; padding: 10px 12px; border: 1px solid rgba(0,234,255,.35);
+  border-radius: 6px; background: rgba(4,20,35,.88); color: #d8e8f5;
+}
+.hardness-title { margin-bottom: 7px; color: #00eaff; font-size: 12px; }
+.hardness-item {
+  display: grid; grid-template-columns: 12px 54px 1fr; align-items: center; gap: 6px;
+  margin: 3px 0; font-size: 11px;
+  i { width: 10px; height: 10px; border-radius: 2px; }
+  small { color: #86a6bd; text-align: right; }
+}
 .out_rectangle {
   position: fixed;
-  width: 15%;
-  height: 30%;
-  top: 51%;
-  right: 1%;
+  width: 240px;
+  height: 90px;
+  left: 320px;
+  bottom: 45px;
 
   .jojo {
     position: absolute;
@@ -57,6 +104,9 @@ const unitLabel = computed(() => LABELS[props.activeType]?.unit ?? '');
       rgba(221, 94, 75, 1),
       rgba(181, 11, 39, 1)
     );
+    &.anomaly {
+      background-image: linear-gradient(to right, #28a05a, #ffdc46, #dc2d23);
+    }
   }
 
   .triangle1 {

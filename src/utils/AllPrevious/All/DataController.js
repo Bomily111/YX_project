@@ -293,20 +293,6 @@ function controlDBHModel() {
   return primitive;
 }
 
-function controlTFSModel(viewer) {
-  // const LocalFrameToFixedFrame = Cesium.Transforms.localFrameToFixedFrameGenerator('up', 'east');
-  // const modelMatrix = LocalFrameToFixedFrame(Cesium.Cartesian3.fromDegrees(101.78855283519401, 30.040214597296615, 3631.759417509219));
-  // const tfs = viewer.scene.primitives.add(
-  //   Cesium.Model.fromGltf({
-  //     modelMatrix,
-  //     url: 'scene/data/TFS/model.glb',
-  //   })
-  // );
-  // tfs.show = true;
-  // lookAtFixed(tfs.show, viewer);
-  // return tfs;
-  lookAtFixed(true);
-}
 // 销毁旧的 summaryBox
 function destroySummaryBox() {
   const existingBox = document.getElementById('summary-box');
@@ -505,11 +491,6 @@ function loadTSPModelSummary() {
   );
 }
 
-// 加载 TFS 模型的 summaryBox
-function loadTFSModelSummary() {
-  destroySummaryBox(); // 销毁旧的 summaryBo
-}
-
 export {
   lookAtFixed,
   controlTEGModel,
@@ -520,11 +501,9 @@ export {
   controlGPRModel,
   controlAHDModel,
   controlDBHModel,
-  controlTFSModel,
   loadAHDModelSummary,
   loadDBHModelSummary,
   loadGPRModelSummary,
   loadTSPModelSummary,
-  loadTFSModelSummary,
   destroySummaryBox,
 };

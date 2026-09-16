@@ -1,303 +1,184 @@
 <template>
   <div class="td-root">
-    <!-- 返回列表 -->
-    <button v-if="selected" class="td-back" @click="selected = null">‹ 返回数据集列表</button>
+    <section class="td-section">
+      <div class="td-title">三维预测成果</div>
+      <div class="td-types">
+        <button
+          v-for="item in resultTypes"
+          :key="item.key"
+          type="button"
+          :class="{ active: selected && activeType === item.key }"
+          :disabled="!metadata"
+          @click="selectType(item.key)"
+        >
+          <i>{{ item.icon }}</i>
+          <span><b>{{ item.label }}</b><small>{{ item.description }}</small></span>
+        </button>
+      </div>
+      <div class="td-hint">点击成果按钮切换 TEM 三维体素层或 570 Ω·m 等值面，隧道实体继续保留。</div>
+      <div v-if="metadata" class="td-meta-strip">
+        <span>{{ metadata.shape.join(' × ') }} 体素</span>
+        <span>{{ voxelResolution }}</span>
+        <span>{{ activeValueRange }}</span>
+      </div>
+      <div v-if="activeType !== 'isosurface'" class="td-controls">
+        <label class="td-opacity-control"><span>透明度 <b>{{ Math.round(opacity * 100) }}%</b></span><input v-model.number="opacity" :disabled="!selected" type="range" min="0.15" max="1" step="0.01" @input="syncOpacity" /></label>
+        <div class="td-control-row"><span>剖切方向</span><div class="td-option-group axis"><button v-for="option in sliceAxes" :key="option.value" type="button" :class="{ active: sliceAxis === option.value }" :disabled="!selected" @click="setSliceAxis(option.value)">{{ option.label }}</button></div></div>
+        <div v-if="sliceAxis !== 'none'" class="td-control-row"><span>保留范围</span><div class="td-option-group"><button v-for="option in fractionOptions" :key="option.value" type="button" :class="{ active: sliceFraction === option.value }" @click="setSliceFraction(option.value)">{{ option.label }}</button></div></div>
+      </div>
+    </section>
 
-    <!-- Level 1: Dataset List -->
-    <div v-if="!selected">
-      <div class="td-toolbar">
-        <input v-model="searchQuery" class="td-search" placeholder="搜索里程段..." @input="doSearch" />
-        <button class="td-refresh" @click="loadIndex()" title="刷新">↻</button>
+    <section v-if="metadata" class="td-section td-fans">
+      <div class="td-title-row">
+        <div class="td-title">二维扇面成果</div>
+        <small>点击放大</small>
       </div>
-      <div v-if="loading" class="td-empty">加载中...</div>
-      <div v-else-if="filteredDatasets.length === 0" class="td-empty">
-        {{ searchQuery ? '无匹配结果' : '暂无处理数据' }}
+      <div class="td-fan-grid">
+        <button
+          v-for="fan in fanSections"
+          :key="fan.id"
+          type="button"
+          :title="`查看${fan.label}`"
+          @click="selectedFan = fan"
+        >
+          <img :src="fan.src" :alt="`${fan.label}视电阻率等值线图`" />
+          <span>{{ fan.label }}</span>
+        </button>
       </div>
-      <div v-else class="td-list">
-        <div v-for="ds in filteredDatasets" :key="ds.jobId" class="td-card" @click="selected = ds">
-          <div class="td-card-top">
-            <span class="td-card-mileage">{{ ds.mileage || '前向 ' + (ds.xRange?.map((v:number) => v.toFixed(0)).join('~') || '—') + 'm' }}</span>
-            <button class="td-card-del" @click.stop="deleteDataset(ds)">×</button>
-          </div>
-          <div class="td-card-meta">
-            <span>{{ ds.createdAt ? ds.createdAt.slice(0, 16).replace('T', ' ') : '—' }}</span>
-            <span class="td-card-badge">{{ ds.anomalyCount }} 异常体</span>
-          </div>
-          <div class="td-card-meta">
-            <span>k 均值 {{ ds.kMean?.toFixed(1) || '—' }}</span>
-          </div>
-        </div>
+    </section>
+
+    <section v-if="metadata" class="td-section">
+      <div class="td-title">结果统计</div>
+      <div class="td-stat-grid">
+        <div><span>视电阻率体素</span><b>{{ formatCount(metadata.resistivity.count) }}</b></div>
+        <div><span>富水异常体素</span><b class="water">{{ formatCount(metadata.water.count) }}</b></div>
+        <div><span>富水体素占比</span><b>{{ metadata.water.percentage.toFixed(2) }}%</b></div>
+        <div><span>当前显示</span><b>{{ activeResultLabel }}</b></div>
+      </div>
+    </section>
+
+    <section v-if="metadata" class="td-section td-conclusion">
+      <div class="td-title">预报结论</div>
+      <template v-if="activeType === 'resistivity'">
+        <div class="td-row"><span>电性分布范围</span><b>{{ resistivityRange }}</b></div>
+        <div class="td-row"><span>空间解释</span><b>掌子面前方整体电性体素场</b></div>
+        <p>视电阻率体素反映掌子面前方岩体电性变化，可与 TSP 波速体素在同一隧道空间中对照分析。</p>
+      </template>
+      <template v-else-if="activeType === 'water'">
+        <div class="td-row"><span>低阻异常位置</span><b>{{ waterForwardRange }}</b></div>
+        <div class="td-row"><span>异常规模</span><b>{{ formatCount(metadata.water.count) }} 体素</b></div>
+        <div class="td-row"><span>异常强度依据</span><b>ρs &lt; {{ metadata.water.threshold }} Ω·m</b></div>
+        <p>低阻体素作为疑似富水异常空间约束，建议结合 TSP、地质雷达、钻孔和掌子面揭露结果进一步验证。</p>
+      </template>
+      <template v-else>
+        <div class="td-row"><span>等值面阈值</span><b>ρs = 570 Ω·m</b></div>
+        <div class="td-row"><span>模型文件</span><b>anomaly_k570_4x.glb</b></div>
+        <div class="td-row"><span>显示方式</span><b>橙色半透明异常边界</b></div>
+        <p>该模型仅表达 570 Ω·m 单一等值边界，不叠加其他阈值；点击模型可切换高亮状态。</p>
+      </template>
+    </section>
+
+    <div v-if="selectedFan" class="td-fan-modal" @click.self="selectedFan = null">
+      <div class="td-fan-modal__card">
+        <div><b>{{ selectedFan.label }}视电阻率等值线图</b><button type="button" @click="selectedFan = null">×</button></div>
+        <img :src="selectedFan.src" :alt="`${selectedFan.label}视电阻率等值线图`" />
       </div>
     </div>
 
-    <!-- Level 2: Dataset Detail -->
-    <div v-else>
-
-      <!-- k≈570 等值面 & 异常体 -->
-      <div class="td-section">
-        <button class="td-toggle" @click="open.anomaly = !open.anomaly">
-          <span :class="{ rotate: open.anomaly }">▸</span> k≈570 等值面 & 异常体
-          <span class="td-badge">{{ anomalies.length }}</span>
-        </button>
-        <div v-show="open.anomaly" class="td-body">
-          <div class="td-kv"><span>模型</span><b>anomaly_k570_4x.glb</b></div>
-          <div class="td-kv"><span>三角面</span><b>860 顶点 / 1,664 面</b></div>
-          <button class="td-view-btn" @click="$emit('viewInScene', selected?.jobId)">
-            <span>📍</span> 在场景中查看
-          </button>
-          <div class="td-section-divider"></div>
-          <div v-if="anomalies.length === 0" class="td-empty">暂无检测到显著异常体</div>
-          <div v-else class="td-anomaly-list">
-            <div v-for="a in anomalies" :key="a.id" class="td-anomaly-card">
-              <div class="td-anomaly-header">
-                <span class="td-anomaly-id">#{{ a.id }}</span>
-                <span class="td-anomaly-k" :style="{ color: kColor(a.k_mean) }">k={{ a.k_mean.toFixed(1) }}</span>
-              </div>
-              <div class="td-anomaly-meta">
-                <span>{{ a.voxels }} 体素</span>
-                <span>中心 ({{ a.cx.toFixed(1) }}, {{ a.cy.toFixed(1) }}, {{ a.cz.toFixed(1) }})m</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 密集点云分布图 -->
-      <div class="td-section">
-        <button class="td-toggle" @click="open.denseCloud = !open.denseCloud">
-          <span :class="{ rotate: open.denseCloud }">▸</span> 密集点云三维分布
-        </button>
-        <div v-show="open.denseCloud" class="td-body">
-          <img :src="`${baseUrl}/fig3d_1_dense_cloud.png`"
-               class="td-full-img" @click="zoomImage = `${baseUrl}/fig3d_1_dense_cloud.png`" />
-        </div>
-      </div>
-
-      <!-- 多深度 YZ 断面 -->
-      <div class="td-section">
-        <button class="td-toggle" @click="open.depthSlices = !open.depthSlices">
-          <span :class="{ rotate: open.depthSlices }">▸</span> 多深度 YZ 断面
-        </button>
-        <div v-show="open.depthSlices" class="td-body">
-          <img :src="`${baseUrl}/fig3d_3_depth_slices.png`"
-               class="td-full-img" @click="zoomImage = `${baseUrl}/fig3d_3_depth_slices.png`" />
-        </div>
-      </div>
-
-      <!-- 等值线扇面图 -->
-      <div class="td-section">
-        <button class="td-toggle" @click="open.fanContour = !open.fanContour">
-          <span :class="{ rotate: open.fanContour }">▸</span> 等值线扇面图
-          <span class="td-badge">4</span>
-        </button>
-        <div v-show="open.fanContour" class="td-body">
-          <div class="td-gallery">
-            <div v-for="img in contourImages" :key="img.name" class="td-thumb" @click="zoomImage = img.url">
-              <img :src="img.url" :alt="img.name" />
-              <span class="td-thumb-label">{{ img.name }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 体素数据下载 -->
-      <div class="td-section">
-        <button class="td-toggle" @click="open.voxelCsv = !open.voxelCsv">
-          <span :class="{ rotate: open.voxelCsv }">▸</span> 体素数据 (CSV)
-        </button>
-        <div v-show="open.voxelCsv" class="td-body">
-          <div class="td-kv"><span>文件</span><b>tem_voxel_full.csv</b></div>
-          <button class="td-view-btn" @click="$emit('viewVoxelCloud', selected?.jobId)">
-            <span>📍</span> 在场景中查看体素点云
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Zoom Modal -->
-    <Teleport to="body">
-      <div v-if="zoomImage" class="td-modal" @click="zoomImage = null">
-        <img :src="zoomImage" class="td-modal-img" @click.stop />
-        <button class="td-modal-close" @click="zoomImage = null">×</button>
-      </div>
-    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
-interface Dataset {
-  jobId: string; createdAt: string; mileage?: string
-  xRange: number[]; yRange: number[]; zRange: number[]
-  anomalyCount: number; kMean: number
+type ResultType = 'resistivity' | 'water' | 'isosurface'
+interface FanSection { id: number; label: string; src: string }
+interface Metadata {
+  shape: number[]
+  voxelSize: number[]
+  bounds: { min: number[]; max: number[] }
+  resistivity: { count: number; valueRange: number[]; unit: string }
+  water: { rule: string; threshold: number; count: number; percentage: number; bounds: { min: number[]; max: number[] } }
 }
 
-interface Anomaly {
-  id: number; voxels: number; cx: number; cy: number; cz: number; k_mean: number
+const emit = defineEmits<{
+  selectResult: [type: ResultType]
+  opacityChange: [opacity: number]
+  sliceChange: [axis: 'none' | 'x' | 'y' | 'z', fraction: number]
+}>()
+const metadata = ref<Metadata | null>(null)
+const activeType = ref<ResultType>('resistivity')
+const selected = ref(false)
+const opacity = ref(0.4)
+const sliceAxis = ref<'none' | 'x' | 'y' | 'z'>('none')
+const sliceFraction = ref(1)
+const selectedFan = ref<FanSection | null>(null)
+const fanSections: FanSection[] = Array.from({ length: 4 }, (_, index) => ({
+  id: index + 1,
+  label: `扇面 ${index + 1}`,
+  src: `/data/geophysical_tem/fan_section_${index + 1}.jpg`,
+}))
+const sliceAxes: { label: string; value: 'none' | 'x' | 'y' | 'z' }[] = [
+  { label: '关闭', value: 'none' }, { label: '前向X', value: 'x' }, { label: '横向Y', value: 'y' }, { label: '高程Z', value: 'z' },
+]
+const fractionOptions = [
+  { label: '25%', value: 0.25 }, { label: '50%', value: 0.5 }, { label: '75%', value: 0.75 }, { label: '全部', value: 1 },
+]
+const resultTypes: { key: ResultType; icon: string; label: string; description: string }[] = [
+  { key: 'resistivity', icon: '▦', label: '视电阻率体素', description: '掌子面前方整体电性分布' },
+  { key: 'water', icon: '≈', label: '富水异常体', description: 'ρs < 570 Ω·m 低阻区域' },
+  { key: 'isosurface', icon: '◈', label: '570 等值面', description: 'ρs = 570 Ω·m 异常边界 GLB' },
+]
+
+const voxelResolution = computed(() => metadata.value ? `分辨率 ${metadata.value.voxelSize.map(value => value.toFixed(2)).join('×')} m` : '')
+const resistivityRange = computed(() => metadata.value ? `${metadata.value.resistivity.valueRange[0].toFixed(1)}～${metadata.value.resistivity.valueRange[1].toFixed(1)} Ω·m` : '—')
+const activeValueRange = computed(() => activeType.value === 'water' ? 'ρs < 570 Ω·m' : activeType.value === 'isosurface' ? 'ρs = 570 Ω·m' : resistivityRange.value)
+const activeResultLabel = computed(() => activeType.value === 'water' ? '富水异常体' : activeType.value === 'isosurface' ? '570 等值面' : '视电阻率场')
+const waterForwardRange = computed(() => metadata.value ? axisRange(metadata.value.water.bounds.min[0], metadata.value.water.bounds.max[0]) + '（距掌子面）' : '—')
+
+function selectType(type: ResultType) {
+  activeType.value = type
+  selected.value = true
+  emit('selectResult', type)
+  emit('opacityChange', opacity.value)
+  emit('sliceChange', sliceAxis.value, sliceFraction.value)
 }
+function syncOpacity() { emit('opacityChange', opacity.value) }
+function setSliceAxis(value: 'none' | 'x' | 'y' | 'z') { sliceAxis.value = value; emit('sliceChange', value, sliceFraction.value) }
+function setSliceFraction(value: number) { sliceFraction.value = value; emit('sliceChange', sliceAxis.value, value) }
+function axisRange(min: number, max: number) { return `${min.toFixed(1)}～${max.toFixed(1)} m` }
+function formatCount(value: number) { return new Intl.NumberFormat('zh-CN').format(value) }
 
-defineEmits<{ viewInScene: [jobId: string]; viewVoxelCloud: [jobId: string] }>()
-
-const props = defineProps<{ dataDir: string }>()
-
-const datasets = ref<Dataset[]>([])
-const loading = ref(true)
-const selected = ref<Dataset | null>(null)
-const searchQuery = ref('')
-const filteredDatasets = ref<Dataset[]>([])
-
-function doSearch() {
-  const q = searchQuery.value.toLowerCase()
-  filteredDatasets.value = q
-    ? datasets.value.filter(ds => (ds.mileage || '').toLowerCase().includes(q))
-    : datasets.value
-}
-const baseUrl = computed(() => selected.value ? `${props.dataDir}/${selected.value.jobId}` : '')
-
-const open = reactive({
-  anomaly: false, denseCloud: false, depthSlices: false, fanContour: false, voxelCsv: false,
+onMounted(async () => {
+  try {
+    const response = await fetch('/data/geophysical_tem/metadata.json')
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    metadata.value = await response.json()
+  } catch (error) {
+    console.warn('[TEM] 成果读取失败:', error)
+  }
 })
-const anomalies = ref<Anomaly[]>([])
-const contourImages = ref<{ name: string; url: string }[]>([])
-const zoomImage = ref<string | null>(null)
-
-async function loadIndex() {
-  loading.value = true
-  try {
-    const r = await fetch(`${props.dataDir}/index.json`)
-    datasets.value = await r.json()
-  } catch { datasets.value = [] }
-  doSearch()
-  loading.value = false
-}
-
-async function loadDataset(ds: Dataset) {
-  const url = `${props.dataDir}/${ds.jobId}/meta.json`
-  try {
-    const r = await fetch(url)
-    const meta = await r.json()
-    anomalies.value = meta.anomalies || []
-    const names = ['线1', '线2', '线3', '线4']
-    contourImages.value = names.map(n => ({
-      name: `${n} (φ=${n === '线1' ? '+30' : n === '线2' ? '+15' : n === '线3' ? '0' : '-15'}°)`,
-      url: `${props.dataDir}/${ds.jobId}/fan_contour_${n.replace('线', 'line')}.png`,
-    }))
-  } catch { anomalies.value = []; contourImages.value = [] }
-}
-
-async function deleteDataset(ds: Dataset) {
-  if (!confirm(`删除数据集 ${ds.createdAt?.slice(0,16).replace('T',' ') || ds.jobId}？`)) return
-  try {
-    await fetch(`/api/process/tem/${ds.jobId}`, { method: 'DELETE' })
-    if (selected.value?.jobId === ds.jobId) selected.value = null
-    loadIndex()
-  } catch (e) { console.warn('删除失败:', e) }
-}
-
-watch(() => props.dataDir, val => { if (val) loadIndex() }, { immediate: true })
-watch(selected, ds => { if (ds) loadDataset(ds) })
-
-function kColor(k: number): string {
-  if (k < 570) return '#4488ff'
-  if (k < 590) return '#44ccff'
-  if (k < 610) return '#44dd66'
-  return '#dd8800'
-}
 </script>
 
 <style scoped lang="scss">
-.td-root { font-size: 13px; }
-
-.td-toolbar { display: flex; gap: 6px; margin-bottom: 8px; }
-.td-search {
-  flex: 1; padding: 6px 10px; border: 1px solid rgba(0,180,255,.15); border-radius: 4px;
-  background: rgba(0,20,40,.6); color: #c7d5ea; font-size: 12px; outline: none;
-  &::placeholder { color: #4a6a8a; }
-  &:focus { border-color: rgba(0,234,255,.4); }
-}
-.td-refresh {
-  background: none; border: 1px solid rgba(0,180,255,.15);
-  color: #7dd3fc; font-size: 16px; cursor: pointer; padding: 2px 10px; border-radius: 4px;
-  flex-shrink: 0; transition: .15s;
-  &:hover { background: rgba(0,200,255,.1); color: #fff; }
-}
-
-.td-back {
-  background: none; border: none; color: #7dd3fc; font-size: 14px;
-  cursor: pointer; padding: 4px 0; margin-bottom: 8px;
-  &:hover { color: #fff; }
-}
-
-.td-empty { font-size: 12px; color: #5a7a9a; text-align: center; padding: 20px; }
-
-.td-list { display: flex; flex-direction: column; gap: 6px; }
-.td-card {
-  padding: 10px 12px; border-radius: 6px; cursor: pointer;
-  background: rgba(0, 180, 255, 0.04); border: 1px solid rgba(0, 180, 255, 0.08);
-  transition: .15s;
-  &:hover { background: rgba(0, 200, 255, 0.08); border-color: rgba(0, 200, 255, 0.2); }
-}
-.td-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-.td-card-mileage { font-size: 13px; color: #c7d5ea; font-weight: 600; }
-.td-card-time { font-size: 11px; color: #5a7a9a; }
-.td-card-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; background: rgba(0,200,255,.12); color: #7dd3fc; }
-.td-card-del {
-  background: none; border: none; color: #5a3a3a; font-size: 18px; cursor: pointer;
-  padding: 0 4px; line-height: 1; transition: .15s;
-  &:hover { color: #f87171; }
-}
-.td-card-meta { display: flex; gap: 12px; font-size: 11px; color: #5a7a9a; }
-
-.td-section {
-  margin-bottom: 6px; border-radius: 6px;
-  background: rgba(0, 180, 255, 0.03); border: 1px solid rgba(0, 180, 255, 0.06);
-  overflow: hidden;
-}
-.td-toggle {
-  width: 100%; padding: 9px 12px; background: none; border: none;
-  color: #a9bcd6; font-size: 13px; font-weight: 600; cursor: pointer;
-  display: flex; align-items: center; gap: 6px; text-align: left;
-  &:hover { color: #cfe4fb; }
-  span { display: inline-block; transition: transform .2s; font-size: 10px; color: #00eaff; }
-  span.rotate { transform: rotate(90deg); }
-}
-.td-badge { margin-left: auto; font-size: 10px; padding: 1px 6px; border-radius: 8px; background: rgba(0,200,255,.12); color: #7dd3fc; font-weight: 400; }
-.td-body { padding: 8px 12px 12px; }
-
-.td-kv { display: flex; justify-content: space-between; padding: 2px 0; font-size: 12px; color: #8aa0bd; b { color: #d7e3f5; font-weight: 600; } }
-
-.td-view-btn {
-  margin-top: 8px; width: 100%; padding: 8px; border: none; border-radius: 5px;
-  background: linear-gradient(135deg, rgba(56,189,248,.12), rgba(0,234,255,.08));
-  color: #00eaff; font-size: 13px; font-weight: 600; cursor: pointer;
-  border: 1px solid rgba(0, 234, 255, 0.15);
-  &:hover { background: rgba(0, 234, 255, 0.15); }
-}
-
-.td-section-divider { height: 1px; background: rgba(0, 180, 255, 0.1); margin: 10px 0; }
-.td-anomaly-list { display: flex; flex-direction: column; gap: 4px; }
-.td-anomaly-card { padding: 6px 8px; border-radius: 4px; background: rgba(0, 180, 255, 0.04); border: 1px solid rgba(0, 180, 255, 0.06); }
-.td-anomaly-header { display: flex; justify-content: space-between; align-items: center; }
-.td-anomaly-id { font-size: 12px; font-weight: 700; color: #c7d5ea; }
-.td-anomaly-k { font-size: 13px; font-weight: 700; }
-.td-anomaly-meta { font-size: 10px; color: #5a7a9a; margin-top: 2px; display: flex; justify-content: space-between; }
-
-.td-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.td-thumb {
-  cursor: pointer; border-radius: 4px; overflow: hidden;
-  border: 1px solid rgba(0, 180, 255, 0.08); position: relative;
-  &:hover { border-color: rgba(0, 234, 255, 0.3); }
-  img { width: 100%; height: auto; display: block; }
-  .td-thumb-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 2px 4px; background: rgba(0,0,0,0.6); font-size: 10px; color: #8aa0bd; text-align: center; }
-}
-
-.td-full-img { width: 100%; border-radius: 4px; cursor: pointer; border: 1px solid rgba(0, 180, 255, 0.08); &:hover { border-color: rgba(0, 234, 255, 0.3); } }
-
-.td-download-btn { display: block; text-align: center; margin-top: 8px; padding: 8px; background: rgba(68, 255, 136, 0.08); border: 1px solid rgba(68, 255, 136, 0.2); border-radius: 5px; color: #44ff88; font-size: 13px; text-decoration: none; cursor: pointer; &:hover { background: rgba(68, 255, 136, 0.15); } }
-
-.td-modal { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.td-modal-img { max-width: 90vw; max-height: 90vh; object-fit: contain; cursor: default; }
-.td-modal-close { position: fixed; top: 16px; right: 24px; background: none; border: none; color: #fff; font-size: 32px; cursor: pointer; z-index: 10000; }
+.td-root { color:#b8cbe0; font-size:12px; }
+.td-section { margin-bottom:12px; padding:10px 12px; border:1px solid rgba(0,180,255,.08); border-radius:6px; background:rgba(0,180,255,.04); }
+.td-conclusion p { margin:8px 0 0; color:#648194; font-size:9px; line-height:1.6; }
+.td-title { margin-bottom:8px; color:#5a8ab5; font-size:11px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
+.td-title-row { display:flex; align-items:center; justify-content:space-between; .td-title { margin-bottom:6px; } small { color:#4e7188; font-size:8px; } }
+.td-types { display:grid; gap:5px; button { width:100%; padding:8px; display:grid; grid-template-columns:29px 1fr; align-items:center; gap:8px; border:1px solid rgba(0,180,255,.15); border-radius:5px; color:#7896aa; background:rgba(4,19,32,.7); text-align:left; cursor:pointer; transition:.15s; &:hover:not(:disabled),&.active { border-color:#00eaff; background:rgba(0,234,255,.1); } &:disabled { opacity:.45; cursor:default; } > i { width:28px; height:28px; display:grid; place-items:center; border-radius:5px; color:#48d9ec; background:rgba(26,151,178,.12); font-style:normal; font-size:16px; } b,small { display:block; } b { color:#b9d0de; font-size:10px; } small { margin-top:2px; color:#526f84; font-size:8px; } &.active b { color:#00eaff; } } }
+.td-hint { margin-top:7px; color:#4f7087; font-size:8px; line-height:1.5; }
+.td-meta-strip { margin-top:8px; display:flex; flex-wrap:wrap; gap:4px; span { padding:3px 5px; border-radius:3px; color:#7192a7; background:rgba(38,117,147,.1); font-size:8px; } }
+.td-controls { margin-top:9px; padding-top:8px; display:grid; gap:7px; border-top:1px solid rgba(53,137,168,.1); }
+.td-opacity-control { display:grid; gap:4px; color:#607f95; font-size:9px; > span { display:flex; justify-content:space-between; } b { color:#4fcfe4; font:600 8px Consolas; } input { width:100%; margin:0; accent-color:#29cce6; cursor:pointer; &:disabled { opacity:.35; cursor:default; } } }
+.td-control-row { display:grid; grid-template-columns:62px 1fr; align-items:center; gap:6px; > span { color:#607f95; font-size:9px; } }
+.td-option-group { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; &.axis { grid-template-columns:repeat(4,1fr); } button { min-width:0; padding:4px 2px; border:1px solid rgba(46,139,175,.18); border-radius:3px; color:#6f8da2; background:#071a28; cursor:pointer; font-size:8px; &:hover:not(:disabled),&.active { border-color:rgba(35,199,222,.48); color:#55d4e6; background:rgba(22,139,162,.16); } &:disabled { opacity:.35; cursor:default; } } }
+.td-row { display:grid; grid-template-columns:78px 1fr; gap:6px; padding:4px 0; border-bottom:1px solid rgba(55,135,165,.08); span { color:#55768e; font-size:9px; } b { color:#abc5d5; font-size:9px; font-weight:600; text-align:right; } }
+.td-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; border:1px solid rgba(52,132,163,.12); background:rgba(52,132,163,.12); div { min-width:0; padding:7px; background:rgba(4,20,33,.85); } span,b { display:block; } span { color:#4e7087; font-size:8px; } b { margin-top:3px; overflow:hidden; color:#aac5d5; font:600 11px Consolas; text-overflow:ellipsis; white-space:nowrap; } b.water { color:#35bdf4; } }
+.td-conclusion { border-color:rgba(45,198,158,.16); }
+.td-fans { padding-bottom:8px; }
+.td-fan-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; button { position:relative; height:67px; padding:0; overflow:hidden; border:1px solid rgba(45,151,184,.18); border-radius:4px; background:#061522; cursor:zoom-in; transition:.15s; &:hover { border-color:rgba(39,211,231,.62); box-shadow:0 0 9px rgba(30,192,220,.12); } img { width:100%; height:100%; display:block; object-fit:contain; background:#eef2f1; } span { position:absolute; left:3px; bottom:3px; padding:2px 5px; border-radius:2px; color:#d8f4f6; background:rgba(3,18,28,.76); font-size:8px; } } }
+.td-fan-modal { position:fixed; z-index:1200; inset:0; display:grid; place-items:center; padding:6vh 370px 6vh 24px; background:rgba(1,7,12,.72); backdrop-filter:blur(4px); }
+.td-fan-modal__card { width:min(900px,78vw); padding:10px; border:1px solid rgba(44,194,218,.42); border-radius:7px; background:#071724; box-shadow:0 18px 60px rgba(0,0,0,.55); > div { height:28px; display:flex; align-items:flex-start; justify-content:space-between; color:#9edce8; font-size:11px; button { width:24px; height:24px; padding:0; border:1px solid rgba(75,153,178,.24); border-radius:4px; color:#8db5c5; background:#0b2232; cursor:pointer; font-size:17px; line-height:20px; } } img { width:100%; max-height:72vh; display:block; object-fit:contain; background:#fff; } }
+@media (max-width:1100px) { .td-fan-modal { padding-right:330px; } }
 </style>

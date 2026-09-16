@@ -120,15 +120,19 @@
 
     <!-- 体数据渲染覆盖层（进入模型视图后挂载，始终保持 DOM） -->
     <DTVolume v-show="isModelViewMode" />
+    <RockGradeColorBar v-if="isModelViewMode && currentActiveKey === 'geophysical_grade'" />
+    <TSPColorBar
+      v-if="isModelViewMode && ['tsp_hardness', 'tsp_integrity'].includes(currentActiveKey)"
+      :active-type="currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity'"
+    />
 
     <!-- 不良地质 / 超前预报 功能面板 -->
     <BLDZ v-if="isBLDZ" :value="selectedValue" />
-    <ZZMSM v-if="showzzmsm" />
     <DZLD v-if="isRadar" />
     <AHD v-if="isAHD" />
     <DBH v-if="isDBH" />
-    <TSP v-if="isTSP" />
-    <TEM v-if="isTEM" />
+    <TSP v-if="isTSP" :initial-type="tspInitialType" />
+    <TEM v-if="isTEM" :initial-type="temInitialType" />
 
 
 
@@ -147,10 +151,12 @@
     <PredictionCenter
       v-if="activeScene === 'workface'"
       :show="!!activeScene"
-      :active-action="activeAction"
+      :active-action="currentActiveKey"
       @close="handleBackToOverview"
       @action="handlePanelAction"
-      @version-change="handleRockVersionChange"
+      @stage-change="handleRockStageChange"
+      @attribute-change="handlePredictionAttributeChange"
+      @changes-toggle="handleRockChangesToggle"
       @segment-select="handleRockSegmentSelect"
     />
     <SceneControlPanel
@@ -241,20 +247,21 @@ import DispatchEquipment from '@/components/SceneManagement/DispatchComponents/D
 import DispatchGantt from '@/components/SceneManagement/DispatchComponents/DispatchGantt.vue';
 import ProcessingWorkflowSidebar from '@/views/chaobao/ProcessingWorkflowSidebar.vue';
 import BLDZ from '@/components/SceneManagement/BLDZComponents/BLDZ.vue';
-import ZZMSM from '@/components/SceneManagement/ZZMSMComponents/ZZMSM.vue';
 import DZLD from '@/components/SceneManagement/DZLDComponents/DZLD.vue';
 import AHD from '@/components/SceneManagement/AHDComponents/AHD.vue';
 import DBH from '@/components/SceneManagement/DBHComponents/DBH.vue';
 import TSP from '@/components/SceneManagement/TSPComponents/TSP.vue';
 import TEM from '@/components/SceneManagement/TEMComponents/TEM.vue';
+import RockGradeColorBar from '@/components/SceneManagement/Colorbars/RockGradeColorBar.vue';
+import TSPColorBar from '@/components/SceneManagement/Colorbars/TSPColorBar.vue';
 import DTVolume from '@/utils/AllPrevious/All/DTVolume.vue';
 import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
-import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeOverview, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
+import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
 import { createMileageRuler, getMileageRuler } from '@/utils/Common/MileageRuler';
-import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, loadJumboModel, mergeModelConfigsFromApi } from '@/utils/Common/GeoModelController';
+import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, loadJumboModel, mergeModelConfigsFromApi, setGeoModelDifferenceHighlight } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
 import { removeVectorField } from '@/utils/Common/WindVectorField';
@@ -424,12 +431,13 @@ const currentActiveKey = ref('');
 // --- 不良地质 / 超前预报 面板状态 ---
 const isBLDZ = ref(false);
 const selectedValue = ref('');
-const showzzmsm = ref(false);
 const isRadar = ref(false);
 const isAHD = ref(false);
 const isDBH = ref(false);
 const isTSP = ref(false);
+const tspInitialType = ref<'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity'>('vs');
 const isTEM = ref(false);
+const temInitialType = ref<'resistivity' | 'water' | 'isosurface'>('resistivity');
 
 // key → 中文名 映射
 const keyNameMap: Record<string, string> = {
@@ -443,6 +451,9 @@ const keyNameMap: Record<string, string> = {
   deep_hole: '加深炮孔',
   tsp: 'TSP反演',
   tem: '瞬变电磁',
+  geophysical_grade: '综合围岩分级模型',
+  tsp_hardness: 'TSP坚硬程度模型',
+  tsp_integrity: 'TSP完整程度模型',
   jumbo_rig: '凿岩台车',
 };
 
@@ -642,11 +653,12 @@ const initSceneData = () => {
 const handleLayerSelect = (item: any) => {
   isModelViewMode.value = true;
   currentActiveKey.value = item.key;
+  if (item.key === 'tsp') tspInitialType.value = ['vp', 'hardness', 'ratio', 'anomaly', 'integrity'].includes(item.subType) ? item.subType : 'vs';
+  if (item.key === 'tem') temInitialType.value = item.subType === 'water' || item.subType === 'isosurface' ? item.subType : 'resistivity';
   const name = keyNameMap[item.key] ?? item.name;
 
   // 重置所有面板
   isBLDZ.value = false;
-  showzzmsm.value = false;
   isRadar.value = false;
   isAHD.value = false;
   isDBH.value = false;
@@ -655,16 +667,16 @@ const handleLayerSelect = (item: any) => {
   selectedValue.value = '';
 
   // 加载对应地质模型（体数据 / GLB 统一由 GeoModelController 处理）
-  const VOLUME_KEYS = ['weak_rock', 'water_zone', 'fracture_zone', 'tsp', 'tem', 'face_sketch', 'horiz_drill', 'gpr', 'jumbo_rig'];
+  const VOLUME_KEYS = ['weak_rock', 'water_zone', 'fracture_zone', 'tsp', 'tem', 'geophysical_grade', 'tsp_hardness', 'tsp_integrity', 'face_sketch', 'horiz_drill', 'gpr', 'jumbo_rig'];
   if (VOLUME_KEYS.includes(item.key)) {
-    activateGeoModel(item.key);
+    activateGeoModel(item.key, undefined, item.subType);
   } else {
     // 切换到非体数据界面时清理体数据模型，防止 WebGL canvas 残留
     deactivateGeoModel();
   }
 
   if (name === '掌子面素描') {
-    showzzmsm.value = true;
+    // 新版掌子面照片与素描由 GeoModelController 和右侧预测中心直接展示。
   } else if (name === '地质雷达') {
     isRadar.value = true;
   } else if (name === '超前水平钻') {
@@ -675,6 +687,8 @@ const handleLayerSelect = (item: any) => {
     isTSP.value = true;
   } else if (name === '瞬变电磁') {
     isTEM.value = true;
+  } else if (item.key === 'geophysical_grade') {
+    // 融合分级体素直接叠加在主场景，右侧保留属性维度控制。
   } else {
     // 不良地质类型：软弱围岩、高地应力、富水带、破碎带
     isBLDZ.value = true;
@@ -682,7 +696,7 @@ const handleLayerSelect = (item: any) => {
   }
 };
 
-const handlePanelAction = (action: { key: string }, type: 'view' | 'process' = 'view') => {
+const handlePanelAction = (action: { key: string; subType?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface' }, type: 'view' | 'process' = 'view') => {
   const isWorkflowAction = activeScene.value === 'workface';
 
   // 支护场景的"钢架试验"按钮 → 跳转参数化试验子模块
@@ -709,26 +723,48 @@ const handlePanelAction = (action: { key: string }, type: 'view' | 'process' = '
     // 如果有其他模型视图开着，先关掉
     isModelViewMode.value = false;
     deactivateGeoModel();
-    isBLDZ.value = false; showzzmsm.value = false; isRadar.value = false; isAHD.value = false; isDBH.value = false; isTSP.value = false; isTEM.value = false;
+    isBLDZ.value = false; isRadar.value = false; isAHD.value = false; isDBH.value = false; isTSP.value = false; isTEM.value = false;
 
     // 打开工作流侧边栏
     processingModelKey.value = action.key;
   } else {
     // 对于所有 'view' 点击 (按钮主体), 或者非 workface 场景的点击
-    handleLayerSelect({ key: action.key, name: keyNameMap[action.key] || '' });
+    handleLayerSelect({ key: action.key, name: keyNameMap[action.key] || '', subType: action.subType });
   }
 };
 
-const handleRockVersionChange = async (version: 'design' | 'forecast') => {
+const handleRockStageChange = async (stage: 'baseline' | 'prediction' | 'correction') => {
   const viewer = getViewer();
   if (!viewer) return;
   layerState.showTunnel = true;
   setTunnelGlbVisible(true);
   try {
-    if (version === 'design') await flyToDesignRockGradeOverview(viewer);
-    else await setDesignRockGradeModelEnabled(false, viewer);
+    // 设计基准阶段全量加载 17 段精细上色模型；离开设计基准后恢复按距离分段加载。
+    await setDesignRockGradeModelEnabled(stage === 'baseline', viewer);
+    setGeoModelDifferenceHighlight(false);
+    deactivateGeoModel();
+    currentActiveKey.value = '';
   } catch (error) {
-    console.error('[围岩分级] 设计版模型加载失败:', error);
+    console.error('[围岩分级] 模型阶段切换失败:', error);
+  }
+};
+
+const handleRockChangesToggle = (show: boolean) => {
+  setGeoModelDifferenceHighlight(show);
+};
+
+const handlePredictionAttributeChange = (attribute: 'grade' | 'integrity' | 'hardness' | 'groundwater' | 'stress') => {
+  const attributeModelKeys = ['geophysical_grade', 'tsp_integrity', 'tsp_hardness'];
+  const requestedKey = attribute === 'grade'
+    ? 'geophysical_grade'
+    : attribute === 'integrity'
+      ? 'tsp_integrity'
+      : attribute === 'hardness'
+        ? 'tsp_hardness'
+        : '';
+  if (attributeModelKeys.includes(currentActiveKey.value) && currentActiveKey.value !== requestedKey) {
+    deactivateGeoModel();
+    currentActiveKey.value = '';
   }
 };
 
@@ -929,7 +965,7 @@ const handleSelectScene = (key: string) => {
   setWindTunnelTranslucent(false);
 
   setDesignRockGradeModelEnabled(key === 'workface', viewer).catch((error) => {
-    console.error('[围岩分级] 设计版模型加载失败:', error);
+    console.error('[围岩分级] 设计基准模型加载失败:', error);
   });
 
   // 关闭所有场景浮层
@@ -972,7 +1008,6 @@ const handleBackToOverview = () => {
     isModelViewMode.value = false;
     currentActiveKey.value = '';
     isBLDZ.value = false;
-    showzzmsm.value = false;
     isRadar.value = false;
     isAHD.value = false;
     isDBH.value = false;
@@ -1487,7 +1522,7 @@ onBeforeUnmount(() => {
 .terrain-alpha-value { color: #00eaff; font-size: 12px; min-width: 32px; text-align: right; }
 
 .xray-row {
-  display: flex; align-items: center; gap: 5px; margin-top: 4px; margin-bottom: 4px;
+  display: flex; align-items: center; margin-top: 4px; margin-bottom: 4px;
   padding-left: 26px;
 }
 .xray-btn {
@@ -1500,6 +1535,7 @@ onBeforeUnmount(() => {
   background: rgba(0, 200, 255, 0.22); border-color: #00eaff;
   color: #00eaff; box-shadow: 0 0 6px rgba(0, 234, 255, 0.3);
 }
+
 /* ── 快捷侧边栏（地图模式） ────────────────────────────── */
 .quick-sidebar {
   position: absolute;

@@ -7,6 +7,7 @@ import AdminLayout from '@/views/admin/AdminLayout.vue'
 import AdminWorksites from '@/views/admin/WorksitesPage.vue'
 import AdminModels from '@/views/admin/ModelsPage.vue'
 import AdminAlerts from '@/views/admin/AlertsPage.vue'
+import GeophysicalVoxelWorkbench from '@/views/GeophysicalVoxelWorkbench.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -28,6 +29,11 @@ const routes: RouteRecordRaw[] = [
     path: '/ventilation-twin',
     name: 'VentilationTwin',
     component: VentilationTwinPage
+  },
+  {
+    path: '/geophysical-voxel',
+    name: 'GeophysicalVoxelWorkbench',
+    component: GeophysicalVoxelWorkbench
   },
   {
     path: '/admin',

@@ -59,7 +59,7 @@ function loadBingMapAerial(viewer: any, appConfig: any) {
       assetId: 2,
       accessToken: appConfig.ionToken,
       server: 'https://api.cesium.com',
-    })
+    } as any)
   );
 }
 

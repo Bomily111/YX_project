@@ -19,7 +19,7 @@ export function createViewer(container: string | HTMLElement): Cesium.Viewer {
 
   const s = viewer.scene
   s.globe.show = false           // 不要地球
-  s.skyBox.show = false
+  ;(s.skyBox as any).show = false
   s.sun.show = false
   s.moon.show = false
   s.skyAtmosphere.show = false

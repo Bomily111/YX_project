@@ -159,7 +159,7 @@ async function migrateModelConfigs() {
     },
     {
       code: 'tsp', name: 'TSP反演(默认VS)', sub_type: 'vs', start_dk: 278100, end_dk: 286400,
-      volume_url: 'data/tsp_new/vs_3.json',
+      volume_url: 'data/tsp_actual/vs.json',
       anchor_lon: 94.9056136, anchor_lat: 29.5333802, anchor_height: 2945.51,
       rotation_x: 0.0, rotation_y: -1.5, rotation_z: 168.5,
       translate_x: 25, translate_y: 45, translate_z: -50,
@@ -172,7 +172,7 @@ async function migrateModelConfigs() {
     },
     {
       code: 'tem', name: '瞬变电磁', sub_type: 'tem', start_dk: 278100, end_dk: 286400,
-      volume_url: 'data/tem_new/tem_model.json',
+      volume_url: 'data/geophysical_tem/resistivity_contrast.json',
       anchor_lon: 94.9056136, anchor_lat: 29.5333802, anchor_height: 2945.51,
       rotation_x: 0.0, rotation_y: 1.5, rotation_z: -11.5,
       translate_x: 35, translate_y: -35, translate_z: -30,
@@ -206,14 +206,10 @@ async function migrateModelConfigs() {
       look_at_offset_x: 265, look_at_offset_y: -357, look_at_offset_z: 84,
     },
     {
-      code: 'horiz_drill', name: '超前水平钻+掌子面素描', start_dk: 278100, end_dk: 286400,
+      code: 'horiz_drill', name: '超前水平钻', start_dk: 278100, end_dk: 286400,
       glb_urls: JSON.stringify([
         { url: 'data/ahd/ahd1/2320835.glb', mileage: 5, heightOffset: 5 },
         { url: 'data/ahd/ahd2/2336197.glb', mileage: 15, heightOffset: 5 },
-        { url: 'data/tfs_new/tfs3/2322196.glb', mileage: 0 },
-        { url: 'data/tfs_new/tfs1/2322509.glb', mileage: 10 },
-        { url: 'data/tfs_new/tfs2/2322518.glb', mileage: 20 },
-        { url: 'data/tfs_new/tfs4/2326775.glb', mileage: 25 },
       ]),
       anchor_lon: 94.9056136, anchor_lat: 29.5333802, anchor_height: 2945.51,
       glb_heading: 1.7467, glb_y_rot: -1.5708, heading_deg: 100.08,
@@ -225,15 +221,9 @@ async function migrateModelConfigs() {
     },
     {
       code: 'face_sketch', name: '掌子面素描', start_dk: 278100, end_dk: 286400,
-      glb_urls: JSON.stringify([
-        { url: 'data/tfs_new/tfs3/2322196.glb', mileage: 0 },
-        { url: 'data/tfs_new/tfs1/2322509.glb', mileage: 10 },
-        { url: 'data/tfs_new/tfs2/2322518.glb', mileage: 20 },
-        { url: 'data/tfs_new/tfs4/2326775.glb', mileage: 30 },
-      ]),
-      anchor_lon: 94.9056136, anchor_lat: 29.5333802, anchor_height: 2945.51,
-      glb_heading: 1.7467, glb_y_rot: -1.5708, heading_deg: 100.08,
-      reference_mileage: 0,
+      // 新版掌子面由前端依据 face_sketch 数据生成照片断面，不再绑定 GLB。
+      anchor_lon: 94.9058769996, anchor_lat: 29.533338106, anchor_height: 2945.641,
+      heading_deg: 101.833672597,
       fly_dest_x: -475447.3, fly_dest_y: 5536370.3, fly_dest_z: 3126656.9,
       fly_heading: 5.6439, fly_pitch: -0.1861,
       look_at_lon: 94.9056136, look_at_lat: 29.5333802, look_at_height: 2945.51,

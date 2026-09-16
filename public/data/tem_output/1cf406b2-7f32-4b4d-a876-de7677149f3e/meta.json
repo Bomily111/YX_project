@@ -29,7 +29,9 @@
       "cx": 26.348921850092662,
       "cy": 18.92760076160029,
       "cz": 15.445445258821504,
-      "k_mean": 566.7090290734989
+      "k_mean": 566.7090290734989,
+      "x_range": [23.324, 29.033], "y_range": [16.474, 22.155], "z_range": [13.272, 18.585],
+      "k_range": [560.4099, 569.9915], "strength_index": 0.1928, "strength_level": "弱", "confidence": 0.4960
     },
     {
       "id": 4,
@@ -37,7 +39,9 @@
       "cx": 44.7757748468573,
       "cy": 22.945705788360595,
       "cz": -0.12972561287399184,
-      "k_mean": 560.7582522458309
+      "k_mean": 560.7582522458309,
+      "x_range": [38.821, 51.056], "y_range": [14.202, 31.244], "z_range": [-5.323, 5.303],
+      "k_range": [537.2972, 569.9788], "strength_index": 0.5415, "strength_level": "中", "confidence": 0.6080
     },
     {
       "id": 5,
@@ -45,7 +49,9 @@
       "cx": 48.53066759687699,
       "cy": -30.970696136775125,
       "cz": 29.216103491593053,
-      "k_mean": 561.6390416879044
+      "k_mean": 561.6390416879044,
+      "x_range": [41.268, 55.135], "y_range": [-36.924, -22.155], "z_range": [22.570, 33.860],
+      "k_range": [543.0968, 569.9941], "strength_index": 0.4899, "strength_level": "中", "confidence": 0.6330
     },
     {
       "id": 6,
@@ -53,9 +59,13 @@
       "cx": 49.21886555933789,
       "cy": 34.45618516689442,
       "cz": 12.741809360366183,
-      "k_mean": 564.2560315182936
+      "k_mean": 564.2560315182936,
+      "x_range": [42.900, 54.319], "y_range": [27.835, 41.469], "z_range": [8.624, 16.593],
+      "k_range": [551.6241, 569.9864], "strength_index": 0.3366, "strength_level": "中", "confidence": 0.5514
     }
   ],
+  "detection": { "background_resistivity": 613.2168, "low_resistivity_threshold": 570, "minimum_connected_voxels": 100, "connectivity": 2 },
+  "scan_geometry": { "section_count": 4, "section_angles": [30, 15, 0, -15], "direction_range": [-60, 60], "directions_per_section": 9, "coordinate_system": "隧洞局部坐标：X前向、Y横向、Z高程" },
   "slice_depths": [
     10,
     20,

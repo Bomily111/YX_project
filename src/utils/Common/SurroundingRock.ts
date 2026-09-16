@@ -465,7 +465,7 @@ function buildPrimitive(
     attributes: {
       position: posAttr,
       normal:   normAttr,
-    },
+    } as any,
     indices,
     primitiveType:  Cesium.PrimitiveType.TRIANGLES,
     boundingSphere: Cesium.BoundingSphere.fromVertices(Array.from(vertices) as any),

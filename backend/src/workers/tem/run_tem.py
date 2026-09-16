@@ -457,9 +457,8 @@ def main():
             verts, faces, _, _ = measure.marching_cubes(gk_ds, level=570, spacing=(dx, dy, dz))
             verts[:, 0] += gx_ds[0]; verts[:, 1] += gy_ds[0]; verts[:, 2] += gz_ds[0]
             import trimesh
-            # k=570 is a single-value boundary. Keep one semantic surface color
-            # instead of implying a value gradient that does not exist, and
-            # export normals so Cesium can reveal the shape with soft lighting.
+            # k=570 represents one semantic anomaly boundary, so use one clear
+            # translucent material rather than implying a value gradient.
             material = trimesh.visual.material.PBRMaterial(
                 name="TEM_k570_anomaly_boundary",
                 baseColorFactor=[255, 107, 44, 158],
@@ -523,6 +522,36 @@ def main():
         plt.close(fig)
         log("多深度断面图已生成")
 
+        # 将异常体的空间边界、强度与规则可信度一并固化，供预测数据源追溯展示。
+        anomaly_details = []
+        for lid, cnt, cx, cy, cz, ka in anomalies:
+            coords = np.where(labeled == lid)
+            strength_index = float(np.clip((low_thr - ka) / max(k_std, 1e-6), 0.0, 1.0))
+            if strength_index >= 0.6:
+                strength_level = "强"
+            elif strength_index >= 0.25:
+                strength_level = "中"
+            else:
+                strength_level = "弱"
+            confidence_score = float(np.clip(
+                0.45 + min(cnt / 10000.0, 1.0) * 0.35 + strength_index * 0.20,
+                0.0, 0.98,
+            ))
+            anomaly_details.append({
+                "id": int(lid),
+                "voxels": int(cnt),
+                "cx": float(cx), "cy": float(cy), "cz": float(cz),
+                "k_mean": float(ka),
+                "x_range": [float(grid_x[coords[0]].min()), float(grid_x[coords[0]].max())],
+                "y_range": [float(grid_y[coords[1]].min()), float(grid_y[coords[1]].max())],
+                "z_range": [float(grid_z[coords[2]].min()), float(grid_z[coords[2]].max())],
+                "k_range": [float(grid_k[labeled == lid].min()), float(grid_k[labeled == lid].max())],
+                "strength_index": strength_index,
+                "strength_level": strength_level,
+                "confidence": confidence_score,
+                "confidence_basis": "低阻幅度、连通体规模与空间连续性规则评估",
+            })
+
         # 保存元数据 JSON
         meta = {
             "voxel_shape": [nx, ny, nz],
@@ -530,8 +559,27 @@ def main():
             "y_range": [float(y_min), float(y_max)],
             "z_range": [float(z_min), float(z_max)],
             "k_stats": {"mean": float(k_mean), "std": float(k_std), "min": float(pts_k.min()), "max": float(pts_k.max())},
-            "anomalies": [{"id": int(lid), "voxels": int(cnt), "cx": float(cx), "cy": float(cy), "cz": float(cz), "k_mean": float(ka)}
-                          for lid, cnt, cx, cy, cz, ka in anomalies],
+            "anomalies": anomaly_details,
+            "detection": {
+                "background_resistivity": float(k_mean),
+                "low_resistivity_threshold": float(low_thr),
+                "minimum_connected_voxels": 100,
+                "connectivity": 2,
+            },
+            "scan_geometry": {
+                "section_count": len(LINE_PHI),
+                "section_angles": [float(v) for v in LINE_PHI.values()],
+                "direction_range": [-60.0, 60.0],
+                "directions_per_section": len(DIRECTION_ANGLES),
+                "coordinate_system": "隧洞局部坐标：X前向、Y横向、Z高程",
+            },
+            "processing_trace": [
+                {"stage": "输入检查", "detail": "距离—视电阻率点列；有限值与测线完整性检查"},
+                {"stage": "二维空间解释", "detail": "各扇形断面薄板样条 RBF 插值"},
+                {"stage": "坐标统一", "detail": "四断面映射至隧洞局部 X/Y/Z 坐标"},
+                {"stage": "体素场构建", "detail": "均衡 IDW 插值与三维高斯平滑"},
+                {"stage": "富水异常识别", "detail": "低阻阈值、三维连通性与最小体素规模联合判定"},
+            ],
             "slice_depths": [10, 20, 30, 40, 50],
             "output_files": [
                 "tem_volume.raw", "tem_model.json", "meta.json",

@@ -1,0 +1,61 @@
+{
+  "source": "data/tem_voxel_full.csv",
+  "coordinateSystem": "TEM local: X forward, Y transverse, Z elevation",
+  "shape": [
+    80,
+    100,
+    80
+  ],
+  "voxelSize": [
+    0.7760009765625,
+    1.0289993286132812,
+    0.6019992828369141
+  ],
+  "bounds": {
+    "min": [
+      -2.796999931335449,
+      -50.91299819946289,
+      -17.06399917602539
+    ],
+    "max": [
+      58.54499816894531,
+      50.91299819946289,
+      30.466999053955078
+    ]
+  },
+  "resistivity": {
+    "count": 640000,
+    "valueRange": [
+      531.7055053710938,
+      622.0534057617188
+    ],
+    "displayRange": [
+      553.65240234375,
+      604.7235400390625
+    ],
+    "displayStretch": "P2–P98",
+    "unit": "Ω·m"
+  },
+  "water": {
+    "rule": "ρs < 570 Ω·m",
+    "threshold": 570.0,
+    "count": 249890,
+    "percentage": 39.0453125,
+    "bounds": {
+      "min": [
+        -2.796999931335449,
+        -50.91299819946289,
+        -17.06399917602539
+      ],
+      "max": [
+        58.54499816894531,
+        50.91299819946289,
+        30.466999053955078
+      ]
+    }
+  },
+  "outputs": {
+    "resistivity": "resistivity_contrast.json",
+    "water": "water.json"
+  }
+}

@@ -76,12 +76,12 @@ export function DTScopeEngine(vueGlobalConfig) {
   //config the global viewer
   if (Cesium.defined(viewer)) {
     // Configure viewer parameters
-    viewer._cesiumWidget._creditContainer.style.display = 'none';
+    (viewer as any)._cesiumWidget._creditContainer.style.display = 'none';
     // Smooth the earth edge
     viewer.scene.postProcessStages.fxaa.enabled = true;
     //@ts-ignore
     viewer._cesiumWidget._supportsImageRenderingPixelated = Cesium.FeatureDetection.supportsImageRenderingPixelated();
-    viewer._cesiumWidget._forceResize = true;
+    (viewer as any)._cesiumWidget._forceResize = true;
     //@ts-ignore
     if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) {
       let vtxfDpr = window.devicePixelRatio;

@@ -1,5 +1,14 @@
-# Vue 3 + TypeScript + Vite
+# 隧洞施工数字孪生平台
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## 启动
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+要求 Node.js 20.19+。
+
+```bash
+npm ci
+npm run dev
+```
+
+综合物探体素建模工作台：`/geophysical-voxel`。平台内入口位于“隧洞围岩 → 超前预测 → 综合物探体素建模”。
+
+输入格式、阈值规则与自检结果见 [综合物探体素建模模块说明](./综合物探体素建模模块说明.md)。

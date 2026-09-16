@@ -138,11 +138,11 @@ onBeforeMount(() => {
 }
 
 .panStyle {
-  cursor: url('@/assets/images/cursor/pan.png') 8 8, auto;
+  cursor: grab;
 }
 
 .zoomStyle {
-  cursor: url('@/assets/images/cursor/zoom.png') 24 24, auto;
+  cursor: zoom-in;
 }
 
 .customCursor {
@@ -152,8 +152,9 @@ onBeforeMount(() => {
   z-index: 1;
   width: 48px;
   height: 48px;
-  background: url('@/assets/images/cursor/zoom.png') no-repeat;
-  background-size: 100% 100%;
+  border: 2px solid rgba(83, 218, 244, 0.9);
+  border-radius: 50%;
+  background: rgba(24, 100, 130, 0.18);
 }
 
 .position-container {

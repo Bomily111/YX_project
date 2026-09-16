@@ -13,7 +13,6 @@ import { Positions, Rulers1000m, Rulers100m, Rulers10m } from './All/TunnelInfo'
 import { hideLegend } from './All/legendManager.js';
 import {
   lookAtFixed,
-  controlTFSModel,
   controlTSPModel,
   controlTEMModel,
   controlWATERModel,
@@ -26,7 +25,6 @@ import {
   loadDBHModelSummary,
   loadGPRModelSummary,
   loadTSPModelSummary,
-  loadTFSModelSummary,
   destroySummaryBox,
 } from './All/DataController';
 // import LandslideSimulation from './All/LandslideSimulation';
@@ -43,6 +41,8 @@ export default class Previous {
 
     Previous.SVData = []; // 代替之前的globe全局变量
     Previous.SVData[0] = viewer;
+    Previous.volumeLoopGeneration = (Previous.volumeLoopGeneration || 0) + 1;
+    this.volumeLoopGeneration = Previous.volumeLoopGeneration;
     this.drawVolume();
   }
 
@@ -52,7 +52,6 @@ export default class Previous {
    * @memberof Previous
    */
   clearPrimitiveModel() {
-    // this.deleteTFS();
     // this.deleteTSP();
     // this.deleteTEM();
     // this.deleteAHD();
@@ -111,21 +110,6 @@ export default class Previous {
     Previous.SVData.showVolume = true;
     initVolume(url);
     lookAtFixed(Previous.SVData.showVolume);
-  }
-
-  /**
-   * 康定二号地质场景，掌子面的加载, 标记为TFS
-   *
-   * @memberof Previous
-   */
-  loadTFS() {
-    console.log('TFS模型load了');
-    this.primitives.TFS = controlTFSModel(Previous.SVData[0]);
-    loadTFSModelSummary();
-  }
-
-  deleteTFS() {
-    this.deletePrimitive('TFS');
   }
 
   /**
@@ -309,7 +293,11 @@ export default class Previous {
   }
 
   drawVolume() {
+    const generation = this.volumeLoopGeneration;
     const loopRender = () => {
+      if (generation !== Previous.volumeLoopGeneration) return;
+      const viewer = Previous.SVData[0];
+      if (!viewer || (typeof viewer.isDestroyed === 'function' && viewer.isDestroyed())) return;
       requestAnimationFrame(loopRender);
       if (Previous.SVData[1]) {
         Previous.SVData[1].draw();
@@ -318,3 +306,7 @@ export default class Previous {
     loopRender();
   }
 }
+
+Previous.stopVolumeLoop = () => {
+  Previous.volumeLoopGeneration = (Previous.volumeLoopGeneration || 0) + 1;
+};

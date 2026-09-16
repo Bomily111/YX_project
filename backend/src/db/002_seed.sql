@@ -7,7 +7,7 @@ INSERT INTO geological_model_types (code, name_cn, name_en, data_type, render_me
 ('high_stress',   '高地应力',   'High Stress',            'glb',        'cesium_model',  'adverse_geology',    2),
 ('water_zone',    '富水带',     'Water-rich Zone',        'volume_json','volume_canvas',  'adverse_geology',    3),
 ('fracture_zone', '破碎带',     'Fracture Zone',          'volume_json','volume_canvas',  'adverse_geology',    4),
-('face_sketch',   '掌子面素描', 'Tunnel Face Sketch',     'glb',        'cesium_model',  'face_monitoring',    5),
+('face_sketch',   '掌子面素描', 'Tunnel Face Sketch',     'image',      'cesium_entity', 'face_monitoring',    5),
 ('gpr',           '地质雷达',   'Ground Penetrating Radar','glb',       'cesium_model',  'advance_prediction', 6),
 ('horiz_drill',   '超前水平钻', 'Advance Horizontal Drill','glb',        'cesium_model',  'advance_prediction', 7),
 ('deep_hole',     '加深炮孔',   'Deep Blast Holes',       'glb',        'cesium_model',  'advance_prediction', 8),

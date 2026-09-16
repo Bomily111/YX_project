@@ -1,13 +1,17 @@
 <template>
-  <div class="out_rectangle">
-    <div class="jojo"></div>
-    <div class="triangle1"></div>
-    <div class="triangle2"></div>
-    <div class="triangle3"></div>
-    <div class="text1">{{ label1 }}</div>
-    <div class="text2">{{ label2 }}</div>
-    <div class="text3">{{ label3 }}</div>
-    <div class="text4">{{ unitLabel }}</div>
+  <div class="tem-legend" aria-label="视电阻率图例">
+    <div class="tem-legend__head">
+      <span>视电阻率</span>
+      <b>{{ rangeLabel }}</b>
+    </div>
+    <div class="tem-legend__bar"></div>
+    <div class="tem-legend__ticks">
+      <span v-for="tick in ticks" :key="tick">{{ tick }}</span>
+    </div>
+    <div class="tem-legend__hint">
+      <span>低阻</span>
+      <span>高阻</span>
+    </div>
   </div>
 </template>
 
@@ -15,119 +19,75 @@
 import { computed } from 'vue';
 
 const props = defineProps({
-  minValue: { type: Number, default: null },
-  maxValue: { type: Number, default: null },
-  unit: { type: String, default: '' },
+  minValue: { type: Number, required: true },
+  maxValue: { type: Number, required: true },
+  unit: { type: String, default: 'Ω·m' },
 });
 
-const useActual = computed(() => props.minValue != null && props.maxValue != null);
-
-const label1 = computed(() => (useActual.value ? String(Math.round(props.minValue!)) : '0'));
-const label2 = computed(() =>
-  useActual.value ? String(Math.round((props.minValue! + props.maxValue!) / 2)) : '50',
-);
-const label3 = computed(() => (useActual.value ? String(Math.round(props.maxValue!)) : '100'));
-const unitLabel = computed(() =>
-  useActual.value ? `电阻率/${props.unit}` : '电阻率/%',
+const formatValue = (value: number) => value.toFixed(1);
+const ticks = computed(() => Array.from(
+  { length: 5 },
+  (_, index) => formatValue(props.minValue + (props.maxValue - props.minValue) * index / 4),
+));
+const rangeLabel = computed(() =>
+  `${formatValue(props.minValue)}–${formatValue(props.maxValue)} ${props.unit}`,
 );
 </script>
 
-<style lang="scss" scoped>
-.out_rectangle {
+<style scoped lang="scss">
+.tem-legend {
   position: fixed;
-  width: 15%;
-  height: 30%;
-  top: 42%;
-  right: 1%;
+  z-index: 100;
+  left: 50%;
+  bottom: 42px;
+  width: min(380px, 36vw);
+  padding: 9px 12px 8px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(52, 168, 194, .34);
+  border-radius: 7px;
+  background: rgba(3, 14, 24, .84);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .28), inset 0 0 18px rgba(25, 125, 151, .06);
+  color: #9bb7c8;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+}
 
-  .jojo {
-    position: absolute;
-    width: 90%;
-    height: 40px;
-    top: 0%;
-    left: 5%;
-    background-image: linear-gradient(
-      to right,
-      rgba(59, 76, 192, 1),
-      rgba(95, 127, 232, 1),
-      rgba(135, 171, 253, 1),
-      rgba(176, 203, 252, 1),
-      rgba(220, 220, 220, 1),
-      rgba(228, 217, 211, 1),
-      rgba(246, 191, 165, 1),
-      rgba(243, 149, 118, 1),
-      rgba(221, 94, 75, 1),
-      rgba(181, 11, 39, 1),
-      rgba(0, 0, 0, 0)
-    );
-  }
+.tem-legend__head,
+.tem-legend__hint,
+.tem-legend__ticks {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .triangle1 {
-    position: absolute;
-    height: 0;
-    width: 0;
-    top: -5%;
-    left: 1.8%;
-    font-size: 0;
-    line-height: 0;
-    border: 10px solid transparent;
-    border-top-color: rgba(181, 11, 39, 1);
-  }
+.tem-legend__head {
+  margin-bottom: 6px;
+  font-size: 11px;
+}
 
-  .triangle2 {
-    position: absolute;
-    height: 0;
-    width: 0;
-    top: -5%;
-    left: 48.8%;
-    font-size: 0;
-    line-height: 0;
-    border: 10px solid transparent;
-    border-top-color: rgba(228, 217, 211, 1);
-  }
+.tem-legend__head span { color: #79d7e7; }
+.tem-legend__head b { color: #c3d9e5; font: 500 10px Consolas, monospace; }
 
-  .triangle3 {
-    position: absolute;
-    height: 0;
-    width: 0;
-    top: -5%;
-    left: 90.8%;
-    font-size: 0;
-    line-height: 0;
-    border: 10px solid transparent;
-    border-top-color: rgba(59, 76, 192, 1);
-  }
+.tem-legend__bar {
+  height: 10px;
+  border: 1px solid rgba(139, 215, 224, .22);
+  border-radius: 2px;
+  background: linear-gradient(90deg, #440154 0%, #373e8e 20%, #189299 46%, #53ce67 72%, #fde725 100%);
+}
 
-  .text1 {
-    position: absolute;
-    top: -18%;
-    left: 3%;
-    font-size: 12px;
-    color: white;
-  }
+.tem-legend__ticks {
+  margin-top: 4px;
+  color: #a8c1cf;
+  font: 9px Consolas, monospace;
+}
 
-  .text2 {
-    position: absolute;
-    top: -18%;
-    left: 48%;
-    font-size: 12px;
-    color: white;
-  }
+.tem-legend__hint {
+  margin-top: 2px;
+  color: #54798d;
+  font-size: 9px;
+}
 
-  .text3 {
-    position: absolute;
-    top: -18%;
-    left: 88%;
-    font-size: 12px;
-    color: white;
-  }
-
-  .text4 {
-    position: absolute;
-    top: 55px;
-    left: 30%;
-    font-size: 12px;
-    color: white;
-  }
+@media (max-width: 1100px) {
+  .tem-legend { width: 300px; left: 43%; }
 }
 </style>

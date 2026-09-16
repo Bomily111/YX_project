@@ -29,12 +29,17 @@
       <Panel v-if="showPanel" :row="selectedRow" @close="showPanel = false" />
     </div>
     <!-- 色标图例 -->
-    <TEMColorBar v-if="selectedRow || modelLoadedDirectly" />
+    <TEMColorBar
+      v-if="activeType === 'resistivity' && temRange"
+      :min-value="temRange[0]"
+      :max-value="temRange[1]"
+      unit="Ω·m"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 // import MileageSelect from './Modules/MileageSelect_TEM.vue';
 import MileageSelect from '../DZLDComponents/Modules/MileageSelect_D.vue';
@@ -48,6 +53,20 @@ import * as Cesium from 'Cesium';
 import AllLine from '../ZZMSMComponents/D3K278+100.000~DK300+800.000.json';
 
 let { zzsmImage } = new AppConfig().appConfig;
+
+const props = defineProps({
+  initialType: { type: String, default: 'resistivity' },
+});
+
+const normalizeType = (type: string) => type === 'water' || type === 'isosurface' ? type : 'resistivity';
+const activeType = ref(normalizeType(props.initialType));
+const temRange = ref<[number, number] | null>(null);
+
+watch(
+  () => props.initialType,
+  (type) => { activeType.value = normalizeType(type); },
+  { immediate: true },
+);
 
 let Points = ref([]);
 let tunnel_options = reactive([]);
@@ -168,6 +187,18 @@ function deleteAllLine() {
 }
 
 onMounted(() => {
+  fetch('/data/geophysical_tem/metadata.json')
+    .then((response) => {
+      if (!response.ok) throw new Error('TEM metadata unavailable');
+      return response.json();
+    })
+    .then((data) => {
+      const range = data?.resistivity?.valueRange;
+      if (Array.isArray(range) && range.length === 2) {
+        temRange.value = [Number(range[0]), Number(range[1])];
+      }
+    })
+    .catch((error) => console.warn('[TEM] 视电阻率元数据读取失败:', error));
   show(tunnel_selected.value);
 });
 </script>

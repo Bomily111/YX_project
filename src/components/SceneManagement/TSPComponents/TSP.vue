@@ -26,33 +26,40 @@
     <!-- 右侧面板 -->
     <div class="right-panel" v-if="selectedRow">
       <!-- TSP反演面板 -->
-      <Panel v-if="showPanel" :row="selectedRow" @close="showPanel = false" />
+      <Panel v-if="showPanel && selectedRow" :row="selectedRow" @close="showPanel = false" />
       <!-- 结论面板 -->
-      <TSPConclusionPanel :fdinfo="selectedRow?.value?.fdinfo" :dkname="selectedRow?.value?.dkname" />
+      <TSPConclusionPanel
+        :fdinfo="selectedRow?.value?.fdinfo"
+        :dkname="selectedRow?.value?.dkname"
+      />
     </div>
-    <!-- VP / VS / 弹性模量 切换器 -->
-    <TSPModelSelector v-if="modelLoadedDirectly" @change="onTypeChange" />
     <!-- 色标图例 -->
-    <TSPColorBar v-if="modelLoadedDirectly" :activeType="activeType" />
+    <TSPColorBar
+      v-if="modelLoadedDirectly"
+      :active-type="activeType"
+      :value-range="tspMeta?.channels?.[activeType]?.valueRange"
+      :unit="tspMeta?.channels?.[activeType]?.unit"
+    />
   </div>
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 import MileageSelect from '../DZLDComponents/Modules/MileageSelect_D.vue';
 import Panel from './Modules/panel.vue';
 import TSPConclusionPanel from './Modules/TSPConclusionPanel.vue';
-import TSPModelSelector from './Modules/TSPModelSelector.vue';
 import TSPColorBar from '../Colorbars/TSPColorBar.vue';
 import AppConfig from '@/config/AppConfig';
-// @ts-ignore
-import { switchTSPLayer } from '@/utils/Common/GeoModelController';
 //@ts-ignore
 import * as Cesium from 'Cesium';
 import AllLine from '../ZZMSMComponents/D3K278+100.000~DK300+800.000.json';
 
 let { zzsmImage } = new AppConfig().appConfig;
+
+const props = defineProps({
+  initialType: { type: String, default: 'vs' },
+});
 
 let Points = ref([]);
 let tunnel_options = reactive([]);
@@ -62,7 +69,15 @@ let selectedRow = ref(null); // 新增：保存当前选中的里程
 let showPanel = ref(false);
 let showConclusionPanel = ref(false);
 let modelLoadedDirectly = ref(false); // 无里程数据时直接加载模型的标志
-let activeType = ref('vs'); // 当前显示的模型类型：vp / vs / e
+const normalizeType = (type) => ['vp', 'vs', 'hardness', 'ratio', 'anomaly', 'integrity'].includes(type) ? type : 'vs';
+let activeType = ref(normalizeType(props.initialType)); // 与进入模型视图前的选择保持一致
+let tspMeta = ref(null);
+
+watch(
+  () => props.initialType,
+  (type) => { activeType.value = normalizeType(type); },
+  { immediate: true },
+);
 
 function changeTunnel(tunnel) {
   showGraph.value = false;
@@ -74,11 +89,6 @@ function handleSelectRow(row) {
   selectedRow.value = row;
   showPanel.value = true;
   showConclusionPanel.value = true;
-}
-
-function onTypeChange(type) {
-  activeType.value = type;
-  switchTSPLayer(type);
 }
 
 // 加载数据
@@ -131,7 +141,7 @@ function show(tunnel) {
       .catch(() => {
         // 后端无该模块数据时，体数据已由 activateGeoModel 加载（含相机设置）
         // 此处仅标记 UI 状态，不重复加载/不重置相机
-        activeType.value = 'vs';
+        activeType.value = normalizeType(props.initialType);
         modelLoadedDirectly.value = true;
       });
   });
@@ -182,6 +192,13 @@ function deleteAllLine() {
 }
 
 onMounted(() => {
+  fetch('/data/tsp_actual/metadata.json')
+    .then((response) => {
+      if (!response.ok) throw new Error('TSP metadata unavailable');
+      return response.json();
+    })
+    .then((data) => { tspMeta.value = data; })
+    .catch((error) => console.warn('[TSP] 实测元数据读取失败:', error));
   show(tunnel_selected.value);
 });
 

@@ -1,0 +1,2074 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../default/css/pageZXIndex.css"/>
+    <link rel="stylesheet" type="text/css" href="../default/css/pictureViewer.css"/>
+<script type="text/javascript" src="../js/jquery-1.8.0.min.js"></script><script type="text/javascript" src="../default/js/picjs/jquery.mousewheel.min.js"></script><script type="text/javascript" src="../default/js/picjs/pictureViewer.js"></script>    <title>
+      地震波反射
+    </title>
+<style type="text/css">
+.divtitle {
+	width: 300px;
+	height: 30px;
+	/* 	text-align: center; */
+	font-size: 20px;
+	font: bolder;
+	background-color: rgb(140, 197, 255);
+}
+/* div{
+	border:3px solid black;
+} */
+.tdA {
+	border: 1px solid gray;
+	text-align: center;
+	font-size: 15px;
+	font-style: normal;
+	font: bolder;
+	font-weight: bold;
+}
+
+.tdB {
+	border: 1px solid gray;
+	text-align: center;
+	font-size: 15px;
+	font-style: normal;
+	font-weight: normal;
+}
+
+.td {
+	/* border-bottom: 1px solid black; */
+	/* border-right: 1px solid black; */
+	
+}
+
+td {
+	padding:6px;
+}
+
+.div_check {
+	border: 1px solid black;
+	width: 33%;
+	height: 25px;
+	float: left;
+	text-align: center;
+	background-color: rgb(215, 215, 215);
+	cursor:pointer;
+}
+
+.asd {
+	float: left;
+	width: 30%;
+	border: 1px solid black;
+}
+
+body {
+	text-align: center;font-weight: bold;
+}
+
+div {
+	width: 778px;
+	margin: 0 auto;
+	font-weight: bold;
+}
+</style><script type="text/javascript">
+	function lap_tab(n){
+		if (n == 1) {
+			$("#model2").hide();
+			$("#model1").show();
+			$("#lap_divtitle2").css("background-color", "");
+		}  else {
+			$("#model1").hide();
+			$("#model2").show();
+			$("#lap_divtitle1").css("background-color", "");
+		}
+
+		$("#divtitle" + n).attr("onmousedown",
+				"this.style.backgroundColor='rgb(242,242,242)'");//初始化
+	}
+	function tab(n) {
+		var ns=n.split("_");
+		if(ns[0]==1){
+			$("#di1_1").css("display", "none");
+			$("#di1_2").css("display", "none");
+			$("#di1_3").css("display", "none");
+			$("#di"+n).show();
+			if(ns[1]==1){
+				$("#divtitle1_3").css("background-color", "");
+				$("#divtitle1_2").css("background-color", "");
+			}else if(ns[1]==2){
+				$("#divtitle1_3").css("background-color", "");
+				$("#divtitle1_1").css("background-color", "");
+			}else{
+				$("#divtitle1_1").css("background-color", "");
+				$("#divtitle1_2").css("background-color", "");
+			}
+		}else{
+			$("#di2_1").css("display", "none");
+			$("#di2_2").css("display", "none");
+			$("#di2_3").css("display", "none");
+			$("#di"+n).show();
+			if(ns[1]==1){
+				$("#divtitle2_3").css("background-color", "");
+				$("#divtitle2_2").css("background-color", "");
+			}else if(ns[1]==2){
+				$("#divtitle2_3").css("background-color", "");
+				$("#divtitle2_1").css("background-color", "");
+			}else{
+				$("#divtitle2_1").css("background-color", "");
+				$("#divtitle2_2").css("background-color", "");
+			}
+		}
+	}
+</script>
+  </head>
+  <body>
+    <div style="width: 80%; margin-top: 20px;">
+      <div style="width: 100%; height: 28px; margin-bottom: 20px;margin-top:20px;">
+        <div id="report_name" style="margin:auto;height:28px" class="div203">
+<span style="font-family: 'Arial Negreta','Arial Normal','Arial';font-size: 18px;font-style: normal;line-height:28px">地震波反射</span>
+        </div>
+      </div>
+      <div id="model1" style="width:100%;height:100%;">
+        <div style="width: 70%; height: 25px; margin-top: 10px; text-align: 0 auto">
+          <div id="divtitle1_1" class="div_check" onclick="tab('1_1')" onmousedown="this.style.backgroundColor='rgb(242,242,242)'" style="background-color: rgb(242, 242, 242);">
+            地震波预报结果
+          </div>
+          <div id="divtitle1_2" class="div_check" onclick="tab('1_2')" onmousedown="this.style.backgroundColor='rgb(242,242,242)'">
+            围岩岩体物理学参数表
+          </div>
+          <div id="divtitle1_3" class="div_check" onclick="tab('1_3')" onmousedown="this.style.backgroundColor='rgb(242,242,242)'">
+            地震波现场数据记录表
+          </div>
+        </div>
+        <div id="di1_1" style="width: 100%; height: 100%; display: block; margin-top: 25px;">
+          <div style="width: 50%; float: left;">
+            工程名称：康定2号隧道2#斜井
+          </div>
+          <div style="width: 50%; float: right;">
+            预报日期：2022-06-05
+          </div>
+          <table cellspacing="0" border="1" bordercolor="gay" style="border-collapse: collapse; width: 80%; height: 110%;margin: auto;">
+            <tbody>
+              <tr height="2.38%">
+                <td width="12.50%">
+                  掌子面里程
+                </td>
+                <td width="12.50%" class="tdB">
+                  X1DK2+937.0
+                </td>
+                <td width="12.50%">
+                  探测长度(m)
+                </td>
+                <td width="8.33%" class="tdB">
+                  100.0
+                </td>
+                <td width="16.67%">
+                  设备
+                </td>
+                <td width="12.50%" class="tdB">
+                  TSP303
+                </td>
+                <td width="16.67%">
+                  激发孔间距(m)
+                </td>
+                <td width="8.33%" class="tdB">
+                  2.5
+                </td>
+              </tr>
+              <tr height="2.38%">
+                <td>
+                  激发孔数量
+                </td>
+                <td class="tdB">
+                  24
+                </td>
+                <td>
+                  平均深度(m)
+                </td>
+                <td class="tdB">
+                  1.4
+                </td>
+                <td>
+                  激发孔直径（mm）
+                </td>
+                <td class="tdB">
+                  0.0
+                </td>
+                <td>
+                  激发孔距地面高度(m)
+                </td>
+                <td class="tdB">
+                  1.5
+                </td>
+              </tr>
+              <tr height="2.38%">
+                <td>
+                  接收孔数量
+                </td>
+                <td class="tdB">
+                  2
+                </td>
+                <td>
+                  深度(m)
+                </td>
+                <td class="tdB">
+                  1.8
+                </td>
+                <td>
+                  接收孔直径（mm）
+                </td>
+                <td class="tdB">
+                  50.0
+                </td>
+                <td>
+                  接收孔距地面高度(m)
+                </td>
+                <td class="tdB">
+                  0.8
+                </td>
+              </tr>
+              <tr height="13.10%">
+                <td>
+                  波速分布图
+                </td>
+                <td colspan="7">
+<img alt="pic" onclick="expandImg(this)" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="img_1.jpg"/>
+                </td>
+              </tr>
+              <tr height="13.10%">
+                <td>
+                  2D成果图
+                </td>
+                <td colspan="7">
+<img alt="pic" onclick="expandImg(this)" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="img_2.jpg"/>
+                </td>
+              </tr>
+              <tr height="11.90%">
+                <td>
+                  X向云图
+                </td>
+                <td colspan="7">
+<img alt="pic" onclick="expandImg(this)" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="img_3.jpg"/>
+                </td>
+              </tr>
+              <tr height="10.71%">
+                <td>
+                  Y向云图
+                </td>
+                <td colspan="7">
+<img alt="pic" onclick="expandImg(this)" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="img_4.jpg"/>
+                </td>
+              </tr>
+              <tr height="10.71%">
+                <td>
+                  Z向云图
+                </td>
+                <td colspan="7">
+<img alt="pic" onclick="expandImg(this)" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="img_5.jpg"/>
+                </td>
+              </tr>
+              <tr height="10.71%">
+                <td>
+                  岩土物性图
+                </td>
+                <td colspan="7">
+<img alt="pic" onclick="expandImg(this)" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="img_6.jpg"/>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  结论
+                </td>
+                <td colspan="7">
+                  <table cellspacing="0" border="1" bordercolor="#F5F5F5" style="border-collapse: collapse; width:100%;">
+                    <tbody>
+                      <tr>
+                        <td class="tdA">
+                          序号
+                        </td>
+                        <td class="tdA">
+                          里程范围
+                        </td>
+                        <td class="tdA">
+                          长度(m)
+                        </td>
+                        <td class="tdA">
+                          探测结论
+                        </td>
+                        <td class="tdA">
+                          风险类别
+                        </td>
+                        <td class="tdA">
+                          地质风险等级
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="tdB">
+                          1
+                        </td>
+                        <td class="tdB">
+                          起:X1DK2+853.0                          <br/>
+止:X1DK2+837.0
+                        </td>
+                        <td class="tdB">
+                          16.0
+                        </td>
+                        <td class="tdB" style="text-align:left;">
+                          该段围岩较前段有所变差，围岩较破碎，节理裂隙较发育，含水（线状或沿裂隙股状流出）。
+                        </td>
+                        <td class="tdB">
+                          
+									破碎带  
+								
+								
+								
+								
+									涌水  
+                        </td>
+                        <td class="tdB">
+                          <div style="width:30px;height:20px;border:1px solid;border-radius:3px;background: green;">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="tdB">
+                          2
+                        </td>
+                        <td class="tdB">
+                          起:X1DK2+873.0                          <br/>
+止:X1DK2+853.0
+                        </td>
+                        <td class="tdB">
+                          20.0
+                        </td>
+                        <td class="tdB" style="text-align:left;">
+                          该段围岩较前段稍有变好，围岩较完整～较破碎，节理裂隙较发育，含水（线状或沿裂隙股状流出）。
+                        </td>
+                        <td class="tdB">
+                          
+									破碎带  
+								
+								
+								
+								
+									涌水  
+                        </td>
+                        <td class="tdB">
+                          <div style="width:30px;height:20px;border:1px solid;border-radius:3px;background: green;">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="tdB">
+                          3
+                        </td>
+                        <td class="tdB">
+                          起:X1DK2+894.0                          <br/>
+止:X1DK2+873.0
+                        </td>
+                        <td class="tdB">
+                          21.0
+                        </td>
+                        <td class="tdB" style="text-align:left;">
+                          该段围岩较前段稍有变差，围岩较破碎，节理裂隙较发育，含水（线状或沿裂隙股状流出）。
+                        </td>
+                        <td class="tdB">
+                          
+									破碎带  
+								
+								
+								
+								
+									涌水  
+                        </td>
+                        <td class="tdB">
+                          <div style="width:30px;height:20px;border:1px solid;border-radius:3px;background: green;">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="tdB">
+                          4
+                        </td>
+                        <td class="tdB">
+                          起:X1DK2+937.0                          <br/>
+止:X1DK2+894.0
+                        </td>
+                        <td class="tdB">
+                          43.0
+                        </td>
+                        <td class="tdB" style="text-align:left;">
+                          该段围岩与当前掌子面基本一致，围岩较完整～较破碎，节理裂隙较发育，含水（线状或沿裂隙股状流出）。
+                        </td>
+                        <td class="tdB">
+                          
+									破碎带  
+								
+								
+								
+								
+									涌水  
+                        </td>
+                        <td class="tdB">
+                          <div style="width:30px;height:20px;border:1px solid;border-radius:3px;background: green;">
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+              <tr height="7.14%">
+                <td>
+                  后续建议
+                </td>
+                <td colspan="7" style="text-align:left;" class="tdB">
+                  预报段围岩总体上为较完整～较破碎，含水（线状或股状出水），节理较发育，提请施工过程中及时支护，加强排水措施，并按设计施作超前钻孔及加深炮孔进一步探测。防止局部掉块、塌方、涌突水等工程地质灾害发生，确保施工安全。
+                </td>
+              </tr>
+              <tr height="2.38%">
+                <td>
+                  原始数据文件
+                </td>
+                <td colspan="3" style="font-weight: normal;">
+<a href="/cqdzyb/wtf/download?path=f8ca0d11-6cf6-4329-9ff6-cc6e147f61ed">原始文件下载</a>
+                </td>
+                <td colspan="2">
+                  上传日期
+                </td>
+                <td colspan="2" style="font-weight: normal;">
+                  2022-06-06
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="width: 33.3%; float: left;font-weight: normal;">
+            检测：雷乐
+          </div>
+          <div style="width: 33.3%; float: left;font-weight: normal;">
+            复核：张硕
+          </div>
+          <div style="width: 33.3%; float: left;font-weight: normal;">
+            监理：齐小辉
+          </div>
+        </div>
+        <div id="di1_2" style="width: 100%; height: 100%; display: none; margin-top: 25px;">
+          <table cellspacing="0" border="1" bordercolor="gay" style="border-collapse: collapse; width: 80%; height: 110%;margin: auto;">
+            <tbody>
+              <tr>
+                <td colspan="8">
+                  围岩岩体物理力学参数表
+                </td>
+              </tr>
+              <tr height="20px">
+                <td height="20px">
+                  检波器
+                </td>
+                <td>
+                  序号
+                </td>
+                <td>
+                  波型
+                </td>
+                <td>
+                  隧道里程
+                </td>
+                <td>
+                  速度 (m/s)
+                </td>
+                <td>
+                  Vp/Vs
+                </td>
+                <td>
+                  泊松比
+                </td>
+                <td>
+                  密度 (g/cm3)
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  2
+                </td>
+                <td class="tdB">
+                  2
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SV波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2942.18
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4690
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.74
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.25
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2567.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  3
+                </td>
+                <td class="tdB">
+                  3
+                </td>
+                <td height="25" align="center" class="tdB">
+                  P波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2933.67
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4567
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.71
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.24
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2542.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  4
+                </td>
+                <td class="tdB">
+                  4
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SV波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2925.29
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4650
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.78
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.27
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2537.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  9
+                </td>
+                <td class="tdB">
+                  9
+                </td>
+                <td height="25" align="center" class="tdB">
+                  P波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2916.72
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4580
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.72
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.25
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2541.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  10
+                </td>
+                <td class="tdB">
+                  10
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SH波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2906.39
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4722
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.78
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.27
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2557.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  15
+                </td>
+                <td class="tdB">
+                  15
+                </td>
+                <td height="25" align="center" class="tdB">
+                  P波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2903.42
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4719
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.84
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.29
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2531.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  14
+                </td>
+                <td class="tdB">
+                  14
+                </td>
+                <td height="25" align="center" class="tdB">
+                  P波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2901.45
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4721
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.79
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.27
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2553.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  13
+                </td>
+                <td class="tdB">
+                  13
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SV波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2895.61
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4475
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.74
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.25
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2505.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  17
+                </td>
+                <td class="tdB">
+                  17
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SH波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2894.17
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4557
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.77
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.27
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2515.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  16
+                </td>
+                <td class="tdB">
+                  16
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SV波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2874.95
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4579
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.79
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.27
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2511.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  16
+                </td>
+                <td class="tdB">
+                  16
+                </td>
+                <td height="25" align="center" class="tdB">
+                  P波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2873.7
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4624
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.8
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.28
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2521.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  18
+                </td>
+                <td class="tdB">
+                  18
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SH波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2871.67
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4721
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.76
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.26
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2565.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  22
+                </td>
+                <td class="tdB">
+                  22
+                </td>
+                <td height="25" align="center" class="tdB">
+                  P波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2852.0
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4515
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.71
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.24
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2530.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  27
+                </td>
+                <td class="tdB">
+                  27
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SH波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2849.4
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4662
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.78
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.27
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2539.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  28
+                </td>
+                <td class="tdB">
+                  28
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SH波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2845.47
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4556
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.7
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.24
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2543.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  20
+                </td>
+                <td class="tdB">
+                  20
+                </td>
+                <td height="25" align="center" class="tdB">
+                  P波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2842.62
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4631
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.81
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.28
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2519.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  20
+                </td>
+                <td class="tdB">
+                  20
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SV波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2839.01
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4543
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.77
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.26
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2512.0
+                </td>
+              </tr>
+              <tr>
+                <td height="25" align="center" class="tdB">
+                  32
+                </td>
+                <td class="tdB">
+                  32
+                </td>
+                <td height="25" align="center" class="tdB">
+                  
+						SH波
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2821.99
+                </td>
+                <td height="25" align="center" class="tdB">
+                  4686
+                </td>
+                <td height="25" align="center" class="tdB">
+                  1.72
+                </td>
+                <td height="25" align="center" class="tdB">
+                  0.25
+                </td>
+                <td height="25" align="center" class="tdB">
+                  2573.0
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="width: 33.3%; float: left; font-weight: normal;">
+            检测：雷乐
+          </div>
+          <div style="width: 33.3%; float: left; font-weight: normal;">
+            复核：张硕
+          </div>
+          <div style="width: 33.3%; float: left; font-weight: normal;">
+            监理：齐小辉
+          </div>
+        </div>
+        <div id="di1_3" style="width: 100%; height: 100%; display: none; margin-top: 25px;font-weight: normal;">
+          <table cellspacing="0" border="1" bordercolor="gay" style="border-collapse: collapse; width: 80%; height: 110%;margin: auto;">
+            <tbody>
+              <tr height="14.63%">
+                <td colspan="12" style="font-weight: bold;">
+                  TSP现场数据记录表
+                </td>
+              </tr>
+              <tr height="14.63%">
+                <td colspan="10">
+                  隧道名称：康定2号隧道2#斜井
+                </td>
+                <td colspan="2" class="tdB">
+                  2022-06-05
+                </td>
+              </tr>
+              <tr height="9.76%">
+                <td colspan="3" rowspan="2">
+                  掌子面里程
+                </td>
+                <td colspan="4" rowspan="2" class="tdB">
+                  X1DK2+937.0
+                </td>
+                <td colspan="3" rowspan="2">
+                  炮孔布置
+                </td>
+                <td>
+                  左边墙
+                </td>
+                <td>
+                </td>
+              </tr>
+              <tr height="9.76%">
+                <td>
+                  右边墙
+                </td>
+                <td>
+                  √
+                </td>
+              </tr>
+              <tr height="24.39%">
+                <td rowspan="3">
+                  接收器
+                </td>
+                <td colspan="4">
+                  里程
+                </td>
+                <td colspan="2">
+                  距拱顶垂直距离（m）
+                </td>
+                <td colspan="2">
+                  距中线距离（m）
+                </td>
+                <td>
+                  距地面高度（m）
+                </td>
+                <td>
+                  孔深（m）
+                </td>
+                <td>
+                  倾角（。）
+                </td>
+              </tr>
+              <tr height="7.32%">
+                <td>
+                  左
+                </td>
+                <td colspan="3">
+                   
+		                    X1DK3+009
+                </td>
+                <td colspan="2">
+                  6.7
+                </td>
+                <td colspan="2">
+                  4.0
+                </td>
+                <td>
+                  0.8
+                </td>
+                <td>
+                  1.8
+                </td>
+                <td>
+                  4.0
+                </td>
+              </tr>
+              <tr height="7.32%">
+                <td>
+                  右
+                </td>
+                <td colspan="3">
+                   
+		                    X1DK3+009
+                </td>
+                <td colspan="2">
+                  6.7
+                </td>
+                <td colspan="2">
+                  4.0
+                </td>
+                <td>
+                  0.8
+                </td>
+                <td>
+                  1.9
+                </td>
+                <td>
+                  3.0
+                </td>
+              </tr>
+              <tr height="7.32%">
+                <td colspan="12">
+                  炮点参数
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table cellspacing="0" border="1" bordercolor="gay" style="border-collapse: collapse; width: 80%; height: 110%;margin: auto;">
+            <tbody>
+              <tr height="3%">
+                <td width="14.29%">
+                  序号
+                </td>
+                <td width="14.29%">
+                  距离（m）
+                </td>
+                <td width="14.29%">
+                  深度（m）
+                </td>
+                <td width="14.29%">
+                  高度（m）
+                </td>
+                <td width="14.29%">
+                  方位角（。）
+                </td>
+                <td width="14.29%">
+                  倾角（。）
+                </td>
+                <td width="14.29%">
+                  药量（g）
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  1
+                </td>
+                <td height="25" align="center">
+                  53.5
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  2
+                </td>
+                <td height="25" align="center">
+                  51.9
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -6.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  3
+                </td>
+                <td height="25" align="center">
+                  50.3
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  4
+                </td>
+                <td height="25" align="center">
+                  48.7
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.6
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -6.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  5
+                </td>
+                <td height="25" align="center">
+                  47.2
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -6.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  6
+                </td>
+                <td height="25" align="center">
+                  45.9
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -7.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  7
+                </td>
+                <td height="25" align="center">
+                  44.0
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -4.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  8
+                </td>
+                <td height="25" align="center">
+                  42.0
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  9
+                </td>
+                <td height="25" align="center">
+                  40.6
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -6.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  10
+                </td>
+                <td height="25" align="center">
+                  38.7
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  11
+                </td>
+                <td height="25" align="center">
+                  36.6
+                </td>
+                <td height="25" align="center">
+                  1.6
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  12
+                </td>
+                <td height="25" align="center">
+                  34.8
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  150
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  13
+                </td>
+                <td height="25" align="center">
+                  33.3
+                </td>
+                <td height="25" align="center">
+                  1.0
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -7.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  14
+                </td>
+                <td height="25" align="center">
+                  32.3
+                </td>
+                <td height="25" align="center">
+                  1.0
+                </td>
+                <td height="25" align="center">
+                  1.6
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -7.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  15
+                </td>
+                <td height="25" align="center">
+                  29.3
+                </td>
+                <td height="25" align="center">
+                  1.2
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -7.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  16
+                </td>
+                <td height="25" align="center">
+                  27.3
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  17
+                </td>
+                <td height="25" align="center">
+                  25.3
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  18
+                </td>
+                <td height="25" align="center">
+                  23.3
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -4.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  19
+                </td>
+                <td height="25" align="center">
+                  22.1
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -4.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  20
+                </td>
+                <td height="25" align="center">
+                  20.4
+                </td>
+                <td height="25" align="center">
+                  1.2
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -7.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  21
+                </td>
+                <td height="25" align="center">
+                  19.0
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -7.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  22
+                </td>
+                <td height="25" align="center">
+                  17.4
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  23
+                </td>
+                <td height="25" align="center">
+                  15.6
+                </td>
+                <td height="25" align="center">
+                  1.5
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -5.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  24
+                </td>
+                <td height="25" align="center">
+                  13.8
+                </td>
+                <td height="25" align="center">
+                  1.0
+                </td>
+                <td height="25" align="center">
+                  1.4
+                </td>
+                <td height="25" align="center">
+                  0.0
+                </td>
+                <td height="25" align="center">
+                  -6.0
+                </td>
+                <td height="25" align="center">
+                  100
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="width: 33.3%; float: left;font-weight: normal;">
+            检测：雷乐
+          </div>
+          <div style="width: 33.3%; float: left;font-weight: normal;">
+            复核：张硕
+          </div>
+          <div style="width: 33.3%; float: left;font-weight: normal;">
+            监理：齐小辉
+          </div>
+        </div>
+      </div>
+      <div id="model2" style="display:none;width:100%;height:100%;">
+        <div style="width: 70%; height: 25px; margin-top: 10px; text-align: 0 auto">
+          <div id="divtitle2_1" class="div_check" onclick="tab('2_1')" onmousedown="this.style.backgroundColor='rgb(242,242,242)'" style="background-color: rgb(242, 242, 242);">
+            地震波预报结果
+          </div>
+          <div id="divtitle2_2" class="div_check" onclick="tab('2_2')" onmousedown="this.style.backgroundColor='rgb(242,242,242)'">
+            围岩岩体物理学参数表
+          </div>
+          <div id="divtitle2_3" class="div_check" onclick="tab('2_3')" onmousedown="this.style.backgroundColor='rgb(242,242,242)'">
+            地震波现场数据记录表
+          </div>
+        </div>
+        <div id="di2_1" style="width: 100%; height: 100%; display: block; margin-top: 25px;">
+          <div style="width: 50%; float: left;">
+            工程名称：
+          </div>
+          <div style="width: 50%; float: right;">
+            预报日期：1970-01-01
+          </div>
+          <table cellspacing="0" border="1" bordercolor="gay" style="border-collapse: collapse; width: 80%; height: 110%;margin: auto;">
+            <tbody>
+              <tr height="2.38%">
+                <td width="12.50%">
+                  掌子面里程
+                </td>
+                <td width="12.50%">
+                </td>
+                <td width="12.50%">
+                  探测长度(m)
+                </td>
+                <td width="8.33%">
+                </td>
+                <td width="16.67%" style="backgrund-color: rgb(176, 208, 255);">
+                  设备
+                </td>
+                <td width="12.50%">
+                </td>
+                <td width="16.67%">
+                  激发孔间距(m)
+                </td>
+                <td width="8.33%">
+                </td>
+              </tr>
+              <tr height="2.38%">
+                <td>
+                  激发孔数量
+                </td>
+                <td>
+                </td>
+                <td>
+                  平均深度(m)
+                </td>
+                <td>
+                </td>
+                <td>
+                  激发孔直径（mm）
+                </td>
+                <td>
+                </td>
+                <td>
+                  激发孔距地面高度(m)
+                </td>
+                <td>
+                </td>
+              </tr>
+              <tr height="2.38%">
+                <td>
+                  接收孔数量
+                </td>
+                <td>
+                </td>
+                <td>
+                  深度(m)
+                </td>
+                <td>
+                </td>
+                <td>
+                  接收孔直径（mm）
+                </td>
+                <td>
+                </td>
+                <td>
+                  接收孔距地面高度(m)
+                </td>
+                <td>
+                </td>
+              </tr>
+              <tr height="13.10%">
+                <td>
+                  波速分布图
+                </td>
+                <td colspan="7">
+<img alt="pic" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="img_7.jpg"/>
+                </td>
+              </tr>
+              <tr height="13.10%">
+                <td>
+                  2D成果图
+                </td>
+                <td colspan="7">
+<img alt="pic" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="/cqdzyb"/>
+                </td>
+              </tr>
+              <tr height="11.90%">
+                <td>
+                  X向云图
+                </td>
+                <td colspan="7">
+<img alt="pic" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="/cqdzyb"/>
+                </td>
+              </tr>
+              <tr height="10.71%">
+                <td>
+                  Y向云图
+                </td>
+                <td colspan="7">
+<img alt="pic" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="/cqdzyb"/>
+                </td>
+              </tr>
+              <tr height="10.71%">
+                <td>
+                  Z向云图
+                </td>
+                <td colspan="7">
+<img alt="pic" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="/cqdzyb"/>
+                </td>
+              </tr>
+              <tr height="10.71%">
+                <td>
+                  岩土物性图
+                </td>
+                <td colspan="7">
+<img alt="pic" style="margin-top: 5px; margin-bottom: 5px;height: 300px;width: 98%;" src="/cqdzyb"/>
+                </td>
+              </tr>
+              <tr height="10.71%">
+                <td>
+                  结论
+                </td>
+                <td colspan="7">
+                  <table cellspacing="0" border="1" bordercolor="#F5F5F5" style="border-collapse: collapse; width: 98%; height: 98%;">
+                    <tbody>
+                      <tr>
+                        <td class="tdB">
+                          序号
+                        </td>
+                        <td class="tdB">
+                          里程
+                        </td>
+                        <td class="tdB">
+                          长度(m)
+                        </td>
+                        <td class="tdB">
+                          结论
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+              <tr height="7.14%">
+                <td>
+                  后续建议
+                </td>
+                <td colspan="7">
+                </td>
+              </tr>
+              <tr height="2.38%">
+                <td>
+                  原始数据文件
+                </td>
+                <td colspan="3">
+<a href="/cqdzyb/wtf/download?path=">原始文件下载</a>
+                </td>
+                <td colspan="2">
+                  上传日期
+                </td>
+                <td colspan="2">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="width: 33.3%; float: left;">
+            检测：
+          </div>
+          <div style="width: 33.3%; float: left;">
+            复核：
+          </div>
+          <div style="width: 33.3%; float: left;">
+            监理：
+          </div>
+        </div>
+        <div id="di2_2" style="width: 100%; height: 100%; display: none; margin-top: 25px;">
+          <table cellspacing="0" border="1" bordercolor="gay" style="border-collapse: collapse; width: 80%; height: 110%;margin: auto;">
+            <tbody>
+              <tr>
+                <td colspan="8">
+                  围岩岩体物理力学参数表
+                </td>
+              </tr>
+              <tr height="20px">
+                <td height="20px">
+                  检波器
+                </td>
+                <td>
+                  序号
+                </td>
+                <td>
+                  波型
+                </td>
+                <td>
+                  隧道里程
+                </td>
+                <td>
+                  速度 (m/s)
+                </td>
+                <td>
+                  Vp/Vs
+                </td>
+                <td>
+                  泊松比
+                </td>
+                <td>
+                  密度 (g/cm3)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="width: 33.3%; float: left;">
+            检测：
+          </div>
+          <div style="width: 33.3%; float: left;">
+            复核：
+          </div>
+          <div style="width: 33.3%; float: left;">
+            监理：
+          </div>
+        </div>
+        <div id="di2_3" style="width: 100%; height: 100%; display: none; margin-top: 25px;">
+          <table cellspacing="0" border="1" bordercolor="gay" style="border-collapse: collapse; width: 80%; height: 110%;margin: auto;">
+            <tbody>
+              <tr height="14.63%">
+                <td colspan="12">
+                  TSP现场数据记录表
+                </td>
+              </tr>
+              <tr height="14.63%">
+                <td colspan="10">
+                  隧道名称：
+                </td>
+                <td colspan="2">
+                </td>
+              </tr>
+              <tr height="9.76%">
+                <td colspan="3" rowspan="2">
+                  掌子面里程
+                </td>
+                <td colspan="4" rowspan="2">
+                </td>
+                <td colspan="3" rowspan="2">
+                  炮孔布置
+                </td>
+                <td>
+                  左边墙
+                </td>
+                <td>
+                </td>
+              </tr>
+              <tr height="9.76%">
+                <td>
+                  右边墙
+                </td>
+                <td>
+                </td>
+              </tr>
+              <tr height="24.39%">
+                <td rowspan="3">
+                  接收器
+                </td>
+                <td colspan="4">
+                  里程
+                </td>
+                <td colspan="2">
+                  距拱顶垂直距离（m）
+                </td>
+                <td colspan="2">
+                  距中线距离（m）
+                </td>
+                <td>
+                  距地面高度（m）
+                </td>
+                <td>
+                  孔深（m）
+                </td>
+                <td>
+                  倾角（。）
+                </td>
+              </tr>
+              <tr height="7.32%">
+                <td>
+                  左
+                </td>
+                <td colspan="3">
+                  
+					   
+							0+000
+                </td>
+                <td colspan="2">
+                </td>
+                <td colspan="2">
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+              </tr>
+              <tr height="7.32%">
+                <td>
+                  右
+                </td>
+                <td colspan="3">
+                  
+					   
+							0+000
+                </td>
+                <td colspan="2">
+                </td>
+                <td colspan="2">
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+              </tr>
+              <tr height="7.32%">
+                <td colspan="12">
+                  炮点参数
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table cellspacing="0" border="1" bordercolor="gay" style="border-collapse: collapse; width: 80%; height: 110%;margin: auto;">
+            <tbody>
+              <tr height="3%">
+                <td width="14.29%">
+                  序号
+                </td>
+                <td width="14.29%">
+                  距离（m）
+                </td>
+                <td width="14.29%">
+                  深度（m）
+                </td>
+                <td width="14.29%">
+                  高度（m）
+                </td>
+                <td width="14.29%">
+                  方位角（。）
+                </td>
+                <td width="14.29%">
+                  倾角（。）
+                </td>
+                <td width="14.29%">
+                  药量（g）
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="width: 33.3%; float: left;">
+            检测：
+          </div>
+          <div style="width: 33.3%; float: left;">
+            复核：
+          </div>
+          <div style="width: 33.3%; float: left;">
+            监理：
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
