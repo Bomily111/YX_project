@@ -33,33 +33,21 @@
         :dkname="selectedRow?.value?.dkname"
       />
     </div>
-    <!-- 色标图例 -->
-    <TSPColorBar
-      v-if="modelLoadedDirectly"
-      :active-type="activeType"
-      :value-range="tspMeta?.channels?.[activeType]?.valueRange"
-      :unit="tspMeta?.channels?.[activeType]?.unit"
-    />
   </div>
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 import MileageSelect from '../DZLDComponents/Modules/MileageSelect_D.vue';
 import Panel from './Modules/panel.vue';
 import TSPConclusionPanel from './Modules/TSPConclusionPanel.vue';
-import TSPColorBar from '../Colorbars/TSPColorBar.vue';
 import AppConfig from '@/config/AppConfig';
 //@ts-ignore
 import * as Cesium from 'Cesium';
 import AllLine from '../ZZMSMComponents/D3K278+100.000~DK300+800.000.json';
 
 let { zzsmImage } = new AppConfig().appConfig;
-
-const props = defineProps({
-  initialType: { type: String, default: 'vs' },
-});
 
 let Points = ref([]);
 let tunnel_options = reactive([]);
@@ -68,17 +56,6 @@ let showGraph = ref(false);
 let selectedRow = ref(null); // 新增：保存当前选中的里程
 let showPanel = ref(false);
 let showConclusionPanel = ref(false);
-let modelLoadedDirectly = ref(false); // 无里程数据时直接加载模型的标志
-const normalizeType = (type) => ['vp', 'vs', 'hardness', 'ratio', 'anomaly', 'integrity'].includes(type) ? type : 'vs';
-let activeType = ref(normalizeType(props.initialType)); // 与进入模型视图前的选择保持一致
-let tspMeta = ref(null);
-
-watch(
-  () => props.initialType,
-  (type) => { activeType.value = normalizeType(type); },
-  { immediate: true },
-);
-
 function changeTunnel(tunnel) {
   showGraph.value = false;
   tunnel_selected.value = tunnel;
@@ -140,9 +117,7 @@ function show(tunnel) {
       })
       .catch(() => {
         // 后端无该模块数据时，体数据已由 activateGeoModel 加载（含相机设置）
-        // 此处仅标记 UI 状态，不重复加载/不重置相机
-        activeType.value = normalizeType(props.initialType);
-        modelLoadedDirectly.value = true;
+        // 此处不重复加载模型或重置相机。
       });
   });
 }
@@ -192,13 +167,6 @@ function deleteAllLine() {
 }
 
 onMounted(() => {
-  fetch('/data/tsp_actual/metadata.json')
-    .then((response) => {
-      if (!response.ok) throw new Error('TSP metadata unavailable');
-      return response.json();
-    })
-    .then((data) => { tspMeta.value = data; })
-    .catch((error) => console.warn('[TSP] 实测元数据读取失败:', error));
   show(tunnel_selected.value);
 });
 

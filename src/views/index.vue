@@ -121,9 +121,10 @@
     <!-- 体数据渲染覆盖层（进入模型视图后挂载，始终保持 DOM） -->
     <DTVolume v-show="isModelViewMode" />
     <RockGradeColorBar v-if="isModelViewMode && currentActiveKey === 'geophysical_grade'" />
+    <RockGradeComparison v-if="isModelViewMode && currentActiveKey === 'geophysical_grade'" />
     <TSPColorBar
-      v-if="isModelViewMode && ['tsp_hardness', 'tsp_integrity'].includes(currentActiveKey)"
-      :active-type="currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity'"
+      v-if="isModelViewMode && (isTSP || ['tsp', 'tsp_hardness', 'tsp_integrity'].includes(currentActiveKey))"
+      :active-type="currentActiveKey === 'tsp' ? tspInitialType : currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity'"
     />
 
     <!-- 不良地质 / 超前预报 功能面板 -->
@@ -131,7 +132,7 @@
     <DZLD v-if="isRadar" />
     <AHD v-if="isAHD" />
     <DBH v-if="isDBH" />
-    <TSP v-if="isTSP" :initial-type="tspInitialType" />
+    <TSP v-if="isTSP" />
     <TEM v-if="isTEM" :initial-type="temInitialType" />
 
 
@@ -253,6 +254,7 @@ import DBH from '@/components/SceneManagement/DBHComponents/DBH.vue';
 import TSP from '@/components/SceneManagement/TSPComponents/TSP.vue';
 import TEM from '@/components/SceneManagement/TEMComponents/TEM.vue';
 import RockGradeColorBar from '@/components/SceneManagement/Colorbars/RockGradeColorBar.vue';
+import RockGradeComparison from '@/components/SceneManagement/Colorbars/RockGradeComparison.vue';
 import TSPColorBar from '@/components/SceneManagement/Colorbars/TSPColorBar.vue';
 import DTVolume from '@/utils/AllPrevious/All/DTVolume.vue';
 import Toolbar from '@/components/Toolbar.vue';

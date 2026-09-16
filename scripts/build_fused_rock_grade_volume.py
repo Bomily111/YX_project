@@ -108,6 +108,37 @@ def main() -> None:
     )
 
     counts = {str(grade): int(np.count_nonzero(grades == grade)) for grade in range(2, 6)}
+
+    # Reduce the fused volume to a longitudinal prediction profile for the
+    # design / prediction / observed comparison strip.  The scene stretches
+    # the source x range onto the report's 100 m forecast interval
+    # YK2+244--YK2+344 (see GeoModelController.ts), so use the same mapping
+    # here instead of treating the source-grid x values as chainage metres.
+    grade_grid = grades.reshape(shape)
+    axial_grades: list[int] = []
+    for x_index in range(shape[0]):
+        classified = grade_grid[x_index][grade_grid[x_index] > 0]
+        if classified.size == 0:
+            axial_grades.append(0)
+            continue
+        axial_grades.append(int(np.bincount(classified, minlength=6).argmax()))
+
+    forecast_start = 2244.0
+    forecast_end = 2344.0
+    cell_edges = np.linspace(forecast_start, forecast_end, shape[0] + 1)
+    axial_segments = []
+    segment_start = 0
+    for index in range(1, len(axial_grades) + 1):
+        if index < len(axial_grades) and axial_grades[index] == axial_grades[segment_start]:
+            continue
+        grade = axial_grades[segment_start]
+        axial_segments.append({
+            "start": round(float(cell_edges[segment_start]), 3),
+            "end": round(float(cell_edges[index]), 3),
+            "grade": str(grade) if grade else None,
+        })
+        segment_start = index
+
     metadata = {
         "sources": ["data/tem_voxel_full.csv", "data/Vp.csv", "data/Vs.csv"],
         "shape": shape,
@@ -116,6 +147,12 @@ def main() -> None:
         "gradeCounts": counts,
         "rule": "Vp/Vs < 1.7 => II; < 2.0 => III; otherwise IV; rho < 570 Ω·m degrades one class",
         "colours": {"2": "#5a9fc6", "3": "#244b78", "4": "#e8bd35", "5": "#8f3f20"},
+        "axialProfile": {
+            "method": "cross-section majority grade",
+            "mileageRange": [forecast_start, forecast_end],
+            "mileagePrefix": "YK",
+            "segments": axial_segments,
+        },
     }
     (OUTPUT / "metadata.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Built fused grade volume {shape}: {metadata['classified']:,} classified, {counts}")

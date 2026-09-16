@@ -23,5 +23,30 @@
     "3": "#244b78",
     "4": "#e8bd35",
     "5": "#8f3f20"
+  },
+  "axialProfile": {
+    "method": "cross-section majority grade",
+    "mileageRange": [
+      2244.0,
+      2344.0
+    ],
+    "mileagePrefix": "YK",
+    "segments": [
+      {
+        "start": 2244.0,
+        "end": 2249.0,
+        "grade": null
+      },
+      {
+        "start": 2249.0,
+        "end": 2334.0,
+        "grade": "4"
+      },
+      {
+        "start": 2334.0,
+        "end": 2344.0,
+        "grade": "3"
+      }
+    ]
   }
 }
