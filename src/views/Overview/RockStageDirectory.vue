@@ -1,7 +1,11 @@
 <template>
   <transition name="rock-directory-slide">
     <aside v-if="show" class="rock-stage-directory" aria-label="隧洞围岩目录">
-      <div class="rsd-home"><span>⌂</span> 工点概况</div>
+      <button type="button" class="rsd-home rsd-home-link" @click="$emit('home')">
+        <span>⌂</span>
+        <strong>首页</strong>
+      </button>
+      <div class="rsd-context"><span>◎</span> 工点概况</div>
       <header class="rsd-header">
         <span class="rsd-symbol">⬡</span>
         <span class="rsd-title">隧洞围岩</span>
@@ -52,6 +56,7 @@ defineProps<{
 
 defineEmits<{
   'update:modelValue': [node: RockDirectoryNode]
+  home: []
 }>()
 
 const stages: { key: RockStage; label: string; description: string }[] = [
@@ -80,12 +85,27 @@ type RockStage = Exclude<RockDirectoryNode, 'monitoring'>
 }
 
 .rsd-home,
+.rsd-context,
 .rsd-static-item {
   display: flex; align-items: center; gap: 11px;
   min-height: 44px; padding: 0 18px;
   color: #7892aa; font-size: 12px;
   border-bottom: 1px solid rgba(0, 150, 220, .07);
 }
+.rsd-home-link {
+  width: 100%;
+  font-family: inherit;
+  text-align: left;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: .18s ease;
+}
+.rsd-home-link strong { flex: 1; color: #b9cee0; font-size: 12px; font-weight: 600; }
+.rsd-home-link:hover { background: rgba(0, 170, 235, .08); }
+.rsd-home-link:hover strong { color: #69dff2; }
 .rsd-section-link {
   width: 100%;
   font-family: inherit;
@@ -103,6 +123,7 @@ type RockStage = Exclude<RockDirectoryNode, 'monitoring'>
   box-shadow: inset 3px 0 0 #37dfff;
 }
 .rsd-home span,
+.rsd-context span,
 .rsd-static-item span { width: 18px; color: #4e85aa; text-align: center; }
 
 .rsd-header {

@@ -16,6 +16,7 @@
         <OverviewHUD
           :active-scene="activeScene"
           :scenes="SCENE_DEFS_LIST"
+          :show-back-to-overview="activeScene !== 'workface'"
           @select-scene="handleSelectScene"
           @back-to-overview="handleBackToOverview"
         />
@@ -146,6 +147,7 @@
       :show="!!activeScene && !processingModelKey"
       :model-value="rockDirectoryNode"
       @update:model-value="selectRockDirectoryNode"
+      @home="handleBackToOverview"
     />
 
     <!-- 其他场景使用原数据面板；隧洞围岩数据监测归入“监测预警”目录 -->

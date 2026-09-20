@@ -17,7 +17,7 @@
     <!-- 场景模式：面包屑导航条 -->
     <div v-else class="top-nav-panel">
       <div class="tn-list">
-        <div class="tn-item bc-back" @click="$emit('back-to-overview')">
+        <div v-if="showBackToOverview" class="tn-item bc-back" @click="$emit('back-to-overview')">
           ← 返回总览
         </div>
         <div class="tn-item bc-scene">
@@ -45,7 +45,10 @@ export interface SceneDef {
 const props = defineProps<{
   activeScene: string | null;
   scenes: SceneDef[];
+  showBackToOverview?: boolean;
 }>();
+
+const showBackToOverview = computed(() => props.showBackToOverview ?? true);
 
 defineEmits<{
   'select-scene': [key: string];
