@@ -1,6 +1,6 @@
 <template>
-  <transition name="panel-slide-left">
-    <div v-if="show" class="scene-data-panel" :style="{ '--sc': sceneColor }">
+  <transition :name="embedded ? '' : (placement === 'right' ? 'panel-slide-right' : 'panel-slide-left')">
+    <div v-if="show" class="scene-data-panel" :class="[`placement-${placement}`, { embedded }]" :style="{ '--sc': sceneColor }">
       <!-- 面板顶部 -->
       <div class="sdp-header">
         <span class="sdp-icon">{{ sceneIcon }}</span>
@@ -325,7 +325,12 @@ const props = defineProps<{
   show: boolean;
   sceneKey: string | null;
   isModelViewMode: boolean;
+  placement?: 'left' | 'right';
+  embedded?: boolean;
 }>();
+
+const placement = computed(() => props.placement ?? 'left');
+const embedded = computed(() => props.embedded ?? false);
 
 const emit = defineEmits<{
   'select-layer': [item: LayerItem];
@@ -643,6 +648,15 @@ function statusBarColor(level?: string): string {
   transform: translateX(-100%);
   opacity: 0;
 }
+.panel-slide-right-enter-active,
+.panel-slide-right-leave-active {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+.panel-slide-right-enter-from,
+.panel-slide-right-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
 
 /* ── 面板主体 ─────────────────────────────────────── */
 .scene-data-panel {
@@ -667,6 +681,35 @@ function statusBarColor(level?: string): string {
   &::-webkit-scrollbar { width: 3px; }
   &::-webkit-scrollbar-thumb { background: rgba(0, 170, 255, 0.3); border-radius: 2px; }
 }
+
+.scene-data-panel.placement-right {
+  left: auto;
+  right: 0;
+  border-right: 0;
+  border-left: 1px solid rgba(0, 170, 255, 0.2);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
+}
+
+.scene-data-panel.embedded {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  min-height: 0;
+  color: #c7d5ea;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  overflow: visible;
+}
+
+.scene-data-panel.embedded .sdp-header { display: none; }
+.scene-data-panel.embedded .sdp-metrics { padding: 9px 10px 5px; gap: 5px; }
+.scene-data-panel.embedded .sdp-metric-item { min-height: 46px; padding: 6px; }
+.scene-data-panel.embedded .sdp-m-val { font-size: 15px; }
+.scene-data-panel.embedded .sdp-chart-section,
+.scene-data-panel.embedded .sdp-status-list,
+.scene-data-panel.embedded .sdp-alerts { padding-left: 10px; padding-right: 10px; }
 
 /* ── 顶部 Header ─────────────────────────────────── */
 .sdp-header {

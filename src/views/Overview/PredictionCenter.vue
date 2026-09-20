@@ -1,6 +1,6 @@
 <template>
   <transition name="panel-slide-right">
-    <div v-if="show" class="pred-center-panel">
+    <div v-if="show" class="pred-center-panel" :style="{ right: `${rightOffset}px` }">
       <!-- Header -->
       <div class="pc-header">
         <div class="pc-title-group">
@@ -16,7 +16,7 @@
       </div>
 
       <!-- 同一围岩模型的连续演化状态轴 -->
-      <div class="pc-stage-axis" role="tablist" aria-label="围岩模型演化阶段">
+      <div v-if="showStageNavigation" class="pc-stage-axis" role="tablist" aria-label="围岩模型演化阶段">
         <button
           v-for="(stage, index) in stages"
           :key="stage.key"
@@ -360,7 +360,13 @@ interface Action {
 const props = defineProps<{
   show: boolean
   activeAction?: string | null
+  stage?: 'baseline' | 'prediction' | 'correction'
+  rightOffset?: number
+  showStageNavigation?: boolean
 }>()
+
+const rightOffset = computed(() => props.rightOffset ?? 0)
+const showStageNavigation = computed(() => props.showStageNavigation ?? true)
 
 const emit = defineEmits<{
   close: []
@@ -386,7 +392,7 @@ interface StageDefinition {
   basis: { label: string; value: string }[]
 }
 
-const activeStage = ref<ModelStage>('baseline')
+const activeStage = ref<ModelStage>(props.stage ?? 'baseline')
 const activeAttribute = ref<ModelAttribute>('grade')
 const showChanges = ref(false)
 const showDataBasis = ref(false)
@@ -636,7 +642,7 @@ function selectMethod(m: MethodCard) {
   activeTab.value = 'preview'
 }
 
-function switchStage(stage: ModelStage) {
+function applyStage(stage: ModelStage) {
   activeStage.value = stage
   selectedMethod.value = null
   selectedDesignSegmentIndex.value = null
@@ -644,8 +650,16 @@ function switchStage(stage: ModelStage) {
   showChanges.value = false
   showDataBasis.value = false
   if (stage === 'baseline') loadDesignSegments()
+}
+
+function switchStage(stage: ModelStage) {
+  applyStage(stage)
   emit('stageChange', stage)
 }
+
+watch(() => props.stage, (stage) => {
+  if (stage && stage !== activeStage.value) applyStage(stage)
+})
 
 function selectAttribute(attribute: ModelAttribute) {
   activeAttribute.value = attribute

@@ -140,19 +140,30 @@
     <!-- 左侧掌子面信息面板（总览模式下显示，场景/模型视图模式下隐藏） -->
     <WorkfaceInfoPanel v-show="!activeScene && !isModelViewMode" />
 
-    <!-- 场景左侧数据面板 -->
-    <SceneDataPanel
+    <!-- 隧洞围岩左侧阶段目录 -->
+    <RockStageDirectory
+      v-if="activeScene === 'workface'"
       :show="!!activeScene && !processingModelKey"
+      :model-value="rockDirectoryNode"
+      @update:model-value="selectRockDirectoryNode"
+    />
+
+    <!-- 其他场景使用原数据面板；隧洞围岩数据监测归入“监测预警”目录 -->
+    <SceneDataPanel
+      :show="!!activeScene && (!isWorkfaceScene || rockDirectoryNode === 'monitoring') && !processingModelKey"
       :scene-key="activeScene"
       :is-model-view-mode="isModelViewMode"
+      :placement="isWorkfaceScene ? 'right' : 'left'"
       @select-layer="handleLayerSelect"
     />
 
     <!-- 场景右侧操控面板：工作面用超报数据中心，其他场景用通用面板 -->
     <PredictionCenter
-      v-if="activeScene === 'workface'"
+      v-if="isWorkfaceScene && rockDirectoryNode !== 'monitoring'"
       :show="!!activeScene"
       :active-action="currentActiveKey"
+      :stage="rockStage"
+      :show-stage-navigation="false"
       @close="handleBackToOverview"
       @action="handlePanelAction"
       @stage-change="handleRockStageChange"
@@ -239,6 +250,7 @@ import DTGlobe from '@/components/DTGlobe/DTGlobe.vue';
 import OverviewHUD from '@/views/Overview/OverviewHUD.vue';
 import WorkfaceInfoPanel from '@/views/WorkfaceInfoPanel.vue';
 import SceneDataPanel from '@/views/Overview/SceneDataPanel.vue';
+import RockStageDirectory from '@/views/Overview/RockStageDirectory.vue';
 import SceneControlPanel from '@/views/Overview/SceneControlPanel.vue';
 import PredictionCenter from '@/views/Overview/PredictionCenter.vue';
 import type { SceneDef } from '@/views/Overview/OverviewHUD.vue';
@@ -285,6 +297,11 @@ const isModelViewMode = ref(false);
 
 // ── 总览/场景模式状态 ─────────────────────────────────────
 const activeScene = ref<string | null>(null);
+type RockStage = 'baseline' | 'prediction' | 'correction';
+const rockStage = ref<RockStage>('baseline');
+type RockDirectoryNode = RockStage | 'monitoring';
+const rockDirectoryNode = ref<RockDirectoryNode>('baseline');
+const isWorkfaceScene = computed(() => activeScene.value === 'workface');
 
 // ── 场景定义（供 OverviewHUD + fly-to 使用） ──────────────
 const SCENE_DEFS: Record<string, {
@@ -751,6 +768,15 @@ const handleRockStageChange = async (stage: 'baseline' | 'prediction' | 'correct
   }
 };
 
+const selectRockDirectoryNode = (node: RockDirectoryNode) => {
+  rockDirectoryNode.value = node;
+  if (node === 'monitoring') return;
+  const stage = node;
+  if (rockStage.value === stage) return;
+  rockStage.value = stage;
+  handleRockStageChange(stage);
+};
+
 const handleRockChangesToggle = (show: boolean) => {
   setGeoModelDifferenceHighlight(show);
 };
@@ -955,6 +981,13 @@ const handleSelectScene = (key: string) => {
   }
 
   activeScene.value = key;
+
+  // 隧洞围岩采用左侧阶段目录 + 右侧双信息面板，避免可拖动图层窗遮挡右侧内容。
+  if (key === 'workface') {
+    drag.left = 244;
+    drag.top = 80;
+    panelCollapsed.value = true;
+  }
 
   // 其他场景继续复用主 Viewer
   removeWindTunnelGlb(viewer);
