@@ -10,7 +10,6 @@
     </div>
 
     <TunnelModule v-show="ready" />
-    <button v-show="ready" class="back-btn" @click="$router.push('/')">← 返回平台</button>
 
     <!-- AI 智能助手（爆破场景） -->
     <AgentChat :context="{ scene: 'blast' }" />
@@ -75,11 +74,4 @@ onBeforeUnmount(() => {
   font-family: system-ui, "Microsoft YaHei", sans-serif;
 }
 
-.back-btn {
-  position: fixed; top: 40px; left: 18px; z-index: 100;
-  background: rgba(13,20,33,.85); border: 1px solid rgba(56,189,248,.3);
-  color: #cfe4fb; padding: 8px 16px; border-radius: 8px; cursor: pointer;
-  font-size: 13px; font-family: inherit; transition: .15s;
-}
-.back-btn:hover { background: rgba(56,189,248,.2); border-color: #38bdf8; color: #fff; }
 </style>

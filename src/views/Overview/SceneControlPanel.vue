@@ -168,45 +168,6 @@ const SCENE_CFG: Record<string, {
   entityList: EntityItem[];
   logs: Log[];
 }> = {
-  workface: {
-    color: '#00e5ff', name: '超报处理',
-    actions: [],
-    actionGroups: [
-      {
-        title: '超前预报',
-        actions: [
-          { key: 'face_sketch', label: '掌子面素描', icon: '⬡', type: 'primary' },
-          { key: 'gpr', label: '地质雷达', icon: '≋', type: 'primary' },
-          { key: 'horiz_drill', label: '超前水平钻', icon: '⊕', type: 'secondary' },
-          { key: 'deep_hole', label: '加深炮孔', icon: '⦿', type: 'secondary' },
-          { key: 'tsp', label: 'TSP反演', icon: '▦', type: 'secondary' },
-          { key: 'tem', label: '瞬变电磁', icon: '⚡', type: 'secondary' },
-        ],
-      },
-      {
-        title: '不良地质',
-        actions: [
-          { key: 'weak_rock', label: '软弱围岩', icon: '◈', type: 'secondary' },
-          { key: 'high_stress', label: '高地应力', icon: '♨', type: 'secondary' },
-          { key: 'water_zone', label: '富水带', icon: '💧', type: 'secondary' },
-          { key: 'fracture_zone', label: '破碎带', icon: '▓', type: 'secondary' },
-        ],
-      },
-    ],
-    params: [
-      { key: 'video', label: '实时视频', type: 'toggle' },
-      { key: 'alarm', label: '地质预警', type: 'toggle' },
-      { key: 'advance', label: '预报范围', type: 'slider', min: 10, max: 60, step: 5, unit: 'm' },
-    ],
-    entityListTitle: '',
-    entityList: [],
-    logs: [
-      { id: 'l1', time: '15:32', msg: '围岩评级更新：V级', type: 'warn' },
-      { id: 'l2', time: '14:45', msg: '超前水平钻完成，取芯2.5m', type: 'info' },
-      { id: 'l3', time: '13:20', msg: '掌子面素描已上传', type: 'ok' },
-      { id: 'l4', time: '11:00', msg: '当班交接，现场正常', type: 'ok' },
-    ],
-  },
   support: {
     color: '#aa88ff', name: '支护监测', 
     actions: [
@@ -433,8 +394,8 @@ onMounted(() => {
   right: 0;
   top: 60px;
   bottom: 0;
-  width: 272px;
-  background: rgba(0, 6, 18, 0.88);
+  width: 332px;
+  background: rgba(0, 6, 18, 0.92);
   border-left: 1px solid rgba(0, 170, 255, 0.2);
   z-index: 18;
   display: flex;

@@ -830,17 +830,38 @@ export function updateRockMatrix(lon: number, lat: number, height: number, headi
 
 // ── 主界面凿岩台车模型（直接叠加在主页面施工面处，不切场景、不飞相机）────
 let jumboPrimitive: any = null;
+let jumboViewer: any = null;
+let jumboLoadRequest = 0;
 
 /**
  * 在主页面施工面（DK281+500）加载凿岩台车 GLB 模型
  */
 export function loadJumboModel(customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer) return;
+  if (!viewer || viewer.isDestroyed?.()) return;
 
   const cfg = MODEL_CONFIGS.jumbo_rig;
   if (!cfg?.glbUrl) return;
-  if (jumboPrimitive) return;
+  if (jumboPrimitive) {
+    const isCurrentScene = jumboViewer === viewer
+      && !viewer.isDestroyed?.()
+      && viewer.scene.primitives.contains(jumboPrimitive);
+    if (isCurrentScene) {
+      jumboPrimitive.show = true;
+      return;
+    }
+
+    // 路由切换后旧 Viewer 已失效，不能把旧场景中的 primitive 当作已加载。
+    try {
+      if (jumboViewer && !jumboViewer.isDestroyed?.()) {
+        jumboViewer.scene.primitives.remove(jumboPrimitive);
+      }
+    } catch {}
+    jumboPrimitive = null;
+    jumboViewer = null;
+  }
+
+  const requestId = ++jumboLoadRequest;
 
   const pos = Cesium.Cartesian3.fromDegrees(cfg.tunnelPos[0], cfg.tunnelPos[1], cfg.tunnelPos[2]);
   const hpr = new Cesium.HeadingPitchRoll(cfg.glbHeading ?? 0, 0, cfg.glbRoll ?? 0);
@@ -852,7 +873,12 @@ export function loadJumboModel(customViewer?: any) {
 
   Cesium.Model.fromGltfAsync({ url: cfg.glbUrl, modelMatrix })
     .then((model) => {
+      if (requestId !== jumboLoadRequest || viewer.isDestroyed?.()) {
+        try { if (!model.isDestroyed?.()) model.destroy(); } catch {}
+        return;
+      }
       jumboPrimitive = viewer.scene.primitives.add(model);
+      jumboViewer = viewer;
       console.log('[GeoModel] 凿岩台车已加载到主页面施工面:', cfg.tunnelPos);
     })
     .catch((e) => console.error('[GeoModel] 凿岩台车加载失败:', e));
@@ -865,10 +891,13 @@ export function setJumboModelVisible(show: boolean) {
 
 /** 从场景中移除主界面凿岩台车模型 */
 export function removeJumboModel(customViewer?: any) {
-  const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer || !jumboPrimitive) return;
-  viewer.scene.primitives.remove(jumboPrimitive);
+  ++jumboLoadRequest;
+  const viewer = jumboViewer || customViewer || DTScopeEngine.viewer;
+  if (viewer && jumboPrimitive && !viewer.isDestroyed?.()) {
+    try { viewer.scene.primitives.remove(jumboPrimitive); } catch {}
+  }
   jumboPrimitive = null;
+  jumboViewer = null;
 }
 
 /** 退出模型视图时清理所有地质模型 */

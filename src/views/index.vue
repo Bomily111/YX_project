@@ -16,36 +16,51 @@
         <OverviewHUD
           :active-scene="activeScene"
           :scenes="SCENE_DEFS_LIST"
-          :show-back-to-overview="activeScene !== 'workface'"
+          :show-back-to-overview="!['workface', 'support', 'dispatch'].includes(activeScene ?? '')"
           @select-scene="handleSelectScene"
           @back-to-overview="handleBackToOverview"
         />
       </div>
 
-      <MileageSearchBar />
-
       <div class="header-right">
-        <router-link to="/admin" class="overview-btn admin-entry" title="管理后台">⚙ 管理</router-link>
-        <button class="overview-btn" @click="flyToOverview" title="跳转至线路总览视角">
-          ⊙ 线路总览
-        </button>
-        <button class="overview-btn" @click="copyCurrentView" title="复制当前相机视角参数">
-          ⊕ 复制视角
-        </button>
+        <div v-if="!isModelViewMode" class="header-tools-entry">
+          <button type="button" class="header-icon-btn" title="工具栏" aria-label="工具栏">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h2M10 12h10M4 17h7M15 17h5"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="12" r="2"></circle><circle cx="13" cy="17" r="2"></circle></svg>
+          </button>
+          <div class="header-tools-dropdown">
+            <Toolbar
+              dropdown
+              :active-tool="activeTool"
+              @toggle-tool="handleToggleTool"
+              @action="handleToolAction"
+            />
+          </div>
+        </div>
+        <div class="header-search-entry">
+          <button
+            type="button"
+            class="header-icon-btn"
+            :class="{ active: showMileageSearch, disabled: !mileageSearchEnabled }"
+            :disabled="!mileageSearchEnabled"
+            :title="mileageSearchEnabled ? '里程搜索' : '当前版块暂不支持里程搜索'"
+            aria-label="里程搜索"
+            @click="showMileageSearch = !showMileageSearch"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+          </button>
+          <div v-if="showMileageSearch && mileageSearchEnabled" class="header-search-popover">
+            <MileageSearchBar popup />
+          </div>
+        </div>
+        <router-link to="/admin" class="header-icon-btn user-entry" title="管理后台" aria-label="管理后台">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"></circle><path d="M5.5 20c.5-4 2.7-6 6.5-6s6 2 6.5 6"></path></svg>
+        </router-link>
         <div class="date-time-group">
           <div class="time">{{ timeStr }}</div>
           <div class="date">{{ dateStr }}</div>
         </div>
       </div>
     </header>
-
-    <!-- 左侧浮动工具栏（仅总览模式显示） -->
-    <Toolbar
-      v-show="!activeScene && !isModelViewMode"
-      :active-tool="activeTool"
-      @toggle-tool="handleToggleTool"
-      @action="handleToolAction"
-    />
 
     <!-- 漫游控制弹窗 -->
     <RoamingToolbar :visible="activeTool === 'roaming'" @close="activeTool = null" />
@@ -76,19 +91,6 @@
         </label>
         <div v-show="layerState.showTunnel" class="xray-row">
           <button class="xray-btn" :class="{ active: isXray }" @click="toggleXray">👁 透视</button>
-        </div>
-        <label class="checkbox-item">
-          <input type="checkbox" v-model="layerState.showRock" @change="toggleRockModel">
-          <span class="custom-check"></span>
-          围岩模型
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" v-model="layerState.showWindTunnel" @change="toggleWindTunnelModel">
-          <span class="custom-check"></span>
-          通风模型
-        </label>
-        <div v-show="layerState.showWindTunnel" class="xray-row">
-          <button class="xray-btn" :class="{ active: isWindXray }" @click="toggleWindXray">👁 透视</button>
         </div>
         <label class="checkbox-item">
           <input type="checkbox" v-model="layerState.showMileageRuler" @change="toggleMileageRuler">
@@ -148,18 +150,31 @@
       :model-value="rockDirectoryNode"
       @update:model-value="selectRockDirectoryNode"
       @home="handleBackToOverview"
+      @worksite="openWorksiteOverview"
+      @navigate="navigatePlatformModule"
+    />
+
+    <SceneModuleDirectory
+      v-if="activeScene === 'support' || activeScene === 'dispatch'"
+      :show="!!activeScene"
+      :scene-key="activeScene"
+      :model-value="sceneModuleSection"
+      @update:model-value="sceneModuleSection = $event"
+      @home="handleBackToOverview"
+      @worksite="openWorksiteOverview"
+      @navigate="navigatePlatformModule"
     />
 
     <!-- 其他场景使用原数据面板；隧洞围岩数据监测归入“监测预警”目录 -->
     <SceneDataPanel
-      :show="!!activeScene && (!isWorkfaceScene || rockDirectoryNode === 'monitoring') && !processingModelKey"
+      :show="!!activeScene && (isWorkfaceScene ? rockDirectoryNode === 'monitoring' : sceneModuleSection === 'monitoring') && !processingModelKey"
       :scene-key="activeScene"
       :is-model-view-mode="isModelViewMode"
-      :placement="isWorkfaceScene ? 'right' : 'left'"
+      placement="right"
       @select-layer="handleLayerSelect"
     />
 
-    <!-- 场景右侧操控面板：工作面用超报数据中心，其他场景用通用面板 -->
+    <!-- 场景右侧操控面板：围岩阶段使用数字孪生中心，监测预警使用曲线与预警报告 -->
     <PredictionCenter
       v-if="isWorkfaceScene && rockDirectoryNode !== 'monitoring'"
       :show="!!activeScene"
@@ -174,7 +189,7 @@
       @segment-select="handleRockSegmentSelect"
     />
     <SceneControlPanel
-      v-else-if="activeScene"
+      v-else-if="activeScene && !isWorkfaceScene && sceneModuleSection === 'functions'"
       :show="!!activeScene"
       :scene-key="activeScene"
       :is-model-view-mode="isModelViewMode"
@@ -245,7 +260,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import * as Cesium from 'cesium'; // 引入 Cesium
 import { ScreenSpaceEventHandler, ScreenSpaceEventType } from 'cesium'; // 引入事件处理器
 import DTGlobe from '@/components/DTGlobe/DTGlobe.vue';
@@ -253,6 +268,7 @@ import OverviewHUD from '@/views/Overview/OverviewHUD.vue';
 import WorkfaceInfoPanel from '@/views/WorkfaceInfoPanel.vue';
 import SceneDataPanel from '@/views/Overview/SceneDataPanel.vue';
 import RockStageDirectory from '@/views/Overview/RockStageDirectory.vue';
+import SceneModuleDirectory, { type SceneModuleSection } from '@/views/Overview/SceneModuleDirectory.vue';
 import SceneControlPanel from '@/views/Overview/SceneControlPanel.vue';
 import PredictionCenter from '@/views/Overview/PredictionCenter.vue';
 import type { SceneDef } from '@/views/Overview/OverviewHUD.vue';
@@ -276,8 +292,8 @@ import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
-import { createMileageRuler, getMileageRuler } from '@/utils/Common/MileageRuler';
-import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, loadJumboModel, mergeModelConfigsFromApi, setGeoModelDifferenceHighlight } from '@/utils/Common/GeoModelController';
+import { createMileageRuler, getMileageRuler, destroyMileageRuler } from '@/utils/Common/MileageRuler';
+import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, loadJumboModel, removeJumboModel, mergeModelConfigsFromApi, setGeoModelDifferenceHighlight } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
 import { removeVectorField } from '@/utils/Common/WindVectorField';
@@ -290,6 +306,7 @@ import { useMonitorStore } from '@/stores/monitorStore';
 
 // ── Stores ──────────────────────────────────────────────
 const router = useRouter();
+const route = useRoute();
 const sceneStore = useSceneStore();
 const tunnelStore = useTunnelStore();
 const modelStore = useModelStore();
@@ -304,6 +321,7 @@ const rockStage = ref<RockStage>('baseline');
 type RockDirectoryNode = RockStage | 'monitoring';
 const rockDirectoryNode = ref<RockDirectoryNode>('baseline');
 const isWorkfaceScene = computed(() => activeScene.value === 'workface');
+const sceneModuleSection = ref<SceneModuleSection>('functions');
 
 // ── 场景定义（供 OverviewHUD + fly-to 使用） ──────────────
 const SCENE_DEFS: Record<string, {
@@ -368,13 +386,17 @@ const overviewMetrics = reactive({ advance: '--', personnel: '--', muck: '--' })
 
 // ── 工具栏状态 ─────────────────────────────────────────
 const activeTool = ref<string | null>(null);
+const showMileageSearch = ref(false);
+const mileageSearchEnabled = computed(() => !['blast', 'vent', 'dispatch'].includes(activeScene.value ?? ''));
 
 function handleToggleTool(tool: string) {
   activeTool.value = activeTool.value === tool ? null : tool;
 }
 
 function handleToolAction(action: string) {
-  if (action === 'fullscreen') {
+  if (action === 'copy-view') {
+    copyCurrentView();
+  } else if (action === 'fullscreen') {
     const el = document.documentElement;
     if (document.fullscreenElement) {
       document.exitFullscreen();
@@ -566,6 +588,12 @@ const flyToOverview = () => {
   const viewer = getViewer();
   if (!viewer) return;
   viewer.scene.camera.flyTo({ ...OVERVIEW_VIEW, duration: 2 });
+};
+
+// 共享目录“工点概览”：完成场景清理后定位整条线路。
+const openWorksiteOverview = () => {
+  handleBackToOverview();
+  requestAnimationFrame(() => flyToOverview());
 };
 
 // ── 定位到当前工作面（DK281+500）──────────────────────────
@@ -967,6 +995,7 @@ const handleAgentSceneOpen = (scene: string) => {
 const handleSelectScene = (key: string) => {
   const def = SCENE_DEFS[key];
   if (!def) return;
+  if (['blast', 'vent', 'dispatch'].includes(key)) showMileageSearch.value = false;
   const viewer = getViewer();
   if (!viewer) return;
   
@@ -983,12 +1012,17 @@ const handleSelectScene = (key: string) => {
   }
 
   activeScene.value = key;
+  sceneModuleSection.value = 'functions';
 
   // 隧洞围岩采用左侧阶段目录 + 右侧双信息面板，避免可拖动图层窗遮挡右侧内容。
   if (key === 'workface') {
     drag.left = 244;
     drag.top = 80;
-    panelCollapsed.value = true;
+    panelCollapsed.value = false;
+
+    // 路由返回或场景重建后，确保里程刻度绑定当前 Viewer 并恢复原显示状态。
+    const ruler = createMileageRuler(viewer);
+    if (layerState.showMileageRuler) ruler.show(); else ruler.hide();
   }
 
   // 其他场景继续复用主 Viewer
@@ -1024,6 +1058,11 @@ const handleSelectScene = (key: string) => {
     duration: 2.2,
     easingFunction: Cesium.EasingFunction.QUINTIC_OUT,
   });
+};
+
+const navigatePlatformModule = (key: string) => {
+  if (key === activeScene.value) return;
+  handleSelectScene(key);
 };
 
 // ── 返回总览：关闭面板 + 相机飞回总览视角 ───────────────
@@ -1136,11 +1175,25 @@ onMounted(() => {
 
   // 延迟一点启动，给 Viewer 初始化留出缓冲时间
   setTimeout(initSceneData, 800);
+  setTimeout(() => {
+    const requestedScene = route.query.scene;
+    if (typeof requestedScene === 'string' && SCENE_DEFS[requestedScene]) {
+      handleSelectScene(requestedScene);
+      return;
+    }
+    if (route.query.view === 'line-overview') {
+      flyToOverview();
+    }
+  }, 1200);
   loadApiData();
 });
 
 onBeforeUnmount(() => {
   clearInterval(timer);
+  // 独立模块会销毁主页 Viewer，刻度尺必须同步释放，避免返回时复用旧场景实例。
+  destroyMileageRuler();
+  // 台车模型同样绑定主页 Viewer，路由离开时释放，返回后由初始化流程重新加载。
+  removeJumboModel();
   if (worksiteClickHandler) {
     worksiteClickHandler.destroy();
     worksiteClickHandler = null;
@@ -1396,7 +1449,28 @@ onBeforeUnmount(() => {
   letter-spacing: 0.5px;
 }
 
-.header-right { margin-right: 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+.header-right { margin-right: 20px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.header-search-entry { position: relative; display: flex; align-items: center; }
+.header-tools-entry { position: relative; display: flex; align-items: center; height: 100%; }
+.header-tools-dropdown {
+  position: absolute; z-index: 80; top: 52px; right: -80px;
+  visibility: hidden; opacity: 0; transform: translateY(-5px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s;
+}
+.header-tools-entry:hover .header-tools-dropdown,
+.header-tools-entry:focus-within .header-tools-dropdown { visibility: visible; opacity: 1; transform: translateY(0); }
+.header-icon-btn {
+  width: 34px; height: 34px; padding: 0; display: grid; place-items: center;
+  color: rgba(190, 225, 245, .78); background: transparent;
+  border: 1px solid transparent; border-radius: 50%; cursor: pointer;
+  transition: .18s ease; text-decoration: none;
+}
+.header-icon-btn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.header-icon-btn:hover,.header-icon-btn.active { color: #00eaff; background: rgba(0,180,255,.14); border-color: rgba(0,220,255,.42); box-shadow: 0 0 10px rgba(0,200,255,.2); }
+.header-icon-btn.disabled { opacity: .3; cursor: not-allowed; box-shadow: none; }
+.user-entry { margin-left: 1px; color: #c8e5f4; background: rgba(0,70,120,.18); border-color: rgba(0,170,255,.22); }
+.header-search-popover { position: absolute; z-index: 80; top: 43px; right: -42px; padding: 8px; background: rgba(2,10,22,.96); border: 1px solid rgba(0,200,255,.34); box-shadow: 0 8px 24px rgba(0,0,0,.48),0 0 14px rgba(0,180,255,.12); backdrop-filter: blur(14px); }
 
 .overview-btn {
   padding: 0 16px;

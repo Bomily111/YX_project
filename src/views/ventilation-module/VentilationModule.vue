@@ -1,26 +1,33 @@
 <template>
   <div class="vent-root">
     <header class="vent-header">
-      <div>
-        <h1>隧道通风仿真平台 · 三管隧道系统</h1>
-        <div class="badges"><span>几何模型</span><span>1D Hardy-Cross</span><span>3D CFD Thermal</span></div>
+      <div class="vent-header-left"><div class="vent-title-container"><h1>钻爆法隧洞群施工数字孪生系统</h1></div></div>
+      <div class="vent-header-center"><strong class="vent-scene-title">通风除尘</strong></div>
+      <div class="vent-header-right">
+        <button type="button" class="vent-header-icon disabled" disabled title="当前版块暂不支持里程搜索" aria-label="里程搜索不可用"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg></button>
+        <router-link to="/admin" class="vent-header-icon" title="管理后台" aria-label="管理后台"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"></circle><path d="M5.5 20c.5-4 2.7-6 6.5-6s6 2 6.5 6"></path></svg></router-link>
       </div>
-      <div class="meta">马蹄形 9m × 7.66m · 主洞中心距 32m · DDK 22.5°斜交<br>Left 4.0km · Right 8.2km · DDK 7.2km</div>
     </header>
 
     <div class="vent-layout">
-      <main class="workspace">
-        <nav class="tabs">
-          <button class="active" @click="selectView('flow')">{{ view === 'geometry' ? '← 返回通风三维总览' : '通风三维总览' }}</button>
+      <aside class="vent-directory" aria-label="通风除尘目录">
+        <button type="button" class="vent-dir-row vent-home" @click="router.push('/')"><span>⌂</span><b>首页</b></button>
+        <button type="button" class="vent-dir-row vent-worksite" @click="openWorksiteOverview"><span>◎</span>工点概览</button>
+        <button type="button" class="vent-module-link" @click="openPlatformModule('workface')"><span>⬡</span><b>隧洞围岩</b><em>›</em></button>
+        <button type="button" class="vent-module-link" @click="openPlatformModule('blast')"><span>✹</span><b>开挖爆破</b><em>›</em></button>
+        <button type="button" class="vent-module-link" @click="openPlatformModule('support')"><span>◈</span><b>围岩支护</b><em>›</em></button>
+        <div class="vent-dir-head"><span>≋</span><b>通风除尘</b><em>⌄</em></div>
+        <nav>
+          <button :class="{ active: view === 'geometry' }" @click="selectView('geometry')"><i></i>通风设计</button>
+          <button :class="{ active: view === 'flow' }" @click="selectView('flow')"><i></i>三维风流</button>
+          <button :class="{ active: view === 'co' }" @click="selectView('co')"><i></i>CO 爆破扩散</button>
+          <button :class="{ active: view === 'transient' }" @click="selectView('transient')"><i></i>瞬态通风</button>
+          <button :class="{ active: view === 'thermal' }" @click="selectView('thermal')"><i></i>热瞬态分析</button>
         </nav>
-
-        <div class="stage" :class="{ 'has-subtabs': view !== 'geometry' }">
-          <nav v-if="view !== 'geometry'" class="subtabs">
-            <button :class="{ active: view === 'flow' }" @click="selectView('flow')">3D 风流</button>
-            <button :class="{ active: view === 'co' }" @click="selectView('co')">CO 爆破</button>
-            <button :class="{ active: view === 'transient' }" @click="selectView('transient')">瞬态通风</button>
-            <button :class="{ active: view === 'thermal' }" @click="selectView('thermal')">热瞬态</button>
-          </nav>
+        <button type="button" class="vent-module-link" @click="openPlatformModule('dispatch')"><span>◎</span><b>装备调度</b><em>›</em></button>
+      </aside>
+      <main class="workspace">
+        <div class="stage">
           <TunnelGeometryView v-show="view === 'geometry'" :active-chainage="activeChainage"
             :active-tunnel="activeTunnel" @locate="locateFromPlan" />
 
@@ -209,12 +216,17 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 import * as echarts from 'echarts'
+import { useRouter } from 'vue-router'
 import TunnelGeometryView from './TunnelGeometryView.vue'
 import VentilationMileageSearch from './VentilationMileageSearch.vue'
 import { createVentilationViewer, flyToLocal, installModelControls, lookAtLocal } from './scene'
 import { buildSteadyLayers, destroyVentilation, layers, loadTunnelModel, recolorSteady, setLayerVisible, setModelOpacity, setTunnelSectionView, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
 
 type ViewKey = 'geometry' | 'flow' | 'co' | 'transient' | 'thermal'
+const router = useRouter()
+function openWorksiteOverview() {
+  router.push({ path: '/', query: { view: 'line-overview' } })
+}
 const ASSET = '/data/ventilation/'
 const view = ref<ViewKey>('flow')
 const cesiumHost = ref<HTMLElement>()
@@ -227,6 +239,13 @@ const layerPanelCollapsed = ref(false)
 const layerPanelPosition = ref({ left: 14, top: 45 })
 const renderedField = ref<'steady' | 'thermal' | null>(null)
 const pickedInfo = ref<any>(null)
+function openPlatformModule(key: 'workface' | 'blast' | 'support' | 'dispatch') {
+  if (key === 'blast') {
+    router.push('/blast-twin')
+    return
+  }
+  router.push({ path: '/', query: { scene: key } })
+}
 type TunnelKey = 'left' | 'right' | 'ddk'
 const activeChainage = ref(3905.151)
 const activeTunnel = ref<TunnelKey>('left')
@@ -1042,4 +1061,53 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:1px solid 
   .tool-row{width:max-content}
   .location-status{left:10px;bottom:10px}.location-status small{display:none}
 }
+
+/* 统一平台框架：顶栏 + 左侧目录 + 中央业务区 + 右侧功能栏 */
+.vent-header {
+  z-index: 30;
+  height: 60px;
+  min-width: 1200px;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(0,20,40,.95), rgba(0,20,40,.6));
+  border-bottom: 1px solid rgba(0,255,255,.3);
+  box-shadow: 0 0 15px rgba(0,255,255,.2);
+}
+.vent-header::after { display:none; }
+.vent-header-left{display:flex;align-items:center;height:100%;flex-shrink:0}
+.vent-title-container{position:relative;display:flex;align-items:center;height:100%;padding:0 40px 0 30px;background:linear-gradient(to right,rgba(0,15,30,1),rgba(0,50,90,1))}
+.vent-title-container::after{content:'';position:absolute;right:-20px;top:0;width:40px;height:100%;background:rgba(0,50,90,1);transform:skewX(-25deg);border-right:2px solid #00eaff;box-shadow:2px 0 8px rgba(0,234,255,.4);z-index:1}
+.vent-header h1{position:relative;z-index:2;margin:0;color:#fff;font-size:26px;font-weight:bold;letter-spacing:2px;text-shadow:0 0 10px rgba(0,255,255,.8);background:linear-gradient(180deg,#fff,#87cefa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.vent-header-center{flex:1;display:flex;align-items:center;padding-left:40px}
+.vent-scene-title{position:relative;padding:0 24px;color:var(--vent-cyan);font-size:15px;font-weight:bold;letter-spacing:1px;text-shadow:0 0 8px #00eaff}
+.vent-header-right{height:100%;padding:0 24px;display:flex;align-items:center;justify-content:flex-end;gap:14px}
+.meta{font-size:10px;white-space:nowrap}
+.vent-header-icon{width:34px;height:34px;padding:0;display:grid;place-items:center;color:#c8e5f4;background:rgba(0,70,120,.18);border:1px solid rgba(0,170,255,.22);border-radius:50%;cursor:pointer;text-decoration:none;transition:.18s ease}.vent-header-icon svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.vent-header-icon:hover{color:#00eaff;background:rgba(0,180,255,.14);border-color:rgba(0,220,255,.42)}.vent-header-icon.disabled{opacity:.3;cursor:not-allowed}
+.vent-layout { height: calc(100% - 60px); grid-template-columns: 216px minmax(0,1fr) 332px; }
+.vent-directory {
+  position: relative;
+  z-index: 24;
+  color: #c7d5ea;
+  background: rgba(2,10,22,.94);
+  border-right: 1px solid rgba(0,170,255,.24);
+  box-shadow: 4px 0 24px rgba(0,0,0,.5);
+  backdrop-filter: blur(16px);
+}
+.vent-dir-row { display:flex;align-items:center;gap:11px;width:100%;min-height:44px;padding:0 18px;box-sizing:border-box;color:#7892aa;font-family:inherit;font-size:12px;text-align:left;border:0;border-bottom:1px solid rgba(0,150,220,.07);background:transparent; }
+.vent-dir-row span { width:18px;color:#4e85aa;text-align:center; }
+.vent-home { cursor:pointer;transition:.18s ease; }.vent-home b{color:#b9cee0}.vent-home:hover{background:rgba(0,170,235,.08)}.vent-home:hover b{color:#69dff2}
+.vent-worksite{cursor:pointer;transition:.18s ease}.vent-worksite:hover{color:#c9edfa;background:rgba(0,170,235,.06)}
+.vent-dir-head { display:flex;align-items:center;gap:9px;min-height:47px;padding:0 15px;color:#fff;background:linear-gradient(90deg,rgba(0,116,218,.92),rgba(0,174,235,.72));border-block:1px solid rgba(64,207,255,.35);box-shadow:inset 3px 0 0 #7de9ff; }
+.vent-dir-head b{font-size:14px;letter-spacing:1px}.vent-dir-head em{margin-left:auto;font-style:normal}
+.vent-directory nav{padding:5px 0 7px;background:rgba(0,35,67,.25)}
+.vent-directory nav button{display:grid;grid-template-columns:18px 1fr;align-items:center;width:100%;min-height:40px;padding:0 14px 0 25px;color:#829bb4;text-align:left;font-family:inherit;font-size:12px;border:0;background:transparent;cursor:pointer;transition:.18s ease}
+.vent-directory nav button i{width:10px;height:1px;background:rgba(80,155,200,.4)}
+.vent-directory nav button:hover{color:#c9edfa;background:rgba(0,170,235,.06)}
+.vent-directory nav button.active{color:#e6fbff;background:linear-gradient(90deg,rgba(0,135,230,.28),rgba(0,105,175,.1));box-shadow:inset 3px 0 0 #37dfff}
+.vent-module-link{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;width:100%;min-height:43px;padding:0 16px;color:#7892aa;text-align:left;font-family:inherit;border:0;border-bottom:1px solid rgba(0,150,220,.07);background:transparent;cursor:pointer;transition:.18s ease}.vent-module-link span{color:#4e85aa;text-align:center}.vent-module-link b{font-size:12px;font-weight:500}.vent-module-link em{color:#456b87;font-size:16px;font-style:normal}.vent-module-link:hover{color:#dffaff;background:rgba(0,170,235,.07)}.vent-module-link:hover span,.vent-module-link:hover em{color:#69dff2}
+.info-panel { width: 332px; box-sizing: border-box; background: rgba(2,10,22,.94); border-left:1px solid rgba(0,170,255,.2); box-shadow:-4px 0 24px rgba(0,0,0,.5); backdrop-filter:blur(16px); }
+@media(max-width:1100px){.vent-layout{grid-template-columns:190px minmax(0,1fr) 300px}.vent-directory{width:190px}.info-panel{width:300px}.vent-header .meta{display:none}}
 </style>

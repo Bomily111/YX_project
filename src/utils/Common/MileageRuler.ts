@@ -195,6 +195,11 @@ export class MileageRuler {
     return this._visible
   }
 
+  /** 判断刻度尺是否仍绑定当前 Cesium 场景。 */
+  belongsTo(viewer: Cesium.Viewer): boolean {
+    return this.viewer === viewer && !viewer.isDestroyed()
+  }
+
   show(): void {
     this._visible = true
     this.offsetLine.show = true
@@ -212,12 +217,15 @@ export class MileageRuler {
   }
 
   destroy(): void {
-    this.offsetLine.removeAll()
-    this.tickLines.removeAll()
-    this.tickLabels.removeAll()
-    this.viewer.scene.primitives.remove(this.offsetLine)
-    this.viewer.scene.primitives.remove(this.tickLines)
-    this.viewer.scene.primitives.remove(this.tickLabels)
+    // 页面路由切换时 Viewer 可能已先销毁；此处必须允许重复、安全清理。
+    try { this.offsetLine?.removeAll() } catch {}
+    try { this.tickLines?.removeAll() } catch {}
+    try { this.tickLabels?.removeAll() } catch {}
+    if (!this.viewer.isDestroyed()) {
+      try { this.viewer.scene.primitives.remove(this.offsetLine) } catch {}
+      try { this.viewer.scene.primitives.remove(this.tickLines) } catch {}
+      try { this.viewer.scene.primitives.remove(this.tickLabels) } catch {}
+    }
   }
 }
 
@@ -225,6 +233,12 @@ let _ruler: MileageRuler | null = null
 
 /** 创建（或获取已有）里程刻度尺 */
 export function createMileageRuler(viewer: Cesium.Viewer): MileageRuler {
+  // 爆破/通风为独立页面，返回首页后会生成新的 Viewer。
+  // 旧刻度尺不能跨 Viewer 复用，否则会保持“已显示”状态但实际不在新场景中。
+  if (_ruler && !_ruler.belongsTo(viewer)) {
+    _ruler.destroy()
+    _ruler = null
+  }
   if (_ruler) return _ruler
   _ruler = new MileageRuler(viewer)
   return _ruler

@@ -6,7 +6,7 @@
         <span class="sdp-icon">{{ sceneIcon }}</span>
         <div class="sdp-title-group">
           <div class="sdp-title">{{ sceneName }}</div>
-          <div class="sdp-sub">实时数据监测</div>
+          <div class="sdp-sub">{{ props.sceneKey === 'workface' ? '监测预警' : '实时数据监测' }}</div>
         </div>
         <span class="sdp-live-dot"></span>
       </div>
@@ -162,7 +162,7 @@
       <!-- 告警提示 -->
       <div v-if="alerts.length" class="sdp-alerts">
         <div class="sdp-alert-title">
-          <span class="sdp-alert-dot"></span>活跃预警
+          <span class="sdp-alert-dot"></span>{{ props.sceneKey === 'workface' ? '预警报告' : '活跃预警' }}
         </div>
         <div v-for="a in alerts" :key="a.id" class="sdp-alert-item" :class="a.level">
           <span class="sdp-alert-lv">{{ a.level === 'warn' ? '⚠' : '●' }}</span>
@@ -685,6 +685,7 @@ function statusBarColor(level?: string): string {
 .scene-data-panel.placement-right {
   left: auto;
   right: 0;
+  width: 332px;
   border-right: 0;
   border-left: 1px solid rgba(0, 170, 255, 0.2);
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);

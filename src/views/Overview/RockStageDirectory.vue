@@ -5,7 +5,7 @@
         <span>⌂</span>
         <strong>首页</strong>
       </button>
-      <div class="rsd-context"><span>◎</span> 工点概况</div>
+      <button type="button" class="rsd-context rsd-context-link" @click="$emit('worksite')"><span>◎</span> 工点概览</button>
       <header class="rsd-header">
         <span class="rsd-symbol">⬡</span>
         <span class="rsd-title">隧洞围岩</span>
@@ -29,19 +29,16 @@
           <span v-if="modelValue === item.key" class="rsd-current">当前</span>
         </button>
       </nav>
-      <div class="rsd-divider"></div>
+      <div class="rsd-module-divider"></div>
       <button
+        v-for="module in otherModules"
+        :key="module.key"
         type="button"
-        class="rsd-static-item rsd-section-link"
-        :class="{ active: modelValue === 'monitoring' }"
-        :aria-current="modelValue === 'monitoring' ? 'page' : undefined"
-        @click="$emit('update:modelValue', 'monitoring')"
+        class="rsd-module-link"
+        @click="$emit('navigate', module.key)"
       >
-        <span>◈</span>
-        <strong>监测预警</strong>
-        <em v-if="modelValue === 'monitoring'">当前</em>
+        <span>{{ module.icon }}</span><strong>{{ module.label }}</strong><em>›</em>
       </button>
-      <div class="rsd-static-item"><span>▤</span> 数据档案</div>
     </aside>
   </transition>
 </template>
@@ -57,15 +54,25 @@ defineProps<{
 defineEmits<{
   'update:modelValue': [node: RockDirectoryNode]
   home: []
+  worksite: []
+  navigate: [module: PlatformModule]
 }>()
 
-const stages: { key: RockStage; label: string; description: string }[] = [
+type PlatformModule = 'workface' | 'blast' | 'support' | 'vent' | 'dispatch'
+const otherModules: { key: PlatformModule; label: string; icon: string }[] = [
+  { key: 'blast', label: '开挖爆破', icon: '✹' },
+  { key: 'support', label: '围岩支护', icon: '◈' },
+  { key: 'vent', label: '通风除尘', icon: '≋' },
+  { key: 'dispatch', label: '装备调度', icon: '◎' },
+]
+
+const stages: { key: RockDirectoryNode; label: string; description: string }[] = [
   { key: 'baseline', label: '设计基准', description: '勘察设计资料与分级区段' },
   { key: 'prediction', label: '超前预测', description: '属性维度与超前地质预报' },
   { key: 'correction', label: '揭露校正', description: '掌子面揭露与模型修正' },
+  { key: 'monitoring', label: '监测预警', description: '实时监测数据与风险预警' },
 ]
 
-type RockStage = Exclude<RockDirectoryNode, 'monitoring'>
 </script>
 
 <style scoped lang="scss">
@@ -106,6 +113,8 @@ type RockStage = Exclude<RockDirectoryNode, 'monitoring'>
 .rsd-home-link strong { flex: 1; color: #b9cee0; font-size: 12px; font-weight: 600; }
 .rsd-home-link:hover { background: rgba(0, 170, 235, .08); }
 .rsd-home-link:hover strong { color: #69dff2; }
+.rsd-context-link { width:100%;font-family:inherit;text-align:left;border-top:0;border-right:0;border-left:0;background:transparent;cursor:pointer;transition:.18s ease; }
+.rsd-context-link:hover { color:#c9edfa;background:rgba(0,170,235,.06); }
 .rsd-section-link {
   width: 100%;
   font-family: inherit;
@@ -190,7 +199,9 @@ type RockStage = Exclude<RockDirectoryNode, 'monitoring'>
 .rsd-node-copy strong { display: block; color: inherit; font-size: 12px; font-weight: 500; }
 .rsd-node.active .rsd-node-copy strong { color: #dffaff; font-weight: 600; }
 .rsd-current { color: #69dff2; font-size: 9px; }
-.rsd-divider { height: 1px; margin: 6px 14px; background: rgba(0, 150, 220, .12); }
+.rsd-module-divider { height: 1px; margin: 8px 14px; background: rgba(0, 150, 220, .14); }
+.rsd-module-link { display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;width:100%;min-height:43px;padding:0 16px;color:#7892aa;text-align:left;font-family:inherit;border:0;border-bottom:1px solid rgba(0,150,220,.07);background:transparent;cursor:pointer;transition:.18s ease; }
+.rsd-module-link span{color:#4e85aa;text-align:center}.rsd-module-link strong{font-size:12px;font-weight:500}.rsd-module-link em{color:#456b87;font-size:16px;font-style:normal}.rsd-module-link:hover{color:#dffaff;background:rgba(0,170,235,.07)}.rsd-module-link:hover span,.rsd-module-link:hover em{color:#69dff2}
 
 .rock-directory-slide-enter-active,
 .rock-directory-slide-leave-active { transition: transform .28s ease, opacity .22s ease; }

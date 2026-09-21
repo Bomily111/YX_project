@@ -1,5 +1,5 @@
 <template>
-  <div class="mileage-search-wrap">
+  <div class="mileage-search-wrap" :class="{ popup }">
     <el-autocomplete
       v-model="query"
       :fetch-suggestions="fetchSuggestions"
@@ -22,6 +22,8 @@ import { ref, onBeforeUnmount } from 'vue'
 import * as Cesium from 'cesium'
 import { DTScopeEngine } from '@/utils/Common/Viewer'
 import mileageData from '@/assets/data/centerline_mileage.json'
+
+defineProps<{ popup?: boolean }>()
 
 interface MileageEntry {
   index: number
@@ -189,6 +191,7 @@ onBeforeUnmount(() => {
   transform: translateX(-50%);
   z-index: 11;
 }
+.mileage-search-wrap.popup { position: static; left: auto; top: auto; transform: none; z-index: auto; }
 
 :deep(.el-autocomplete) {
   width: 240px;
