@@ -1,10 +1,16 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import * as Cesium from 'cesium'
 import type { PreparedVoxelModel, RenderStatistics } from './types'
 
 export type LayerKey = 'resistivity' | 'water' | 'grade2' | 'grade3' | 'grade4' | 'grade5'
 export type PaletteName = 'viridis' | 'jet'
 export type SliceAxis = 'none' | 'x' | 'y' | 'z'
+
+interface VoxelSceneOptions {
+  transparent?: boolean
+  cesiumViewer?: Cesium.Viewer
+}
 
 const MAX_RENDER_INSTANCES_PER_LAYER = 180_000
 
@@ -73,7 +79,8 @@ export class VoxelScene {
   private readonly scene = new THREE.Scene()
   private readonly camera = new THREE.PerspectiveCamera(45, 1, 0.01, 10_000_000)
   private readonly renderer: THREE.WebGLRenderer
-  private readonly controls: OrbitControls
+  private readonly controls: OrbitControls | null
+  private readonly cesiumViewer?: Cesium.Viewer
   private readonly root = new THREE.Group()
   private readonly layers = new Map<LayerKey, LayerRecord>()
   private readonly visibility: Record<LayerKey, boolean> = {
@@ -90,12 +97,17 @@ export class VoxelScene {
   private model: PreparedVoxelModel | null = null
   private geometry: THREE.BoxGeometry | null = null
   private boundsHelper: THREE.Box3Helper | null = null
+  private boundsVisible = false
   private palette: PaletteName = 'viridis'
   private sliceAxis: SliceAxis = 'none'
   private sliceFraction = 1
+  private worldToModel: Cesium.Matrix4 | null = null
+  private modelWorldCenter: Cesium.Cartesian3 | null = null
 
-  constructor(private readonly container: HTMLElement) {
-    this.scene.background = new THREE.Color(0x050b14)
+  constructor(private readonly container: HTMLElement, options: VoxelSceneOptions = {}) {
+    const transparent = options.transparent ?? false
+    this.cesiumViewer = options.cesiumViewer
+    this.scene.background = transparent ? null : new THREE.Color(0x050b14)
     this.scene.add(this.root)
     this.scene.add(new THREE.HemisphereLight(0xd7f3ff, 0x17202b, 1.5))
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.6)
@@ -103,16 +115,21 @@ export class VoxelScene {
     this.scene.add(keyLight)
 
     this.camera.up.set(0, 0, 1)
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' })
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: transparent, powerPreference: 'high-performance' })
+    if (transparent) this.renderer.setClearColor(0x000000, 0)
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.renderer.localClippingEnabled = true
     this.renderer.outputColorSpace = THREE.SRGBColorSpace
     this.container.appendChild(this.renderer.domElement)
 
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-    this.controls.enableDamping = true
-    this.controls.dampingFactor = 0.08
-    this.controls.screenSpacePanning = true
+    this.controls = this.cesiumViewer ? null : new OrbitControls(this.camera, this.renderer.domElement)
+    if (this.controls) {
+      this.controls.enableDamping = true
+      this.controls.dampingFactor = 0.08
+      this.controls.screenSpacePanning = true
+    } else {
+      this.renderer.domElement.style.pointerEvents = 'none'
+    }
 
     this.resizeObserver = new ResizeObserver(() => this.resize())
     this.resizeObserver.observe(this.container)
@@ -123,6 +140,7 @@ export class VoxelScene {
   setModel(model: PreparedVoxelModel): RenderStatistics {
     this.clearModel()
     this.model = model
+    if (this.cesiumViewer) this.configureCesiumAlignment(model)
     this.geometry = new THREE.BoxGeometry(
       model.voxelSize[0] * 0.9,
       model.voxelSize[1] * 0.9,
@@ -147,6 +165,7 @@ export class VoxelScene {
     )
     const box = new THREE.Box3(half.clone().multiplyScalar(-1), half)
     this.boundsHelper = new THREE.Box3Helper(box, 0x31546c)
+    this.boundsHelper.visible = this.boundsVisible
     this.root.add(this.boundsHelper)
     this.fitCamera(half)
     this.updateClipping()
@@ -192,6 +211,11 @@ export class VoxelScene {
     this.updateClipping()
   }
 
+  setBoundsVisible(visible: boolean) {
+    this.boundsVisible = visible
+    if (this.boundsHelper) this.boundsHelper.visible = visible
+  }
+
   resetCamera() {
     if (!this.model) return
     const half = new THREE.Vector3(
@@ -206,9 +230,13 @@ export class VoxelScene {
     cancelAnimationFrame(this.animationFrame)
     this.resizeObserver.disconnect()
     this.clearModel()
-    this.controls.dispose()
+    this.controls?.dispose()
     this.renderer.dispose()
     this.renderer.domElement.remove()
+    if (this.cesiumViewer && !this.cesiumViewer.isDestroyed()) {
+      this.cesiumViewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
+      this.cesiumViewer.scene.requestRender()
+    }
   }
 
   private createLayer(
@@ -314,14 +342,92 @@ export class VoxelScene {
 
   private fitCamera(half: THREE.Vector3) {
     const radius = Math.max(half.length(), 1)
+    if (this.cesiumViewer && this.modelWorldCenter) {
+      this.cesiumViewer.camera.lookAt(
+        this.modelWorldCenter,
+        new Cesium.HeadingPitchRange(
+          Cesium.Math.toRadians(305),
+          Cesium.Math.toRadians(-18),
+          radius * 3.1,
+        ),
+      )
+      this.cesiumViewer.scene.requestRender()
+      return
+    }
     this.camera.near = Math.max(radius / 10_000, 0.001)
     this.camera.far = radius * 100
     this.camera.position.set(radius * 1.55, -radius * 1.75, radius * 1.25)
     this.camera.updateProjectionMatrix()
-    this.controls.target.set(0, 0, 0)
-    this.controls.minDistance = radius * 0.05
-    this.controls.maxDistance = radius * 20
-    this.controls.update()
+    if (this.controls) {
+      this.controls.target.set(0, 0, 0)
+      this.controls.minDistance = radius * 0.05
+      this.controls.maxDistance = radius * 20
+      this.controls.update()
+    }
+  }
+
+  /**
+   * 将动态输入的 TEM 工程坐标锚定到围岩等级模型使用的同一掌子面中线。
+   * 数据坐标：X=隧道前向、Y=横向、Z=高程。
+   */
+  private configureCesiumAlignment(model: PreparedVoxelModel) {
+    const anchor = Cesium.Cartesian3.fromDegrees(94.9058769996, 29.533338106, 2945.641)
+    // 以隧道中线上的锚点为旋转中心，绕竖直方向顺时针旋转 90°。
+    const tunnelHeading = Cesium.Math.toRadians(101.833672597)
+    const heading = tunnelHeading + Cesium.Math.toRadians(90)
+    const pitch = Cesium.Math.toRadians(0.286420559)
+    const sinH = Math.sin(heading)
+    const cosH = Math.cos(heading)
+    const sinTunnelH = Math.sin(tunnelHeading)
+    const cosTunnelH = Math.cos(tunnelHeading)
+    const sinP = Math.sin(pitch)
+    const cosP = Math.cos(pitch)
+    const forward = new Cesium.Cartesian3(sinH * cosP, cosH * cosP, sinP)
+    const lateral = new Cesium.Cartesian3(-cosH, sinH, 0)
+    const vertical = new Cesium.Cartesian3(-sinH * sinP, -cosH * sinP, cosP)
+    const tunnelForward = new Cesium.Cartesian3(sinTunnelH * cosP, cosTunnelH * cosP, sinP)
+    const tunnelVertical = new Cesium.Cartesian3(-sinTunnelH * sinP, -cosTunnelH * sinP, cosP)
+    const centre = model.center
+    // 输入说明允许 Z 使用绝对高程；绝对高程需换算为相对掌子面锚点的高差。
+    const centreZ = Math.abs(centre[2]) > 500 ? centre[2] - 2945.641 : centre[2]
+    // 模型几何中心落在隧道中线上；横向中心不随里程刻度的偏移量移动。
+    const centreEnu = new Cesium.Cartesian3(
+      tunnelForward.x * centre[0] + tunnelVertical.x * centreZ,
+      tunnelForward.y * centre[0] + tunnelVertical.y * centreZ,
+      tunnelForward.z * centre[0] + tunnelVertical.z * centreZ,
+    )
+    const localFrame = Cesium.Matrix4.fromArray([
+      forward.x, forward.y, forward.z, 0,
+      lateral.x, lateral.y, lateral.z, 0,
+      vertical.x, vertical.y, vertical.z, 0,
+      centreEnu.x, centreEnu.y, centreEnu.z, 1,
+    ])
+    const enuFrame = Cesium.Transforms.eastNorthUpToFixedFrame(anchor)
+    const modelToWorld = Cesium.Matrix4.multiply(enuFrame, localFrame, new Cesium.Matrix4())
+    this.worldToModel = Cesium.Matrix4.inverseTransformation(modelToWorld, new Cesium.Matrix4())
+    this.modelWorldCenter = Cesium.Matrix4.getTranslation(modelToWorld, new Cesium.Cartesian3())
+  }
+
+  private syncCesiumCamera() {
+    const viewer = this.cesiumViewer
+    const inverse = this.worldToModel
+    if (!viewer || viewer.isDestroyed() || !inverse) return
+    const cesiumCamera = viewer.camera
+    const position = Cesium.Matrix4.multiplyByPoint(inverse, cesiumCamera.positionWC, new Cesium.Cartesian3())
+    const direction = Cesium.Matrix4.multiplyByPointAsVector(inverse, cesiumCamera.directionWC, new Cesium.Cartesian3())
+    const up = Cesium.Matrix4.multiplyByPointAsVector(inverse, cesiumCamera.upWC, new Cesium.Cartesian3())
+    Cesium.Cartesian3.normalize(direction, direction)
+    Cesium.Cartesian3.normalize(up, up)
+
+    this.camera.position.set(position.x, position.y, position.z)
+    this.camera.up.set(up.x, up.y, up.z)
+    this.camera.lookAt(position.x + direction.x, position.y + direction.y, position.z + direction.z)
+
+    const frustum = cesiumCamera.frustum as Cesium.PerspectiveFrustum
+    if (typeof frustum.fovy === 'number') this.camera.fov = Cesium.Math.toDegrees(frustum.fovy)
+    this.camera.near = Math.max(Number(frustum.near) || 0.01, 0.01)
+    this.camera.far = Math.max(Number(frustum.far) || 10_000_000, this.camera.near + 1)
+    this.camera.updateProjectionMatrix()
   }
 
   private resize() {
@@ -334,7 +440,8 @@ export class VoxelScene {
 
   private animate = () => {
     this.animationFrame = requestAnimationFrame(this.animate)
-    this.controls.update()
+    if (this.cesiumViewer) this.syncCesiumCamera()
+    else this.controls?.update()
     this.renderer.render(this.scene, this.camera)
   }
 }

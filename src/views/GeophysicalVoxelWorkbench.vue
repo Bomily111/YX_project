@@ -1,6 +1,6 @@
 <template>
-  <div class="gv-root">
-    <header class="gv-header">
+  <div class="gv-root" :class="{ embedded }">
+    <header v-if="!embedded" class="gv-header">
       <div class="gv-brand">
         <button class="gv-back" type="button" title="返回平台" @click="router.push('/')">‹</button>
         <div class="gv-brand-mark">GV</div>
@@ -17,6 +17,16 @@
 
     <main class="gv-main">
       <aside class="gv-left-panel">
+        <div v-if="embedded" class="gv-embedded-head">
+          <button class="gv-exit-btn" type="button" title="返回预测方法列表" @click="exitWorkbench">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.8 4.5 6.3 10l5.5 5.5M6.8 10h7"></path></svg>
+            <span>返回</span>
+          </button>
+          <div><b>综合物探体素建模</b><small>视电阻率 · 富水异常体 · 围岩分级</small></div>
+          <div class="gv-embedded-actions">
+            <button class="gv-primary" type="button" @click="dialogOpen = true">{{ model ? '更换数据' : '导入数据' }}</button>
+          </div>
+        </div>
         <section class="gv-panel-section">
           <div class="gv-section-title">模型视图</div>
           <div class="gv-presets">
@@ -46,6 +56,12 @@
             <i :style="{ background: layer.color, boxShadow: `0 0 8px ${layer.color}` }"></i>
             <span>{{ layer.label }}</span>
             <em>{{ formatCount(layerCount(layer.key)) }}</em>
+          </label>
+          <label class="gv-layer-row" :class="{ disabled: !model }">
+            <input v-model="boundsVisible" type="checkbox" :disabled="!model" @change="sceneApi?.setBoundsVisible(boundsVisible)" />
+            <i class="bounds-mark"></i>
+            <span>模型包围盒</span>
+            <em>辅助</em>
           </label>
         </section>
 
@@ -152,15 +168,9 @@
         <header>
           <div>
             <h2 id="gv-dialog-title">输入体素点位数据</h2>
-            <p>仅解析此对话框中粘贴的内容或你明确选择的本地文件。</p>
           </div>
           <button type="button" title="关闭" @click="closeDialog">×</button>
         </header>
-
-        <div class="gv-dialog-notice">
-          <b>不补点、不外推、不造坐标</b>
-          <span>CSV 支持有/无表头；电阻率按 X=前向/Y=横向，Vp/Vs 按 X=横向/Y=前向解析。</span>
-        </div>
 
         <div class="gv-input-grid">
           <article v-for="definition in inputDefinitions" :key="definition.kind" class="gv-input-card" :class="definition.kind">
@@ -185,18 +195,10 @@
           </article>
         </div>
 
-        <details class="gv-format-help">
-          <summary>输入格式说明</summary>
-          <div>
-            <p><b>CSV：</b><code>x,y,z,resistivity</code> / <code>x,y,z,vp</code> / <code>x,y,z,vs</code>；无表头时固定按 x、y、z、标量解析。</p>
-            <p><b>JSON：</b><code>[{x, y, z, resistivity}]</code>，或 <code>{ points: [...], voxelSize: [dx, dy, dz] }</code>。单层/单列网格无法推导某轴尺寸时，必须显式提供 voxelSize。</p>
-          </div>
-        </details>
-
         <div v-if="buildError" class="gv-build-error">{{ buildError }}</div>
 
         <footer>
-          <button class="gv-secondary" type="button" :disabled="processing" @click="closeDialog">取消</button>
+          <button class="gv-secondary" type="button" :disabled="processing" @click="cancelDialog">取消</button>
           <button class="gv-primary" type="button" :disabled="processing" @click="buildModel">
             {{ processing ? '正在严格校验…' : '校验并构建模型' }}
           </button>
@@ -209,6 +211,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
+import { DTScopeEngine } from '@/utils/Common/Viewer'
 import { parseScalarInput } from '@/modules/geophysical/input'
 import { prepareVoxelModel } from '@/modules/geophysical/model'
 import { VoxelScene } from '@/modules/geophysical/VoxelScene'
@@ -220,6 +223,18 @@ import type {
   RenderStatistics,
   ScalarKind,
 } from '@/modules/geophysical/types'
+
+const props = withDefaults(defineProps<{
+  embedded?: boolean
+}>(), {
+  embedded: false,
+})
+
+const emit = defineEmits<{
+  close: []
+}>()
+
+const embedded = computed(() => props.embedded)
 
 type PresetKey = 'resistivity' | 'water' | 'grades'
 
@@ -239,6 +254,7 @@ const activePreset = ref<PresetKey>('resistivity')
 const resistivityOpacity = ref(0.68)
 const waterOpacity = ref(0.32)
 const gradeOpacity = ref(0.82)
+const boundsVisible = ref(false)
 
 const inputs = reactive<Record<ScalarKind, InputSelection>>({
   resistivity: { text: '', file: null },
@@ -308,6 +324,18 @@ function closeDialog() {
   if (!processing.value) dialogOpen.value = false
 }
 
+function exitWorkbench() {
+  if (processing.value) return
+  dialogOpen.value = false
+  if (embedded.value) emit('close')
+  else router.push('/')
+}
+
+function cancelDialog() {
+  if (embedded.value) exitWorkbench()
+  else closeDialog()
+}
+
 async function buildModel() {
   buildError.value = ''
   if (!hasSource('resistivity')) {
@@ -336,7 +364,10 @@ async function buildModel() {
     const prepared = await prepareVoxelModel(resistivity, vp, vs, value => Object.assign(progress, value))
     model.value = prepared
     await nextTick()
-    if (!sceneApi.value && canvasHost.value) sceneApi.value = new VoxelScene(canvasHost.value)
+    if (!sceneApi.value && canvasHost.value) sceneApi.value = new VoxelScene(canvasHost.value, {
+      transparent: props.embedded,
+      cesiumViewer: props.embedded ? DTScopeEngine.viewer : undefined,
+    })
     renderStats.value = sceneApi.value?.setModel(prepared) ?? null
     sceneApi.value?.setPalette(palette.value)
     sceneApi.value?.setOpacity('resistivity', resistivityOpacity.value)
@@ -415,7 +446,10 @@ function formatScalar(value: number): string {
 }
 
 onMounted(() => {
-  if (canvasHost.value) sceneApi.value = new VoxelScene(canvasHost.value)
+  if (canvasHost.value) sceneApi.value = new VoxelScene(canvasHost.value, {
+    transparent: props.embedded,
+    cesiumViewer: props.embedded ? DTScopeEngine.viewer : undefined,
+  })
 })
 
 onBeforeUnmount(() => sceneApi.value?.dispose())
@@ -428,6 +462,10 @@ onBeforeUnmount(() => sceneApi.value?.dispose())
   --panel: rgba(7, 17, 29, .94);
   width: 100%; height: 100%; color: #d9e8f2; overflow: hidden;
   background: #050b14; font-family: Inter, "Microsoft YaHei", sans-serif;
+}
+.gv-root.embedded {
+  position: fixed; z-index: 9; inset: 0;
+  width: auto; height: auto; background: transparent; pointer-events:none;
 }
 .gv-header {
   position: relative; z-index: 20; height: 68px; padding: 0 18px 0 16px;
@@ -448,6 +486,28 @@ onBeforeUnmount(() => sceneApi.value?.dispose())
 .gv-secondary { border: 1px solid #33495b; color: #a9bdca; background: #152330; }
 .gv-primary:disabled, .gv-secondary:disabled, .gv-ghost-btn:disabled { opacity: .45; cursor: default; }
 .gv-main { height: calc(100% - 68px); display: grid; grid-template-columns: 286px minmax(0,1fr) 286px; }
+.embedded .gv-main { position:absolute; inset:0; height:auto; display:block; background:transparent; pointer-events:none; }
+.embedded .gv-stage { position:absolute; z-index:1; inset:0; background:transparent; pointer-events:none; }
+.embedded .gv-stage > canvas { pointer-events:none; }
+.embedded .gv-stage-grid { display:none; }
+.embedded .gv-dialog-backdrop { pointer-events:auto; }
+.embedded .gv-left-panel,
+.embedded .gv-right-panel { position:absolute; z-index:8; right:0; width:332px; box-sizing:border-box; pointer-events:auto; }
+.embedded .gv-left-panel { top:60px; bottom:44%; border-right:0; border-left:1px solid rgba(75,158,191,.16); }
+.embedded .gv-right-panel { top:56%; bottom:0; padding-bottom:12px; border-top:1px solid rgba(75,158,191,.2); }
+.embedded .gv-coordinate-note { left:232px; bottom:52px; padding:7px 11px; color:#b6d4e2; background:rgba(3,11,18,.88); border:1px solid rgba(39,214,245,.2); font-size:12px; }
+.embedded .gv-colorbar { left:calc(50% - 58px); bottom:20px; width:min(620px,calc(100% - 628px)); gap:12px; color:#bad5e2; font-size:12px; }
+.embedded .gv-colorbar div { height:12px; box-shadow:0 0 10px rgba(39,214,245,.12); }
+.gv-embedded-head { padding: 13px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; border-bottom:1px solid rgba(74,143,171,.18); background:linear-gradient(90deg,rgba(12,35,53,.96),rgba(7,20,33,.94)); }
+.gv-embedded-head > div:not(.gv-embedded-actions) { min-width:0; flex:1; }
+.gv-embedded-head b,.gv-embedded-head small { display:block; }
+.gv-embedded-head b { color:#d8f4fb; font-size:12px; }
+.gv-embedded-head small { margin-top:3px; color:#63859c; font-size:8px; white-space:nowrap; }
+.gv-embedded-head .gv-primary { flex-shrink:0; padding:6px 9px; font-size:9px; }
+.gv-embedded-actions { display:flex; align-items:center; gap:7px; flex-shrink:0; }
+.gv-exit-btn { height:28px; padding:0 10px; display:inline-flex; align-items:center; gap:5px; flex-shrink:0; border:1px solid rgba(0,190,235,.32); border-radius:3px; color:#9fc8d8; background:rgba(0,72,105,.24); font-family:inherit; font-size:11px; cursor:pointer; transition:.18s ease; }
+.gv-exit-btn svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.gv-exit-btn:hover { color:#fff; border-color:#27d6f5; background:rgba(39,214,245,.14); box-shadow:0 0 9px rgba(39,214,245,.18); }
 .gv-left-panel, .gv-right-panel { position: relative; z-index: 8; min-height: 0; overflow-y: auto; background: var(--panel); scrollbar-width: thin; scrollbar-color: #21465c transparent; }
 .gv-left-panel { border-right: 1px solid rgba(75,158,191,.16); }
 .gv-right-panel { border-left: 1px solid rgba(75,158,191,.16); padding-bottom: 20px; }
@@ -465,6 +525,7 @@ onBeforeUnmount(() => sceneApi.value?.dispose())
 .gv-layer-row { height: 29px; display: grid; grid-template-columns: 18px 9px 1fr auto; align-items: center; gap: 7px; color: #91a8b8; font-size: 11px; }
 .gv-layer-row input { accent-color: #24c8e5; }
 .gv-layer-row i { width: 8px; height: 8px; border-radius: 2px; }
+.gv-layer-row i.bounds-mark { box-sizing:border-box; background:transparent; border:1px solid #6d94a8; box-shadow:none; }
 .gv-layer-row em { color: #4d697c; font: normal 9px Consolas; }
 .gv-layer-row.disabled { opacity: .36; }
 .gv-control-row, .gv-slider-row { display: block; margin-bottom: 11px; color: #7e9aac; font-size: 10px; }
@@ -502,18 +563,18 @@ onBeforeUnmount(() => sceneApi.value?.dispose())
 .gv-audit-card p { margin: 0; color: #587488; font-size: 9px; line-height: 1.65; }
 .gv-audit-row { display: grid; grid-template-columns: 8px 1fr; gap: 7px; align-items: center; margin: 6px 0; color: #6a8799; font-size: 9px; }.gv-audit-row i { width: 7px; height: 7px; border: 1px solid #3b5667; border-radius: 50%; }.gv-audit-row i.pass { border: 0; background: #35cd9b; box-shadow: 0 0 6px #35cd9b; }
 .gv-rule { display: flex; justify-content: space-between; margin: 6px 0; color: #648397; font: 9px Consolas; }.gv-rule b { color: #abc3d1; }.gv-render-stats { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid #173247; color: #5e8296; font-size: 9px; }.gv-render-stats b { color: #8eb7ca; font: 9px Consolas; }
-.gv-dialog-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 24px; background: rgba(1,6,11,.82); backdrop-filter: blur(9px); }
-.gv-dialog { width: min(1040px, calc(100vw - 48px)); max-height: calc(100vh - 48px); overflow-y: auto; border: 1px solid #24506a; border-radius: 13px; background: #091724; box-shadow: 0 28px 90px rgba(0,0,0,.6); }
-.gv-dialog > header { padding: 18px 21px; display: flex; justify-content: space-between; border-bottom: 1px solid #19364a; background: linear-gradient(90deg,#0d2232,#0a1927); }.gv-dialog h2 { margin: 0; color: #d7edf5; font-size: 16px; }.gv-dialog header p { margin: 4px 0 0; color: #638196; font-size: 10px; }.gv-dialog header > button { border: 0; color: #7493a6; background: none; font-size: 27px; cursor: pointer; }
+.gv-dialog-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 18px; background: transparent; backdrop-filter: none; }
+.gv-dialog { width: min(820px, calc(100vw - 40px)); max-height: calc(100vh - 80px); overflow-y: auto; border: 1px solid rgba(53,154,194,.72); border-radius: 9px; background: rgba(7,20,33,.97); box-shadow: 0 18px 55px rgba(0,0,0,.48),0 0 22px rgba(39,214,245,.1); }
+.gv-dialog > header { padding: 13px 17px; display: flex; align-items:center; justify-content: space-between; border-bottom: 1px solid #19364a; background: linear-gradient(90deg,#0d2232,#0a1927); }.gv-dialog h2 { margin: 0; color: #d7edf5; font-size: 18px; }.gv-dialog header > button { border: 0; color: #8fb0c2; background: none; font-size: 27px; cursor: pointer; }
 .gv-dialog-notice { margin: 14px 18px 0; padding: 10px 12px; display: flex; gap: 12px; align-items: center; border: 1px solid rgba(58,203,164,.18); border-radius: 6px; color: #698e83; background: rgba(28,115,91,.08); font-size: 9px; }.gv-dialog-notice b { color: #55d4ae; font-size: 10px; white-space: nowrap; }
-.gv-input-grid { padding: 14px 18px 10px; display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-.gv-input-card { padding: 12px; border: 1px solid #1b3b50; border-radius: 8px; background: #0b1c2a; }.gv-input-card.resistivity { border-color: rgba(45,182,191,.45); }
-.gv-input-title { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: center; margin-bottom: 9px; }.gv-input-title > span { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 7px; color: #51dbea; background: rgba(31,149,172,.15); font: 700 11px Consolas; }.gv-input-title b, .gv-input-title small { display: block; }.gv-input-title b { color: #a8c5d4; font-size: 11px; }.gv-input-title small { margin-top: 2px; color: #4f6e81; font-size: 8px; }
-.gv-input-card textarea { width: 100%; height: 174px; resize: vertical; padding: 9px; border: 1px solid #18384c; border-radius: 5px; outline: 0; color: #a6c0ce; background: #06131e; font: 9px/1.5 Consolas; }.gv-input-card textarea:focus { border-color: #298ba5; box-shadow: 0 0 0 2px rgba(39,184,213,.08); }.gv-input-card textarea:disabled { opacity: .35; }
-.gv-file-row { height: 28px; display: flex; align-items: center; gap: 7px; margin-top: 7px; }.gv-file-row label { padding: 5px 8px; border: 1px solid #23516a; border-radius: 4px; color: #6fa8bf; background: rgba(21,67,88,.4); font-size: 9px; cursor: pointer; }.gv-file-row label input { display: none; }.gv-file-row span { min-width: 0; overflow: hidden; flex: 1; color: #607f91; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }.gv-file-row button { border: 0; color: #b47777; background: none; font-size: 8px; cursor: pointer; }
+.gv-input-grid { padding: 12px 14px 8px; display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; }
+.gv-input-card { padding: 10px; border: 1px solid #1b3b50; border-radius: 6px; background: #0b1c2a; }.gv-input-card.resistivity { border-color: rgba(45,182,191,.45); }
+.gv-input-title { display: grid; grid-template-columns: 36px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }.gv-input-title > span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 6px; color: #51dbea; background: rgba(31,149,172,.15); font: 700 13px Consolas; }.gv-input-title b, .gv-input-title small { display: block; }.gv-input-title b { color: #b9d3df; font-size: 13px; }.gv-input-title small { margin-top: 2px; color: #6f8fa2; font-size: 10px; }
+.gv-input-card textarea { width: 100%; height: 100px; resize: vertical; padding: 8px; border: 1px solid #18384c; border-radius: 4px; outline: 0; color: #b7ced9; background: #06131e; font: 11px/1.5 Consolas; }.gv-input-card textarea:focus { border-color: #298ba5; box-shadow: 0 0 0 2px rgba(39,184,213,.08); }.gv-input-card textarea:disabled { opacity: .35; }
+.gv-file-row { min-height: 30px; display: flex; align-items: center; gap: 7px; margin-top: 7px; }.gv-file-row label { padding: 6px 9px; border: 1px solid #23516a; border-radius: 4px; color: #84bdd3; background: rgba(21,67,88,.4); font-size: 11px; cursor: pointer; }.gv-file-row label input { display: none; }.gv-file-row span { min-width: 0; overflow: hidden; flex: 1; color: #7898a9; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }.gv-file-row button { border: 0; color: #cf8e8e; background: none; font-size: 10px; cursor: pointer; }
 .gv-format-help { margin: 0 18px 10px; padding: 8px 11px; border: 1px solid #17364a; border-radius: 6px; color: #64879b; background: rgba(7,22,34,.7); font-size: 9px; }.gv-format-help summary { cursor: pointer; color: #789db1; }.gv-format-help p { margin: 7px 0; }.gv-format-help code { padding: 2px 4px; border-radius: 3px; color: #7ec8d8; background: #07131d; }
-.gv-build-error { margin: 0 18px 10px; padding: 9px 11px; border: 1px solid rgba(239,68,68,.32); border-radius: 6px; color: #f08e8e; background: rgba(127,33,33,.13); font-size: 10px; }
-.gv-dialog > footer { padding: 12px 18px 16px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid #173347; }
+.gv-build-error { margin: 0 14px 8px; padding: 8px 10px; border: 1px solid rgba(239,68,68,.32); border-radius: 5px; color: #f29c9c; background: rgba(127,33,33,.13); font-size: 12px; }
+.gv-dialog > footer { padding: 10px 14px 12px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid #173347; }.gv-dialog > footer button{font-size:12px;}
 @media (max-width: 1050px) { .gv-main { grid-template-columns: 260px minmax(0,1fr); }.gv-right-panel { display: none; } }
 @media (max-width: 760px) { .gv-main { grid-template-columns: 1fr; }.gv-left-panel { position: absolute; z-index: 12; left: 0; top: 68px; bottom: 0; width: 250px; }.gv-safety-badge { display: none; }.gv-input-grid { grid-template-columns: 1fr; }.gv-dialog { width: calc(100vw - 20px); }.gv-dialog-backdrop { padding: 10px; } }
 </style>

@@ -26,7 +26,6 @@
           <span class="rsd-node-copy">
             <strong>{{ item.label }}</strong>
           </span>
-          <span v-if="modelValue === item.key" class="rsd-current">当前</span>
         </button>
       </nav>
       <div class="rsd-module-divider"></div>
@@ -198,7 +197,6 @@ const stages: { key: RockDirectoryNode; label: string; description: string }[] =
 .rsd-node-copy { min-width: 0; }
 .rsd-node-copy strong { display: block; color: inherit; font-size: 12px; font-weight: 500; }
 .rsd-node.active .rsd-node-copy strong { color: #dffaff; font-weight: 600; }
-.rsd-current { color: #69dff2; font-size: 9px; }
 .rsd-module-divider { height: 1px; margin: 8px 14px; background: rgba(0, 150, 220, .14); }
 .rsd-module-link { display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;width:100%;min-height:43px;padding:0 16px;color:#7892aa;text-align:left;font-family:inherit;border:0;border-bottom:1px solid rgba(0,150,220,.07);background:transparent;cursor:pointer;transition:.18s ease; }
 .rsd-module-link span{color:#4e85aa;text-align:center}.rsd-module-link strong{font-size:12px;font-weight:500}.rsd-module-link em{color:#456b87;font-size:16px;font-style:normal}.rsd-module-link:hover{color:#dffaff;background:rgba(0,170,235,.07)}.rsd-module-link:hover span,.rsd-module-link:hover em{color:#69dff2}

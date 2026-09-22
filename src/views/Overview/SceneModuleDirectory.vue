@@ -25,7 +25,6 @@
             >
               <span class="branch" aria-hidden="true"></span>
               <strong>{{ item.label }}</strong>
-              <em v-if="modelValue === item.key">当前</em>
             </button>
           </nav>
         </template>
@@ -93,11 +92,10 @@ const modules: { key: PlatformModule; label: string; icon: string }[] = [
 .header-icon { display: grid; place-items: center; width: 22px; font-size: 16px; }
 .header-arrow { margin-left: auto; color: rgba(255,255,255,.8); }
 .directory-tree { padding: 5px 0 7px; background: rgba(0, 35, 67, .25); }
-.directory-node { position: relative; display: grid; grid-template-columns: 18px minmax(0,1fr) auto; align-items: center; width: 100%; min-height: 40px; padding: 0 14px 0 25px; color: #829bb4; text-align: left; font-family: inherit; border: 0; background: transparent; cursor: pointer; transition: .18s ease; }
+.directory-node { position: relative; display: grid; grid-template-columns: 18px minmax(0,1fr); align-items: center; width: 100%; min-height: 40px; padding: 0 14px 0 25px; color: #829bb4; text-align: left; font-family: inherit; border: 0; background: transparent; cursor: pointer; transition: .18s ease; }
 .directory-node:hover { color: #c9edfa; background: rgba(0, 170, 235, .06); }
 .directory-node.active { color: #e6fbff; background: linear-gradient(90deg, rgba(0, 135, 230, .28), rgba(0, 105, 175, .1)); box-shadow: inset 3px 0 0 #37dfff; }
 .directory-node strong { color: inherit; font-size: 12px; font-weight: 500; }
-.directory-node em { color: #69dff2; font-size: 9px; font-style: normal; }
 .branch { position: relative; width: 12px; height: 100%; }
 .branch::before { content: ''; position: absolute; left: 4px; inset-block: 0; width: 1px; background: rgba(80, 155, 200, .24); }
 .branch::after { content: ''; position: absolute; left: 4px; top: 50%; width: 8px; height: 1px; background: rgba(80, 155, 200, .35); }

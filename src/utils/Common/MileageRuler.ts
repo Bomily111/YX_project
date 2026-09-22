@@ -63,7 +63,10 @@ export class MileageRuler {
   private _visible = true
 
   /** 偏移距离（米） */
-  private readonly sideOffset = 25
+  private readonly sideOffset = 24
+
+  /** 与隧道中线保持完全一致的黄色及透明度。 */
+  private readonly rulerColor = Cesium.Color.YELLOW.withAlpha(0.8)
 
   constructor(viewer: Cesium.Viewer) {
     this.viewer = viewer
@@ -107,12 +110,12 @@ export class MileageRuler {
     }
     this.offsetLine.add({
       positions: mainLinePositions,
-      width: 3,
+      width: 2.5,
       material: new Cesium.Material({
         strict: false,
         fabric: {
           type: 'Color',
-          uniforms: { color: Cesium.Color.YELLOW },
+          uniforms: { color: this.rulerColor },
         },
       }),
     })
@@ -142,7 +145,7 @@ export class MileageRuler {
     }
 
     // ── 1000m 主刻度 + 标签 ──────────────────────────────
-    addTicks(ticks1000m, 20, Cesium.Color.YELLOW, 100)
+    addTicks(ticks1000m, 22, this.rulerColor, 100)
     for (const idx of ticks1000m) {
       const e = entries[idx]
       const next = entries[Math.min(idx + 1, entries.length - 1)]
@@ -151,21 +154,22 @@ export class MileageRuler {
       this.tickLabels.add({
         position: Cesium.Cartesian3.fromDegrees(labelPos.lon, labelPos.lat, labelPos.alt),
         text: e.mileage,
-        font: 'bold 20px Consolas, Microsoft YaHei, monospace',
+        font: '600 18px Consolas, Microsoft YaHei, monospace',
         fillColor: Cesium.Color.WHITE,
-        outlineColor: Cesium.Color.BLACK,
-        outlineWidth: 4,
+        outlineColor: Cesium.Color.fromCssColorString('#07131f'),
+        outlineWidth: 5,
         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
         scale: 1.0,
         horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
         verticalOrigin: Cesium.VerticalOrigin.CENTER,
         pixelOffset: new Cesium.Cartesian2(6, 0),
-        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 10000),
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 12000),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
       })
     }
 
-    // ── 100m 中刻度 + 近距标签 ───────────────────────────
-    addTicks(ticks100m, 10, Cesium.Color.YELLOW, 50)
+    // ── 100m 中刻度 + 近距离标签 ─────────────────────────
+    addTicks(ticks100m, 12, this.rulerColor, 50)
     for (const idx of ticks100m) {
       const e = entries[idx]
       const next = entries[Math.min(idx + 1, entries.length - 1)]
@@ -174,21 +178,22 @@ export class MileageRuler {
       this.tickLabels.add({
         position: Cesium.Cartesian3.fromDegrees(labelPos.lon, labelPos.lat, labelPos.alt),
         text: e.mileage,
-        font: 'bold 16px Consolas, Microsoft YaHei, monospace',
+        font: '700 16px Consolas, Microsoft YaHei, monospace',
         fillColor: Cesium.Color.WHITE,
-        outlineColor: Cesium.Color.BLACK,
-        outlineWidth: 3,
+        outlineColor: Cesium.Color.fromCssColorString('#07131f'),
+        outlineWidth: 5,
         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-        scale: 0.8,
+        scale: 0.9,
         horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
         verticalOrigin: Cesium.VerticalOrigin.CENTER,
         pixelOffset: new Cesium.Cartesian2(5, 0),
-        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 3000),
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 1800),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
       })
     }
 
-    // ── 20m 细刻度（无标签） ─────────────────────────────
-    addTicks(ticks20m, 5, Cesium.Color.YELLOW, 0)
+    // ── 20m 细刻度：仅显示刻度线 ─────────────────────────
+    addTicks(ticks20m, 6, this.rulerColor, 0)
   }
 
   get visible(): boolean {

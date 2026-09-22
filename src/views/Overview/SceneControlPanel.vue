@@ -7,7 +7,6 @@
           <div class="scp-title">操控面板</div>
           <div class="scp-sub">{{ sceneName }}</div>
         </div>
-        <button class="scp-close" @click="$emit('close')" title="关闭">×</button>
       </div>
 
       <!-- 快捷操作按钮 -->
@@ -416,7 +415,7 @@ onMounted(() => {
 .scp-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 9px;
   padding: 14px 14px 12px;
   border-bottom: 1px solid rgba(0, 170, 255, 0.15);
   background: rgba(0, 20, 48, 0.6);
@@ -425,21 +424,6 @@ onMounted(() => {
 .scp-title-group { display: flex; flex-direction: column; gap: 2px; }
 .scp-title { font-size: 15px; font-weight: bold; color: #e8f4ff; letter-spacing: 1px; }
 .scp-sub   { font-size: 10px; color: var(--sc); opacity: 0.6; letter-spacing: 0.5px; }
-
-.scp-close {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 80, 80, 0.15);
-  border: 1px solid rgba(255, 80, 80, 0.3);
-  color: rgba(255, 150, 150, 0.8);
-  font-size: 16px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  line-height: 1;
-  transition: all 0.2s;
-
-  &:hover { background: rgba(255, 80, 80, 0.3); color: #fff; }
-}
 
 /* ── 通用 Section 标题 ────────────────────────────── */
 .scp-section-title {

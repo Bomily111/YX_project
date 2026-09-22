@@ -4,7 +4,16 @@
       <!-- Header -->
       <div class="pc-header">
         <div class="pc-title-group">
-          <button v-if="activeStage !== 'baseline' && selectedMethod" class="pc-back-btn" @click="selectedMethod = null">‹ 返回</button>
+          <button
+            v-if="activeStage !== 'baseline' && selectedMethod"
+            class="pc-back-btn"
+            type="button"
+            title="返回预测方法列表"
+            @click="selectedMethod = null"
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.8 4.5 6.3 10l5.5 5.5M6.8 10h7"></path></svg>
+            <span>返回</span>
+          </button>
           <div>
             <div class="pc-title">{{ selectedMethod ? selectedMethod.label : '围岩数字孪生模型' }}</div>
             <div v-if="!selectedMethod" class="pc-subtitle">
@@ -12,7 +21,6 @@
             </div>
           </div>
         </div>
-        <button class="pc-close" @click="$emit('close')" title="关闭">×</button>
       </div>
 
       <!-- 同一围岩模型的连续演化状态轴 -->
@@ -322,7 +330,6 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import ProcessTab from './PredictionCenter/ProcessTab.vue'
 import MethodPreview from './PredictionCenter/MethodPreview.vue'
 import {
@@ -378,7 +385,6 @@ const emit = defineEmits<{
 }>()
 
 const selectedMethod = ref<MethodCard | null>(null)
-const router = useRouter()
 type ModelStage = 'baseline' | 'prediction' | 'correction'
 type ModelAttribute = 'grade' | 'integrity' | 'hardness' | 'groundwater' | 'stress'
 interface StageDefinition {
@@ -635,7 +641,11 @@ function handleFaceMileageSelect(mileage: string) {
 
 function selectMethod(m: MethodCard) {
   if (m.key === 'geophysical_voxel') {
-    router.push('/geophysical-voxel')
+    emit('action', {
+      key: m.key,
+      label: m.label,
+      icon: m.icon,
+    }, 'view')
     return
   }
   selectedMethod.value = m
@@ -753,24 +763,44 @@ onMounted(() => {
 }
 
 .pc-header {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; gap: 9px;
   padding: 14px 16px 12px;
   border-bottom: 1px solid rgba(0, 180, 255, 0.12);
 }
-.pc-title-group { display: flex; align-items: center; gap: 8px; }
+.pc-title-group { min-width:0; display: flex; align-items: center; gap: 8px; }
 .pc-title { font-size: 16px; font-weight: 700; color: #7dd3fc; }
 .pc-subtitle { margin-top: 2px; font-size: 10px; color: #587897; letter-spacing: .5px; }
 .pc-back-btn {
-  background: none; border: none; color: #8aa0bd; font-size: 18px;
-  cursor: pointer; padding: 0; line-height: 1;
-  &:hover { color: #fff; }
+  height: 28px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 190, 235, .32);
+  border-radius: 3px;
+  color: #9fc8d8;
+  background: rgba(0, 72, 105, .24);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  transition: .18s ease;
+  svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  &:hover {
+    color: #fff;
+    border-color: #27d6f5;
+    background: rgba(39, 214, 245, .14);
+    box-shadow: 0 0 9px rgba(39, 214, 245, .18);
+  }
 }
-.pc-close {
-  background: none; border: none; color: #5a7590; font-size: 20px;
-  cursor: pointer; padding: 0 4px; line-height: 1;
-  &:hover { color: #fff; }
-}
-
 .pc-stage-axis {
   position: relative;
   display: grid; grid-template-columns: repeat(3, 1fr);

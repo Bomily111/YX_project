@@ -65,7 +65,7 @@
     <!-- 漫游控制弹窗 -->
     <RoamingToolbar :visible="activeTool === 'roaming'" @close="activeTool = null" />
 
-    <div class="floating-panel"
+    <div v-show="!showGeophysicalVoxelWorkbench" class="floating-panel"
          :style="{ left: drag.left + 'px', top: drag.top + 'px' }"
          @mousedown="startDrag">
       <div class="drag-header" @mousedown="startDrag">
@@ -129,6 +129,11 @@
       v-if="isModelViewMode && (isTSP || ['tsp', 'tsp_hardness', 'tsp_integrity'].includes(currentActiveKey))"
       :active-type="currentActiveKey === 'tsp' ? tspInitialType : currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity'"
     />
+    <GeophysicalVoxelWorkbench
+      v-if="showGeophysicalVoxelWorkbench"
+      embedded
+      @close="closeGeophysicalVoxelWorkbench"
+    />
 
     <!-- 不良地质 / 超前预报 功能面板 -->
     <BLDZ v-if="isBLDZ" :value="selectedValue" />
@@ -176,7 +181,7 @@
 
     <!-- 场景右侧操控面板：围岩阶段使用数字孪生中心，监测预警使用曲线与预警报告 -->
     <PredictionCenter
-      v-if="isWorkfaceScene && rockDirectoryNode !== 'monitoring'"
+      v-if="isWorkfaceScene && rockDirectoryNode !== 'monitoring' && !showGeophysicalVoxelWorkbench"
       :show="!!activeScene"
       :active-action="currentActiveKey"
       :stage="rockStage"
@@ -286,6 +291,7 @@ import TEM from '@/components/SceneManagement/TEMComponents/TEM.vue';
 import RockGradeColorBar from '@/components/SceneManagement/Colorbars/RockGradeColorBar.vue';
 import RockGradeComparison from '@/components/SceneManagement/Colorbars/RockGradeComparison.vue';
 import TSPColorBar from '@/components/SceneManagement/Colorbars/TSPColorBar.vue';
+import GeophysicalVoxelWorkbench from '@/views/GeophysicalVoxelWorkbench.vue';
 import DTVolume from '@/utils/AllPrevious/All/DTVolume.vue';
 import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
@@ -313,6 +319,7 @@ const modelStore = useModelStore();
 
 // ── 侧边栏 / 模型视图模式状态 ────────────────────────────
 const isModelViewMode = ref(false);
+const showGeophysicalVoxelWorkbench = ref(false);
 
 // ── 总览/场景模式状态 ─────────────────────────────────────
 const activeScene = ref<string | null>(null);
@@ -748,6 +755,14 @@ const handleLayerSelect = (item: any) => {
 const handlePanelAction = (action: { key: string; subType?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface' }, type: 'view' | 'process' = 'view') => {
   const isWorkflowAction = activeScene.value === 'workface';
 
+  if (action.key === 'geophysical_voxel') {
+    deactivateGeoModel();
+    isModelViewMode.value = false;
+    currentActiveKey.value = action.key;
+    showGeophysicalVoxelWorkbench.value = true;
+    return;
+  }
+
   // 支护场景的"钢架试验"按钮 → 跳转参数化试验子模块
   if (activeScene.value === 'support' && action.key === 'experiment') {
     router.push('/support-experiment');
@@ -782,6 +797,11 @@ const handlePanelAction = (action: { key: string; subType?: 'vp' | 'vs' | 'hardn
   }
 };
 
+const closeGeophysicalVoxelWorkbench = () => {
+  showGeophysicalVoxelWorkbench.value = false;
+  if (currentActiveKey.value === 'geophysical_voxel') currentActiveKey.value = '';
+};
+
 const handleRockStageChange = async (stage: 'baseline' | 'prediction' | 'correction') => {
   const viewer = getViewer();
   if (!viewer) return;
@@ -799,6 +819,7 @@ const handleRockStageChange = async (stage: 'baseline' | 'prediction' | 'correct
 };
 
 const selectRockDirectoryNode = (node: RockDirectoryNode) => {
+  showGeophysicalVoxelWorkbench.value = false;
   rockDirectoryNode.value = node;
   if (node === 'monitoring') return;
   const stage = node;
@@ -1068,6 +1089,7 @@ const navigatePlatformModule = (key: string) => {
 // ── 返回总览：关闭面板 + 相机飞回总览视角 ───────────────
 const handleBackToOverview = () => {
   activeScene.value = null;
+  showGeophysicalVoxelWorkbench.value = false;
 
   // 关闭所有场景浮层
   showLining.value = false;
