@@ -685,7 +685,7 @@ function statusBarColor(level?: string): string {
 .scene-data-panel.placement-right {
   left: auto;
   right: 0;
-  width: 332px;
+  width: var(--rock-right-rail, 380px);
   border-right: 0;
   border-left: 1px solid rgba(0, 170, 255, 0.2);
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
@@ -1304,4 +1304,29 @@ function statusBarColor(level?: string): string {
     box-shadow: 0 0 10px rgba(0, 180, 255, 0.2);
   }
 }
+
+/* 加宽右栏后的大字号显示规格。 */
+.scene-data-panel.placement-right .sdp-header { padding: 16px 18px 14px; }
+.scene-data-panel.placement-right .sdp-icon { font-size: 25px; }
+.scene-data-panel.placement-right .sdp-title { font-size: 18px; }
+.scene-data-panel.placement-right .sdp-sub { margin-top: 3px; font-size: 12px; }
+.scene-data-panel.placement-right .sdp-metric-item { min-height: 62px; padding: 12px 11px 10px; }
+.scene-data-panel.placement-right .sdp-m-val { font-size: 19px; }
+.scene-data-panel.placement-right .sdp-m-unit,
+.scene-data-panel.placement-right .sdp-m-label { font-size: 11px; }
+.scene-data-panel.placement-right .sdp-chart-section,
+.scene-data-panel.placement-right .sdp-status-list,
+.scene-data-panel.placement-right .sdp-structure-tree,
+.scene-data-panel.placement-right .sdp-alerts { padding-right: 18px; padding-left: 18px; }
+.scene-data-panel.placement-right .sdp-chart-title,
+.scene-data-panel.placement-right .sdp-list-title { font-size: 13px; }
+.scene-data-panel.placement-right .sdp-mini-chart svg { height: 86px; }
+.scene-data-panel.placement-right .sdp-chl { font-size: 10px; }
+.scene-data-panel.placement-right .sdp-status-row { gap: 10px; margin-bottom: 10px; }
+.scene-data-panel.placement-right .sdp-status-key { width: 82px; font-size: 12px; }
+.scene-data-panel.placement-right .sdp-status-val { width: 64px; font-size: 12px; }
+.scene-data-panel.placement-right .st-parent,
+.scene-data-panel.placement-right .st-leaf { font-size: 12px; }
+.scene-data-panel.placement-right .sdp-alert-title { font-size: 13px; }
+.scene-data-panel.placement-right .sdp-alert-text { font-size: 12px; line-height: 1.5; }
 </style>

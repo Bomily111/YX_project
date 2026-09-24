@@ -95,7 +95,7 @@ const stages: { key: RockDirectoryNode; label: string; description: string }[] =
 .rsd-static-item {
   display: flex; align-items: center; gap: 11px;
   min-height: 44px; padding: 0 18px;
-  color: #7892aa; font-size: 12px;
+  color: #7892aa; font-size: 14px;
   border-bottom: 1px solid rgba(0, 150, 220, .07);
 }
 .rsd-home-link {
@@ -109,7 +109,7 @@ const stages: { key: RockDirectoryNode; label: string; description: string }[] =
   cursor: pointer;
   transition: .18s ease;
 }
-.rsd-home-link strong { flex: 1; color: #b9cee0; font-size: 12px; font-weight: 600; }
+.rsd-home-link strong { flex: 1; color: #b9cee0; font-size: 14px; font-weight: 600; }
 .rsd-home-link:hover { background: rgba(0, 170, 235, .08); }
 .rsd-home-link:hover strong { color: #69dff2; }
 .rsd-context-link { width:100%;font-family:inherit;text-align:left;border-top:0;border-right:0;border-left:0;background:transparent;cursor:pointer;transition:.18s ease; }
@@ -132,7 +132,7 @@ const stages: { key: RockDirectoryNode; label: string; description: string }[] =
 }
 .rsd-home span,
 .rsd-context span,
-.rsd-static-item span { width: 18px; color: #4e85aa; text-align: center; }
+.rsd-static-item span { width: 18px; color: #4e85aa; text-align: center; font-size: 15px; }
 
 .rsd-header {
   display: flex;
@@ -155,8 +155,8 @@ const stages: { key: RockDirectoryNode; label: string; description: string }[] =
   font-size: 16px;
 }
 
-.rsd-title { flex: 1; color: #fff; font-size: 14px; font-weight: 700; letter-spacing: 1px; }
-.rsd-chevron { color: rgba(255,255,255,.8); font-size: 14px; }
+.rsd-title { flex: 1; color: #fff; font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+.rsd-chevron { color: rgba(255,255,255,.8); font-size: 16px; }
 
 .rsd-tree { padding: 5px 0 7px; background: rgba(0, 35, 67, .25); }
 
@@ -195,11 +195,11 @@ const stages: { key: RockDirectoryNode; label: string; description: string }[] =
 .rsd-branch::after { content: ''; position: absolute; left: 4px; top: 50%; width: 8px; height: 1px; background: rgba(80, 155, 200, .35); }
 
 .rsd-node-copy { min-width: 0; }
-.rsd-node-copy strong { display: block; color: inherit; font-size: 12px; font-weight: 500; }
+.rsd-node-copy strong { display: block; color: inherit; font-size: 14px; font-weight: 500; }
 .rsd-node.active .rsd-node-copy strong { color: #dffaff; font-weight: 600; }
 .rsd-module-divider { height: 1px; margin: 8px 14px; background: rgba(0, 150, 220, .14); }
 .rsd-module-link { display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;width:100%;min-height:43px;padding:0 16px;color:#7892aa;text-align:left;font-family:inherit;border:0;border-bottom:1px solid rgba(0,150,220,.07);background:transparent;cursor:pointer;transition:.18s ease; }
-.rsd-module-link span{color:#4e85aa;text-align:center}.rsd-module-link strong{font-size:12px;font-weight:500}.rsd-module-link em{color:#456b87;font-size:16px;font-style:normal}.rsd-module-link:hover{color:#dffaff;background:rgba(0,170,235,.07)}.rsd-module-link:hover span,.rsd-module-link:hover em{color:#69dff2}
+.rsd-module-link span{color:#4e85aa;text-align:center;font-size:15px}.rsd-module-link strong{font-size:14px;font-weight:500}.rsd-module-link em{color:#456b87;font-size:18px;font-style:normal}.rsd-module-link:hover{color:#dffaff;background:rgba(0,170,235,.07)}.rsd-module-link:hover span,.rsd-module-link:hover em{color:#69dff2}
 
 .rock-directory-slide-enter-active,
 .rock-directory-slide-leave-active { transition: transform .28s ease, opacity .22s ease; }

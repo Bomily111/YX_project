@@ -61,14 +61,12 @@
       <div class="tm-kv"><span>爆后点云</span><b>{{ (info.pointCount/10000).toFixed(0) }} 万点 (3.las)</b></div>
     </section>
 
-    <!-- 底部：视角(点击进入透视/半透明) + 退出(回带纹理整体隧道) -->
-    <footer class="tm-footer">
+    <div class="tm-view-actions" aria-label="三维视角控制">
       <button @click="fly('persp')">透视</button>
-      <button @click="fly('front')">正视掌子面</button>
+      <button @click="fly('front')">正视</button>
       <button @click="fly('side')">侧视</button>
       <button @click="fly('top')">俯视</button>
-      <button class="tm-exit" @click="exit">退出</button>
-    </footer>
+    </div>
 
     <!-- 图层控制里勾选"二维设计图"时, 在面板下方显示可关闭小窗 -->
     <Design2DPanel :visible="showDesign2D" />
@@ -227,5 +225,26 @@ function onToggleDiagram(visible: boolean) {
 .tm-footer button:hover { background: rgba(56,189,248,.2); border-color: #38bdf8; color: #fff; }
 .tm-footer .tm-exit { border-color: rgba(248,113,113,.5); color: #fca5a5; margin-left: 14px; }
 .tm-footer .tm-exit:hover { background: rgba(248,113,113,.2); border-color: #f87171; color: #fff; }
+
+/* 与主平台一致的四周工作区框架。 */
+.tm-root { --rock-right-rail: 380px; }
+.tm-root::before { content:''; position:absolute; z-index:17; top:60px; right:var(--rock-right-rail); bottom:0; left:216px; border:1px solid rgba(51,205,239,.34); border-radius:14px; box-shadow:0 0 24px rgba(0,0,0,.55); pointer-events:none; }
+.tm-viewer { clip-path: inset(60px var(--rock-right-rail) 0 216px round 14px); }
+.tm-view-actions { position:absolute;z-index:26;top:76px;right:398px;display:flex;gap:7px;padding:6px;border:1px solid rgba(53,190,224,.28);border-radius:7px;background:rgba(3,17,29,.82);box-shadow:0 6px 18px rgba(0,0,0,.32);backdrop-filter:blur(8px); }
+.tm-view-actions button { padding:7px 11px;border:1px solid rgba(72,178,207,.28);border-radius:5px;color:#afd1dc;background:rgba(8,40,58,.78);font-size:12px;cursor:pointer;transition:.15s; }
+.tm-view-actions button:hover { color:#fff;border-color:#42dcec;background:rgba(20,104,132,.4); }
+.tm-right { width: var(--rock-right-rail); padding: 18px; }
+.tm-home,.tm-context { font-size: 14px; }
+.tm-directory-head strong { font-size: 16px; }
+.tm-directory-node { font-size: 14px; }
+.tm-module-link span { font-size: 15px; }
+.tm-module-link strong { font-size: 14px; }
+.tm-module-link em { font-size: 18px; }
+.tm-panel-h { font-size: 18px; margin-bottom: 12px; padding-bottom: 10px; }
+.tm-kv { padding-block: 7px; font-size: 14px; }
+.tm-grid > div { padding: 10px 11px; }
+.tm-grid label { font-size: 12px; }
+.tm-grid b { font-size: 17px; }
+.tm-holes-h,.hc { font-size: 13px; }
 
 </style>

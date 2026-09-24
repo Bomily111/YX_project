@@ -1110,4 +1110,22 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:1px solid 
 .vent-module-link{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;width:100%;min-height:43px;padding:0 16px;color:#7892aa;text-align:left;font-family:inherit;border:0;border-bottom:1px solid rgba(0,150,220,.07);background:transparent;cursor:pointer;transition:.18s ease}.vent-module-link span{color:#4e85aa;text-align:center}.vent-module-link b{font-size:12px;font-weight:500}.vent-module-link em{color:#456b87;font-size:16px;font-style:normal}.vent-module-link:hover{color:#dffaff;background:rgba(0,170,235,.07)}.vent-module-link:hover span,.vent-module-link:hover em{color:#69dff2}
 .info-panel { width: 332px; box-sizing: border-box; background: rgba(2,10,22,.94); border-left:1px solid rgba(0,170,255,.2); box-shadow:-4px 0 24px rgba(0,0,0,.5); backdrop-filter:blur(16px); }
 @media(max-width:1100px){.vent-layout{grid-template-columns:190px minmax(0,1fr) 300px}.vent-directory{width:190px}.info-panel{width:300px}.vent-header .meta{display:none}}
+
+/* 与其他业务版块一致的四周栏、圆角视窗和大字号侧栏。 */
+.vent-root { --rock-right-rail: 380px; }
+.vent-layout { grid-template-columns:216px minmax(0,1fr) var(--rock-right-rail); }
+.workspace { box-sizing:border-box; }
+.stage { overflow:hidden; border-radius:14px; box-shadow:0 0 0 1px rgba(51,205,239,.3); }
+.info-panel { width:var(--rock-right-rail); padding:20px; }
+.vent-dir-row { font-size:14px; }
+.vent-dir-head b { font-size:16px; }
+.vent-directory nav button { font-size:14px; }
+.vent-module-link span { font-size:15px; }
+.vent-module-link b { font-size:14px; }
+.vent-module-link em { font-size:18px; }
+.info-panel h2 { font-size:18px; }
+.info-card { padding:13px 15px; font-size:13px; }
+.info-card h3 { font-size:14px; }
+.geometry-info .geo-box h4 { font-size:12px; }
+.geometry-info p b { font-size:12px; }
 </style>

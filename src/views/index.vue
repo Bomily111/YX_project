@@ -1,8 +1,9 @@
 <template>
-  <div class="dashboard-container">
+  <div class="dashboard-container" :class="{ 'rock-workspace': showRockWorkspaceShell, 'platform-workspace': showPlatformWorkspaceShell }">
     <div class="globe-layer">
       <DTGlobe />
     </div>
+    <div v-if="showFramedWorkspaceShell" class="rock-viewport-rim" aria-hidden="true"></div>
 
     <header class="tech-header">
       <div class="header-left">
@@ -124,7 +125,6 @@
     <!-- 体数据渲染覆盖层（进入模型视图后挂载，始终保持 DOM） -->
     <DTVolume v-show="isModelViewMode" />
     <RockGradeColorBar v-if="isModelViewMode && currentActiveKey === 'geophysical_grade'" />
-    <RockGradeComparison v-if="isModelViewMode && currentActiveKey === 'geophysical_grade'" />
     <TSPColorBar
       v-if="isModelViewMode && (isTSP || ['tsp', 'tsp_hardness', 'tsp_integrity'].includes(currentActiveKey))"
       :active-type="currentActiveKey === 'tsp' ? tspInitialType : currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity'"
@@ -201,6 +201,14 @@
       @close="handleBackToOverview"
       @action="handlePanelAction"
       @select-layer="handleLayerSelect"
+    />
+
+    <!-- 隧洞围岩各阶段共用同一尺寸的底部信息栏，内容随阶段与当前模型切换。 -->
+    <RockWorkspaceFooter
+      v-if="showRockWorkspaceShell"
+      :stage="rockStage"
+      :directory-node="rockDirectoryNode"
+      :active-key="currentActiveKey"
     />
 
     <!-- 支护场景 -->
@@ -289,7 +297,7 @@ import DBH from '@/components/SceneManagement/DBHComponents/DBH.vue';
 import TSP from '@/components/SceneManagement/TSPComponents/TSP.vue';
 import TEM from '@/components/SceneManagement/TEMComponents/TEM.vue';
 import RockGradeColorBar from '@/components/SceneManagement/Colorbars/RockGradeColorBar.vue';
-import RockGradeComparison from '@/components/SceneManagement/Colorbars/RockGradeComparison.vue';
+import RockWorkspaceFooter from '@/views/Overview/RockWorkspaceFooter.vue';
 import TSPColorBar from '@/components/SceneManagement/Colorbars/TSPColorBar.vue';
 import GeophysicalVoxelWorkbench from '@/views/GeophysicalVoxelWorkbench.vue';
 import DTVolume from '@/utils/AllPrevious/All/DTVolume.vue';
@@ -328,6 +336,9 @@ const rockStage = ref<RockStage>('baseline');
 type RockDirectoryNode = RockStage | 'monitoring';
 const rockDirectoryNode = ref<RockDirectoryNode>('baseline');
 const isWorkfaceScene = computed(() => activeScene.value === 'workface');
+const showRockWorkspaceShell = computed(() => isWorkfaceScene.value && !showGeophysicalVoxelWorkbench.value && !processingModelKey.value);
+const showPlatformWorkspaceShell = computed(() => ['support', 'dispatch'].includes(activeScene.value ?? ''));
+const showFramedWorkspaceShell = computed(() => showRockWorkspaceShell.value || showPlatformWorkspaceShell.value);
 const sceneModuleSection = ref<SceneModuleSection>('functions');
 
 // ── 场景定义（供 OverviewHUD + fly-to 使用） ──────────────
@@ -1234,6 +1245,61 @@ onBeforeUnmount(() => {
 }
 .globe-layer {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+}
+
+/* 隧洞围岩工作区：不改变 Cesium 画布尺寸，仅裁出被四周栏包围的圆角视窗。 */
+.rock-workspace,
+.platform-workspace {
+  --rock-right-rail: 380px;
+}
+.rock-workspace .globe-layer,
+.platform-workspace .globe-layer {
+  clip-path: inset(60px var(--rock-right-rail) 210px 216px round 14px);
+}
+.rock-viewport-rim {
+  position: absolute;
+  z-index: 9;
+  top: 60px;
+  right: var(--rock-right-rail);
+  bottom: 210px;
+  left: 216px;
+  border: 1px solid rgba(51, 205, 239, .38);
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(0, 58, 84, .7),
+    0 0 24px rgba(0, 0, 0, .62),
+    inset 0 0 20px rgba(0, 160, 215, .035);
+  pointer-events: none;
+}
+.rock-workspace :deep(#volume-container),
+.platform-workspace :deep(#volume-container) {
+  clip-path: inset(60px var(--rock-right-rail) 210px 216px round 14px);
+}
+.platform-workspace .globe-layer,
+.platform-workspace :deep(#volume-container) {
+  clip-path: inset(60px var(--rock-right-rail) 0 216px round 14px);
+}
+.platform-workspace .rock-viewport-rim { bottom: 0; }
+.rock-workspace :deep(.rock-stage-directory),
+.platform-workspace :deep(.module-directory) {
+  border-top-right-radius: 10px;
+  box-shadow: 5px 0 24px rgba(0, 0, 0, .48);
+}
+.rock-workspace :deep(.pred-center-panel),
+.rock-workspace :deep(.scene-data-panel.placement-right),
+.platform-workspace :deep(.scene-ctrl-panel),
+.platform-workspace :deep(.scene-data-panel.placement-right) {
+  border-top-left-radius: 10px;
+  box-shadow: -5px 0 24px rgba(0, 0, 0, .48);
+}
+/* 原先贴底的图例移到三维视窗上缘，避免与统一底栏遮挡。 */
+.rock-workspace :deep(.tsp-legend),
+.rock-workspace :deep(.tem-legend) {
+  top: 88px;
+  bottom: auto;
+}
+.rock-workspace :deep(.tem-legend) {
+  left: calc(50% - 58px);
 }
 
 /* Header */

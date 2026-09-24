@@ -750,7 +750,7 @@ onMounted(() => {
   right: 0;
   top: 60px;
   bottom: 0;
-  width: 332px;
+  width: var(--rock-right-rail, 380px);
   background: rgba(0, 6, 18, 0.92);
   border-left: 1px solid rgba(0, 170, 255, 0.2);
   z-index: 18;
@@ -1105,4 +1105,32 @@ onMounted(() => {
   background: rgba(0, 180, 220, .08); font-size: 9px; cursor: pointer;
   &:hover { border-color: rgba(0, 234, 255, .55); background: rgba(0, 200, 235, .16); }
 }
+
+/* 围岩右栏加宽后的可读性规格。 */
+.pc-header { padding: 16px 18px 14px; }
+.pc-title { font-size: 18px; }
+.pc-subtitle { margin-top: 4px; font-size: 12px; line-height: 1.4; }
+.pc-body { padding-inline: 4px; }
+.pc-version-intro { padding: 14px; }
+.pc-intro-title { font-size: 15px; }
+.pc-intro-desc { font-size: 12px; line-height: 1.7; }
+.pc-section-title,.pc-group-title { font-size: 13px; }
+.pc-source-label,.pc-source-value,.pc-stack-name,.pc-attribute-btn { font-size: 12px; }
+.pc-stack-state { font-size: 11px; }
+.pc-grade-controls__head { font-size: 12px; }
+.pc-grade-filter button span { font-size: 12px; }
+.pc-grade-filter button small { font-size: 10px; }
+.pc-grade-adjust { min-height: 30px; font-size: 11px; }
+.pc-grade-adjust b { font-size: 11px; }
+.pc-grade-controls__hint { font-size: 10px; line-height: 1.5; }
+.pc-action-btn { min-height: 38px; font-size: 12px; }
+.pc-change-title { font-size: 12px; }
+.pc-change-desc { font-size: 11px; }
+.pc-change-legend { font-size: 10px; }
+.pc-grade-desc { font-size: 12px; }
+.pc-segment-mileage { font-size: 13px; }
+.pc-card { min-height: 92px; padding: 13px 12px; }
+.pc-card-label { font-size: 13px; }
+.pc-card-status { font-size: 11px; line-height: 1.35; }
+.pc-hist-time,.pc-hist-view { font-size: 11px; }
 </style>

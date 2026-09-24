@@ -393,7 +393,7 @@ onMounted(() => {
   right: 0;
   top: 60px;
   bottom: 0;
-  width: 332px;
+  width: var(--rock-right-rail, 380px);
   background: rgba(0, 6, 18, 0.92);
   border-left: 1px solid rgba(0, 170, 255, 0.2);
   z-index: 18;
@@ -772,4 +772,13 @@ onMounted(() => {
   font-size: 8px;
   color: rgba(180, 220, 255, 0.25);
 }
+
+/* 四大业务版块统一采用加宽、大字号右侧栏。 */
+.scp-header{padding:16px 18px 14px}.scp-title{font-size:18px}.scp-sub{margin-top:3px;font-size:12px}
+.scp-actions,.scp-params,.scp-entity-list,.scp-log{padding-right:18px;padding-left:18px}
+.scp-section-title{font-size:13px}.scp-ab-label{font-size:13px}.scp-ab-icon{font-size:21px}
+.scp-action-btn{min-height:76px}.scp-param-label,.scp-param-val,.scp-toggle-label,.scp-slider-val{font-size:12px}
+.scp-entity-name{font-size:13px}.scp-entity-loc,.scp-entity-status{font-size:11px}
+.scp-log-row{font-size:12px}.scp-log-time{font-size:11px}
+.vgc-name,.vgc-val span,.vgc-limit{font-size:10px}.vgc-val{font-size:18px}
 </style>
