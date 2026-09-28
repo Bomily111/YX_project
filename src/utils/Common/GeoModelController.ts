@@ -323,7 +323,8 @@ let fusedGradeReloadTimer: number | null = null;
 let tspAttributeOpacity = 0.68;
 let tspAttributeContrast = 1.2;
 let activeGeoModelKey: string | null = null;
-const FACE_SKETCH_VERTICAL_OFFSET = 5;
+// 掌子面照片模型统一下移 1.15 m：原相对锚点抬高 5 m，现调整为 3.85 m。
+const FACE_SKETCH_VERTICAL_OFFSET = 3.85;
 let selectedFaceSketchMileage = FACE_SKETCH_RECORDS[FACE_SKETCH_RECORDS.length - 1].mileage;
 let faceSketchSceneItems: Array<{ mileage: string; entity: any; material: any; centre: Cesium.Cartesian3 }> = [];
 

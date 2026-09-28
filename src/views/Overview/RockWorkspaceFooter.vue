@@ -369,15 +369,15 @@ onMounted(async () => {
 .rock-workspace-footer {
   position: absolute; z-index: 19; right: var(--rock-right-rail, 380px); bottom: 0; left: 216px; height: 210px;
   box-sizing: border-box; overflow: hidden; color: #c7d5ea;
-  border: 1px solid rgba(0, 188, 238, .28); border-bottom: 0; border-radius: 12px 12px 0 0;
-  background: linear-gradient(180deg, rgba(6, 23, 39, .97), rgba(2, 10, 22, .98));
-  box-shadow: 0 -5px 24px rgba(0, 0, 0, .48), inset 0 1px rgba(119, 226, 255, .06);
+  border: 1px solid rgba(0, 170, 255, .22); border-bottom: 0; border-radius: 12px 12px 0 0;
+  background: rgba(0, 6, 18, .94);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, .5), inset 0 1px rgba(0, 170, 255, .04);
   backdrop-filter: blur(16px); font-family: system-ui, "Microsoft YaHei", sans-serif;
 }
-.rwf-header { height: 46px; padding: 0 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(41,174,211,.15); background:rgba(0,79,109,.07); }
-.rwf-title { display:flex;align-items:center;gap:9px;min-width:0; > i{width:3px;height:24px;border-radius:2px;background:linear-gradient(#62efff,#0a759b);box-shadow:0 0 8px rgba(39,220,246,.55)} div{display:flex;align-items:baseline;gap:11px;min-width:0} strong{color:#9cecf5;font-size:14px;letter-spacing:.5px;white-space:nowrap} span{color:#5f8195;font-size:10px;white-space:nowrap} }
+.rwf-header { height: 46px; padding: 0 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(0,170,255,.15); background:rgba(0,20,48,.6); }
+.rwf-title { display:flex;align-items:center;gap:9px;min-width:0; > i{width:3px;height:24px;border-radius:2px;background:linear-gradient(#7dd3fc,#0066cc);box-shadow:0 0 8px rgba(0,170,255,.45)} div{display:flex;align-items:baseline;gap:11px;min-width:0} strong{color:#7dd3fc;font-size:14px;letter-spacing:.5px;white-space:nowrap} span{color:#587897;font-size:10px;white-space:nowrap} }
 .rwf-badges { display:flex;align-items:center;gap:7px; }
-.rwf-badge { padding:3px 7px;border:1px solid rgba(64,169,198,.2);border-radius:3px;color:#7398aa;background:rgba(15,93,119,.1);font-size:9px; }
+.rwf-badge { padding:3px 7px;border:1px solid rgba(0,170,255,.2);border-radius:3px;color:#789bb5;background:rgba(0,80,160,.18);font-size:9px; }
 .rwf-live { display:flex;align-items:center;gap:5px;margin-left:4px;color:#6f9689;font-size:9px; i{width:5px;height:5px;border-radius:50%;background:#48df9d;box-shadow:0 0 6px #48df9d} }
 .rwf-dashboard { height:163px;display:grid;grid-template-columns:minmax(390px,42%) 1fr;gap:18px;padding:15px 18px 13px;box-sizing:border-box; }
 .rwf-metrics { display:grid;grid-template-columns:repeat(4,minmax(74px,1fr));gap:8px; }
@@ -455,6 +455,35 @@ onMounted(async () => {
 .rwf-face-arch .zone { display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid rgba(255,255,255,.09);background:rgba(66,143,171,.18);b{color:#9fc3cf;font-size:9px}small{margin-top:3px;color:#607f8e;font-size:7px}&.crown{background:linear-gradient(180deg,rgba(190,83,54,.43),rgba(186,154,50,.23))}&.right{background:rgba(184,145,48,.2)}&.floor{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.1);border-right:0;background:rgba(55,160,119,.19)} }
 .rwf-face-baseline { display:flex;justify-content:space-between;margin-top:7px;border-top:1px solid rgba(68,131,153,.25);color:#486b7b;font-size:7px; }
 .rwf-face-note { gap:5px;span{color:#587989;font-size:7px}b{color:#9ab9c5;font:9px Consolas,"Microsoft YaHei",sans-serif;font-weight:500} }
+
+/* 与左右侧栏统一为深蓝黑半透明面板；等级、曲线和预警色继续承担数据表达。 */
+.rwf-metric,
+.rwf-source-stack,
+.rwf-scheme-summary,
+.rwf-design-cards > div,
+.rwf-compare-card,
+.rwf-correction-result,
+.rwf-update-log,
+.rwf-monitor-cards > div,
+.rwf-trend-chart,
+.rwf-alert-queue,
+.rwf-face-summary,
+.rwf-zone-card,
+.rwf-baseline-legend,
+.rwf-correction-legend,
+.rwf-correction-note,
+.rwf-face-legend,
+.rwf-face-note {
+  border-color: rgba(0, 170, 255, .12);
+  background: rgba(0, 20, 48, .46);
+}
+.rwf-profile-track,
+.rwf-track,
+.rwf-c-track,
+.rwf-face-arch {
+  border-color: rgba(0, 170, 255, .2);
+  background-color: #061528;
+}
 
 /* 可读性：底栏增高后统一抬升字号，并为密集标签保留独立行高。 */
 .rwf-title { strong{font-size:15px}span{font-size:11px} }
