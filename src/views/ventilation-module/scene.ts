@@ -1,6 +1,28 @@
 import * as Cesium from 'cesium'
+import { enableUndergroundTerrainBackground } from '@/utils/Common/UndergroundTerrain'
+import { ventilationPositionToLocal, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
 
 const localFlightTokens = new WeakMap<Cesium.Viewer, object>()
+const MODEL_UP = Cesium.Cartesian3.normalize(
+  ventilationVectorToWorld(Cesium.Cartesian3.UNIT_Y),
+  new Cesium.Cartesian3(),
+)
+const MODEL_RIGHT = Cesium.Cartesian3.normalize(
+  ventilationVectorToWorld(Cesium.Cartesian3.UNIT_X),
+  new Cesium.Cartesian3(),
+)
+
+function cameraUpForModel(direction: Cesium.Cartesian3) {
+  let right = Cesium.Cartesian3.cross(direction, MODEL_UP, new Cesium.Cartesian3())
+  if (Cesium.Cartesian3.magnitudeSquared(right) < Cesium.Math.EPSILON8) {
+    right = Cesium.Cartesian3.clone(MODEL_RIGHT)
+  }
+  Cesium.Cartesian3.normalize(right, right)
+  return Cesium.Cartesian3.normalize(
+    Cesium.Cartesian3.cross(right, direction, new Cesium.Cartesian3()),
+    new Cesium.Cartesian3(),
+  )
+}
 
 export function createVentilationViewer(container: HTMLElement): Cesium.Viewer {
   const viewer = new Cesium.Viewer(container, {
@@ -20,12 +42,6 @@ export function createVentilationViewer(container: HTMLElement): Cesium.Viewer {
   })
 
   const scene = viewer.scene
-  scene.globe.show = false
-  ;(scene.skyBox as any).show = false
-  scene.sun.show = false
-  scene.moon.show = false
-  scene.skyAtmosphere.show = false
-  scene.fog.enabled = false
   scene.backgroundColor = Cesium.Color.fromCssColorString('#07131f')
   // 保留半透明模型的深度信息，供 Cesium 原生导航与点击拾取使用。
   scene.pickTranslucentDepth = true
@@ -42,6 +58,7 @@ export function createVentilationViewer(container: HTMLElement): Cesium.Viewer {
 
   const credit = viewer.cesiumWidget.creditContainer as HTMLElement
   if (credit) credit.style.display = 'none'
+  enableUndergroundTerrainBackground(viewer)
   return viewer
 }
 
@@ -55,9 +72,7 @@ export function lookAtLocal(
     Cesium.Cartesian3.subtract(target, destination, new Cesium.Cartesian3()),
     new Cesium.Cartesian3(),
   )
-  const up = Math.abs(Cesium.Cartesian3.dot(direction, Cesium.Cartesian3.UNIT_Y)) > 0.98
-    ? Cesium.Cartesian3.UNIT_Z
-    : Cesium.Cartesian3.UNIT_Y
+  const up = cameraUpForModel(direction)
   viewer.camera.setView({
     destination,
     orientation: { direction, up },
@@ -76,9 +91,7 @@ export function flyToLocal(
     Cesium.Cartesian3.subtract(target, destination, new Cesium.Cartesian3()),
     new Cesium.Cartesian3(),
   )
-  const endUp = Math.abs(Cesium.Cartesian3.dot(endDirection, Cesium.Cartesian3.UNIT_Y)) > 0.98
-    ? Cesium.Cartesian3.UNIT_Z
-    : Cesium.Cartesian3.UNIT_Y
+  const endUp = cameraUpForModel(endDirection)
   const camera = viewer.camera
   const flightToken = {}
   localFlightTokens.set(viewer, flightToken)
@@ -122,8 +135,8 @@ export function flyToLocal(
  * - 滚轮：朝鼠标指向的位置缩放
  * - 双指：缩放并平移
  *
- * 隧道使用局部 Y-up 坐标并隐藏了地球，因此不使用依赖椭球面的 Cesium
- * 默认导航。动态拾取旋转点也避免长模型始终围绕一个固定中心旋转。
+ * 隧道虽然已锚定到真实地理坐标，但交互仍按原工程模型的局部 Y-up
+ * 坐标进行环绕，保持加入地形前的旋转手感。
  */
 export function installModelControls(
   viewer: Cesium.Viewer,
@@ -141,7 +154,6 @@ export function installModelControls(
   controller.enableTilt = false
   controller.enableLook = false
 
-  const WORLD_UP = Cesium.Cartesian3.UNIT_Y
   const MIN_DISTANCE = 1.5
   const MAX_DISTANCE = 50000
   const ORBIT_SPEED = 0.0042
@@ -194,16 +206,7 @@ export function installModelControls(
       Cesium.Cartesian3.subtract(target, position, new Cesium.Cartesian3()),
       new Cesium.Cartesian3(),
     )
-    let right = Cesium.Cartesian3.cross(direction, WORLD_UP, new Cesium.Cartesian3())
-    if (Cesium.Cartesian3.magnitudeSquared(right) < Cesium.Math.EPSILON8) {
-      right = Cesium.Cartesian3.clone(camera.rightWC)
-    } else {
-      Cesium.Cartesian3.normalize(right, right)
-    }
-    const up = Cesium.Cartesian3.normalize(
-      Cesium.Cartesian3.cross(right, direction, new Cesium.Cartesian3()),
-      new Cesium.Cartesian3(),
-    )
+    const up = cameraUpForModel(direction)
     camera.setView({ destination: position, orientation: { direction, up } })
   }
 
@@ -255,18 +258,21 @@ export function installModelControls(
   }
 
   const orbitByPixels = (dx: number, dy: number) => {
-    const offset = Cesium.Cartesian3.subtract(camera.positionWC, pivot, new Cesium.Cartesian3())
+    const localPivot = ventilationPositionToLocal(pivot)
+    const localCamera = ventilationPositionToLocal(camera.positionWC)
+    const offset = Cesium.Cartesian3.subtract(localCamera, localPivot, new Cesium.Cartesian3())
     const distance = Math.max(Cesium.Cartesian3.magnitude(offset), MIN_DISTANCE)
     const horizontal = Math.hypot(offset.x, offset.z)
-    const yaw = Math.atan2(offset.x, offset.z) - dx * ORBIT_SPEED
+    const yaw = Math.atan2(offset.x, offset.z) + dx * ORBIT_SPEED
     const currentPitch = Math.atan2(offset.y, horizontal)
     const pitch = Cesium.Math.clamp(currentPitch + dy * ORBIT_SPEED, -1.47, 1.47)
     const projected = Math.cos(pitch) * distance
-    const position = new Cesium.Cartesian3(
-      pivot.x + Math.sin(yaw) * projected,
-      pivot.y + Math.sin(pitch) * distance,
-      pivot.z + Math.cos(yaw) * projected,
+    const localPosition = new Cesium.Cartesian3(
+      localPivot.x + Math.sin(yaw) * projected,
+      localPivot.y + Math.sin(pitch) * distance,
+      localPivot.z + Math.cos(yaw) * projected,
     )
+    const position = ventilationPositionToWorld(localPosition)
     setLookAt(position, pivot)
   }
 

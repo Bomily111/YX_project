@@ -1,4 +1,5 @@
 import * as Cesium from 'cesium'
+import { VENTILATION_MODEL_MATRIX, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
 
 export type ColorMode = 'velocity' | 'temperature'
 
@@ -17,7 +18,7 @@ export interface VentilationLayers {
   arrowHeads?: Cesium.PointPrimitiveCollection
   streamlines?: Cesium.PolylineCollection
   particles?: Cesium.PointPrimitiveCollection
-  particleState: Array<{ point: any; tube: 'left' | 'right'; speed: number }>
+  particleState: Array<{ point: any; tube: 'left' | 'right'; speed: number; localX: number; localY: number }>
   removeAnimation?: () => void
 }
 
@@ -68,7 +69,9 @@ function createMapper(data: CfdData): Mapper {
       const mappedX = x <= gap
         ? remap(x, lx0, lx1, 26.5, 37.5)
         : remap(x, rx0, rx1, -5.5, 5.5)
-      return new Cesium.Cartesian3(mappedX, remap(data.y[i], yMin, yMax, 0.2, 6.8), data.z[i])
+      return ventilationPositionToWorld(
+        new Cesium.Cartesian3(mappedX, remap(data.y[i], yMin, yMax, 0.2, 6.8), data.z[i]),
+      )
     },
   }
 }
@@ -76,7 +79,7 @@ function createMapper(data: CfdData): Mapper {
 export async function loadTunnelModel(viewer: Cesium.Viewer) {
   layers.model = await Cesium.Model.fromGltfAsync({
     url: '/data/ventilation/tunnel-assembled.glb',
-    modelMatrix: Cesium.Matrix4.IDENTITY,
+    modelMatrix: VENTILATION_MODEL_MATRIX,
     // The migrated model uses project-local coordinates (Y is elevation and Z
     // is tunnel chainage). Prevent Cesium's normal geospatial Y-up conversion
     // so the GLB, CFD samples and local camera stay in the same frame.
@@ -118,10 +121,10 @@ export async function loadTunnelModel(viewer: Cesium.Viewer) {
     scaleByDistance: new Cesium.NearFarScalar(100, 1, 9000, 0.55),
   }
   // 标签放到双洞外侧并抬高，避免压住 CFD 点云和洞身轮廓。
-  labels.add({ ...labelStyle, position: new Cesium.Cartesian3(43, 18, 3825), text: '左主洞 · TBM' })
+  labels.add({ ...labelStyle, position: ventilationPositionToWorld(new Cesium.Cartesian3(43, 18, 3825)), text: '左主洞 · TBM' })
   labels.add({
     ...labelStyle,
-    position: new Cesium.Cartesian3(-11, 28, 3985),
+    position: ventilationPositionToWorld(new Cesium.Cartesian3(-11, 28, 3985)),
     pixelOffset: new Cesium.Cartesian2(0, -16),
     text: '右主洞 · 钻爆',
   })
@@ -174,7 +177,7 @@ export function buildSteadyLayers(
     const start = arrowMapper.point(i)
     const velocity = Math.max(arrows.vel[i], 0.001)
     const direction = Cesium.Cartesian3.normalize(
-      new Cesium.Cartesian3(-arrows.vx[i], -arrows.vy[i], -arrows.vz[i]),
+      ventilationVectorToWorld(new Cesium.Cartesian3(-arrows.vx[i], -arrows.vy[i], -arrows.vz[i])),
       new Cesium.Cartesian3(),
     )
     const end = Cesium.Cartesian3.add(
@@ -216,22 +219,22 @@ export function buildSteadyLayers(
   for (let i = 0; i < 180; i++) {
     const tube = Math.random() < 0.5 ? 'left' : 'right'
     const x = tube === 'left' ? 32 + (Math.random() - 0.5) * 10 : (Math.random() - 0.5) * 10
+    const y = 0.5 + Math.random() * 5.8
     const point = particles.add({
-      position: new Cesium.Cartesian3(x, 0.5 + Math.random() * 5.8, 3805 + Math.random() * 200),
+      position: ventilationPositionToWorld(new Cesium.Cartesian3(x, y, 3805 + Math.random() * 200)),
       color: velocityColor(0.5, 0.82), pixelSize: 5,
       disableDepthTestDistance: Number.POSITIVE_INFINITY,
     })
-    layers.particleState.push({ point, tube, speed: 10 + Math.random() * 22 })
+    layers.particleState.push({ point, tube, speed: 10 + Math.random() * 22, localX: x, localY: y })
   }
   layers.particles = particles
   const animate = (_scene: any, time: Cesium.JulianDate) => {
     const seconds = Cesium.JulianDate.toDate(time).getTime() / 1000
     for (let i = 0; i < layers.particleState.length; i++) {
       const state = layers.particleState[i]
-      const current = state.point.position as Cesium.Cartesian3
       const span = 200
       const z = 4005 - ((seconds * state.speed + i * 7.3) % span)
-      state.point.position = new Cesium.Cartesian3(current.x, current.y, z)
+      state.point.position = ventilationPositionToWorld(new Cesium.Cartesian3(state.localX, state.localY, z))
     }
   }
   viewer.scene.preRender.addEventListener(animate)

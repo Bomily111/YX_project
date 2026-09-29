@@ -1,4 +1,5 @@
 import * as Cesium from 'cesium'
+import { enableUndergroundTerrainBackground } from '@/utils/Common/UndergroundTerrain'
 
 // 隧道分段锚点（与 tunnel-module/tunnel.ts 一致）
 const SEGMENT_CONFIGS = [
@@ -46,12 +47,6 @@ export function createSupportViewer(container: HTMLElement): Cesium.Viewer {
   })
 
   const s = viewer.scene
-  s.globe.show = false
-  ;(s.skyBox as any).show = false
-  s.sun.show = false
-  s.moon.show = false
-  s.skyAtmosphere.show = false
-  s.fog.enabled = false
   s.backgroundColor = Cesium.Color.fromCssColorString('#0a0e15')
   s.debugShowFramesPerSecond = false
   s.screenSpaceCameraController.enableCollisionDetection = false
@@ -63,6 +58,8 @@ export function createSupportViewer(container: HTMLElement): Cesium.Viewer {
 
   const credit = viewer.cesiumWidget.creditContainer as HTMLElement
   if (credit) credit.style.display = 'none'
+
+  enableUndergroundTerrainBackground(viewer)
 
   return viewer
 }

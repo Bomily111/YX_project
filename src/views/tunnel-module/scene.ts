@@ -2,10 +2,11 @@
  * 极简 Cesium 场景 —— 性能优先
  * 关键优化:
  *  - requestRenderMode: 只在交互/变化时渲染, 空闲时 0 GPU -> 拖拽旋转丝滑
- *  - 不加载地球/地形/影像, 纯黑底只放隧道 + 爆破模型
+ *  - 复用主平台影像与地形，并以地下透视方式展示隧道 + 爆破模型
  *  - 相机控制器针对"洞内漫游"调参(关碰撞, 近距可缩放)
  */
 import * as Cesium from 'cesium'
+import { enableUndergroundTerrainBackground } from '@/utils/Common/UndergroundTerrain'
 
 export function createViewer(container: string | HTMLElement): Cesium.Viewer {
   const viewer = new Cesium.Viewer(container, {
@@ -18,12 +19,6 @@ export function createViewer(container: string | HTMLElement): Cesium.Viewer {
   })
 
   const s = viewer.scene
-  s.globe.show = false           // 不要地球
-  ;(s.skyBox as any).show = false
-  s.sun.show = false
-  s.moon.show = false
-  s.skyAtmosphere.show = false
-  s.fog.enabled = false
   s.backgroundColor = Cesium.Color.fromCssColorString('#0a0e15')
   s.debugShowFramesPerSecond = false
 
@@ -39,6 +34,8 @@ export function createViewer(container: string | HTMLElement): Cesium.Viewer {
   // 隐藏 Cesium 版权角标
   const credit = viewer.cesiumWidget.creditContainer as HTMLElement
   if (credit) credit.style.display = 'none'
+
+  enableUndergroundTerrainBackground(viewer)
 
   return viewer
 }

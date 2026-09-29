@@ -221,6 +221,7 @@ import TunnelGeometryView from './TunnelGeometryView.vue'
 import VentilationMileageSearch from './VentilationMileageSearch.vue'
 import { createVentilationViewer, flyToLocal, installModelControls, lookAtLocal } from './scene'
 import { buildSteadyLayers, destroyVentilation, layers, loadTunnelModel, recolorSteady, setLayerVisible, setModelOpacity, setTunnelSectionView, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
+import { VENTILATION_LOCAL_REFERENCE, ventilationPositionToLocal, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
 
 type ViewKey = 'geometry' | 'flow' | 'co' | 'transient' | 'thermal'
 const router = useRouter()
@@ -260,7 +261,7 @@ let mileageMarkerTimer: ReturnType<typeof setTimeout> | undefined
 let stopLayerPanelDrag: (() => void) | undefined
 // CFD 数据包围盒中心：X[-5.4846,45.4880]、Y[0,7.5292]、Z[3805.1509,4005.1511]。
 // 视角复位以该点（K3+905.151）为默认中心；交互时旋转中心随鼠标落点更新。
-const CFD_FOCUS = new Cesium.Cartesian3(20.001704, 3.764577, 3905.151001)
+const CFD_FOCUS = ventilationPositionToWorld(VENTILATION_LOCAL_REFERENCE)
 const orbitFocus = Cesium.Cartesian3.clone(CFD_FOCUS)
 let overviewRadius = 3650
 
@@ -394,7 +395,7 @@ function focusOverview() {
   updateActiveFocus(orbitFocus)
   // The GLB is assembled in plan order (left/TBM on positive local X). This
   // camera keeps that alignment above the right/drill tunnel, matching the 2D plan.
-  lookAtLocal(viewer, orbitFocus, new Cesium.Cartesian3(overviewRadius * -1.18, overviewRadius * 0.83, overviewRadius * 0.71))
+  lookAtLocal(viewer, orbitFocus, ventilationVectorToWorld(new Cesium.Cartesian3(overviewRadius * -1.18, overviewRadius * 0.83, overviewRadius * 0.71)))
 }
 function focusCfd() {
   if (!viewer) return
@@ -407,12 +408,13 @@ function focusCfd() {
   updateActiveFocus(orbitFocus)
   // 以 CFD 包围盒中心为观察中心，完整容纳双洞和 200m 计算区间。
   cameraControls?.setFocus(orbitFocus)
-  flyToLocal(viewer, orbitFocus, new Cesium.Cartesian3(-155, 105, 255), 0.95)
+  flyToLocal(viewer, orbitFocus, ventilationVectorToWorld(new Cesium.Cartesian3(-155, 105, 255)), 0.95)
 }
 function updateActiveFocus(focus: Cesium.Cartesian3) {
   Cesium.Cartesian3.clone(focus, orbitFocus)
-  activeChainage.value = Cesium.Math.clamp(focus.z, 0, 8200)
-  activeTunnel.value = focus.x >= 16 ? 'left' : 'right'
+  const localFocus = ventilationPositionToLocal(focus)
+  activeChainage.value = Cesium.Math.clamp(localFocus.z, 0, 8200)
+  activeTunnel.value = localFocus.x >= 16 ? 'left' : 'right'
 }
 function tunnelLabel(tunnel: TunnelKey) { return ({ left: '左主洞', right: '右主洞', ddk: 'DDK 探洞' })[tunnel] }
 function formatMileage(z: number) { const n = Math.abs(Math.round(z)); return `K${Math.floor(n/1000)}+${String(n%1000).padStart(3,'0')}` }
@@ -452,13 +454,13 @@ function focusStandard(kind: 'section' | 'side' | 'top') {
   const selectedTunnel = activeTunnel.value
   const chainage = activeChainage.value
   // 标准视图统一以两条主洞的中线为中心，使用固定取景距离，避免受当前缩放影响。
-  const target = new Cesium.Cartesian3(16, 3.5, chainage)
+  const target = ventilationPositionToWorld(new Cesium.Cartesian3(16, 3.5, chainage))
   const offsets = {
     // 位于当前切面的大里程侧近距离回望，形成参考图中的双洞汇聚效果。
-    section: new Cesium.Cartesian3(0, 0, 48),
+    section: ventilationVectorToWorld(new Cesium.Cartesian3(0, 0, 48)),
     // 保留侧向关系并加入少量轴向夹角，使两条平行主洞不再完全重合。
-    side: new Cesium.Cartesian3(-115, 35, -70),
-    top: new Cesium.Cartesian3(0, 245, 0.001),
+    side: ventilationVectorToWorld(new Cesium.Cartesian3(-115, 35, -70)),
+    top: ventilationVectorToWorld(new Cesium.Cartesian3(0, 245, 0.001)),
   }
   Cesium.Cartesian3.clone(target, orbitFocus)
   usePerspectiveProjection()
@@ -488,11 +490,11 @@ async function locateFromPlan(payload: { tunnel: TunnelKey; chainage: number }) 
   const ddkEndX = -5.700000266269564
   const x = payload.tunnel === 'left' ? 32 : payload.tunnel === 'right' ? 0
     : ddkEndX - Math.tan(Cesium.Math.toRadians(22.5)) * (2370 - payload.chainage)
-  const focus = new Cesium.Cartesian3(x, 3.8, payload.chainage)
+  const focus = ventilationPositionToWorld(new Cesium.Cartesian3(x, 3.8, payload.chainage))
   Cesium.Cartesian3.clone(focus, orbitFocus)
   cameraControls?.setFocus(focus)
   placeMileageMarker(focus, payload.tunnel, payload.chainage)
-  flyToLocal(viewer, focus, new Cesium.Cartesian3(-105, 62, 138))
+  flyToLocal(viewer, focus, ventilationVectorToWorld(new Cesium.Cartesian3(-105, 62, 138)))
   viewer.resize()
 }
 
