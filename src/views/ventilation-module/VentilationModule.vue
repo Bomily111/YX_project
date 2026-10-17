@@ -188,7 +188,8 @@
             <p><span>左主洞</span><b>TBM · 6,800m · 68段</b></p><p><span>右主洞</span><b>钻爆 · 7,800m · 78段</b></p>
             <p><span>横通道</span><b>4处 · 4m×4m</b></p><p><span>附属通道</span><b>DDK + A线 + D线</b></p>
           </article>
-          <article class="info-card"><h3>稳态 CFD 风场</h3><p><span>计算点</span><b>{{ cfdCells?.meta.n || 0 }}</b></p><p><span>矢量样本</span><b>{{ cfdArrows?.meta.n || 0 }}</b></p><p><span>数据区间</span><b>K3+805～K4+005</b></p><p><span>当前着色</span><b>{{ colorMode === 'velocity' ? '风速' : '温度' }}</b></p></article>
+          <article class="info-card"><h3>稳态 CFD 风场</h3><p><span>计算点</span><b>{{ cfdCells?.meta.n || 0 }}</b></p><p><span>矢量样本</span><b>{{ cfdArrows?.meta.n || 0 }}</b></p><p><span>原始数据区间</span><b>K3+805～K4+005</b></p><p><span>展示位置</span><b>右主洞中心示意配准至 DK278+330</b></p><p><span>当前着色</span><b>{{ colorMode === 'velocity' ? '风速' : '温度' }}</b></p></article>
+          <article class="info-card note">仅调整三维展示坐标；此 CFD 数据并非 DK278+330 工点实测结果，不能据此作联合工程判断。</article>
           <article v-if="pickedInfo" class="info-card highlight"><h3>选中 CFD 采样点</h3><p><span>里程</span><b>{{ formatMileage(pickedInfo.chainage) }}</b></p><p><span>风速</span><b>{{ pickedInfo.velocity.toFixed(3) }} m/s</b></p><p><span>温度</span><b>{{ pickedInfo.temperature.toFixed(2) }} K / {{ (pickedInfo.temperature - 273.15).toFixed(1) }}°C</b></p></article>
           <article class="info-card gallery"><h3>CFD 分析图</h3><div v-for="img in analysisImages" :key="img.src"><img :src="img.src" :alt="img.label" @click="modalImage = img.src"><small>{{ img.label }}</small></div></article>
         </template>
@@ -219,8 +220,19 @@ import * as echarts from 'echarts'
 import { useRouter } from 'vue-router'
 import TunnelGeometryView from './TunnelGeometryView.vue'
 import VentilationMileageSearch from './VentilationMileageSearch.vue'
-import { createVentilationViewer, flyToLocal, installModelControls, lookAtLocal } from './scene'
-import { buildSteadyLayers, destroyVentilation, layers, loadTunnelModel, recolorSteady, setLayerVisible, setModelOpacity, setTunnelSectionView, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
+import { createVentilationViewer, flyToLocal, installModelControls, lookAtLocal, releaseVentilationViewer } from './scene'
+import { resourceManager } from '@/platform/resources/ResourceManager'
+import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry'
+import { getTunnelModel, buildSteadyLayers, layers, recolorSteady, setLayerVisible, setModelOpacity, setTunnelSectionView, updateThermalPoints, type CfdData, type ColorMode } from './cesiumVentilation'
+import {
+  getVentilationCoData,
+  getVentilationSteadyData,
+  getVentilationThermalData,
+  registerVentilationModule,
+  useVentilationThermalSnapshot,
+  useVentilationTransientScenario,
+  type VentilationTransientScenario,
+} from '@/modules/ventilation/resources'
 import { VENTILATION_LOCAL_REFERENCE, ventilationPositionToLocal, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
 
 type ViewKey = 'geometry' | 'flow' | 'co' | 'transient' | 'thermal'
@@ -259,6 +271,13 @@ let pickHandler: Cesium.ScreenSpaceEventHandler | undefined
 let mileageMarker: Cesium.Entity | undefined
 let mileageMarkerTimer: ReturnType<typeof setTimeout> | undefined
 let stopLayerPanelDrag: (() => void) | undefined
+type AnalysisResourceId =
+  | 'ventilation.steady-cfd'
+  | 'ventilation.co-analysis'
+  | 'ventilation.transient-network'
+  | 'ventilation.thermal-field'
+let activeAnalysisResource: AnalysisResourceId | undefined
+let analysisRequest = 0
 // CFD 数据包围盒中心：X[-5.4846,45.4880]、Y[0,7.5292]、Z[3805.1509,4005.1511]。
 // 视角复位以该点（K3+905.151）为默认中心；交互时旋转中心随鼠标落点更新。
 const CFD_FOCUS = ventilationPositionToWorld(VENTILATION_LOCAL_REFERENCE)
@@ -284,11 +303,20 @@ async function ensureScene() {
   viewer = createVentilationViewer(cesiumHost.value)
   cameraControls = installModelControls(viewer, () => orbitFocus, updateActiveFocus)
   loadingText.value = '加载隧道 GLB 模型…'
-  const model = await loadTunnelModel(viewer)
-  overviewRadius = model.boundingSphere.radius
+  registerVentilationModule()
+  await resourceManager.load(['ventilation.scene'], {
+    viewer,
+    reportProgress: (_progress, message) => {
+      if (message) loadingText.value = message
+    },
+  })
+  const model = getTunnelModel()
+  if (!model) throw new Error('[ventilation] 通风隧道模型未完成注册')
+  if (model.ready) overviewRadius = model.boundingSphere.radius
+  else model.readyEvent.addEventListener(() => { overviewRadius = model.boundingSphere.radius })
   // 首次进入直接观察 CFD 计算区间，不再从完整隧道远景开始。
   focusCfd()
-  pickHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+  pickHandler = createScreenSpaceEventHandler('ventilation.pick', viewer.scene.canvas)
   pickHandler.setInputAction((event: any) => {
     if (cameraControls?.isInteracting()) return
     const picked = viewer?.scene.pick(event.position)
@@ -314,24 +342,51 @@ async function ensureScene() {
 
 async function ensureSteadyData() {
   await ensureScene()
-  if (!cfdCells.value || !cfdArrows.value) {
-    loading3d.value = true; loadingText.value = '加载 CFD 点云与矢量场…'
-    const [cells, arrows] = await Promise.all([
-      fetch(ASSET + 'cfd_cell_data_lite.json').then(r => r.json()),
-      fetch(ASSET + 'cfd_arrows.json').then(r => r.json()),
-    ])
-    cfdCells.value = cells; cfdArrows.value = arrows
-    loading3d.value = false
-  }
+  const data = getVentilationSteadyData()
+  if (!data) throw new Error('[ventilation] 稳态 CFD 资源尚未加载')
+  cfdCells.value = data.cells
+  cfdArrows.value = data.arrows
   if (renderedField.value !== 'steady') {
     buildSteadyLayers(viewer!, cfdCells.value!, cfdArrows.value!, colorMode.value)
     renderedField.value = 'steady'
   }
 }
 
+const resourceForView = (key: ViewKey): AnalysisResourceId | undefined => ({
+  geometry: undefined,
+  flow: 'ventilation.steady-cfd',
+  co: 'ventilation.co-analysis',
+  transient: 'ventilation.transient-network',
+  thermal: 'ventilation.thermal-field',
+})[key] as AnalysisResourceId | undefined
+
+async function switchAnalysisResource(key: ViewKey) {
+  await ensureScene()
+  const next = resourceForView(key)
+  if (activeAnalysisResource === next) return
+  if (activeAnalysisResource) {
+    await resourceManager.release([activeAnalysisResource])
+    renderedField.value = null
+  }
+  activeAnalysisResource = undefined
+  if (!next || !viewer) return
+  loading3d.value = true
+  try {
+    await resourceManager.load([next], {
+      viewer,
+      reportProgress: (_progress, message) => { if (message) loadingText.value = message },
+    })
+    activeAnalysisResource = next
+  } finally {
+    loading3d.value = false
+  }
+}
+
 async function selectView(key: ViewKey) {
+  analysisRequest++
   view.value = key
   await nextTick()
+  await switchAnalysisResource(key)
   if (key === 'flow') { await ensureSteadyData(); showSteadyLayers(true); viewer?.resize() }
   else if (key === 'co') await loadCo()
   else if (key === 'transient') await loadTransient()
@@ -505,7 +560,8 @@ const coLabels = ['掌子面','200m','500m','1000m','洞口']
 const coSnapshotMax = computed(() => Math.max(0, (coData.value?.[coFace.value]?.snapshots?.length || 1) - 1))
 const coSnapshotTime = computed(() => { const t=coData.value?.[coFace.value]?.snapshots?.[coSnapshot.value]?.t || 0; return `t=${(t/60).toFixed(0)}min` })
 async function loadCo() {
-  if (!coData.value) coData.value = await fetch(ASSET + 'co_transport_results.json').then(r => r.json())
+  coData.value = getVentilationCoData()
+  if (!coData.value) throw new Error('[ventilation] CO 分析资源尚未加载')
   coSnapshot.value = 0; await nextTick(); renderCoCharts()
 }
 function renderCoCharts() {
@@ -523,7 +579,7 @@ function renderCoProfile() {
 function safeTime(v: number | null | undefined) { return v == null ? '>60 min' : `${(v/60).toFixed(1)} min` }
 function safeClass(v: number | null | undefined) { return v == null ? 'unsafe' : v < 1800 ? 'safe' : 'warning' }
 
-const transientScenario=ref('fan_ramp_up'); const transientData=ref<any>(); const transientIndex=ref(0)
+const transientScenario=ref<VentilationTransientScenario>('fan_ramp_up'); const transientData=ref<any>(); const transientIndex=ref(0)
 const transientDuctEl=ref<HTMLElement>(); const transientPassageEl=ref<HTMLElement>()
 let transientDuctChart:echarts.ECharts|undefined; let transientPassageChart:echarts.ECharts|undefined
 const transientMax=computed(()=>Math.max(0,(transientData.value?.times?.length||1)-1))
@@ -532,7 +588,15 @@ const transientName=computed(()=>({fan_ramp_up:'风机爬升',fan_oscillation:'�
 const transientEdges=[['Duct_DDK','DDK风筒'],['Duct_Left','左线风筒'],['Duct_Right','右线风筒'],['CP_2300_Left_Right','CP左-右'],['CP_2300_DDK_Left','CP DDK-左'],['CP_4000_DDK_Left','CP DDK-左2'],['Shaft','竖井']]
 const currentTransientValues=computed(()=>transientEdges.map(([name,label])=>({name,label,value:transientData.value?.history?.[name]?.Q?.[transientIndex.value]||0})))
 async function loadTransient() {
-  transientData.value=await fetch(`${ASSET}transient_${transientScenario.value}.json`).then(r=>r.json()); transientIndex.value=0; await nextTick(); renderTransientCharts()
+  const request = ++analysisRequest
+  const scenario = transientScenario.value
+  const response = await fetch(`${ASSET}transient_${scenario}.json`)
+  if (!response.ok) throw new Error(`[ventilation] 瞬态工况加载失败：HTTP ${response.status}`)
+  const data = await response.json()
+  if (request !== analysisRequest || view.value !== 'transient' || scenario !== transientScenario.value) return
+  useVentilationTransientScenario(scenario, data)
+  transientData.value = data
+  transientIndex.value=0; await nextTick(); renderTransientCharts()
 }
 function renderTransientCharts(){
   const d=transientData.value;if(!d||!transientDuctEl.value)return
@@ -551,12 +615,25 @@ const thermalMonitorEl=ref<HTMLElement>(); const thermalProfileEl=ref<HTMLElemen
 let thermalMonitorChart:echarts.ECharts|undefined;let thermalProfileChart:echarts.ECharts|undefined
 const thermalProgress=computed(()=>(100*(1-Math.exp(-thermalTimes[thermalIndex.value]/220))).toFixed(1))
 async function initThermal(){
-  await ensureScene(); focusCfd(); if(!thermalMeta.value){[thermalMeta.value,thermalMonitors.value]=await Promise.all([fetch(ASSET+'cfd_transient_index.json').then(r=>r.json()),fetch(ASSET+'transient_thermal_monitors.json').then(r=>r.json())])}
+  await ensureScene(); focusCfd(); const data=getVentilationThermalData();if(!data)throw new Error('[ventilation] 热场资源尚未加载');thermalMeta.value=data.index;thermalMonitors.value=data.monitors
   await changeThermalTime()
 }
 async function changeThermalTime(){
-  const snap=thermalMeta.value?.snapshots?.[thermalIndex.value];if(!snap||!viewer)return
-  loading3d.value=true;loadingText.value=`加载 t=${snap.t}s 热场…`;thermalSnapshot.value=await fetch(ASSET+snap.file).then(r=>r.json());updateThermalPoints(viewer,thermalSnapshot.value!);renderedField.value='thermal';loading3d.value=false;await nextTick();renderThermalCharts()
+  const request = ++analysisRequest
+  const index = thermalIndex.value
+  const snap=thermalMeta.value?.snapshots?.[index];if(!snap||!viewer)return
+  loading3d.value=true;loadingText.value=`加载 t=${snap.t}s 热场…`
+  try {
+    const response = await fetch(ASSET+snap.file)
+    if (!response.ok) throw new Error(`[ventilation] 热场时间片加载失败：HTTP ${response.status}`)
+    const data = await response.json() as CfdData
+    if (request !== analysisRequest || view.value !== 'thermal' || index !== thermalIndex.value || !viewer) return
+    updateThermalPoints(viewer, data)
+    useVentilationThermalSnapshot(snap.file)
+    thermalSnapshot.value=data;renderedField.value='thermal';await nextTick();renderThermalCharts()
+  } finally {
+    if (request === analysisRequest) loading3d.value=false
+  }
 }
 function renderThermalCharts(){
   if(!thermalMonitors.value||!thermalSnapshot.value||!thermalMonitorEl.value)return
@@ -578,7 +655,7 @@ function darkLineOption(x:number[],series:Array<{name:string;data:number[];color
 
 function resizeAll(){viewer?.resize();[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.resize())}
 onMounted(()=>{if(window.innerWidth<=900)layerPanelCollapsed.value=true;window.addEventListener('resize',resizeAll);selectView('flow')})
-onBeforeUnmount(()=>{window.removeEventListener('resize',resizeAll);stopLayerPanelDrag?.();if(mileageMarkerTimer)clearTimeout(mileageMarkerTimer);if(viewer&&mileageMarker)viewer.entities.remove(mileageMarker);pickHandler?.destroy();cameraControls?.destroy();if(viewer){destroyVentilation(viewer);viewer.destroy()}[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
+onBeforeUnmount(()=>{analysisRequest++;window.removeEventListener('resize',resizeAll);stopLayerPanelDrag?.();if(mileageMarkerTimer)clearTimeout(mileageMarkerTimer);if(viewer&&mileageMarker)viewer.entities.remove(mileageMarker);pickHandler?.destroy();cameraControls?.destroy();const activeViewer=viewer;if(activeViewer){const ids=activeAnalysisResource?[activeAnalysisResource,'ventilation.scene']:['ventilation.scene'];void resourceManager.release(ids).finally(()=>releaseVentilationViewer(activeViewer))}activeAnalysisResource=undefined;viewer=undefined;[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
 </script>
 
 <style scoped lang="scss">

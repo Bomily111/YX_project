@@ -10,9 +10,10 @@
 import * as Cesium from 'cesium';
 import { GetCameraPosition } from '@/utils/Common/CameraControl';
 import AppConfig from '@/config/AppConfig';
+import { viewerService } from '@/platform/viewer/ViewerService';
 
 //函数部分
-export function DTScopeEngine(vueGlobalConfig) {
+export function DTScopeEngine(vueGlobalConfig, container: string | HTMLElement = 'cesiumContainer') {
   DTScopeEngine.loading = true;
   if (vueGlobalConfig == null) {
     return;
@@ -27,26 +28,29 @@ export function DTScopeEngine(vueGlobalConfig) {
   }
 
   // create Cesium Viewer
-  let viewer = new Cesium.Viewer('cesiumContainer', {
-    geocoder: false,
-    homeButton: false,
-    sceneModePicker: false,
-    baseLayerPicker: false,
-    navigationHelpButton: false,
-    fullscreenButton: false,
-    infoBox: false,
-    selectionIndicator: false,
-    timeline: false,
-    animation: false,
-    shouldAnimate: true,
-    contextOptions: {
-      webgl: {
-        preserveDrawingBuffer: true,
-        alpha: true,
-        stencil: true,
-        antialias: false,
-        depth: true,
-        powerPreference: 'high-performance',
+  let viewer = viewerService.create(container, {
+    owner: 'main-platform',
+    cesium: {
+      geocoder: false,
+      homeButton: false,
+      sceneModePicker: false,
+      baseLayerPicker: false,
+      navigationHelpButton: false,
+      fullscreenButton: false,
+      infoBox: false,
+      selectionIndicator: false,
+      timeline: false,
+      animation: false,
+      shouldAnimate: true,
+      contextOptions: {
+        webgl: {
+          preserveDrawingBuffer: true,
+          alpha: true,
+          stencil: true,
+          antialias: false,
+          depth: true,
+          powerPreference: 'high-performance',
+        },
       },
     },
   });
@@ -143,9 +147,14 @@ DTScopeEngine.instance = null;
  * @param {appContext.config.globalProperties} vueGlobalConfig
  * @returns { DTScopeEngine} instance
  */
-DTScopeEngine.getInstance = (vueGlobalConfig) => {
-  if (!DTScopeEngine.instance) {
-    DTScopeEngine.instance = new DTScopeEngine(vueGlobalConfig);
+DTScopeEngine.getInstance = (vueGlobalConfig, container?: string | HTMLElement) => {
+  const active = viewerService.current;
+  if (active) {
+    DTScopeEngine.viewer = active;
+    return DTScopeEngine.instance;
+  }
+  if (!DTScopeEngine.instance || !DTScopeEngine.viewer || DTScopeEngine.viewer.isDestroyed()) {
+    DTScopeEngine.instance = new DTScopeEngine(vueGlobalConfig, container);
   }
 
   return DTScopeEngine.instance;
@@ -154,7 +163,8 @@ DTScopeEngine.getInstance = (vueGlobalConfig) => {
 DTScopeEngine.destroy = () => {
   if (DTScopeEngine.viewer) {
     DTScopeEngine.viewer.entities.removeAll();
-    DTScopeEngine.viewer.destroy();
+    viewerService.destroy(DTScopeEngine.viewer);
   }
+  DTScopeEngine.viewer = undefined;
   DTScopeEngine.instance = null;
 };

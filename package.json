@@ -5,7 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
+    "assets:manifest": "node scripts/generate-task-asset-manifest.mjs",
+    "assets:check": "node scripts/generate-task-asset-manifest.mjs --check",
+    "prebuild": "npm run assets:check",
     "build": "vue-tsc -b && vite build",
+    "test": "vitest run",
+    "test:scenario": "vitest run tests/platform/five-asset-scenario.test.ts",
+    "test:watch": "vitest",
     "build:ventilation-model": "node scripts/build_ventilation_tunnel.cjs",
     "build:tsp-model": "python scripts/convert_tsp_csv.py --vp data/Vp.csv --vs data/Vs.csv --output public/data/tsp_actual && python scripts/generate_tsp_hardness.py && python scripts/generate_tsp_integrity.py",
     "preview": "vite preview",
@@ -39,6 +45,7 @@
     "vite": "^7.2.4",
     "vite-plugin-cesium": "^1.2.23",
     "vite-plugin-externals": "^0.6.2",
+    "vitest": "^3.2.4",
     "vue-tsc": "^3.1.4"
   }
 }

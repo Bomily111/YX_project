@@ -10,7 +10,7 @@
 
 <template>
   <div class="cesiumdiv">
-    <div id="cesiumContainer" :class="cursorTypeStyle" />
+    <div ref="viewerHost" class="cesium-host" :class="cursorTypeStyle" />
     <div v-show="isCustom" class="customCursor" :class="cursorTypeStyle" />
     <div class="position-container">
       <span>{{ lonlat.lon }}°</span>
@@ -22,35 +22,53 @@
 
 <script lang="ts" setup>
 import { DTScopeEngine } from '@/utils/Common/Viewer';
+import { viewerService } from '@/platform/viewer/ViewerService';
 import { loadMap } from '@/utils/Maps/MapSource';
 import { ref, reactive, getCurrentInstance, onBeforeMount, onBeforeUnmount } from 'vue';
 import { nextTick } from "vue";
 
 // 3. 确保这个路径对应你刚才创建的文件
 import { throttle, debounce } from "@/utils/Performance";
-import Cesium, { ScreenSpaceEventHandler, ScreenSpaceEventType, defined, Cartographic, Cartesian3 } from 'cesium';
+import Cesium, { type ScreenSpaceEventHandler, ScreenSpaceEventType, defined, Cartographic, Cartesian3 } from 'cesium';
+import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry';
 
 const ctx = getCurrentInstance();
 const _this = ctx.appContext.config.globalProperties;
 
 const cursorTypeStyle = ref('');
+const viewerHost = ref<HTMLElement>();
 const isCustom = ref(false);
 const lonlat = reactive({
   lon: '0.00',
   lat: '0.00',
 });
 
+let inputHandler: ScreenSpaceEventHandler | undefined;
+
 onBeforeUnmount(() => {
-  DTScopeEngine.destroy();
+  inputHandler?.destroy();
+  inputHandler = undefined;
 });
 
 onBeforeMount(() => {
   nextTick(() => {
-    DTScopeEngine.getInstance(_this);
+    if (!viewerHost.value) return;
+    const existing = viewerService.current;
+    if (existing) {
+      viewerService.attachTo(viewerHost.value, 'main-platform');
+      DTScopeEngine.viewer = existing;
+    } else {
+      const container = document.createElement('div');
+      container.id = 'cesiumContainer';
+      container.className = 'cesium-container';
+      viewerHost.value.appendChild(container);
+      DTScopeEngine.getInstance(_this, container);
+      loadMap(DTScopeEngine.viewer);
+    }
     let viewer = DTScopeEngine.viewer;
-    loadMap(viewer);
 
-    let handler = new ScreenSpaceEventHandler(viewer.canvas);
+    let handler = createScreenSpaceEventHandler('main.pointer-style', viewer.canvas);
+    inputHandler = handler;
 
     // 左键拖动样式
     handler.setInputAction((movement) => {
@@ -111,8 +129,10 @@ onBeforeMount(() => {
 </script>
 
 <style>
-#cesiumContainer {
+.cesium-host,
+.cesium-container {
   height: 100%;
+  width: 100%;
 }
 
 .cesiumdiv {

@@ -87,25 +87,14 @@ export async function loadTunnelModel(viewer: Cesium.Viewer) {
     forwardAxis: Cesium.Axis.X,
   })
   viewer.scene.primitives.add(layers.model)
+  viewer.scene.requestRender()
   layers.model.color = Cesium.Color.WHITE.withAlpha(0.82)
   // Preserve the Blender materials; only add a slight cool tint so TBM,
   // drill-and-blast and auxiliary linings remain visually distinguishable.
   layers.model.colorBlendMode = Cesium.ColorBlendMode.MIX
   layers.model.colorBlendAmount = 0.08
-  if (!layers.model.ready) {
-    await new Promise<void>((resolve, reject) => {
-      const removeReady = layers.model.readyEvent.addEventListener(() => {
-        removeReady()
-        removeError()
-        resolve()
-      })
-      const removeError = layers.model.errorEvent.addEventListener((error: unknown) => {
-        removeReady()
-        removeError()
-        reject(error)
-      })
-    })
-  }
+  // Cesium 1.140 的 Model.readyEvent 只能在模型加入场景并完成首帧后触发。
+  // 这里不阻塞资源加载；调用方可订阅 readyEvent 获取首帧后的包围球。
   const labels = viewer.scene.primitives.add(new Cesium.LabelCollection())
   const labelStyle = {
     font: '600 13px Microsoft YaHei',
@@ -286,10 +275,18 @@ export function removeFlowLayers(viewer: Cesium.Viewer) {
   layers.removeAnimation = undefined
 }
 
-export function destroyVentilation(viewer: Cesium.Viewer) {
-  removeFlowLayers(viewer)
+export function getTunnelModel() {
+  return layers.model
+}
+
+export function removeTunnelModel(viewer: Cesium.Viewer) {
   if (layers.tunnelLabels) viewer.scene.primitives.remove(layers.tunnelLabels)
   layers.tunnelLabels = undefined
   if (layers.model) viewer.scene.primitives.remove(layers.model)
   layers.model = undefined
+}
+
+export function destroyVentilation(viewer: Cesium.Viewer) {
+  removeFlowLayers(viewer)
+  removeTunnelModel(viewer)
 }

@@ -142,15 +142,16 @@
                 class="st-leaf"
                 @click="toggleNodeVisible(child.id)"
               >
-                <span class="st-check" :class="{ on: nodeVisible[child.id] ?? child.visible }">
-                  {{ (nodeVisible[child.id] ?? child.visible) ? '✓' : '' }}
+                <span class="st-check" :class="{ on: nodeVisible[child.id] ?? false }">
+                  {{ (nodeVisible[child.id] ?? false) ? '✓' : '' }}
                 </span>
                 <span class="st-icon">{{ child.icon }}</span>
-                <span class="st-label">{{ child.label }}</span>
+                <span class="st-label">{{ child.label }}{{ supportTreeBusy[kindForNode(child.id)] ? '（加载/释放中…）' : '' }}</span>
                 <button
                   class="st-hl"
                   :class="{ on: nodeHighlight[child.id] }"
                   @click.stop="toggleNodeHighlight(child.id)"
+                  :disabled="!nodeVisible[child.id] || supportTreeBusy[kindForNode(child.id)]"
                 >高亮</button>
               </div>
               <div v-if="!node.children?.length" class="st-empty">暂无部件</div>
@@ -158,6 +159,9 @@
           </div>
         </template>
       </div>
+
+      <p v-if="props.sceneKey === 'support'" class="st-source">既有 GLB 构件 · 不可参数化<br>DK278+100～DK278+167 附近示例布置，不代表实测或质量结论。</p>
+      <p v-if="supportTreeError" role="alert" class="st-source">{{ supportTreeError }}</p>
 
       <!-- 告警提示 -->
       <div v-if="alerts.length" class="sdp-alerts">
@@ -174,8 +178,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue';
-import { setRebarMeshesVisible, loadRebarMeshes, setRebarHighlight, setSecondRebarVisible, setSecondRebarHighlight, loadSecondRebarMeshes, setSteelFrameVisible, setSteelFrameHighlight, loadSteelFrameMeshes, setPipeShedVisible, setPipeShedHighlight, loadPipeShedMeshes, setAnchorVisible, setAnchorHighlight, loadAnchorMeshes, setConduitVisible, setConduitHighlight, loadConduitMeshes, setLockAnchorVisible, setLockAnchorHighlight, loadLockAnchorMeshes } from '@/utils/Common/DrawLine';
+import { computed, reactive, ref, watch, onBeforeUnmount } from 'vue';
+import { setLegacySupportHighlight, legacySupportCatalog } from '@/modules/support/legacy-resources';
+import { registerSupportModule } from '@/modules/support/resources';
+import { resourceManager } from '@/platform/resources/ResourceManager';
+import type { LegacySupportKind } from '@/modules/support/LegacySupportLifecycle';
 import { startWind, changePower, removeFlowLine, getCurrentPower } from '@/utils/Common/WindFieldSimulation';
 import { startVectorField, removeVectorField, changeVectorPower, getVectorPower } from '@/utils/Common/WindVectorField';
 import { startProceduralWind, removeProceduralWind, changeProceduralPower, setProceduralFlow } from '@/utils/Common/TunnelWindSimulation';
@@ -570,31 +577,71 @@ const nodeHighlight = reactive<Record<string, boolean>>({});
 // node UUID → component_type 映射（API 加载时填充）
 const componentTypeMap = reactive<Record<string, string>>({});
 
-type CompHandlers = { load: () => void; show: (v: boolean) => void; highlight: (v: boolean) => void };
-const COMP_HANDLERS: Record<string, CompHandlers> = {
-  rebar:        { load: loadRebarMeshes,        show: setRebarMeshesVisible,    highlight: setRebarHighlight },
-  lining_rebar: { load: loadSecondRebarMeshes,   show: setSecondRebarVisible,    highlight: setSecondRebarHighlight },
-  steel_frame:  { load: loadSteelFrameMeshes,    show: setSteelFrameVisible,     highlight: setSteelFrameHighlight },
-  pipe_shed:    { load: loadPipeShedMeshes,      show: setPipeShedVisible,       highlight: setPipeShedHighlight },
-  anchor:       { load: loadAnchorMeshes,        show: setAnchorVisible,         highlight: setAnchorHighlight },
-  conduit:      { load: loadConduitMeshes,       show: setConduitVisible,        highlight: setConduitHighlight },
-  lock_anchor:  { load: loadLockAnchorMeshes,    show: setLockAnchorVisible,     highlight: setLockAnchorHighlight },
+const supportTreeLeases = new Set<LegacySupportKind>();
+const supportTreeBusy = reactive<Record<string, boolean>>({});
+const supportTreeError = ref('');
+let supportTreeGeneration = 0;
+const kindForNode = (id: string) => (componentTypeMap[id] || id) as LegacySupportKind;
+const setKindVisible = (kind: LegacySupportKind, visible: boolean) => {
+  for (const node of structureTree.value.flatMap(group => group.children || [])) {
+    if (kindForNode(node.id) === kind) nodeVisible[node.id] = visible;
+  }
 };
+async function releaseTreeSupport() {
+  supportTreeGeneration++;
+  const ids = legacySupportCatalog.filter(asset => supportTreeLeases.has(asset.kind)).map(asset => asset.id);
+  for (const kind of supportTreeLeases) setLegacySupportHighlight(kind, false);
+  supportTreeLeases.clear();
+  for (const key of Object.keys(nodeVisible)) nodeVisible[key] = false;
+  for (const key of Object.keys(nodeHighlight)) nodeHighlight[key] = false;
+  if (ids.length) await resourceManager.release(ids);
+}
+watch(() => [props.sceneKey, props.show], () => {
+  if (props.sceneKey !== 'support' || !props.show) void releaseTreeSupport();
+});
+onBeforeUnmount(() => { void releaseTreeSupport(); });
 
-function toggleNodeVisible(nodeId: string) {
-  const current = nodeVisible[nodeId] ?? false;
-  nodeVisible[nodeId] = !current;
-  const type = componentTypeMap[nodeId] || nodeId; // fallback to nodeId for hardcoded IDs
-  const h = COMP_HANDLERS[type];
-  if (!h) return;
-  if (!current) { h.load(); h.show(true); if (nodeHighlight[nodeId]) h.highlight(true); }
-  else { h.show(false); nodeHighlight[nodeId] = false; h.highlight(false); }
+async function toggleNodeVisible(nodeId: string) {
+  const kind = kindForNode(nodeId);
+  const asset = legacySupportCatalog.find(item => item.kind === kind);
+  if (!asset || supportTreeBusy[kind]) return;
+  const generation = supportTreeGeneration;
+  supportTreeBusy[kind] = true;
+  supportTreeError.value = '';
+  try {
+    registerSupportModule();
+    if (supportTreeLeases.has(kind)) {
+      supportTreeLeases.delete(kind);
+      setLegacySupportHighlight(kind, false);
+      await resourceManager.release([asset.id]);
+      setKindVisible(kind, false);
+      nodeHighlight[nodeId] = false;
+    } else {
+      const viewer = DTScopeEngine.viewer;
+      if (!viewer) throw new Error('场景尚未初始化');
+      await resourceManager.load([asset.id], { viewer });
+      if (generation !== supportTreeGeneration || props.sceneKey !== 'support' || !props.show) {
+        await resourceManager.release([asset.id]);
+        return;
+      }
+      supportTreeLeases.add(kind);
+      setKindVisible(kind, true);
+    }
+    DTScopeEngine.viewer?.scene.requestRender();
+  } catch (error) {
+    setKindVisible(kind, false);
+    supportTreeError.value = error instanceof Error ? error.message : String(error);
+  } finally {
+    supportTreeBusy[kind] = false;
+  }
 }
 
 function toggleNodeHighlight(nodeId: string) {
+  const kind = kindForNode(nodeId);
+  if (!supportTreeLeases.has(kind)) return;
   nodeHighlight[nodeId] = !nodeHighlight[nodeId];
-  const type = componentTypeMap[nodeId] || nodeId;
-  COMP_HANDLERS[type]?.highlight(nodeHighlight[nodeId]);
+  setLegacySupportHighlight(kind, nodeHighlight[nodeId]);
+  DTScopeEngine.viewer?.scene.requestRender();
 }
 
 // SVG 折线坐标
@@ -898,6 +945,7 @@ function statusBarColor(level?: string): string {
   &.info   { color: #55aaff; }
 }
 
+.st-source { padding: 8px 12px; font-size: 11px; color: #9bb5c8; line-height: 1.6; }
 /* ── 结构树 ─────────────────────────────────────── */
 .sdp-structure-tree {
   padding: 12px 16px 10px;

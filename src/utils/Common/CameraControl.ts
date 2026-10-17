@@ -8,8 +8,9 @@
  * Copyright (c) 2023 by VGE, All Rights Reserved.
  */
 import { DTScopeEngine } from './Viewer';
-import { ScreenSpaceCameraController, Cartesian3, EasingFunction, ScreenSpaceEventHandler, Math, ScreenSpaceEventType, Matrix4 } from 'cesium';
+import { ScreenSpaceCameraController, Cartesian3, EasingFunction, Math, ScreenSpaceEventType, Matrix4 } from 'cesium';
 import { cartesian3ToCartographic } from '@/utils/Common/Transform';
+import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry';
 
 /**
  * @description: 禁用相机控制
@@ -171,7 +172,7 @@ export function flytoControl(viewer, viewPoint, duration, callback) {
  */
 export function GetCameraPosition(viewer) {
   //let viewer = this._viewer;
-  let handler = new ScreenSpaceEventHandler(viewer.canvas);
+  let handler = createScreenSpaceEventHandler('viewer.debug-camera-position', viewer.canvas);
   handler.setInputAction(function (lclickment) {
     let scene = viewer.scene;
     let ellipsoid = scene.globe.ellipsoid;

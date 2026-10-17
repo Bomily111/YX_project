@@ -1,5 +1,24 @@
 import * as Cesium from 'cesium'
 import { enableUndergroundTerrainBackground } from '@/utils/Common/UndergroundTerrain'
+import { viewerService } from '@/platform/viewer/ViewerService'
+import { waitForTunnelGlbSegment } from '@/utils/Common/DrawLine'
+import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry'
+
+interface ViewerSnapshot {
+  backgroundColor: Cesium.Color
+  light: Cesium.Light
+  requestRenderMode: boolean
+  maximumRenderTimeChange: number
+  enableCollisionDetection: boolean
+  enableInputs: boolean
+  enableRotate: boolean
+  enableTranslate: boolean
+  enableZoom: boolean
+  enableTilt: boolean
+  enableLook: boolean
+}
+
+const viewerSnapshots = new WeakMap<Cesium.Viewer, ViewerSnapshot>()
 
 // 隧道分段锚点（与 tunnel-module/tunnel.ts 一致）
 const SEGMENT_CONFIGS = [
@@ -30,26 +49,49 @@ export function getSegmentModelMatrix(i: number): Cesium.Matrix4 {
 }
 
 export function createSupportViewer(container: HTMLElement): Cesium.Viewer {
-  const viewer = new Cesium.Viewer(container, {
-    baseLayer: false as any,
-    baseLayerPicker: false,
-    geocoder: false,
-    timeline: false,
-    animation: false,
-    sceneModePicker: false,
-    navigationHelpButton: false,
-    homeButton: false,
-    fullscreenButton: false,
-    infoBox: false,
-    selectionIndicator: false,
-    scene3DOnly: true,
-    requestRenderMode: false,
-  })
+  const existing = viewerService.current
+  const viewer = existing
+    ? viewerService.attachTo(container, 'support-module')
+    : viewerService.create(container, {
+        owner: 'support-module',
+        cesium: {
+          baseLayer: false as any,
+          baseLayerPicker: false,
+          geocoder: false,
+          timeline: false,
+          animation: false,
+          sceneModePicker: false,
+          navigationHelpButton: false,
+          homeButton: false,
+          fullscreenButton: false,
+          infoBox: false,
+          selectionIndicator: false,
+          scene3DOnly: true,
+          requestRenderMode: false,
+        },
+      })
 
   const s = viewer.scene
+  const controls = s.screenSpaceCameraController
+  if (existing && !viewerSnapshots.has(viewer)) {
+    viewerSnapshots.set(viewer, {
+      backgroundColor: Cesium.Color.clone(s.backgroundColor),
+      light: s.light,
+      requestRenderMode: s.requestRenderMode,
+      maximumRenderTimeChange: s.maximumRenderTimeChange,
+      enableCollisionDetection: controls.enableCollisionDetection,
+      enableInputs: controls.enableInputs,
+      enableRotate: controls.enableRotate,
+      enableTranslate: controls.enableTranslate,
+      enableZoom: controls.enableZoom,
+      enableTilt: controls.enableTilt,
+      enableLook: controls.enableLook,
+    })
+  }
   s.backgroundColor = Cesium.Color.fromCssColorString('#0a0e15')
+  s.requestRenderMode = false
   s.debugShowFramesPerSecond = false
-  s.screenSpaceCameraController.enableCollisionDetection = false
+  controls.enableCollisionDetection = false
 
   s.light = new Cesium.DirectionalLight({
     direction: new Cesium.Cartesian3(0.35, -0.89, -0.28),
@@ -59,39 +101,36 @@ export function createSupportViewer(container: HTMLElement): Cesium.Viewer {
   const credit = viewer.cesiumWidget.creditContainer as HTMLElement
   if (credit) credit.style.display = 'none'
 
-  enableUndergroundTerrainBackground(viewer)
+  if (!existing) enableUndergroundTerrainBackground(viewer)
 
   return viewer
 }
 
-export async function loadTunnelModel(viewer: Cesium.Viewer): Promise<Cesium.Model> {
-  const modelMatrix = getSegmentModelMatrix(0)
-  console.log('[cesiumScene] 加载隧道, modelMatrix translation:', Cesium.Matrix4.getTranslation(modelMatrix, new Cesium.Cartesian3()))
-  console.log('[cesiumScene] 开始下载隧道 GLB (68MB, 请耐心等待)...')
-  const model = await Cesium.Model.fromGltfAsync({
-    url: '/data/tunnel/tunnel000.glb',
-    modelMatrix,
-  })
-  console.log('[cesiumScene] GLB 下载完成，model.ready:', model.ready)
-  // 先加到场景，触发渲染管线处理
-  viewer.scene.primitives.add(model)
-  viewer.scene.requestRender()
-
-  if (!model.ready) {
-    await new Promise<void>((resolve) => {
-      const timeout = setTimeout(() => {
-        console.log('[cesiumScene] readyEvent 超时(10s), model.ready:', model.ready)
-        resolve()
-      }, 10000)
-      model.readyEvent.addEventListener(() => {
-        console.log('[cesiumScene] readyEvent 触发')
-        clearTimeout(timeout)
-        resolve()
-      })
-    })
+export function releaseSupportViewer(viewer: Cesium.Viewer): void {
+  const snapshot = viewerSnapshots.get(viewer)
+  if (snapshot) {
+    const scene = viewer.scene
+    const controls = scene.screenSpaceCameraController
+    scene.backgroundColor = snapshot.backgroundColor
+    scene.light = snapshot.light
+    scene.requestRenderMode = snapshot.requestRenderMode
+    scene.maximumRenderTimeChange = snapshot.maximumRenderTimeChange
+    controls.enableCollisionDetection = snapshot.enableCollisionDetection
+    controls.enableInputs = snapshot.enableInputs
+    controls.enableRotate = snapshot.enableRotate
+    controls.enableTranslate = snapshot.enableTranslate
+    controls.enableZoom = snapshot.enableZoom
+    controls.enableTilt = snapshot.enableTilt
+    controls.enableLook = snapshot.enableLook
+    viewerSnapshots.delete(viewer)
+    scene.requestRender()
+    return
   }
-  console.log('[cesiumScene] 隧道就绪, ready:', model.ready)
-  return model
+  if (viewerService.currentOwner === 'support-module') viewerService.destroy(viewer)
+}
+
+export async function loadTunnelModel(viewer: Cesium.Viewer): Promise<Cesium.Model> {
+  return waitForTunnelGlbSegment(0, viewer)
 }
 
 export function setTunnelOpacity(model: Cesium.Model, opacity: number): void {
@@ -115,7 +154,7 @@ export function setupClickHandler(
   workfaceModel: () => Cesium.Model | null,
   onToggle: () => void
 ) {
-  const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+  const handler = createScreenSpaceEventHandler('support.model-pick', viewer.scene.canvas)
   handler.setInputAction((click: any) => {
     const picked = viewer.scene.pick(click.position)
     if (picked && (picked.primitive === archModel() || picked.primitive === workfaceModel())) {
@@ -154,7 +193,7 @@ export function installOrbitControls(
     return f ? Cesium.Cartesian3.add(f, panOffset, new Cesium.Cartesian3()) : undefined
   }
 
-  const h = new Cesium.ScreenSpaceEventHandler(scene.canvas)
+  const h = createScreenSpaceEventHandler('support.camera-controls', scene.canvas)
   let mode: 'orbit' | 'pan' | null = null
 
   const onLeftDown = () => { mode = 'orbit' }

@@ -1,0 +1,355 @@
+{
+  "support": {
+    "timestamp": 1792232467192,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 24,
+      "entities": 20,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 1,
+      "activeDirectives": 10,
+      "domOverlays": 0,
+      "strategies": {
+        "visibility": 4,
+        "standard-view": 1,
+        "highlight": 4,
+        "label": 1
+      }
+    },
+    "resourceSummary": {
+      "active": 3,
+      "loaded": 3,
+      "failed": 0,
+      "references": 5
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 3
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.scene",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "blast.effect",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 1402521500,
+      "totalJSHeapSize": 1436233140,
+      "jsHeapSizeLimit": 4395630592
+    }
+  },
+  "blast": {
+    "timestamp": 1792232475695,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 10,
+      "entities": 3,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 1,
+      "activeDirectives": 0,
+      "domOverlays": 0,
+      "strategies": {}
+    },
+    "resourceSummary": {
+      "active": 2,
+      "loaded": 2,
+      "failed": 0,
+      "references": 3
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 2
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "blast.effect",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 537573346,
+      "totalJSHeapSize": 573239810,
+      "jsHeapSizeLimit": 4395630592
+    }
+  },
+  "ventilation": {
+    "timestamp": 1792232483191,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 16,
+      "entities": 3,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 1,
+      "activeDirectives": 3,
+      "domOverlays": 0,
+      "strategies": {
+        "visibility": 1,
+        "section": 1,
+        "highlight": 1
+      }
+    },
+    "resourceSummary": {
+      "active": 3,
+      "loaded": 3,
+      "failed": 0,
+      "references": 3
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "blast.effect",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 535086453,
+      "totalJSHeapSize": 612193477,
+      "jsHeapSizeLimit": 4395630592
+    }
+  },
+  "reset": {
+    "timestamp": 1792232506696,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 9,
+      "entities": 3,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 0,
+      "activeDirectives": 0,
+      "domOverlays": 0,
+      "strategies": {}
+    },
+    "resourceSummary": {
+      "active": 1,
+      "loaded": 1,
+      "failed": 0,
+      "references": 1
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "blast.effect",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 576828851,
+      "totalJSHeapSize": 638740299,
+      "jsHeapSizeLimit": 4395630592
+    }
+  }
+}

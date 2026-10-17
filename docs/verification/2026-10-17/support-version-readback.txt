@@ -1,0 +1,147 @@
+TASK ORCHESTRATION
+任务流程确认
+×
+任务描述
+当前隧洞
+主洞
+加载预算
+起点里程
+终点里程
+切换为质量检查计划
+复位
+任务执行完成
+已完成 2 个步骤，结果已写入共享上下文。
+执行状态
+已完成
+进度
+2/2
+任务 ID
+1792232711933-pe4pt
+工作流步骤
+2 STEPS
+01
+展示 rock · rock.design-grade
+完成
+rock · scene.show-resource
+输入 1
+输出 1
+02
+叠加围岩分级与支护钢架 · DK278+330
+完成
+support · scene.show-resource
+输入 1
+输出 1
+依赖 1
+场景资源决策
+2 PLANS
+展示 rock · rock.design-grade
+1101 MB
+rock.design-grade
+焦点
+
+类型匹配 1.00 · 里程匹配 1.00 · 工序匹配 1.00 · 状态匹配 1.00
+
+common.tunnel
+依赖
+
+由已选根资源依赖
+
+叠加围岩分级与支护钢架 · DK278+330
+2 MB
+rock.design-grade
+焦点
+
+类型匹配 1.00 · 里程匹配 1.00 · 工序匹配 1.00 · 状态匹配 1.00
+
+support.scene
+焦点
+
+类型匹配 1.00 · 里程匹配 1.00 · 工序匹配 1.00 · 状态匹配 1.00
+
+common.tunnel
+依赖
+
+由已选根资源依赖
+
+共享上下文
+2 OUTPUTS
+scene.stage.1
+{"resourceId":"rock.design-grade","module":"rock","chainageRange":{"start":278330,"end":278330},"note":"场景展示已完成；不代表工程质量或风险结论"}
+scene-1
+scene.stage.2
+{"resourceId":"support.scene","module":"support","chainageRange":{"start":278330,"end":278330},"note":"围岩分级与支护钢架同场景展示；参数化钢架为示例设计，不代表质量结论"}
+scene-2
+历史结果回看
+刷新
+
+只读查看各步骤结束时的结果；不会重建或改变当前三维场景。
+
+任务运行
+选择历史任务
+2026/10/17 18:25:11 · 支护GLB指纹落库验收
+2026/10/17 18:23:21 · 支护动态模型版本追踪验收
+2026/10/17 18:20:16 · 配准后视觉验收
+2026/10/17 18:19:39 · DK278+330 四阶段场景验收
+2026/10/17 17:55:21 · 检查 DK278+330 至 DK278+340 初期支护质量
+2026/10/17 14:51:49 · 现有资产动态场景验收
+2026/10/17 14:49:00 · DK278+330 围岩分级、支护钢架、爆破点云及通风 CFD 流线
+结果节点
+2026/10/17 18:25:12 · 计划生成
+2026/10/17 18:25:35 · 步骤完成 · scene-1
+2026/10/17 18:25:36 · 步骤完成 · scene-2
+
+状态：已完成 · 已完成 2/2
+
+场景资源：rock.design-grade、support.scene
+
+增强指令：10 条
+
+已加载资源：common.tunnel、rock.design-grade、support.scene
+
+步骤：展示 rock · rock.design-grade（完成） → 叠加围岩分级与支护钢架 · DK278+330（完成）
+
+数据/模型指纹：19 项
+
+asset:/data/tunnel/tunnel000.glb · sha256-bytes-v1: 960b0328e1e2b344…
+
+asset:/data/tunnel/tunnel001.glb · sha256-bytes-v1: 24a243dbf24318d2…
+
+asset:/data/tunnel/tunnel002.glb · sha256-bytes-v1: e54a8a9bc4a96265…
+
+asset:/data/tunnel/tunnel003.glb · sha256-bytes-v1: 0980ddb1c794e265…
+
+asset:/data/tunnel/tunnel004.glb · sha256-bytes-v1: e1268bf375d55731…
+
+asset:/data/tunnel/tunnel005.glb · sha256-bytes-v1: f691383517d6d9f7…
+
+asset:/data/tunnel/tunnel006.glb · sha256-bytes-v1: 6b2459957f5ac759…
+
+asset:/data/tunnel/tunnel007.glb · sha256-bytes-v1: e742be1a5e7b76fb…
+
+asset:/data/tunnel/tunnel008.glb · sha256-bytes-v1: 16e4912b6662042a…
+
+asset:/data/tunnel/tunnel009.glb · sha256-bytes-v1: c7a4cf4717529d2f…
+
+asset:/data/tunnel/tunnel010.glb · sha256-bytes-v1: 74c2670ec74f8878…
+
+asset:/data/tunnel/tunnel011.glb · sha256-bytes-v1: 0f8f2dfe84cf2c6f…
+
+asset:/data/tunnel/tunnel012.glb · sha256-bytes-v1: a84679d6fcccfb03…
+
+asset:/data/tunnel/tunnel013.glb · sha256-bytes-v1: ff2531986bc56d27…
+
+asset:/data/tunnel/tunnel014.glb · sha256-bytes-v1: df8a5c201b24f8c0…
+
+support.arch · sha256-bytes-v1: 72969a1c138c49f2…
+
+support.arch:parameters · sha256-json-v1: 8c3d1e5172046a68…
+
+support.workface · sha256-bytes-v1: bfc1dbc8406bf39d…
+
+support.workface:parameters · sha256-json-v1: 8c3d1e5172046a68…
+
+scene.stage.1
+{"note":"场景展示已完成；不代表工程质量或风险结论","module":"rock","resourceId":"rock.design-grade","chainageRange":{"end":278330,"start":278330}}
+scene.stage.2
+{"note":"围岩分级与支护钢架同场景展示；参数化钢架为示例设计，不代表质量结论","module":"support","resourceId":"support.scene","chainageRange":{"end":278330,"start":278330}}
+执行全部

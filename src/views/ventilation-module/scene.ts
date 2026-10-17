@@ -1,6 +1,28 @@
 import * as Cesium from 'cesium'
 import { enableUndergroundTerrainBackground } from '@/utils/Common/UndergroundTerrain'
 import { ventilationPositionToLocal, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
+import { viewerService } from '@/platform/viewer/ViewerService'
+import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry'
+
+interface ViewerSnapshot {
+  backgroundColor: Cesium.Color
+  light: Cesium.Light
+  pickTranslucentDepth: boolean
+  requestRenderMode: boolean
+  maximumRenderTimeChange: number
+  enableCollisionDetection: boolean
+  enableInputs: boolean
+  enableRotate: boolean
+  enableTranslate: boolean
+  enableZoom: boolean
+  enableTilt: boolean
+  enableLook: boolean
+  zoomFactor: number
+  minimumZoomDistance: number
+  maximumZoomDistance: number
+}
+
+const viewerSnapshots = new WeakMap<Cesium.Viewer, ViewerSnapshot>()
 
 const localFlightTokens = new WeakMap<Cesium.Viewer, object>()
 const MODEL_UP = Cesium.Cartesian3.normalize(
@@ -25,27 +47,54 @@ function cameraUpForModel(direction: Cesium.Cartesian3) {
 }
 
 export function createVentilationViewer(container: HTMLElement): Cesium.Viewer {
-  const viewer = new Cesium.Viewer(container, {
-    baseLayer: false as any,
-    baseLayerPicker: false,
-    geocoder: false,
-    timeline: false,
-    animation: false,
-    sceneModePicker: false,
-    navigationHelpButton: false,
-    homeButton: false,
-    fullscreenButton: false,
-    infoBox: false,
-    selectionIndicator: false,
-    scene3DOnly: true,
-    requestRenderMode: false,
-  })
+  const existing = viewerService.current
+  const viewer = existing
+    ? viewerService.attachTo(container, 'ventilation-module')
+    : viewerService.create(container, {
+        owner: 'ventilation-module',
+        cesium: {
+          baseLayer: false as any,
+          baseLayerPicker: false,
+          geocoder: false,
+          timeline: false,
+          animation: false,
+          sceneModePicker: false,
+          navigationHelpButton: false,
+          homeButton: false,
+          fullscreenButton: false,
+          infoBox: false,
+          selectionIndicator: false,
+          scene3DOnly: true,
+          requestRenderMode: false,
+        },
+      })
 
   const scene = viewer.scene
+  const cameraController = scene.screenSpaceCameraController
+  if (existing && !viewerSnapshots.has(viewer)) {
+    viewerSnapshots.set(viewer, {
+      backgroundColor: Cesium.Color.clone(scene.backgroundColor),
+      light: scene.light,
+      pickTranslucentDepth: scene.pickTranslucentDepth,
+      requestRenderMode: scene.requestRenderMode,
+      maximumRenderTimeChange: scene.maximumRenderTimeChange,
+      enableCollisionDetection: cameraController.enableCollisionDetection,
+      enableInputs: cameraController.enableInputs,
+      enableRotate: cameraController.enableRotate,
+      enableTranslate: cameraController.enableTranslate,
+      enableZoom: cameraController.enableZoom,
+      enableTilt: cameraController.enableTilt,
+      enableLook: cameraController.enableLook,
+      zoomFactor: cameraController.zoomFactor,
+      minimumZoomDistance: cameraController.minimumZoomDistance,
+      maximumZoomDistance: cameraController.maximumZoomDistance,
+    })
+  }
   scene.backgroundColor = Cesium.Color.fromCssColorString('#07131f')
+  // 通风粒子动画和 Model.readyEvent 都依赖连续帧；离开模块时恢复主场景的按需渲染配置。
+  scene.requestRenderMode = false
   // 保留半透明模型的深度信息，供 Cesium 原生导航与点击拾取使用。
   scene.pickTranslucentDepth = true
-  const cameraController = scene.screenSpaceCameraController
   cameraController.enableCollisionDetection = false
   // 与主页面保持一致的缩放手感和距离范围。
   cameraController.zoomFactor = 1.5
@@ -58,8 +107,37 @@ export function createVentilationViewer(container: HTMLElement): Cesium.Viewer {
 
   const credit = viewer.cesiumWidget.creditContainer as HTMLElement
   if (credit) credit.style.display = 'none'
-  enableUndergroundTerrainBackground(viewer)
+  if (!existing) enableUndergroundTerrainBackground(viewer)
   return viewer
+}
+
+export function releaseVentilationViewer(viewer: Cesium.Viewer): void {
+  // 使尚未结束的自定义飞行动画立即失效，避免离开页面后继续改写主场景相机。
+  localFlightTokens.set(viewer, {})
+  const snapshot = viewerSnapshots.get(viewer)
+  if (snapshot) {
+    const scene = viewer.scene
+    const controls = scene.screenSpaceCameraController
+    scene.backgroundColor = snapshot.backgroundColor
+    scene.light = snapshot.light
+    scene.pickTranslucentDepth = snapshot.pickTranslucentDepth
+    scene.requestRenderMode = snapshot.requestRenderMode
+    scene.maximumRenderTimeChange = snapshot.maximumRenderTimeChange
+    controls.enableCollisionDetection = snapshot.enableCollisionDetection
+    controls.enableInputs = snapshot.enableInputs
+    controls.enableRotate = snapshot.enableRotate
+    controls.enableTranslate = snapshot.enableTranslate
+    controls.enableZoom = snapshot.enableZoom
+    controls.enableTilt = snapshot.enableTilt
+    controls.enableLook = snapshot.enableLook
+    controls.zoomFactor = snapshot.zoomFactor
+    controls.minimumZoomDistance = snapshot.minimumZoomDistance
+    controls.maximumZoomDistance = snapshot.maximumZoomDistance
+    viewerSnapshots.delete(viewer)
+    scene.requestRender()
+    return
+  }
+  if (viewerService.currentOwner === 'ventilation-module') viewerService.destroy(viewer)
 }
 
 export function lookAtLocal(
@@ -162,7 +240,7 @@ export function installModelControls(
   const ZOOM_OUT_FACTOR = 1.16
   const pivot = Cesium.Cartesian3.clone(getDefaultFocus())
   const lastPointer = new Cesium.Cartesian2(canvas.clientWidth / 2, canvas.clientHeight / 2)
-  const handler = new Cesium.ScreenSpaceEventHandler(canvas)
+  const handler = createScreenSpaceEventHandler('ventilation.camera-controls', canvas)
   const pivotPoints = scene.primitives.add(new Cesium.PointPrimitiveCollection())
   const pivotPoint = pivotPoints.add({
     position: pivot,

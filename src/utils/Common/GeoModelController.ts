@@ -7,6 +7,7 @@ import * as Cesium from 'cesium';
 import { DTScopeEngine } from './Viewer';
 import { unloadTemVoxelCloud } from './TemVoxelCloud';
 import { FACE_SKETCH_RECORDS, FACE_SKETCH_REFERENCE } from '@/modules/face-sketch/data';
+import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry';
 // @ts-ignore
 import { initVolume, clearVolume } from '@/utils/AllPrevious/All/ShareVolume01.js';
 // @ts-ignore
@@ -749,6 +750,8 @@ export function setTunnelModelVisible(show: boolean) {
 
 // ── 主界面围岩模型（直接叠加在地形上，不切黑底）────────────
 let rockPrimitive: any = null;
+let rockLoadPromise: Promise<void> | null = null;
+const unavailableRockModelUrls = new Set<string>();
 
 /**
  * 在主界面中线上加载围岩 GLB 模型（不切换场景模式，不飞相机）
@@ -760,8 +763,8 @@ export function loadRockModel(customViewer?: any) {
   const cfg = MODEL_CONFIGS.weak_rock;
   if (!cfg?.glbUrl) return;
 
-  // 已加载则跳过
-  if (rockPrimitive) return;
+  // 已加载、正在加载或已确认资源缺失时跳过，避免每次返回首页重复触发 Cesium 解析错误。
+  if (rockPrimitive || rockLoadPromise || unavailableRockModelUrls.has(cfg.glbUrl)) return;
 
   const pos = Cesium.Cartesian3.fromDegrees(cfg.tunnelPos[0], cfg.tunnelPos[1], cfg.tunnelPos[2]);
   const hpr = new Cesium.HeadingPitchRoll(cfg.glbHeading ?? 0, 0, 0);
@@ -772,12 +775,29 @@ export function loadRockModel(customViewer?: any) {
   const translationMatrix = Cesium.Matrix4.fromTranslation(finalOffset);
   modelMatrix = Cesium.Matrix4.multiply(modelMatrix, translationMatrix, new Cesium.Matrix4());
 
-  Cesium.Model.fromGltfAsync({ url: cfg.glbUrl, modelMatrix })
-    .then((model) => {
+  rockLoadPromise = (async () => {
+    const response = await fetch(cfg.glbUrl!, { method: 'HEAD' });
+    const contentType = response.headers.get('content-type') || '';
+    if (!response.ok || contentType.includes('text/html')) {
+      unavailableRockModelUrls.add(cfg.glbUrl!);
+      console.warn(`[GeoModel] 围岩模型资源不存在，已跳过：${cfg.glbUrl}`);
+      return;
+    }
+
+    const model = await Cesium.Model.fromGltfAsync({ url: cfg.glbUrl!, modelMatrix });
+    if (viewer.isDestroyed()) {
+      model.destroy();
+      return;
+    }
+    if (!rockPrimitive) {
       rockPrimitive = viewer.scene.primitives.add(model);
       console.log('[GeoModel] 围岩模型已加载到主界面，并应用了最终位置偏移。');
-    })
-    .catch((e) => console.error('[GeoModel] 围岩模型加载失败:', e));
+    } else {
+      model.destroy();
+    }
+  })()
+    .catch((e) => console.error('[GeoModel] 围岩模型加载失败:', e))
+    .finally(() => { rockLoadPromise = null });
 }
 
 /**
@@ -1066,7 +1086,7 @@ function applyTemGlbAppearance(selected = false) {
 
 function installTemGlbSelection(viewer: Cesium.Viewer) {
   temGlbPickHandler?.destroy()
-  temGlbPickHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+  temGlbPickHandler = createScreenSpaceEventHandler('rock.tem-model-pick', viewer.scene.canvas)
   temGlbPickHandler.setInputAction((event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
     const picked = viewer.scene.pick(event.position) as { primitive?: unknown } | undefined
     const pickedTemSurface = picked?.primitive === temGlbPrimitive

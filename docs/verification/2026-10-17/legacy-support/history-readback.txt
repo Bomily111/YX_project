@@ -1,0 +1,177 @@
+TASK ORCHESTRATION
+任务流程确认
+×
+任务描述
+当前隧洞
+主洞
+加载预算
+起点里程
+终点里程
+切换为质量检查计划
+复位
+生成围岩与既有支护预览
+
+既有支护构件保留 DK278+100～DK278+167 附近示例布置，暂不支持参数修改；参数化钢架试验仍可单独使用。
+
+任务执行完成
+已完成 2 个步骤，结果已写入共享上下文。
+执行状态
+已完成
+进度
+2/2
+任务 ID
+1792234245730-jp8oh
+工作流步骤
+2 STEPS
+01
+展示 rock · rock.design-grade
+完成
+rock · scene.show-resource
+输入 1
+输出 1
+02
+叠加围岩分级与既有支护构件 · 示例布置段
+完成
+support · scene.show-resource
+输入 1
+输出 1
+依赖 1
+场景资源决策
+2 PLANS
+展示 rock · rock.design-grade
+1101 MB
+rock.design-grade
+焦点
+
+类型匹配 1.00 · 里程匹配 1.00 · 工序匹配 1.00 · 状态匹配 1.00
+
+common.tunnel
+依赖
+
+由已选根资源依赖
+
+叠加围岩分级与既有支护构件 · 示例布置段
+134 MB
+rock.design-grade
+焦点
+
+类型匹配 1.00 · 里程匹配 1.00 · 工序匹配 1.00 · 状态匹配 1.00
+
+support.legacy-assembly
+焦点
+
+类型匹配 1.00 · 里程匹配 1.00 · 工序匹配 1.00 · 状态匹配 1.00
+
+common.tunnel
+依赖
+
+由已选根资源依赖
+
+support.legacy-rebar
+依赖
+
+由已选根资源依赖
+
+support.legacy-lining-rebar
+依赖
+
+由已选根资源依赖
+
+support.legacy-steel-frame
+依赖
+
+由已选根资源依赖
+
+support.legacy-pipe-shed
+依赖
+
+由已选根资源依赖
+
+support.legacy-anchor
+依赖
+
+由已选根资源依赖
+
+support.legacy-conduit
+依赖
+
+由已选根资源依赖
+
+support.legacy-lock-anchor
+依赖
+
+由已选根资源依赖
+
+共享上下文
+2 OUTPUTS
+scene.stage.1
+{"resourceId":"rock.design-grade","module":"rock","chainageRange":{"start":278330,"end":278330},"note":"场景展示已完成；不代表工程质量或风险结论"}
+scene-1
+scene.stage.2
+{"resourceId":"support.legacy-assembly","module":"support","chainageRange":{"start":278133.5,"end":278133.5},"note":"结构树既有 GLB 构件；保留 DK278+100～DK278+167 附近原示例布置，不可参数化，不代表实测支护或质量…
+scene-2
+历史结果回看
+刷新
+
+只读查看各步骤结束时的结果；不会重建或改变当前三维场景。
+
+任务运行
+选择历史任务
+2026/10/17 18:50:45 · 围岩与结构树既有支护构件预览（保留原示例布置）
+2026/10/17 18:47:29 · 围岩与结构树既有支护构件预览（保留原示例布置）
+2026/10/17 18:45:35 · 围岩与结构树既有支护构件预览（保留原示例布置）
+2026/10/17 18:25:11 · 支护GLB指纹落库验收
+2026/10/17 18:23:21 · 支护动态模型版本追踪验收
+2026/10/17 18:20:16 · 配准后视觉验收
+2026/10/17 18:19:39 · DK278+330 四阶段场景验收
+2026/10/17 17:55:21 · 检查 DK278+330 至 DK278+340 初期支护质量
+2026/10/17 14:51:49 · 现有资产动态场景验收
+2026/10/17 14:49:00 · DK278+330 围岩分级、支护钢架、爆破点云及通风 CFD 流线
+结果节点
+2026/10/17 18:50:45 · 计划生成
+2026/10/17 18:50:58 · 步骤完成 · scene-1
+2026/10/17 18:50:58 · 步骤完成 · scene-2
+
+状态：已完成 · 已完成 2/2
+
+场景资源：rock.design-grade、support.legacy-assembly
+
+增强指令：3525 条
+
+已加载资源：common.tunnel、rock.design-grade、support.legacy-rebar、support.legacy-lining-rebar、support.legacy-steel-frame、support.legacy-pipe-shed、support.legacy-anchor、support.legacy-conduit、support.legacy-lock-anchor、support.legacy-assembly
+
+步骤：展示 rock · rock.design-grade（完成） → 叠加围岩分级与既有支护构件 · 示例布置段（完成）
+
+数据/模型指纹：13 项
+
+asset:/data/tunnel/tunnel000.glb · sha256-bytes-v1: 960b0328e1e2b344…
+
+asset:/data/tunnel/tunnel001.glb · sha256-bytes-v1: 24a243dbf24318d2…
+
+asset:/data/tunnel/tunnel002.glb · sha256-bytes-v1: e54a8a9bc4a96265…
+
+asset:/data/tunnel/tunnel003.glb · sha256-bytes-v1: 0980ddb1c794e265…
+
+asset:/data/zhihu/Z-PM-23m/Z-PM-钢筋第一层.glb · sha256-bytes-v1: cc67ceb9f1e63f90…
+
+asset:/data/zhihu/Z-PM-23m/Z-PM-钢筋第二层.glb · sha256-bytes-v1: 2da1c1ef5810fd7a…
+
+asset:/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第一层.glb · sha256-bytes-v1: 897f78bd0d250d7c…
+
+asset:/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第二层.glb · sha256-bytes-v1: 6bbaf274b4b49617…
+
+asset:/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-钢架.glb · sha256-bytes-v1: e69709cdf503767b…
+
+asset:/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ76中管棚.glb · sha256-bytes-v1: ed54cc45172fc276…
+
+asset:/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ25自进式中空注浆锚杆.glb · sha256-bytes-v1: 9b2b5bce6883cd23…
+
+asset:/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42注浆小导管.glb · sha256-bytes-v1: ffa90b1e7d16fb93…
+
+asset:/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42锁脚锚杆.glb · sha256-bytes-v1: 6ddb4265eb2d0638…
+
+scene.stage.1
+{"note":"场景展示已完成；不代表工程质量或风险结论","module":"rock","resourceId":"rock.design-grade","chainageRange":{"end":278330,"start":278330}}
+scene.stage.2
+{"note":"结构树既有 GLB 构件；保留 DK278+100～DK278+167 附近原示例布置，不可参数化，不代表实测支护或质量结论","module":"support","resourceId":"support.legacy-assembly","chainageRange":{"end":278133.5,"start":278133…
+执行全部

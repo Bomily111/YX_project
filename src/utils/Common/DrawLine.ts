@@ -4,10 +4,12 @@
 import * as Cesium from 'cesium';
 import { DTScopeEngine } from './Viewer';
 import centerLineData from '@/assets/data/centerLine.json';
+import { queueLegacySupportModel, invalidateLegacySupportModels } from '@/modules/support/LegacySupportLifecycle';
 
 // 全局变量存储实体引用
 let allLineEntity: Cesium.Entity | null | undefined = null;
 let tunnelGlbPrimitives: any[] = [];
+let tunnelGlbViewer: any = null;
 let windTunnelGlbPrimitives: any[] = [];
 
 // ── 隧道按需加载状态 ──────────────────────────────────────
@@ -532,9 +534,7 @@ export function loadRebarMeshes(customViewer?: any) {
     const next = utils.sampleAt(Math.min(dist + 0.01, utils.totalLen));
     const modelMatrix = makeModelMatrix(pos, next);
     const url = i % 2 === 0 ? mesh1Url : mesh2Url;
-    Cesium.Model.fromGltfAsync({ url, modelMatrix })
-      .then((model: any) => { rebarPrimitives.push(viewer.scene.primitives.add(model)); })
-      .catch((e: any) => console.error(`[DrawLine] 洞口钢筋网加载失败:`, e));
+    queueLegacySupportModel('rebar', viewer, { url, modelMatrix }, (model) => { rebarPrimitives.push(viewer.scene.primitives.add(model)); });
   }
   console.log(`[DrawLine] 洞口钢筋网共 ${count} 层（间距${REBAR_SPACING}m，总长${REBAR_TOTAL_LENGTH}m）`);
 }
@@ -560,15 +560,14 @@ export function loadSecondRebarMeshes(customViewer?: any) {
     const next = utils.sampleAt(Math.min(dist + 0.01, utils.totalLen));
     const modelMatrix = makeModelMatrix(pos, next, 0);
     const url = i % 2 === 0 ? mesh1Url : mesh2Url;
-    Cesium.Model.fromGltfAsync({ url, modelMatrix })
-      .then((model: any) => { secondRebarPrimitives.push(viewer.scene.primitives.add(model)); })
-      .catch((e: any) => console.error(`[DrawLine] 二衬钢筋加载失败:`, e));
+    queueLegacySupportModel('lining_rebar', viewer, { url, modelMatrix }, (model) => { secondRebarPrimitives.push(viewer.scene.primitives.add(model)); });
   }
   console.log(`[DrawLine] 二衬钢筋共 ${count} 层（起始${SECOND_START}m，总长${SECOND_LENGTH}m）`);
 }
 
 /** 移除所有支护模型 */
 export function removeRebarMeshes(customViewer?: any) {
+  invalidateLegacySupportModels('rebar', 'lining_rebar', 'steel_frame', 'pipe_shed', 'anchor');
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const p of rebarPrimitives) { try { viewer.scene.primitives.remove(p); } catch (_) {} }
@@ -581,6 +580,15 @@ export function removeRebarMeshes(customViewer?: any) {
   steelFramePrimitives = [];
   pipeShedPrimitives = [];
   anchorPrimitives = [];
+}
+
+export function removeFirstRebarMeshes(customViewer?: any) {
+  invalidateLegacySupportModels('rebar');
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (viewer && !viewer.isDestroyed()) {
+    for (const model of rebarPrimitives) viewer.scene.primitives.remove(model);
+  }
+  rebarPrimitives = [];
 }
 
 /** 控制洞口钢筋网（第一节 23m）显示/隐藏 */
@@ -609,6 +617,7 @@ export function setSecondRebarHighlight(enabled: boolean) {
 
 /** 移除所有二衬钢筋模型 */
 export function removeSecondRebarMeshes(customViewer?: any) {
+  invalidateLegacySupportModels('lining_rebar');
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const p of secondRebarPrimitives) {
@@ -640,9 +649,7 @@ export function loadSteelFrameMeshes(customViewer?: any) {
     const pos = utils.sampleAt(dist);
     const next = utils.sampleAt(Math.min(dist + 0.01, utils.totalLen));
     const modelMatrix = makeModelMatrix(pos, next, 0);
-    Cesium.Model.fromGltfAsync({ url, modelMatrix })
-      .then((model: any) => { steelFramePrimitives.push(viewer.scene.primitives.add(model)); })
-      .catch((e: any) => console.error(`[DrawLine] 钢架加载失败:`, e));
+    queueLegacySupportModel('steel_frame', viewer, { url, modelMatrix }, (model) => { steelFramePrimitives.push(viewer.scene.primitives.add(model)); });
   }
   console.log(`[DrawLine] 钢架共 ${count} 榀（起始${STEEL_START}m，间距${STEEL_SPACING}m，总长${STEEL_LENGTH}m）`);
 }
@@ -661,6 +668,7 @@ export function setSteelFrameHighlight(enabled: boolean) {
 
 /** 移除所有钢架模型 */
 export function removeSteelFrameMeshes(customViewer?: any) {
+  invalidateLegacySupportModels('steel_frame');
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const p of steelFramePrimitives) {
@@ -732,12 +740,7 @@ export function loadPipeShedMeshes(customViewer?: any) {
       const tiltRot = Cesium.Matrix3.fromRotationX(tiltRad);
       const tiltM4 = Cesium.Matrix4.fromRotationTranslation(tiltRot);
       m = Cesium.Matrix4.multiply(m, tiltM4, new Cesium.Matrix4());
-      Cesium.Model.fromGltfAsync({
-        url,
-        modelMatrix: m,
-      })
-        .then((model: any) => { pipeShedPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); })
-        .catch((e: any) => console.error(`[DrawLine] 中管棚加载失败:`, e));
+      queueLegacySupportModel('pipe_shed', viewer, { url, modelMatrix: m }, (model) => { pipeShedPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); });
     }
   }
 
@@ -758,6 +761,7 @@ export function setPipeShedHighlight(enabled: boolean) {
 
 /** 移除所有中管棚模型 */
 export function removePipeShedMeshes(customViewer?: any) {
+  invalidateLegacySupportModels('pipe_shed');
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const p of pipeShedPrimitives) {
@@ -812,9 +816,7 @@ export function loadAnchorMeshes(customViewer?: any) {
       const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
       const anchorPos = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
       const m = buildAnchorMatrix(anchorPos, tunnelHeading, theta);
-      Cesium.Model.fromGltfAsync({ url, modelMatrix: m })
-        .then((mdl: any) => { anchorPrimitives.push({ model: viewer.scene.primitives.add(mdl), theta }); })
-        .catch((e: any) => console.error(`[DrawLine] 锚杆加载失败:`, e));
+      queueLegacySupportModel('anchor', viewer, { url, modelMatrix: m }, (model) => { anchorPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); });
     };
 
     // 偶数环从拱顶开始(i=0→θ=0)，奇数环错开半间距
@@ -847,6 +849,7 @@ export function setAnchorHighlight(enabled: boolean) {
 
 /** 移除所有锚杆模型 */
 export function removeAnchorMeshes(customViewer?: any) {
+  invalidateLegacySupportModels('anchor');
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const p of anchorPrimitives) {
@@ -925,9 +928,7 @@ export function loadConduitMeshes(customViewer?: any) {
       const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
       const p = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
       const m = buildAnchorMatrix(p, tunnelHeading, theta);
-      Cesium.Model.fromGltfAsync({ url, modelMatrix: m })
-        .then((mdl: any) => { conduitPrimitives.push({ model: viewer.scene.primitives.add(mdl), theta }); })
-        .catch((e: any) => console.error(`[DrawLine] 小导管加载失败:`, e));
+      queueLegacySupportModel('conduit', viewer, { url, modelMatrix: m }, (model) => { conduitPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); });
     };
 
     const offset = ri % 2 === 1 ? CONDUIT_CIRC_SPACING / 2 : 0;
@@ -955,6 +956,7 @@ export function setConduitHighlight(enabled: boolean) {
 
 /** 移除所有注浆小导管模型 */
 export function removeConduitMeshes(customViewer?: any) {
+  invalidateLegacySupportModels('conduit');
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const p of conduitPrimitives) {
@@ -1005,9 +1007,7 @@ export function loadLockAnchorMeshes(customViewer?: any) {
       const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
       const p = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
       const m = buildAnchorMatrix(p, tunnelHeading, theta);
-      Cesium.Model.fromGltfAsync({ url, modelMatrix: m })
-        .then((mdl: any) => { lockAnchorPrimitives.push({ model: viewer.scene.primitives.add(mdl), theta }); })
-        .catch((e: any) => console.error(`[DrawLine] 锁脚锚杆加载失败:`, e));
+      queueLegacySupportModel('lock_anchor', viewer, { url, modelMatrix: m }, (model) => { lockAnchorPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); });
     }
   }
 
@@ -1026,6 +1026,7 @@ export function setLockAnchorHighlight(enabled: boolean) {
 
 /** 移除所有锁脚锚杆模型 */
 export function removeLockAnchorMeshes(customViewer?: any) {
+  invalidateLegacySupportModels('lock_anchor');
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   for (const p of lockAnchorPrimitives) {
@@ -1212,6 +1213,26 @@ export async function setDesignRockGradeModelEnabled(enabled: boolean, customVie
     updateTunnelLazyLoad(viewer);
   }
   viewer.scene.requestRender();
+}
+
+/** 供平台资源适配层读取设计围岩分级状态，不允许适配层直接修改内部数组。 */
+export function isDesignRockGradeModelEnabled(): boolean {
+  return designRockGradeEnabled;
+}
+
+/** 返回已经加载并解析的设计围岩分级数据快照。 */
+export function getDesignRockGradeSegments(): readonly DesignRockGradeSegment[] {
+  return designRockGradeData?.segments ? [...designRockGradeData.segments] : [];
+}
+
+/** 返回指定围岩分段的任务标签实体，供资源适配层控制显隐。 */
+export function getDesignRockGradeLabel(segmentIndex: number): Cesium.Entity | undefined {
+  return designRockGradeLabels.find((label) => label.id === `design-rock-grade-${segmentIndex}`);
+}
+
+/** 返回公共隧道中已加载的指定分段，供场景增强引擎定位目标。 */
+export function getTunnelGlbSegment(segmentIndex: number): Cesium.Model | undefined {
+  return tunnelGlbPrimitives[segmentIndex] as Cesium.Model | undefined;
 }
 
 /** 从全局视角容纳整条精细围岩分级隧洞。 */
@@ -1506,11 +1527,37 @@ export function prepareTunnelSegmentsAt(lon: number, lat: number, height: number
   }
 }
 
+/**
+ * 确保公共隧道的指定分段已经完成首帧初始化。
+ * 业务模块通过该入口复用公共模型，不应再次加载 tunnelXXX.glb。
+ */
+export async function waitForTunnelGlbSegment(
+  segmentIndex: number,
+  customViewer?: any,
+  timeoutMs = 30000,
+): Promise<Cesium.Model> {
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (!viewer) throw new Error('[DrawLine] Cesium Viewer 尚未初始化');
+  if (tunnelGlbViewer !== viewer) throw new Error('[DrawLine] 公共隧道尚未绑定到当前 Viewer');
+  if (!SEGMENT_CONFIGS[segmentIndex]) throw new Error(`[DrawLine] 隧道分段不存在：${segmentIndex}`);
+
+  loadTunnelSegment(segmentIndex, viewer);
+  const startedAt = performance.now();
+  while (performance.now() - startedAt < timeoutMs) {
+    const model = tunnelGlbPrimitives[segmentIndex] as Cesium.Model | undefined;
+    if (model?.ready) return model;
+    viewer.scene.requestRender();
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  }
+  throw new Error(`[DrawLine] 等待公共隧道分段 ${segmentIndex} 超时`);
+}
+
 export function loadTunnelGlb(customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
 
   removeTunnelGlb(viewer);
+  tunnelGlbViewer = viewer;
 
   // 相机移动结束后按需加载/卸载
   let timer: any = null;
@@ -1580,10 +1627,16 @@ export function removeTunnelGlb(customViewer?: any) {
     try { viewer.scene.primitives.remove(p); } catch (_) {}
   }
   tunnelGlbPrimitives = [];
+  tunnelGlbViewer = null;
   tunnelSegmentBaseMatrices.length = 0;
   tunnelSegmentPivotCenters.length = 0;
   setDesignRockGradeOverviewEnvironment(viewer, false);
   removeDesignRockGradeLabels(viewer);
+}
+
+/** 当前公共隧道是否已经绑定到指定 Viewer（包含正在加载的分段）。 */
+export function hasTunnelGlb(viewer: any): boolean {
+  return tunnelGlbViewer === viewer && (tunnelGlbPrimitives.some(Boolean) || tunnelLoadingSet.size > 0);
 }
 
 /**
@@ -1592,6 +1645,10 @@ export function removeTunnelGlb(customViewer?: any) {
 export function setTunnelGlbVisible(show: boolean) {
   tunnelGlbVisibleFlag = show;
   for (const p of tunnelGlbPrimitives) if (p) p.show = show;
+}
+
+export function isTunnelGlbVisible(): boolean {
+  return tunnelGlbVisibleFlag;
 }
 
 export function setTunnelTranslucent(on: boolean, customViewer?: any) {

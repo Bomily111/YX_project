@@ -1,0 +1,656 @@
+{
+  "assembly": {
+    "timestamp": 1792234297827,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 1782,
+      "entities": 20,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 1,
+      "activeDirectives": 3525,
+      "domOverlays": 0,
+      "strategies": {
+        "visibility": 1761,
+        "standard-view": 2,
+        "highlight": 1,
+        "label": 1,
+        "opacity": 1760
+      }
+    },
+    "resourceSummary": {
+      "active": 10,
+      "loaded": 10,
+      "failed": 0,
+      "references": 11
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 2
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-rebar",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-lining-rebar",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-steel-frame",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-pipe-shed",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-anchor",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-conduit",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-lock-anchor",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-assembly",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "blast.effect",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 1424128653,
+      "totalJSHeapSize": 1427405413,
+      "jsHeapSizeLimit": 4395630592
+    }
+  },
+  "beforeTree": {
+    "timestamp": 1792234310829,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 1782,
+      "entities": 20,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 1,
+      "activeDirectives": 3525,
+      "domOverlays": 0,
+      "strategies": {
+        "visibility": 1761,
+        "standard-view": 2,
+        "highlight": 1,
+        "label": 1,
+        "opacity": 1760
+      }
+    },
+    "resourceSummary": {
+      "active": 10,
+      "loaded": 10,
+      "failed": 0,
+      "references": 11
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 2
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-rebar",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-lining-rebar",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-steel-frame",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-pipe-shed",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-anchor",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-conduit",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-lock-anchor",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-assembly",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "blast.effect",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 1428667177,
+      "totalJSHeapSize": 1438911597,
+      "jsHeapSizeLimit": 4395630592
+    }
+  },
+  "shared": {
+    "timestamp": 1792234320322,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 1782,
+      "entities": 20,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 1,
+      "activeDirectives": 3525,
+      "domOverlays": 0,
+      "strategies": {
+        "visibility": 1761,
+        "standard-view": 2,
+        "highlight": 1,
+        "label": 1,
+        "opacity": 1760
+      }
+    },
+    "resourceSummary": {
+      "active": 10,
+      "loaded": 10,
+      "failed": 0,
+      "references": 12
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 2
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-rebar",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-lining-rebar",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-steel-frame",
+        "status": "loaded",
+        "references": 2
+      },
+      {
+        "id": "support.legacy-pipe-shed",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-anchor",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-conduit",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-lock-anchor",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-assembly",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "blast.effect",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 1430084319,
+      "totalJSHeapSize": 1438914235,
+      "jsHeapSizeLimit": 4395630592
+    }
+  },
+  "treeReleased": {
+    "timestamp": 1792234339815,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 1782,
+      "entities": 20,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 1,
+      "activeDirectives": 3525,
+      "domOverlays": 0,
+      "strategies": {
+        "visibility": 1761,
+        "standard-view": 2,
+        "highlight": 1,
+        "label": 1,
+        "opacity": 1760
+      }
+    },
+    "resourceSummary": {
+      "active": 10,
+      "loaded": 10,
+      "failed": 0,
+      "references": 11
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 2
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-rebar",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-lining-rebar",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-steel-frame",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-pipe-shed",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-anchor",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-conduit",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-lock-anchor",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "support.legacy-assembly",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "blast.effect",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 1417019200,
+      "totalJSHeapSize": 1439165816,
+      "jsHeapSizeLimit": 4395630592
+    }
+  },
+  "reset": {
+    "timestamp": 1792234365819,
+    "url": "/",
+    "viewer": {
+      "exists": true,
+      "owner": "main-platform",
+      "instanceId": "1",
+      "canvases": 1,
+      "primitives": 9,
+      "entities": 3,
+      "dataSources": 0,
+      "postProcessStages": 0
+    },
+    "inputHandlers": {
+      "count": 3,
+      "owners": [
+        "main.pointer-style",
+        "main.worksite-pick",
+        "viewer.debug-camera-position"
+      ]
+    },
+    "enhancements": {
+      "activePlans": 0,
+      "activeDirectives": 0,
+      "domOverlays": 0,
+      "strategies": {}
+    },
+    "resourceSummary": {
+      "active": 1,
+      "loaded": 1,
+      "failed": 0,
+      "references": 1
+    },
+    "resources": [
+      {
+        "id": "common.tunnel",
+        "status": "loaded",
+        "references": 1
+      },
+      {
+        "id": "rock.design-grade",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-rebar",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-lining-rebar",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-steel-frame",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-pipe-shed",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-anchor",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-conduit",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-lock-anchor",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "support.legacy-assembly",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "blast.effect",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.scene",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.steady-cfd",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.co-analysis",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.transient-network",
+        "status": "idle",
+        "references": 0
+      },
+      {
+        "id": "ventilation.thermal-field",
+        "status": "idle",
+        "references": 0
+      }
+    ],
+    "memory": {
+      "usedJSHeapSize": 1426139801,
+      "totalJSHeapSize": 1437613065,
+      "jsHeapSizeLimit": 4395630592
+    }
+  }
+}

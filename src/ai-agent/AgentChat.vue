@@ -18,6 +18,7 @@
           <span class="ah-title">施工智能助手</span>
           <span v-if="currentScene" class="ah-scene">{{ currentScene }}</span>
           <span class="ah-model">{{ providerLabel }}</span>
+          <button class="ah-task" @click="openTaskWorkflow" title="任务调度">任务</button>
           <button class="ah-min" @click="isOpen = false" title="最小化">─</button>
           <button class="ah-clear" @click="clearHistory" title="清空对话">✕</button>
         </div>
@@ -84,6 +85,7 @@
             <span class="ts-spinner">⟳</span> {{ toolStatus }}
           </div>
         </transition>
+        <div v-if="auditWarning" class="tool-status" role="alert">审计记录未保存：{{ auditWarning }}</div>
 
         <!-- 输入框 -->
         <div class="agent-input-row">
@@ -111,8 +113,11 @@ import { AgentEngine, createAgentEngine } from './AgentEngine'
 import { buildSystemPrompt } from './knowledge/prompts/system'
 import { registerTools, executeTool, unregisterModule } from './ToolRegistry'
 import { commonTools } from './tools/common'
+import { workflowTools } from './tools/workflow.tools'
 import { getAgentConfig } from './config'
 import { aiEvents } from './events'
+import { recordTaskEvent, summarizeAuditValue } from '@/platform/telemetry/TaskAuditClient'
+import { hasTaskWorkflowController, getTaskWorkflowController } from '@/platform/tasks/TaskWorkflowBridge'
 import type { Message, ToolUseBlock, AgentContext } from './types'
 
 // ── Props ─────────────────────────────────────────────────
@@ -125,6 +130,7 @@ const props = defineProps<{
 // ── Emits ─────────────────────────────────────────────────
 const emit = defineEmits<{
   sceneOpen: [scene: string]
+  taskWorkflowOpen: []
 }>()
 
 // ── 引擎 ──────────────────────────────────────────────────
@@ -137,6 +143,11 @@ const streaming = ref(false)
 const streamBuffer = ref('')
 const inputText = ref('')
 const toolStatus = ref('')
+const auditWarning = ref('')
+const workflowToolNames = new Set([
+  'create_task', 'create_workflow', 'execute_task_step', 'continue_workflow',
+  'get_task_status', 'retry_task_step', 'reset_task_scene',
+])
 const unread     = ref(0)
 const messages   = ref<Message[]>([])
 const msgListEl  = ref<HTMLDivElement | null>(null)
@@ -148,12 +159,13 @@ const providerLabel = computed(() => {
   const labels: Record<string, string> = {
     deepseek: 'DeepSeek', claude: 'Claude', qwen: '通义千问', ollama: 'Ollama',
   }
-  return labels[cfg.provider] || cfg.provider
+  return labels[cfg.provider] || cfg.provider || '后端配置'
 })
 
 const currentScene = computed(() => props.context?.scene || '')
 
 const defaultQuickCmds = [
+  '检查 DK278+330 至 DK278+340 初期支护质量',
   '查看当前掌子面状态',
   '飞往围岩模型区域',
   '打开爆破指挥台',
@@ -176,7 +188,7 @@ const quickCommands = computed(() => {
 
 const welcomeIcon = computed(() => props.welcomeIcon || '🏔')
 const welcomeText = computed(() =>
-  props.welcomeText || '你好！我是隧道施工数字孪生平台的智能助手。<br>你可以问我查看地质模型、打开场景、查询施工进度等。'
+  props.welcomeText || '你好！我是隧道施工数字孪生平台的智能助手。<br>可以创建跨模块任务、查看场景、查询施工状态并受控推进任务流程。'
 )
 
 // ── 反馈机制 ──────────────────────────────────────────────
@@ -205,7 +217,7 @@ onMounted(() => {
   loadFeedback()
 
   // 注册通用工具
-  registerTools('common', commonTools)
+  registerTools('common', [...commonTools, ...workflowTools])
 
   // 创建引擎实例
   const sysPrompt = buildSystemPrompt(props.context)
@@ -213,12 +225,13 @@ onMounted(() => {
   engine.value = instance
 
   // 监听场景打开事件
-  aiEvents.on('scene:open', (scene: string) => {
-    emit('sceneOpen', scene)
-  })
+  aiEvents.on('scene:open', handleSceneOpen)
+  aiEvents.on('task:open', handleTaskOpen)
 })
 
 onBeforeUnmount(() => {
+  aiEvents.off('scene:open', handleSceneOpen)
+  aiEvents.off('task:open', handleTaskOpen)
   unregisterModule('common')
   if (engine.value) engine.value.abort()
 })
@@ -266,8 +279,30 @@ const send = async () => {
         },
         onToolUse: async (tool: ToolUseBlock) => {
           toolStatus.value = `执行操作：${tool.name}...`
+          const startedAt = performance.now()
           const result = await executeTool(tool.name, tool.input)
           toolStatus.value = ''
+          let parsed: Record<string, any> = {}
+          try { parsed = JSON.parse(result) } catch { /* 文本型模块工具 */ }
+          const taskId = parsed.taskId || (tool.name !== 'create_task' && workflowToolNames.has(tool.name) && hasTaskWorkflowController()
+            ? getTaskWorkflowController().getStatus().taskId : undefined)
+          try {
+            await recordTaskEvent({
+              taskId, source: 'agent', action: tool.name, callId: tool.id,
+              status: result.startsWith('❌') || parsed.ok === false ? 'failed' : 'completed',
+              durationMs: performance.now() - startedAt,
+              inputSummary: summarizeAuditValue(tool.input) as Record<string, unknown>,
+              resultSummary: {
+                taskStatus: parsed.status,
+                completed: parsed.completed,
+                total: parsed.total,
+                error: result.startsWith('❌') ? result.slice(0, 300) : parsed.notice?.type === 'error' ? parsed.notice.message : undefined,
+              },
+            })
+            auditWarning.value = ''
+          } catch (error) {
+            auditWarning.value = error instanceof Error ? error.message : String(error)
+          }
           return result
         },
         onComplete: (fullText: string) => {
@@ -303,9 +338,17 @@ const sendQuick = (cmd: string) => {
   send()
 }
 
+const handleSceneOpen = (scene: string) => emit('sceneOpen', scene)
+const handleTaskOpen = () => emit('taskWorkflowOpen')
+const openTaskWorkflow = () => {
+  isOpen.value = true
+  emit('taskWorkflowOpen')
+}
+
 const clearHistory = () => {
   messages.value = []
   unread.value = 0
+  auditWarning.value = ''
   if (engine.value) engine.value.clearHistory()
 }
 
@@ -418,7 +461,7 @@ const renderMarkdown = (text: string): string => {
   flex: 1;
 }
 .ah-model { font-size: 10px; color: rgba(0, 200, 255, 0.5); font-family: 'Consolas', monospace; }
-.ah-min, .ah-clear {
+.ah-task, .ah-min, .ah-clear {
   width: 22px; height: 22px; background: transparent;
   border: 1px solid rgba(180, 220, 255, 0.2); color: rgba(180, 220, 255, 0.5);
   font-size: 12px; cursor: pointer; border-radius: 3px;
@@ -426,6 +469,7 @@ const renderMarkdown = (text: string): string => {
   transition: all 0.15s;
   &:hover { background: rgba(255, 255, 255, 0.08); color: rgba(200, 240, 255, 0.9); }
 }
+.ah-task { width: auto; padding: 0 7px; color: rgba(94, 229, 177, .82); border-color: rgba(94, 229, 177, .28); }
 
 // ── 消息列表 ──────────────────────────────────────────────
 .agent-messages {

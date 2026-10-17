@@ -11,5 +11,6 @@ export const aiEvents = mitt<{
   'vent:show-wind-field': boolean
   'dispatch:show-gantt': boolean
   'scene:open': string           // scene key
+  'task:open': undefined         // 打开统一任务流程面板
   'camera:fly-to': { lng: number; lat: number; height: number }
 }>()

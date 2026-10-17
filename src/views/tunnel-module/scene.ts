@@ -7,18 +7,62 @@
  */
 import * as Cesium from 'cesium'
 import { enableUndergroundTerrainBackground } from '@/utils/Common/UndergroundTerrain'
+import { viewerService } from '@/platform/viewer/ViewerService'
+import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry'
+
+interface ViewerSnapshot {
+  backgroundColor: Cesium.Color
+  light: Cesium.Light
+  requestRenderMode: boolean
+  maximumRenderTimeChange: number
+  enableCollisionDetection: boolean
+  enableInputs: boolean
+  enableRotate: boolean
+  enableTranslate: boolean
+  enableZoom: boolean
+  enableTilt: boolean
+  enableLook: boolean
+}
+
+const viewerSnapshots = new WeakMap<Cesium.Viewer, ViewerSnapshot>()
 
 export function createViewer(container: string | HTMLElement): Cesium.Viewer {
-  const viewer = new Cesium.Viewer(container, {
-    baseLayer: false as any, baseLayerPicker: false, geocoder: false,
-    timeline: false, animation: false, sceneModePicker: false,
-    navigationHelpButton: false, homeButton: false, fullscreenButton: false,
-    infoBox: false, selectionIndicator: false, scene3DOnly: true,
-    // 加载阶段用连续渲染(保证模型被处理/显示), 载完再切按需渲染省资源
-    requestRenderMode: false,
-  })
+  const host = typeof container === 'string'
+    ? document.getElementById(container)
+    : container
+  if (!host) throw new Error('[blast] Viewer 宿主不存在')
+
+  const existing = viewerService.current
+  const viewer = existing
+    ? viewerService.attachTo(host, 'blast-module')
+    : viewerService.create(host, {
+        owner: 'blast-module',
+        cesium: {
+          baseLayer: false as any, baseLayerPicker: false, geocoder: false,
+          timeline: false, animation: false, sceneModePicker: false,
+          navigationHelpButton: false, homeButton: false, fullscreenButton: false,
+          infoBox: false, selectionIndicator: false, scene3DOnly: true,
+          requestRenderMode: false,
+        },
+      })
 
   const s = viewer.scene
+  const controls = s.screenSpaceCameraController
+  if (existing && !viewerSnapshots.has(viewer)) {
+    viewerSnapshots.set(viewer, {
+      backgroundColor: Cesium.Color.clone(s.backgroundColor),
+      light: s.light,
+      requestRenderMode: s.requestRenderMode,
+      maximumRenderTimeChange: s.maximumRenderTimeChange,
+      enableCollisionDetection: controls.enableCollisionDetection,
+      enableInputs: controls.enableInputs,
+      enableRotate: controls.enableRotate,
+      enableTranslate: controls.enableTranslate,
+      enableZoom: controls.enableZoom,
+      enableTilt: controls.enableTilt,
+      enableLook: controls.enableLook,
+    })
+  }
   s.backgroundColor = Cesium.Color.fromCssColorString('#0a0e15')
   s.debugShowFramesPerSecond = false
 
@@ -35,9 +79,32 @@ export function createViewer(container: string | HTMLElement): Cesium.Viewer {
   const credit = viewer.cesiumWidget.creditContainer as HTMLElement
   if (credit) credit.style.display = 'none'
 
-  enableUndergroundTerrainBackground(viewer)
+  if (!existing) enableUndergroundTerrainBackground(viewer)
 
   return viewer
+}
+
+export function releaseViewer(viewer: Cesium.Viewer): void {
+  const snapshot = viewerSnapshots.get(viewer)
+  if (snapshot) {
+    const scene = viewer.scene
+    const controls = scene.screenSpaceCameraController
+    scene.backgroundColor = snapshot.backgroundColor
+    scene.light = snapshot.light
+    scene.requestRenderMode = snapshot.requestRenderMode
+    scene.maximumRenderTimeChange = snapshot.maximumRenderTimeChange
+    controls.enableCollisionDetection = snapshot.enableCollisionDetection
+    controls.enableInputs = snapshot.enableInputs
+    controls.enableRotate = snapshot.enableRotate
+    controls.enableTranslate = snapshot.enableTranslate
+    controls.enableZoom = snapshot.enableZoom
+    controls.enableTilt = snapshot.enableTilt
+    controls.enableLook = snapshot.enableLook
+    viewerSnapshots.delete(viewer)
+    scene.requestRender()
+    return
+  }
+  if (viewerService.currentOwner === 'blast-module') viewerService.destroy(viewer)
 }
 
 /** 载入完成后切换为"按需渲染": 空闲 0 GPU, 交互时自动重绘(拖拽/旋转依旧丝滑) */
@@ -73,7 +140,7 @@ export function installOrbitControls(viewer: Cesium.Viewer, getFocus: () => Cesi
     return f ? Cesium.Cartesian3.add(f, panOffset, new Cesium.Cartesian3()) : undefined
   }
 
-  const h = new Cesium.ScreenSpaceEventHandler(scene.canvas)
+  const h = createScreenSpaceEventHandler('blast.camera-controls', scene.canvas)
   let mode: 'orbit' | 'pan' | null = null
   const onLeftDown = () => { mode = 'orbit' }
   const onRightDown = () => { mode = 'pan' }

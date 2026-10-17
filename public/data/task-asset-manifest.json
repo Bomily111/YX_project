@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "path": "/data/zhihu/Z-PM-23m/Z-PM-钢筋第一层.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "cc67ceb9f1e63f9078e07d2e8330c324c97a050afb2328976a84b99f93496944"
+    },
+    {
+      "path": "/data/zhihu/Z-PM-23m/Z-PM-钢筋第二层.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "2da1c1ef5810fd7ae79813c96939f22491aaff23c21020a63e8ea3a126e14f31"
+    },
+    {
+      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第一层.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "897f78bd0d250d7cd874b6811a0076c549055b85a1bb22b69fa1783637f6a322"
+    },
+    {
+      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第二层.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "6bbaf274b4b496179f645b4d86d5b936a76062e2ab510e3e3c24fb5c7e0700d5"
+    },
+    {
+      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-钢架.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "e69709cdf503767bac51ae471a3ce841a82ffc08e33fbb208a013657f545a979"
+    },
+    {
+      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ76中管棚.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "ed54cc45172fc2761aac5f35cc20343d1854245d35b2f2648d2656b1ae373f28"
+    },
+    {
+      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ25自进式中空注浆锚杆.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "9b2b5bce6883cd232ab11d97c21eeef079fae9ab07aede2988b6bb120d2d8a3d"
+    },
+    {
+      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42注浆小导管.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "ffa90b1e7d16fb93d3db4fe3df415200c14c4dd8f20c9460edc46f5fa7b1d47a"
+    },
+    {
+      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42锁脚锚杆.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "6ddb4265eb2d063856cfdb8a6e9fb38ebad11bc2852be27b85d927307f821670"
+    },
+    {
+      "path": "/data/tunnel/tunnel000.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "960b0328e1e2b34457177133512a8c12821f63fda44d734fdddf038ee32edd48"
+    },
+    {
+      "path": "/data/tunnel/tunnel001.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "24a243dbf24318d2d7ed0f98e59ce6df53c07b51133412cfe5c3a4d717afa2a1"
+    },
+    {
+      "path": "/data/tunnel/tunnel002.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+    },
+    {
+      "path": "/data/tunnel/tunnel003.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "0980ddb1c794e2652e974cd0b3a9c7989c41016190f21178f2c9391ad6a2ad61"
+    },
+    {
+      "path": "/data/tunnel/tunnel004.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "e1268bf375d55731216f1fa19dbaae336af99418deea14bdc8f7be952c0f9c76"
+    },
+    {
+      "path": "/data/tunnel/tunnel005.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+    },
+    {
+      "path": "/data/tunnel/tunnel006.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "6b2459957f5ac759e74cc3d0583fdca9465e785fa81c024fc6e4aa42ffcdab71"
+    },
+    {
+      "path": "/data/tunnel/tunnel007.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "e742be1a5e7b76fb8431cf3b20766597cce0ab2fdd3712dca298ebc9c2ce0b69"
+    },
+    {
+      "path": "/data/tunnel/tunnel008.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "16e4912b6662042a01463bdd1f0c3b30bfa0d19feb9d87860ee0839ce2d4b50f"
+    },
+    {
+      "path": "/data/tunnel/tunnel009.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "c7a4cf4717529d2fbd9dbb02092407c71222c8e8be5d2e63aeb0fab942096868"
+    },
+    {
+      "path": "/data/tunnel/tunnel010.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "74c2670ec74f8878bf155862953643611bf04f5924c41050d89792eb03134b76"
+    },
+    {
+      "path": "/data/tunnel/tunnel011.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "0f8f2dfe84cf2c6fff1d3660e4b3d8a3cec49123b7c8768156626d5114b482ee"
+    },
+    {
+      "path": "/data/tunnel/tunnel012.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "a84679d6fcccfb03907706786b05852aed3ceda24f4ec5ff7fa9b11681ba3c77"
+    },
+    {
+      "path": "/data/tunnel/tunnel013.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "ff2531986bc56d2757111639394f31b8444d69893a7bcd7ff954057217775d70"
+    },
+    {
+      "path": "/data/tunnel/tunnel014.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "df8a5c201b24f8c0d0bde0eedd57b6e7d55389f0082c8dd78d086158decd2d8b"
+    },
+    {
+      "path": "/data/tunnel/tunnel015.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "b7c4e7969dc6537c61d506112a6e8f518f4c6f7d8bfb3e0bb2a6d460e8103e20"
+    },
+    {
+      "path": "/data/tunnel/tunnel016.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "485f635ec7e5d24e6c4fcaaeee7f02ae7f39b69e41dc79709816c2972563521a"
+    },
+    {
+      "path": "/data/blast/blast_effect.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+    },
+    {
+      "path": "/data/ventilation/tunnel-assembled.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "ab251005eadc5327de71b9ac69f56b0cc5580043ad5ad6eda57489bef6a8556e"
+    },
+    {
+      "path": "/data/ventilation/cfd_cell_data_lite.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "1d7606400c002c39f1a0884db907f6059264f2e7c36bbf2d2e461bc6c5b5261b"
+    },
+    {
+      "path": "/data/ventilation/cfd_arrows.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "ad4880172c19353cf5cec6b7d9eb50f1ab5eb16160248ad77037dbf1399cf18f"
+    },
+    {
+      "path": "/data/ventilation/co_transport_results.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+    },
+    {
+      "path": "/data/ventilation/transient_fan_ramp_up.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "8fa7587bdc879384bf00184ea7799a138a17615da7569326fdcccaebf6c9191c"
+    },
+    {
+      "path": "/data/ventilation/transient_fan_oscillation.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "fe34e124e9c4239b2d306af850d9f8e8fa3101bc05b8af56ceb3a2aa597d4ca4"
+    },
+    {
+      "path": "/data/ventilation/transient_damper_close.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "9f5495cfbb682b5a39264cf4da9c9cbfaa473d859e9127eb2fe6238598e7e3a8"
+    },
+    {
+      "path": "/data/ventilation/transient_fan_shutdown.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "c680bc6abb223647a34a574edfdf520d988a6b86c4808f46f93b2631fa815005"
+    },
+    {
+      "path": "/data/ventilation/transient_combined.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "580d9bd59603c73883c0e94ee153619ac923433ec3808c74a0b3912f83c2fe0a"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_index.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "d9fad0da6c4900ffe8183123734ece0fe92500842e420ad731cc54b37c7707e5"
+    },
+    {
+      "path": "/data/ventilation/transient_thermal_monitors.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "475495b2d15fd1365cb70354716c5ead1ceddaa65299e746215dfbd7c0cf1167"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_t0s.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "f8ea8eac28b9bb08d7d9ddce09e596be837ba73cb22e70ac0579f66a791eb4c9"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_t100s.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "b69daf879f69618bebd5bed7b5ba72cd0199c7ed281777a4f0d7fabd1fa831f0"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_t200s.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "cef3b0b3280fd29264e390f6cec58f1cdfbb553121fe1b9253f7f302812a7560"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_t300s.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "8469cc721bfd6615402e5f58e7b70467480b9fad8aac10f022ae029a1d2379f3"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_t400s.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "5aaf547a0e597852d1bfc50ce323075ec6fd929dc07764cba2dc69e1ec8a113b"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_t600s.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "15e3788aa1f813343e7debe532ff50308ab1c5eae70d1b9782ff141cef4335f5"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_t800s.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "2fa1e5d205318e73d95565ff5299134983b69d6e574dfba9342a1005039ddbb1"
+    },
+    {
+      "path": "/data/ventilation/cfd_transient_t1000s.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "01d8ebed70c01a08c3ce19c7cf268c4abbf2ad84aa660b61e3cfea6d64888c43"
+    },
+    {
+      "path": "/data/ventilation/mid_tunnel_contour.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "e038a68fc0b63265fd02405039a4cd40face48fd766964173353f1f65e911256"
+    },
+    {
+      "path": "/data/ventilation/axial_temperature_profile.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "b44d1293307457bb5183685911a5df6b627f0780385182fb3b41baab3cc4c9ef"
+    },
+    {
+      "path": "/data/ventilation/cross_section_contours.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "028ca31f069d56901693d3f4bfc185038406ab50332e2aa28a63e4624ae155e0"
+    }
+  ]
+}

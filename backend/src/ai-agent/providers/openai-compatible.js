@@ -6,7 +6,7 @@ import { getLLMConfig } from '../config.js'
  * 发送流式聊天到 OpenAI 兼容 API，通过回调输出标准化 SSE 事件
  */
 export async function streamChat(params, onEvent) {
-  const { messages, tools, system, provider: providerOverride } = params
+  const { messages, tools, system, provider: providerOverride, model: modelOverride } = params
   const llmConfig = getLLMConfig(providerOverride)
 
   if (!llmConfig.apiKey) {
@@ -14,10 +14,10 @@ export async function streamChat(params, onEvent) {
   }
 
   const body = {
-    model: llmConfig.model,
+    model: modelOverride || llmConfig.model,
     messages: [
       { role: 'system', content: system },
-      ...messages.map(m => ({ role: m.role, content: m.content })),
+      ...toOpenAIMessages(messages),
     ],
     stream: true,
     temperature: 0.3,
@@ -131,4 +131,28 @@ export async function streamChat(params, onEvent) {
     onEvent({ type: 'content_block_stop', index: currentToolCall.index })
   }
   onEvent({ type: 'message_stop' })
+}
+
+export function toOpenAIMessages(messages) {
+  return messages.map((message) => {
+    if (message.role === 'assistant' && message.tool_calls?.length) {
+      return {
+        role: 'assistant',
+        content: message.content || null,
+        tool_calls: message.tool_calls.map((call) => ({
+          id: call.id,
+          type: 'function',
+          function: { name: call.name, arguments: JSON.stringify(call.input ?? {}) },
+        })),
+      }
+    }
+    if (message.role === 'tool') {
+      return {
+        role: 'tool',
+        content: message.content,
+        tool_call_id: message.tool_call_id,
+      }
+    }
+    return { role: message.role, content: message.content }
+  })
 }

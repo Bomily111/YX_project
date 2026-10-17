@@ -3,11 +3,13 @@
 
 import { Router } from 'express'
 import chatRouter from './routes/chat.js'
+import taskAuditRouter from './routes/task-audit.js'
 
 const router = Router()
 
 // 聊天路由
 router.use('/', chatRouter)
+router.use('/', taskAuditRouter)
 
 // 后续扩展：
 // import conversationsRouter from './routes/conversations.js'

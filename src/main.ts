@@ -7,8 +7,10 @@ import 'element-plus/dist/index.css'
 import '@/assets/styles/base.css' // 引入全局样式
 import router from './router'
 import AppConfig from '@/config/AppConfig'
+import { installDevDiagnostics } from '@/platform/diagnostics/DevDiagnostics'
 
 async function bootstrap() {
+  installDevDiagnostics()
   const appConfig = new AppConfig();
   await appConfig.loadConfig('/config/Application.json');
 

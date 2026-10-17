@@ -51,6 +51,7 @@ async function sendChatRequest(
 
   const reader = response.body!.getReader()
   const decoder = new TextDecoder()
+  let buffer = ''
   let fullText = ''
   let toolUseBlock: Partial<ToolUseBlock> | null = null
   let inputJson = ''
@@ -59,14 +60,17 @@ async function sendChatRequest(
     const { done, value } = await reader.read()
     if (done) break
 
-    const chunk = decoder.decode(value, { stream: true })
-    for (const line of chunk.split('\n')) {
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) {
       if (!line.startsWith('data: ')) continue
       const data = line.slice(6).trim()
       if (data === '[DONE]') break
 
       try {
         const evt = JSON.parse(data)
+        if (evt.type === 'error') throw new Error(evt.error || 'AI 服务流式响应失败')
 
         if (evt.type === 'content_block_start' && evt.content_block?.type === 'tool_use') {
           toolUseBlock = { type: 'tool_use', id: evt.content_block.id, name: evt.content_block.name, input: {} }
@@ -81,13 +85,16 @@ async function sendChatRequest(
         } else if (evt.type === 'content_block_stop' && toolUseBlock) {
           try { toolUseBlock.input = JSON.parse(inputJson) } catch { /* ignore */ }
           if (callbacks.onToolUse) {
-            const result = await callbacks.onToolUse(toolUseBlock as ToolUseBlock)
-            callbacks.onText('\n' + result)
-            fullText += '\n' + result
+            // 工具结果只写入下一轮模型上下文。界面由工具状态卡片展示执行过程，
+            // 避免把内部 JSON 结果直接混入助手的自然语言回答。
+            await callbacks.onToolUse(toolUseBlock as ToolUseBlock)
           }
           toolUseBlock = null
         }
-      } catch { /* skip parse errors */ }
+      } catch (error) {
+        if (error instanceof SyntaxError) continue
+        throw error
+      }
     }
   }
 
@@ -155,30 +162,53 @@ export class AgentEngine {
 
       // 4. Agent 循环（最多 maxToolRounds 轮）
       let round = 0
+      let completedText = ''
       while (round < maxToolRounds) {
         round++
         let hadToolUse = false
+        let roundText = ''
 
         await sendChatRequest(
           this.messages,
           tools,
           system,
           {
-            ...callbacks,
+            onText: callbacks.onText,
             onToolUse: async (tool: ToolUseBlock) => {
               hadToolUse = true
+              let result: string
               if (callbacks.onToolUse) {
-                return await callbacks.onToolUse(tool)
+                result = await callbacks.onToolUse(tool)
+              } else {
+                // 默认：通过 ToolRegistry 执行
+                result = await executeTool(tool.name, tool.input)
               }
-              // 默认：通过 ToolRegistry 执行
-              return await executeTool(tool.name, tool.input)
+              this.messages.push({
+                role: 'assistant',
+                content: '',
+                tool_calls: [{ id: tool.id, name: tool.name, input: tool.input }],
+              })
+              this.messages.push({
+                role: 'tool',
+                content: result,
+                tool_call_id: tool.id,
+                name: tool.name,
+              })
+              return result
             },
+            onComplete: (text) => { roundText = text },
+            onError: callbacks.onError,
           },
           signal,
         )
 
+        if (roundText) {
+          completedText += `${completedText ? '\n' : ''}${roundText}`
+          if (!hadToolUse) this.addMessage('assistant', roundText)
+        }
         if (!hadToolUse) break
       }
+      callbacks.onComplete(completedText)
     } catch (err: any) {
       if (err.name === 'AbortError') return
       callbacks.onError(err)

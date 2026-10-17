@@ -15,7 +15,7 @@
 
     <!-- 左：全平台共用目录 -->
     <section class="tm-panel tm-left">
-      <button type="button" class="tm-home" @click="router.push('/')"><span>⌂</span><strong>首页</strong></button>
+      <router-link to="/" class="tm-home"><span>⌂</span><strong>首页</strong></router-link>
       <button type="button" class="tm-context" @click="openWorksiteOverview"><span>◎</span>工点概览</button>
       <button type="button" class="tm-module-link" @click="openPlatformModule('workface')"><span>⬡</span><strong>隧洞围岩</strong><em>›</em></button>
       <div class="tm-directory-head"><span>✹</span><strong>开挖爆破</strong><em>⌄</em></div>
@@ -77,9 +77,11 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Cesium from 'cesium'
-import { createViewer, enableOnDemandRender, installOrbitControls } from './scene'
-import { loadTunnel, setTunnelVisible, setTunnelTranslucent } from './tunnel'
-import { loadBlast, setBlastVisible, flyToBlast, flyToTunnelOverview, getBlastModel, BLAST_INFO } from './blast'
+import { createViewer, enableOnDemandRender, installOrbitControls, releaseViewer } from './scene'
+import { setBlastVisible, flyToBlast, flyToTunnelOverview, getBlastModel, BLAST_INFO } from './blast'
+import { resourceManager } from '@/platform/resources/ResourceManager'
+import { registerBlastModule } from '@/modules/blast/resources'
+import { setTunnelGlbVisible, setTunnelTranslucent } from '@/utils/Common/DrawLine'
 import Design2DPanel from './Design2DPanel.vue'
 import { aiEvents } from '@/ai-agent'
 
@@ -97,23 +99,29 @@ let stopLayerPanelDrag: (() => void) | null = null
 let viewer: Cesium.Viewer
 let orbit: { handler: any; resetFocus: () => void }
 
+registerBlastModule()
+
 onMounted(async () => {
   viewer = createViewer(host.value!)
-  loadMsg.value = '隧道段'
-  await loadTunnel(viewer)                    // 只加载爆破所在段(1段, 68MB)
-  setTunnelTranslucent(viewer, false)          // 默认: 保留隧道原始纹理(不透视)
-  loadMsg.value = '爆破效果'
-  const model = await loadBlast(viewer)
+  await resourceManager.load(['blast.effect'], {
+    viewer,
+    reportProgress: (_progress, message) => { loadMsg.value = message ?? '加载场景资源' },
+  })
+  setTunnelTranslucent(false, viewer)          // 默认: 保留隧道原始纹理(不透视)
+  const model = getBlastModel()
+  if (!model) throw new Error('爆破资源加载完成但模型不存在')
   // 标准轨道控制(左键环绕/右键平移/滚轮缩放, 绕断面中心), 修复 Ctrl+左键甩飞黑屏
   orbit = installOrbitControls(viewer, () => getBlastModel()?.boundingSphere?.center)
   const initView = new URLSearchParams(location.search).get('view')
-  model.readyEvent.addEventListener(() => {
+  const finishLoading = () => {
     // 默认进入"带纹理整体隧道"总览; 带 ?view= 时直接进对应透视视角(便于调试)
     if (initView && ['persp', 'front', 'side', 'top'].includes(initView)) fly(initView as any)
     else exit()
     loading.value = false
     setTimeout(() => enableOnDemandRender(viewer), 2500)
-  })
+  }
+  if (model.ready) finishLoading()
+  else model.readyEvent.addEventListener(finishLoading)
 
   // 监听 AI Agent 指令
   aiEvents.on('blast:adjust-view', onAdjustView)
@@ -124,10 +132,16 @@ onBeforeUnmount(() => {
   aiEvents.off('blast:adjust-view', onAdjustView)
   aiEvents.off('blast:toggle-diagram', onToggleDiagram)
   stopLayerPanelDrag?.()
-  try { viewer?.destroy() } catch {}
+  orbit?.handler?.destroy()
+  if (viewer) {
+    setTunnelGlbVisible(true)
+    setTunnelTranslucent(false, viewer)
+    void resourceManager.release(['blast.effect'])
+      .finally(() => releaseViewer(viewer))
+  }
 })
 
-function onToggleTunnel() { setTunnelVisible(viewer, showTunnel.value) }
+function onToggleTunnel() { setTunnelGlbVisible(showTunnel.value); viewer.scene.requestRender() }
 function onToggleBlast() { setBlastVisible(viewer, showBlast.value) }
 function openWorksiteOverview() {
   router.push({ path: '/', query: { view: 'line-overview' } })
@@ -162,11 +176,11 @@ function openPlatformModule(key: 'workface' | 'support' | 'vent' | 'dispatch') {
 }
 // 点视角按钮: 隧道变透视(半透明) + 飞到爆破断面对应视角
 function fly(v: 'persp' | 'front' | 'side' | 'top') {
-  orbit?.resetFocus(); setTunnelTranslucent(viewer, true); flyToBlast(viewer, v)
+  orbit?.resetFocus(); setTunnelTranslucent(true, viewer); flyToBlast(viewer, v)
 }
 // 退出: 恢复带纹理整体隧道 + 总览视角
 function exit() {
-  orbit?.resetFocus(); setTunnelTranslucent(viewer, false); flyToTunnelOverview(viewer)
+  orbit?.resetFocus(); setTunnelTranslucent(false, viewer); flyToTunnelOverview(viewer)
 }
 
 // ── AI Agent 事件响应 ─────────────────────────────────────
@@ -191,7 +205,7 @@ function onToggleDiagram(visible: boolean) {
 .tm-panel { position: absolute; z-index: 18; top: 60px; bottom: 0; box-sizing: border-box; background: rgba(2,10,22,.94); backdrop-filter: blur(16px); }
 .tm-left { left: 0; width: 216px; border-right: 1px solid rgba(0,170,255,.24); box-shadow: 4px 0 24px rgba(0,0,0,.5); }
 .tm-right { right: 0; width: 332px; padding: 16px; overflow-y: auto; border-left: 1px solid rgba(0,170,255,.2); box-shadow: -4px 0 24px rgba(0,0,0,.5); }
-.tm-home,.tm-context { display:flex; align-items:center; gap:11px; width:100%; min-height:44px; padding:0 18px; box-sizing:border-box; color:#7892aa; font-family:inherit; font-size:12px; text-align:left; border:0; border-bottom:1px solid rgba(0,150,220,.07); background:transparent; }
+.tm-home,.tm-context { display:flex; align-items:center; gap:11px; width:100%; min-height:44px; padding:0 18px; box-sizing:border-box; color:#7892aa; font-family:inherit; font-size:12px; text-align:left; text-decoration:none; border:0; border-bottom:1px solid rgba(0,150,220,.07); background:transparent; }
 .tm-home,.tm-context{cursor:pointer}.tm-home span,.tm-context span{width:18px;color:#4e85aa;text-align:center}.tm-home strong{color:#b9cee0}.tm-home:hover,.tm-context:hover{color:#c9edfa;background:rgba(0,170,235,.08)}.tm-home:hover strong{color:#69dff2}
 .tm-directory-head{display:flex;align-items:center;gap:9px;min-height:47px;padding:0 15px;color:#fff;background:linear-gradient(90deg,rgba(0,116,218,.92),rgba(0,174,235,.72));border-block:1px solid rgba(64,207,255,.35);box-shadow:inset 3px 0 0 #7de9ff}.tm-directory-head strong{font-size:14px;letter-spacing:1px}.tm-directory-head em{margin-left:auto;font-style:normal}.tm-directory-node{display:flex;align-items:center;gap:8px;min-height:39px;padding:0 18px 0 29px;color:#829bb4;font-size:12px;background:rgba(0,35,67,.14)}.tm-directory-node.active{color:#e6fbff;background:linear-gradient(90deg,rgba(0,135,230,.28),rgba(0,105,175,.1));box-shadow:inset 3px 0 0 #37dfff}.tm-branch{width:10px;height:1px;background:rgba(80,155,200,.4)}.tm-layer-group{margin-top:8px;padding:14px 16px;border-top:1px solid rgba(0,170,255,.12)}
 .tm-module-link{display:grid;grid-template-columns:22px 1fr auto;align-items:center;gap:8px;width:100%;min-height:43px;padding:0 16px;color:#7892aa;text-align:left;font-family:inherit;border:0;border-bottom:1px solid rgba(0,150,220,.07);background:transparent;cursor:pointer;transition:.18s ease}.tm-module-link span{color:#4e85aa;text-align:center}.tm-module-link strong{font-size:12px;font-weight:500}.tm-module-link em{color:#456b87;font-size:16px;font-style:normal}.tm-module-link:hover{color:#dffaff;background:rgba(0,170,235,.07)}.tm-module-link:hover span,.tm-module-link:hover em{color:#69dff2}
@@ -233,6 +247,9 @@ function onToggleDiagram(visible: boolean) {
 .tm-view-actions { position:absolute;z-index:26;top:76px;right:398px;display:flex;gap:7px;padding:6px;border:1px solid rgba(53,190,224,.28);border-radius:7px;background:rgba(3,17,29,.82);box-shadow:0 6px 18px rgba(0,0,0,.32);backdrop-filter:blur(8px); }
 .tm-view-actions button { padding:7px 11px;border:1px solid rgba(72,178,207,.28);border-radius:5px;color:#afd1dc;background:rgba(8,40,58,.78);font-size:12px;cursor:pointer;transition:.15s; }
 .tm-view-actions button:hover { color:#fff;border-color:#42dcec;background:rgba(20,104,132,.4); }
+@media (max-width: 900px) {
+  .tm-view-actions { left: 232px; right: auto; }
+}
 .tm-right { width: var(--rock-right-rail); padding: 18px; }
 .tm-home,.tm-context { font-size: 14px; }
 .tm-directory-head strong { font-size: 16px; }

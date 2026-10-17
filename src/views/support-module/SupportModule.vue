@@ -97,9 +97,10 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import * as Cesium from 'cesium'
 import { generateSteelArchGLB, generateWorkfaceGLB, getProfileSummary } from './steelArch'
+import { fingerprintGeneratedAsset } from '@/platform/telemetry/GeneratedAssetVersions'
 import {
   createSupportViewer,
-  loadTunnelModel,
+  releaseSupportViewer,
   setTunnelOpacity,
   getArchFocus,
   getArchModelMatrix,
@@ -107,6 +108,12 @@ import {
   enableOnDemandRender,
   installOrbitControls,
 } from './cesiumScene'
+import { resourceManager } from '@/platform/resources/ResourceManager'
+import {
+  getSupportTunnelModel,
+  registerSupportModule,
+  trackSupportGeneratedModel,
+} from '@/modules/support/resources'
 
 const host = ref<HTMLElement>()
 const loading = ref(true)
@@ -132,9 +139,14 @@ let archBlobUrl: string | null = null
 let workfaceBlobUrl: string | null = null
 let showWorkface = false
 let updating = false
+let disposed = false
+let generation = 0
+let demandRenderTimer: ReturnType<typeof setTimeout> | null = null
 
 async function regenerateArch() {
   if (!viewer || !tunnelModel || updating) return
+  const activeViewer = viewer
+  const activeGeneration = ++generation
   updating = true
 
   try {
@@ -148,27 +160,43 @@ async function regenerateArch() {
 
     // 钢架
     const glb = await generateSteelArchGLB(params)
+    const archVersions = await fingerprintGeneratedAsset('support.arch', glb, {
+      ...params, modelMatrix: Array.from(Cesium.Matrix4.toArray(modelMatrix)),
+    })
     console.log('[钢架] GLB 生成完成, 大小:', (glb.byteLength / 1024).toFixed(1), 'KB')
     if (archBlobUrl) URL.revokeObjectURL(archBlobUrl)
     archBlobUrl = URL.createObjectURL(new Blob([glb], { type: 'application/octet-stream' }))
     const model = await Cesium.Model.fromGltfAsync({ url: archBlobUrl, modelMatrix })
+    if (disposed || viewer !== activeViewer || generation !== activeGeneration) {
+      model.destroy()
+      return
+    }
 
-    if (archModel) viewer.scene.primitives.remove(archModel)
+    if (archModel) activeViewer.scene.primitives.remove(archModel)
     archModel = model
-    viewer.scene.primitives.add(model)
+    activeViewer.scene.primitives.add(model)
+    trackSupportGeneratedModel('arch', model, archVersions)
 
     // 工作面
     const wfGlb = await generateWorkfaceGLB(params)
+    const workfaceVersions = await fingerprintGeneratedAsset('support.workface', wfGlb, {
+      ...params, modelMatrix: Array.from(Cesium.Matrix4.toArray(modelMatrix)),
+    })
     if (workfaceBlobUrl) URL.revokeObjectURL(workfaceBlobUrl)
     workfaceBlobUrl = URL.createObjectURL(new Blob([wfGlb], { type: 'application/octet-stream' }))
     const wfModel = await Cesium.Model.fromGltfAsync({ url: workfaceBlobUrl, modelMatrix })
+    if (disposed || viewer !== activeViewer || generation !== activeGeneration) {
+      wfModel.destroy()
+      return
+    }
     wfModel.show = showWorkface
 
-    if (workfaceModel) viewer.scene.primitives.remove(workfaceModel)
+    if (workfaceModel) activeViewer.scene.primitives.remove(workfaceModel)
     workfaceModel = wfModel
-    viewer.scene.primitives.add(wfModel)
+    activeViewer.scene.primitives.add(wfModel)
+    trackSupportGeneratedModel('workface', wfModel, workfaceVersions)
 
-    viewer.scene.requestRender()
+    activeViewer.scene.requestRender()
     console.log('[钢架] 钢架+工作面已更新')
   } catch (err) {
     console.error('[钢架] 更新失败:', err)
@@ -252,7 +280,16 @@ onMounted(async () => {
     loadMsg.value = '加载隧道模型'
     loadPct.value = 15
 
-    tunnelModel = await loadTunnelModel(viewer)
+    registerSupportModule()
+    await resourceManager.load(['support.scene'], {
+      viewer,
+      reportProgress: (progress, message) => {
+        loadPct.value = Math.max(loadPct.value, Math.round(progress * 50))
+        if (message) loadMsg.value = message
+      },
+    })
+    tunnelModel = getSupportTunnelModel() ?? null
+    if (!tunnelModel) throw new Error('[support] 公共隧道参考分段未就绪')
     console.log('[钢架] 隧道加载完成, boundingSphere:', JSON.stringify(tunnelModel.boundingSphere))
     setTunnelOpacity(tunnelModel, tunnelOpacity.value)
     loadPct.value = 55
@@ -284,7 +321,9 @@ onMounted(async () => {
       duration: 0,
     })
 
-    setTimeout(() => enableOnDemandRender(viewer!), 1500)
+    demandRenderTimer = setTimeout(() => {
+      if (!disposed && viewer) enableOnDemandRender(viewer)
+    }, 1500)
   } catch (err) {
     console.error('[钢架模块] 初始化失败:', err)
     if (err instanceof Error) {
@@ -296,11 +335,23 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  disposed = true
+  generation++
   if (watchTimer) clearTimeout(watchTimer)
+  if (demandRenderTimer) clearTimeout(demandRenderTimer)
   if (archBlobUrl) URL.revokeObjectURL(archBlobUrl)
   if (workfaceBlobUrl) URL.revokeObjectURL(workfaceBlobUrl)
   if (clickHandler) clickHandler.destroy()
-  try { viewer?.destroy() } catch {}
+  if (orbit) orbit.handler.destroy()
+  const activeViewer = viewer
+  viewer = null
+  tunnelModel = null
+  archModel = null
+  workfaceModel = null
+  if (activeViewer) {
+    void resourceManager.release(['support.scene'])
+      .finally(() => releaseSupportViewer(activeViewer))
+  }
 })
 </script>
 

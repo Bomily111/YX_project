@@ -39,6 +39,13 @@ export function setBlastVisible(viewer: Cesium.Viewer, show: boolean) {
   viewer.scene.requestRender()
 }
 
+export function removeBlast(viewer: Cesium.Viewer) {
+  if (!blastModel) return
+  try { viewer.scene.primitives.remove(blastModel) } catch {}
+  blastModel = null
+  viewer.scene.requestRender()
+}
+
 export function getBlastModel() { return blastModel }
 
 /**

@@ -4,6 +4,7 @@
  */
 import * as Cesium from 'cesium'
 import mileageData from '@/assets/data/centerline_mileage.json'
+import { chainageService } from '@/platform/coordinates/ChainageService'
 
 interface MileageEntry {
   index: number
@@ -17,9 +18,7 @@ const entries = mileageData as MileageEntry[]
 
 /** 解析 YK 格式里程字符串为数值（米），如 "YK3+200" → 3200 */
 function parseYK(m: string): number {
-  const match = m.match(/^YK(\d+)\+(\d+(?:\.\d+)?)$/i)
-  if (!match) return NaN
-  return parseInt(match[1], 10) * 1000 + parseFloat(match[2])
+  return chainageService.tryParse(m) ?? Number.NaN
 }
 
 /** 两点间的 ENU heading（弧度，从北顺时针） */

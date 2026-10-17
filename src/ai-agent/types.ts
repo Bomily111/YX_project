@@ -4,6 +4,14 @@ export interface Message {
   role: 'user' | 'assistant' | 'tool'
   content: string
   tool_call_id?: string
+  name?: string
+  tool_calls?: AgentToolCall[]
+}
+
+export interface AgentToolCall {
+  id: string
+  name: string
+  input: Record<string, any>
 }
 
 export interface AgentTool {

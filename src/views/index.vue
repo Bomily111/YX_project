@@ -24,6 +24,16 @@
       </div>
 
       <div class="header-right">
+        <button
+          type="button"
+          class="header-icon-btn"
+          :class="{ active: showTaskWorkflow }"
+          title="任务流程"
+          aria-label="任务流程"
+          @click="showTaskWorkflow = !showTaskWorkflow"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h10M7 12h10M7 19h10"></path><circle cx="4" cy="5" r="1.2"></circle><circle cx="4" cy="12" r="1.2"></circle><circle cx="4" cy="19" r="1.2"></circle></svg>
+        </button>
         <div v-if="!isModelViewMode" class="header-tools-entry">
           <button type="button" class="header-icon-btn" title="工具栏" aria-label="工具栏">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 12h2M10 12h10M4 17h7M15 17h5"></path><circle cx="16" cy="7" r="2"></circle><circle cx="8" cy="12" r="2"></circle><circle cx="13" cy="17" r="2"></circle></svg>
@@ -259,7 +269,10 @@
     <AgentChat
       :context="{ scene: activeScene || undefined }"
       @scene-open="handleAgentSceneOpen"
+      @task-workflow-open="showTaskWorkflow = true"
     />
+
+    <TaskWorkflowPanel :show="showTaskWorkflow" @close="showTaskWorkflow = false" />
 
     <!-- 隧道加载动画 -->
     <Transition name="tunnel-loading-fade">
@@ -275,7 +288,8 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as Cesium from 'cesium'; // 引入 Cesium
-import { ScreenSpaceEventHandler, ScreenSpaceEventType } from 'cesium'; // 引入事件处理器
+import { type ScreenSpaceEventHandler, ScreenSpaceEventType } from 'cesium'; // 引入事件处理器
+import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry';
 import DTGlobe from '@/components/DTGlobe/DTGlobe.vue';
 import OverviewHUD from '@/views/Overview/OverviewHUD.vue';
 import WorkfaceInfoPanel from '@/views/WorkfaceInfoPanel.vue';
@@ -304,9 +318,12 @@ import DTVolume from '@/utils/AllPrevious/All/DTVolume.vue';
 import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
+import TaskWorkflowPanel from '@/components/task-workflow/TaskWorkflowPanel.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
-import { loadCenterLine, enableBlackModelMode, restoreEarthMode, loadTunnelGlb, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, removeRebarMeshes, removeSecondRebarMeshes, removeSteelFrameMeshes, removePipeShedMeshes, removeAnchorMeshes, removeConduitMeshes, removeLockAnchorMeshes, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
+import { loadCenterLine, enableBlackModelMode, restoreEarthMode, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
 import { createMileageRuler, getMileageRuler, destroyMileageRuler } from '@/utils/Common/MileageRuler';
+import { resourceManager } from '@/platform/resources/ResourceManager';
+import { registerCommonResources } from '@/platform/resources/common';
 import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, loadJumboModel, removeJumboModel, mergeModelConfigsFromApi, setGeoModelDifferenceHighlight } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
@@ -323,11 +340,13 @@ const router = useRouter();
 const route = useRoute();
 const sceneStore = useSceneStore();
 const tunnelStore = useTunnelStore();
+registerCommonResources();
 const modelStore = useModelStore();
 
 // ── 侧边栏 / 模型视图模式状态 ────────────────────────────
 const isModelViewMode = ref(false);
 const showGeophysicalVoxelWorkbench = ref(false);
+const showTaskWorkflow = ref(false);
 
 // ── 总览/场景模式状态 ─────────────────────────────────────
 const activeScene = ref<string | null>(null);
@@ -528,6 +547,11 @@ const getViewer = (): any => {
 // ── 添加工点实体 ─────────────────────────────────────────
 const addWorksiteEntities = (viewer: any) => {
   worksiteList.value.forEach(site => {
+    const existing = viewer.entities.getById(site.id);
+    if (existing) {
+      existing.show = true;
+      return;
+    }
     viewer.entities.add({
       id: site.id,
       name: site.name,
@@ -554,6 +578,10 @@ const addWorksiteEntities = (viewer: any) => {
   });
 };
 
+const removeWorksiteEntities = (viewer: any) => {
+  worksiteList.value.forEach(site => viewer.entities.removeById(site.id));
+};
+
 // ── 工点显隐控制 ─────────────────────────────────────────
 const setWorksiteVisible = (show: boolean) => {
   const viewer = getViewer();
@@ -566,7 +594,7 @@ const setWorksiteVisible = (show: boolean) => {
 
 // ── 注册工点点击事件 ──────────────────────────────────────
 const setupWorksiteClickHandler = (viewer: any) => {
-  worksiteClickHandler = new ScreenSpaceEventHandler(viewer.canvas);
+  worksiteClickHandler = createScreenSpaceEventHandler('main.worksite-pick', viewer.canvas);
   worksiteClickHandler.setInputAction((click: any) => {
     const picked = viewer.scene.pick(click.position);
     if (Cesium.defined(picked) && picked.id) {
@@ -644,6 +672,13 @@ const layerState = reactive({ showModel: true, showMap: true, showTunnel: true, 
 // ── 核心逻辑：初始化场景数据 ─────────────────────────────
 const initSceneData = () => {
   let retryCount = 0;
+  const runSceneInitStep = (label: string, action: () => void) => {
+    try {
+      action();
+    } catch (error) {
+      console.error(`[SceneInit] ${label} 初始化失败:`, error);
+    }
+  };
 
   const tryLoad = () => {
     const viewer = getViewer();
@@ -661,12 +696,9 @@ const initSceneData = () => {
     console.log("✅ 地图引擎已就绪，加载中线与工点...");
 
     // skipZoom=true：跳过内部 zoomTo，避免其异步飞行覆盖初始视角
-    loadCenterLine(undefined, true, true);
-    try {
-      loadTunnelGlb();
-    } catch (e) {
-      console.warn('⚠️ 隧道模型加载失败，跳过：', e);
-    }
+    runSceneInitStep('centerline', () => loadCenterLine(undefined, true, true));
+    void resourceManager.load(['common.tunnel'], { viewer })
+      .catch((e) => console.warn('⚠️ 隧道模型加载失败，跳过：', e));
 
     // 初始化里程刻度尺（默认显示，通过图层面板开关控制）
     try {
@@ -677,28 +709,32 @@ const initSceneData = () => {
     }
 
     // 默认进入总览视角
-    viewer.camera.setView(OVERVIEW_MODE_VIEW);
+    runSceneInitStep('camera', () => viewer.camera.setView(OVERVIEW_MODE_VIEW));
 
     // 加载隧道动态实体（车辆、人员、热点标记）
-    addTunnelEntities((hotspotKey: string) => {
-      handleSelectScene(hotspotKey);
+    runSceneInitStep('tunnel-entities', () => {
+      addTunnelEntities((hotspotKey: string) => {
+        handleSelectScene(hotspotKey);
+      });
     });
 
     // 影像默认勾选：loadCenterLine 会调 enableBlackModelMode，在其之后恢复地球
     if (layerState.showMap) {
-      restoreEarthMode(viewer);
-      loadTerrain(viewer);
-      if (viewer.imageryLayers.length > 0) viewer.imageryLayers.get(0).show = true;
-      enableTerrainTransparency(viewer); // 开启透视效果：远看山体，近看透视隧道/中线
+      runSceneInitStep('earth-mode', () => restoreEarthMode(viewer));
+      runSceneInitStep('terrain', () => loadTerrain(viewer));
+      runSceneInitStep('imagery', () => {
+        if (viewer.imageryLayers.length > 0) viewer.imageryLayers.get(0).show = true;
+      });
+      runSceneInitStep('terrain-transparency', () => enableTerrainTransparency(viewer));
     }
 
-    if (layerState.showRock) loadRockModel(viewer);
+    if (layerState.showRock) runSceneInitStep('rock-model', () => loadRockModel(viewer));
 
     // 台车常开，加载到主页面施工面
-    loadJumboModel(viewer);
+    runSceneInitStep('jumbo-model', () => loadJumboModel(viewer));
 
-    addWorksiteEntities(viewer);
-    setupWorksiteClickHandler(viewer);
+    runSceneInitStep('worksite-entities', () => addWorksiteEntities(viewer));
+    runSceneInitStep('worksite-handler', () => setupWorksiteClickHandler(viewer));
 
     // 从后端加载场景、隧道、模型配置数据
     sceneStore.fetchScenes();
@@ -820,7 +856,7 @@ const handleRockStageChange = async (stage: 'baseline' | 'prediction' | 'correct
   setTunnelGlbVisible(true);
   try {
     // 设计基准阶段全量加载 17 段精细上色模型；离开设计基准后恢复按距离分段加载。
-    await setDesignRockGradeModelEnabled(stage === 'baseline', viewer);
+    await setDesignRockGradeModelEnabled(stage === 'baseline' || resourceManager.getState('rock.design-grade').references > 0, viewer);
     setGeoModelDifferenceHighlight(false);
     deactivateGeoModel();
     currentActiveKey.value = '';
@@ -1067,7 +1103,7 @@ const handleSelectScene = (key: string) => {
   setTunnelGlbVisible(layerState.showTunnel);
   setWindTunnelTranslucent(false);
 
-  setDesignRockGradeModelEnabled(key === 'workface', viewer).catch((error) => {
+  setDesignRockGradeModelEnabled(key === 'workface' || resourceManager.getState('rock.design-grade').references > 0, viewer).catch((error) => {
     console.error('[围岩分级] 设计基准模型加载失败:', error);
   });
 
@@ -1110,7 +1146,9 @@ const handleBackToOverview = () => {
 
   const viewer = getViewer();
   if (!viewer) return;
-  setDesignRockGradeModelEnabled(false, viewer);
+  if (resourceManager.getState('rock.design-grade').references === 0) {
+    void setDesignRockGradeModelEnabled(false, viewer);
+  }
 
   // 如果是从模型视图返回，需要清理状态
   if (isModelViewMode.value) {
@@ -1134,14 +1172,7 @@ const handleBackToOverview = () => {
     }
   }
 
-  // 清理支护场景的所有支护构件模型
-  removeRebarMeshes(viewer);
-  removeSecondRebarMeshes(viewer);
-  removeSteelFrameMeshes(viewer);
-  removePipeShedMeshes(viewer);
-  removeAnchorMeshes(viewer);
-  removeConduitMeshes(viewer);
-  removeLockAnchorMeshes(viewer);
+  // 结构树组件按自身租约释放构件；不直接销毁仍被任务引用的资源。
 
   // 清理风场隧道模型，恢复隧道模型
   removeWindTunnelGlb(viewer);
@@ -1223,6 +1254,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearInterval(timer);
+  void resourceManager.release(['common.tunnel']);
   // 独立模块会销毁主页 Viewer，刻度尺必须同步释放，避免返回时复用旧场景实例。
   destroyMileageRuler();
   // 台车模型同样绑定主页 Viewer，路由离开时释放，返回后由初始化流程重新加载。
@@ -1232,6 +1264,8 @@ onBeforeUnmount(() => {
     worksiteClickHandler = null;
   }
   removeTunnelEntities();
+  const viewer = getViewer();
+  if (viewer && !viewer.isDestroyed()) removeWorksiteEntities(viewer);
   setTunnelTranslucent(false);
   setWindTunnelTranslucent(false);
 });

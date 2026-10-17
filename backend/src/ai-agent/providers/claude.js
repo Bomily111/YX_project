@@ -12,7 +12,7 @@ export async function streamChat(params, onEvent) {
     throw new Error('Claude API Key 未配置')
   }
 
-  const { messages, tools, system } = params
+  const { messages, tools, system, model: modelOverride } = params
 
   const anthropicTools = tools?.map(t => ({
     name: t.name,
@@ -21,10 +21,10 @@ export async function streamChat(params, onEvent) {
   })) || undefined
 
   const body = {
-    model: llmConfig.model,
+    model: modelOverride || llmConfig.model,
     max_tokens: 2048,
     system,
-    messages: messages.map(m => ({ role: m.role, content: m.content })),
+    messages: toClaudeMessages(messages),
     tools: anthropicTools,
     stream: true,
   }
@@ -79,4 +79,28 @@ export async function streamChat(params, onEvent) {
   }
 
   onEvent({ type: 'message_stop' })
+}
+
+export function toClaudeMessages(messages) {
+  return messages.map((message) => {
+    if (message.role === 'assistant' && message.tool_calls?.length) {
+      const content = []
+      if (message.content) content.push({ type: 'text', text: message.content })
+      content.push(...message.tool_calls.map((call) => ({
+        type: 'tool_use', id: call.id, name: call.name, input: call.input ?? {},
+      })))
+      return { role: 'assistant', content }
+    }
+    if (message.role === 'tool') {
+      return {
+        role: 'user',
+        content: [{
+          type: 'tool_result',
+          tool_use_id: message.tool_call_id,
+          content: message.content,
+        }],
+      }
+    }
+    return { role: message.role, content: message.content }
+  })
 }

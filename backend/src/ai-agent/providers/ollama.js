@@ -7,13 +7,13 @@ import { getLLMConfig } from '../config.js'
  */
 export async function streamChat(params, onEvent) {
   const llmConfig = getLLMConfig('ollama')
-  const { messages, tools, system } = params
+  const { messages, tools, system, model: modelOverride } = params
 
   const body = {
-    model: llmConfig.model,
+    model: modelOverride || llmConfig.model,
     messages: [
       { role: 'system', content: system },
-      ...messages.map(m => ({ role: m.role, content: m.content })),
+      ...toOllamaMessages(messages),
     ],
     stream: true,
     options: { temperature: 0.3 },
@@ -44,6 +44,7 @@ export async function streamChat(params, onEvent) {
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
+  let toolSequence = 0
 
   while (true) {
     const { done, value } = await reader.read()
@@ -68,6 +69,27 @@ export async function streamChat(params, onEvent) {
           })
         }
 
+        for (const call of event.message?.tool_calls ?? []) {
+          const id = call.id || `ollama-tool-${Date.now()}-${toolSequence++}`
+          const name = call.function?.name
+          if (!name) continue
+          const input = call.function?.arguments ?? {}
+          onEvent({
+            type: 'content_block_start',
+            index: toolSequence,
+            content_block: { type: 'tool_use', id, name },
+          })
+          onEvent({
+            type: 'content_block_delta',
+            index: toolSequence,
+            delta: {
+              type: 'input_json_delta',
+              partial_json: typeof input === 'string' ? input : JSON.stringify(input),
+            },
+          })
+          onEvent({ type: 'content_block_stop', index: toolSequence })
+        }
+
         if (event.done) {
           onEvent({ type: 'message_stop' })
           return
@@ -77,4 +99,22 @@ export async function streamChat(params, onEvent) {
   }
 
   onEvent({ type: 'message_stop' })
+}
+
+export function toOllamaMessages(messages) {
+  return messages.map((message) => {
+    if (message.role === 'assistant' && message.tool_calls?.length) {
+      return {
+        role: 'assistant',
+        content: message.content || '',
+        tool_calls: message.tool_calls.map((call) => ({
+          function: { name: call.name, arguments: call.input ?? {} },
+        })),
+      }
+    }
+    if (message.role === 'tool') {
+      return { role: 'tool', content: message.content, tool_name: message.name }
+    }
+    return { role: message.role, content: message.content }
+  })
 }

@@ -1,0 +1,9 @@
+[
+  { "kind": "rebar", "id": "support.legacy-rebar", "label": "洞口钢筋网", "start": 278100, "end": 278123, "memoryMb": 15, "paths": ["/data/zhihu/Z-PM-23m/Z-PM-钢筋第一层.glb", "/data/zhihu/Z-PM-23m/Z-PM-钢筋第二层.glb"] },
+  { "kind": "lining_rebar", "id": "support.legacy-lining-rebar", "label": "二衬钢筋", "start": 278123, "end": 278167, "memoryMb": 80, "paths": ["/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第一层.glb", "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第二层.glb"] },
+  { "kind": "steel_frame", "id": "support.legacy-steel-frame", "label": "钢架", "start": 278123, "end": 278167, "memoryMb": 25, "paths": ["/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-钢架.glb"] },
+  { "kind": "pipe_shed", "id": "support.legacy-pipe-shed", "label": "中管棚", "start": 278122.85, "end": 278166.85, "memoryMb": 4, "paths": ["/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ76中管棚.glb"] },
+  { "kind": "anchor", "id": "support.legacy-anchor", "label": "注浆锚杆", "start": 278123, "end": 278167, "memoryMb": 4, "paths": ["/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ25自进式中空注浆锚杆.glb"] },
+  { "kind": "conduit", "id": "support.legacy-conduit", "label": "注浆小导管", "start": 278123, "end": 278167, "memoryMb": 4, "paths": ["/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42注浆小导管.glb"] },
+  { "kind": "lock_anchor", "id": "support.legacy-lock-anchor", "label": "锁脚锚杆", "start": 278123, "end": 278167, "memoryMb": 2, "paths": ["/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42锁脚锚杆.glb"] }
+]

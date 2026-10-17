@@ -6,6 +6,7 @@
     "dev": "node --env-file=.env --watch src/server.js",
     "start": "node --env-file=.env src/server.js",
     "db:migrate": "node scripts/migrate.mjs",
+    "db:task-audit": "node --env-file=.env scripts/apply-task-audit.mjs",
     "db:seed": "node scripts/seed.mjs"
   },
   "dependencies": {
