@@ -11,7 +11,7 @@
         <div class="info-card workface-card">
           <div class="card-header">
             <span class="card-icon">⬡</span>
-            <span class="card-title">当前掌子面</span>
+            <span class="card-title">示例掌子面</span>
             <span class="status-dot pulsing" :class="workfaceStatus.color"></span>
           </div>
           <div class="card-content">
@@ -51,7 +51,7 @@
         <div class="info-card alert-card" :class="{ 'has-alert': alerts.length > 0 }">
           <div class="card-header">
             <span class="card-icon alert-icon">⚠</span>
-            <span class="card-title">风险预警</span>
+            <span class="card-title">示例风险提示</span>
             <span v-if="alerts.length > 0" class="alert-count">{{ alerts.length }}</span>
           </div>
           <div class="card-content">
@@ -66,8 +66,8 @@
               </div>
             </div>
             <div class="tsp-conclusion">
-              <span class="tsp-label">TSP结论</span>
-              <span class="tsp-text">前方30m地质条件总体稳定，关注富水断裂</span>
+              <span class="tsp-label">数据说明</span>
+              <span class="tsp-text">本卡为界面示例，尚未接入该里程的实测预报。</span>
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@ const isCollapsed = ref(false);
 
 // ── 模拟数据 ─────────────────────────────────────────────
 const workface = {
-  mileage: 'DK289+450',
+  mileage: 'YK4+516',
   rockGrade: 'IV级',
   cycleAdvance: 3.5,
   excavationMethod: '三台阶法',

@@ -1909,7 +1909,7 @@ var mobile;
 // cannot overwrite one another's positioning information.
 var volumeLoadGeneration = 0;
 
-function initVolume(jsonfile, cesiumOverride) {
+function initVolume(jsonfile, cesiumOverride, onReady) {
   if (!jsonfile) return;
   var generation = ++volumeLoadGeneration;
 
@@ -1944,7 +1944,7 @@ function initVolume(jsonfile, cesiumOverride) {
   $('status').innerHTML = 'Loading params...';
   ajaxReadFile(decodeURI(jsonfile), function (src, fn) {
     if (generation !== volumeLoadGeneration) return;
-    loadData(src, fn, cesiumOverride || null, generation);
+    loadData(src, fn, cesiumOverride || null, generation, onReady);
   }, true);
 }
 
@@ -1962,7 +1962,7 @@ function loadStoredData(key) {
   }
 }
 
-function loadData(src, fn, cesiumOverride, generation) {
+function loadData(src, fn, cesiumOverride, generation, onReady) {
   if (generation !== volumeLoadGeneration) return;
   console.log(src);
   var parsed;
@@ -2061,7 +2061,7 @@ function loadData(src, fn, cesiumOverride, generation) {
   if (!state.objects[0].volume.scale) state.objects[0].volume.scale = [1.0, 1.0, 1.0];
 
   //Load the image
-  loadTexture(generation);
+  loadTexture(generation, onReady);
 }
 
 function saveData() {
@@ -2138,31 +2138,42 @@ function resetFromData(src) {
   }
 }
 
-function loadTexture(generation) {
+function loadTexture(generation, onReady) {
   if (generation !== volumeLoadGeneration) return;
   $('status').innerHTML = 'Loading image data... ';
   var image;
 
   loadImage(state.objects[0].volume.url, function (loadedRequest) {
     if (generation !== volumeLoadGeneration) return;
+    if (loadedRequest.status !== 200 || !loadedRequest.response?.byteLength) {
+      console.error('[ShareVolume] 体纹理请求失败:', state.objects[0].volume.url, loadedRequest.status);
+      return;
+    }
     image = new Image();
 
     var headers = loadedRequest.getAllResponseHeaders();
     var match = headers.match(/^Content-Type\:\s*(.*?)$/im);
     var mimeType = (match && match[1]) || 'image/png';
     var blob = new Blob([loadedRequest.response], { type: mimeType });
-    image.src = window.URL.createObjectURL(blob);
-    var imageElement = document.createElement('img');
+    var imageUrl = window.URL.createObjectURL(blob);
 
     image.onload = function () {
+      window.URL.revokeObjectURL(imageUrl);
       if (generation !== volumeLoadGeneration) return;
       // console.log("Loaded image: " + image.width + " x " + image.height);
-      imageLoaded(image, generation);
+      imageLoaded(image, generation, onReady);
     };
+    image.onerror = function () {
+      window.URL.revokeObjectURL(imageUrl);
+      if (generation === volumeLoadGeneration) {
+        console.error('[ShareVolume] 体纹理解码失败:', state.objects[0].volume.url);
+      }
+    };
+    image.src = imageUrl;
   });
 }
 
-function imageLoaded(image, generation) {
+function imageLoaded(image, generation, onReady) {
   if (generation !== volumeLoadGeneration) return;
   if (slicer) {
     slicer.clear();
@@ -2187,8 +2198,10 @@ function imageLoaded(image, generation) {
     // var widget = document.getElementsByClassName("cesium-widget").item(0);
     // var minWGS84 = [115.23, 39.55], maxWGS84 = [116.23, 41.55];
     // var position = Cesium.Cartesian3.fromDegrees((minWGS84[0] + maxWGS84[0]) / 2, (minWGS84[1] + maxWGS84[1]) / 2, 2500);
+    var volumeInitStarted = performance.now();
     try {
       volume = new Volume(state.objects[0], image, interactive, $('volume-container'));
+      console.info('[ShareVolume] 体渲染器初始化耗时:', Math.round(performance.now() - volumeInitStarted), 'ms');
     } catch (error) {
       // 构造失败时移除已插入的黑色画布，避免遮挡 Cesium 主场景。
       var failedCanvas = document.getElementById('volume-canvas');
@@ -2205,6 +2218,7 @@ function imageLoaded(image, generation) {
   } else {
     Previous.SVData[1] = volume;
   }
+  if (volume?.properties && typeof volume.draw === 'function') onReady?.();
 
   //Volume draw on mouseup to apply changes from other controls (including slicer)
   //document.addEventListener("mouseup", function(ev) {if (volume) volume.delayedRender(250, true);}, false);

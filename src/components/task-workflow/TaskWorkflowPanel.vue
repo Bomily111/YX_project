@@ -1,10 +1,10 @@
 <template>
   <Transition name="task-panel-slide">
-    <aside v-if="show" class="task-workflow-panel" aria-label="任务流程确认与调试">
+    <aside v-if="show" class="task-workflow-panel" aria-label="任务运行记录与调试">
       <header class="panel-header">
         <div>
           <span class="eyebrow">TASK ORCHESTRATION</span>
-          <h2>任务流程确认</h2>
+          <h2>任务运行记录</h2>
         </div>
         <button type="button" class="icon-button" aria-label="关闭任务流程面板" @click="$emit('close')">×</button>
       </header>
@@ -30,11 +30,11 @@
               <input v-model.number="form.maxLoadMb" type="number" min="1" :disabled="busy" />
             </label>
             <label>
-              <span>起点里程</span>
+              <span>起点里程（YK 米）</span>
               <input v-model.number="form.start" type="number" min="0" :disabled="busy" />
             </label>
             <label>
-              <span>终点里程</span>
+              <span>终点里程（YK 米）</span>
               <input v-model.number="form.end" type="number" min="0" :disabled="busy" />
             </label>
           </div>
@@ -45,10 +45,10 @@
             <button v-if="executor" type="button" :disabled="busy" @click="resetWorkflow()">复位</button>
           </div>
           <button type="button" :disabled="busy" @click="prepareWorkflow('panel', {
-            description: '围岩与结构树既有支护构件预览（保留原示例布置）',
+            description: '围岩与结构树既有支护构件示意装配',
             resourceIds: ['rock.design-grade', 'support.legacy-assembly'],
           })">生成围岩与既有支护预览</button>
-          <p class="history-hint">既有支护构件保留 DK278+100～DK278+167 附近示例布置，暂不支持参数修改；参数化钢架试验仍可单独使用。</p>
+          <p class="history-hint">既有支护组合以 YK1+116～YK1+183 原布置为模板沿目标中线示意重定位，暂不支持参数修改；后续由外部完整参数化支护模块替换。</p>
           <button type="button" :disabled="busy" @click="prepareWorkflow('panel', {
             description: '通风瞬态工况预览（原始 K3+805～K4+005 数据）',
             resourceIds: ['ventilation.transient-network'],
@@ -140,10 +140,10 @@
               <h3>场景资源决策</h3>
               <span>{{ scenePlans.length }} PLANS</span>
             </div>
-            <div v-for="plan in scenePlans" :key="plan.stepId" class="scene-plan-group">
+            <div v-for="(plan, index) in scenePlans" :key="plan.stepId" class="scene-plan-group">
               <div class="scene-plan-title">
                 <strong>{{ stepName(plan.stepId) }}</strong>
-                <span>{{ plan.estimatedIncrementalMemoryMb }} MB</span>
+                <span>{{ sceneAssemblyModes[index] === 'retain' ? '保留并装配' : sceneAssemblyModes[index] === 'replace' ? '切换资源' : '自动装配' }} · {{ sceneEnhancementModes[index] === 'emphasis' ? '突出焦点' : sceneEnhancementModes[index] === 'context' ? '保留背景' : '自动增强' }} · {{ plan.estimatedIncrementalMemoryMb }} MB</span>
               </div>
               <div v-for="decision in plan.decisions" :key="decision.resourceId" class="decision-card">
                 <div class="decision-title">
@@ -177,11 +177,11 @@
             <h3>历史结果回看</h3>
             <button type="button" :disabled="historyBusy" @click="refreshHistory()">刷新</button>
           </div>
-          <p class="history-hint">只读查看各步骤结束时的结果；不会重建或改变当前三维场景。</p>
+          <p class="history-hint">结果内容只读。资产指纹一致时可临时预览节点中的既有静态支护构件；其他资源不参与本次预览。</p>
           <div v-if="historyError" class="notice error" role="alert">{{ historyError }}</div>
           <label v-if="historyRuns.length">
             <span>任务运行</span>
-            <select v-model="selectedRunId" :disabled="historyBusy" @change="loadHistoryRun(selectedRunId)">
+            <select v-model="selectedRunId" :disabled="historyBusy || historyPreviewBusy" @change="loadHistoryRun(selectedRunId)">
               <option value="">选择历史任务</option>
               <option v-for="run in historyRuns" :key="run.task_id" :value="run.task_id">
                 {{ new Date(run.created_at).toLocaleString() }} · {{ run.description }}
@@ -192,14 +192,21 @@
           <template v-if="historySnapshots.length">
             <label>
               <span>结果节点</span>
-              <select v-model="selectedSnapshotId">
+              <select v-model="selectedSnapshotId" :disabled="historyPreviewBusy" @change="exitHistoryPreview()">
                 <option v-for="item in historySnapshots" :key="item.id" :value="String(item.id)">
                   {{ new Date(item.created_at).toLocaleString() }} · {{ snapshotEventLabel(item.event_type) }}{{ item.step_id ? ` · ${item.step_id}` : '' }}
                 </option>
               </select>
             </label>
             <div v-if="selectedHistorySnapshot" class="history-result">
+              <div class="history-preview-actions">
+                <button v-if="historyPreviewId" type="button" :disabled="historyPreviewBusy" @click="exitHistoryPreview()">退出历史预览</button>
+                <button v-else type="button" :disabled="historyPreviewBusy || busy" @click="previewHistorySupport()">预览既有支护构件</button>
+              </div>
+              <p v-if="historyPreviewId" class="history-hint">正在预览节点 {{ historyPreviewId }}{{ historyPreviewPartial ? ' 中的支护部分' : '' }}；增强效果不重放。</p>
+              <p v-if="historyPreviewError" class="history-preview-error" role="alert">{{ historyPreviewError }}</p>
               <p>状态：{{ statusLabel(selectedHistorySnapshot.workflow_state.status) }} · 已完成 {{ selectedHistorySnapshot.workflow_state.completed }}/{{ selectedHistorySnapshot.workflow_state.total }}</p>
+              <p>任务里程体系：{{ selectedHistorySnapshot.workflow_state.chainageFrame === 'YK' ? 'YK（工地中线）' : '历史记录未标记，里程不可直接按 YK 解读' }}</p>
               <p>场景资源：{{ selectedHistorySnapshot.scene_plan?.rootResourceIds.join('、') || '无' }}</p>
               <p>增强指令：{{ selectedHistorySnapshot.enhancement_plan?.directives.length ?? 0 }} 条</p>
               <p>已加载资源：{{ selectedHistorySnapshot.resources.filter(item => item.status === 'loaded').map(item => item.id).join('、') || '无' }}</p>
@@ -248,6 +255,7 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useTunnelStore } from '@/stores/tunnelStore'
 import { viewerService } from '@/platform/viewer/ViewerService'
+import { chainageService } from '@/platform/coordinates/ChainageService'
 import { resourceRegistry } from '@/platform/resources/ResourceRegistry'
 import { resourceManager } from '@/platform/resources/ResourceManager'
 import { registerSupportModule } from '@/modules/support/resources'
@@ -259,7 +267,7 @@ import type { TaskContext } from '@/platform/context/TaskContext'
 import type { WorkflowExecutionSnapshot, WorkflowExecutor } from '@/platform/tasks/WorkflowExecutor'
 import { readStepInputs } from '@/platform/tasks/WorkflowContext'
 import { createQualityCheckExecutor } from '@/platform/tasks/samples/QualityCheckWorkflow'
-import { createSceneExplorationExecutor, sceneStageTask, validateSceneSequence } from '@/platform/tasks/samples/SceneExplorationWorkflow'
+import { createSceneExplorationExecutor, sceneStageTask, validateSceneSequence, validateEnhancementModes, validateAssemblyModes, type SceneEnhancementMode, type SceneAssemblyMode } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import type { ScenePlan, SceneResourceRole } from '@/platform/selection/ScenePlan'
 import { ResourceSelector } from '@/platform/selection/ResourceSelector'
 import { ScenePlanExecutor } from '@/platform/selection/ScenePlanExecutor'
@@ -269,6 +277,8 @@ import { RockAssessmentService } from '@/platform/tasks/actions/RockAssessmentAc
 import { SupportAssessmentService } from '@/platform/tasks/actions/SupportAssessmentAction'
 import { TaskDataProvenance } from '@/platform/telemetry/TaskDataProvenance'
 import { collectActiveAssetPaths, collectActiveDataVersions, readAssetVersions } from '@/platform/telemetry/TaskAssetVersions'
+import { loadTaskAssetManifest } from '@/platform/telemetry/TaskAssetVersions'
+import { checkHistoricalSupportPreview } from '@/platform/telemetry/HistoricalSupportPreview'
 import { recordTaskRun, recordTaskEvent, recordTaskSnapshot, listTaskRuns, listTaskSnapshots, summarizeAuditValue, type TaskAuditEvent, type TaskResultSnapshot, type TaskResultSnapshotInput, type TaskRunSummary } from '@/platform/telemetry/TaskAuditClient'
 import {
   registerTaskWorkflowController,
@@ -278,27 +288,33 @@ import {
 } from '@/platform/tasks/TaskWorkflowBridge'
 
 defineProps<{ show: boolean }>()
-defineEmits<{ close: [] }>()
+const emit = defineEmits<{ close: []; sceneReset: [] }>()
 
 type Notice = { type: 'info' | 'success' | 'error'; title: string; message: string }
 
 const tunnelStore = useTunnelStore()
 const form = reactive({
-  description: '检查 DK278+330 至 DK278+340 围岩变化后初期支护是否合理',
+  description: '检查 YK1+346 至 YK1+356 围岩变化后初期支护是否合理',
   tunnelId: tunnelStore.currentTunnelId ?? '',
-  start: 278330,
-  end: 278340,
-  maxLoadMb: 1200,
+  start: 1346,
+  end: 1356,
+  maxLoadMb: 1400,
 })
 const executor = ref<WorkflowExecutor>()
 const snapshot = ref<WorkflowExecutionSnapshot>()
 const scenePlans = ref<readonly ScenePlan[]>([])
+const sceneEnhancementModes = ref<SceneEnhancementMode[]>([])
+const sceneAssemblyModes = ref<SceneAssemblyMode[]>([])
 const notice = ref<Notice>()
 const auditError = ref('')
 const assetVersionWarning = ref('')
 const busy = ref(false)
 const historyBusy = ref(false)
 const historyError = ref('')
+const historyPreviewError = ref('')
+const historyPreviewBusy = ref(false)
+const historyPreviewId = ref<string>()
+const historyPreviewPartial = ref(false)
 const historyRuns = ref<TaskRunSummary[]>([])
 const historySnapshots = ref<TaskResultSnapshot[]>([])
 const selectedRunId = ref('')
@@ -307,9 +323,12 @@ const selectedTransientScenario = ref<VentilationTransientScenario>('fan_ramp_up
 const selectedThermalFile = ref('')
 const selectedHistorySnapshot = computed(() => historySnapshots.value.find(item => String(item.id) === selectedSnapshotId.value))
 let activeSceneExecutor: ScenePlanExecutor | undefined
+let activeSceneWorkflow: ReturnType<typeof createSceneExplorationExecutor> | undefined
 let activeEnhancementEngine: EnhancementEngine | undefined
 let activeProvenance: TaskDataProvenance | undefined
 let historyRequest = 0
+let historyPreviewRoots: string[] = []
+let historyPreviewUndo: (() => void | Promise<void>) | undefined
 let stopExecutor: (() => void) | undefined
 let unregisterTaskController: (() => void) | undefined
 
@@ -341,6 +360,10 @@ const contextEntries = computed(() => Object.entries(executor.value?.plan.shared
 
 const errorMessage = (error: unknown): string => {
   if (error instanceof AggregateError) return [error.message, ...error.errors.map(errorMessage)].join('；')
+  if (error instanceof Error && 'issues' in error && Array.isArray(error.issues)) {
+    const issues = error.issues as Array<{ path?: string; message?: string }>
+    return `${error.message}：${issues.map(issue => `${issue.path ?? '任务'} ${issue.message ?? '无效'}`).join('；')}`
+  }
   if (error instanceof Error && error.cause) return `${error.message}；${errorMessage(error.cause)}`
   return error instanceof Error ? error.message : String(error)
 }
@@ -354,8 +377,12 @@ const persistAudit = async (event: TaskAuditEvent): Promise<void> => {
   }
 }
 
-const saveResultSnapshot = async (eventType: TaskResultSnapshotInput['eventType'], stepId?: string): Promise<void> => {
-  if (!executor.value) return
+const saveResultSnapshot = async (
+  eventType: TaskResultSnapshotInput['eventType'],
+  stepId?: string,
+  requiredAssetPath?: string,
+): Promise<boolean> => {
+  if (!executor.value) return false
   const active = executor.value
   const scenePlan = activeSceneExecutor?.getActiveState().plan ?? null
   const resourceIds = new Set(scenePlan?.loadOrder ?? [])
@@ -366,6 +393,11 @@ const saveResultSnapshot = async (eventType: TaskResultSnapshotInput['eventType'
     assetVersionWarning.value = ''
   } catch (error) {
     assetVersionWarning.value = errorMessage(error)
+    if (requiredAssetPath) return false
+  }
+  if (requiredAssetPath && !assetVersions.some(version => version.locator === requiredAssetPath)) {
+    assetVersionWarning.value = `当前任务未采集到所选资产：${requiredAssetPath}`
+    return false
   }
   const state: TaskResultSnapshotInput = {
     taskId: active.task.taskId,
@@ -373,8 +405,14 @@ const saveResultSnapshot = async (eventType: TaskResultSnapshotInput['eventType'
     ...(stepId ? { stepId } : {}),
     workflowState: {
       ...active.getSnapshot(),
+      chainageFrame: 'YK',
       steps: active.plan.steps,
       sharedContext: active.plan.sharedContext,
+      ...(sceneEnhancementModes.value.length ? { sceneEnhancementModes: [...sceneEnhancementModes.value] } : {}),
+      ...(sceneAssemblyModes.value.length ? { sceneAssemblyModes: [...sceneAssemblyModes.value] } : {}),
+      ...(sceneAssemblyModes.value.length ? {
+        plannedSceneRoots: scenePlans.value.map(plan => ({ stepId: plan.stepId, resources: [...plan.rootResourceIds] })),
+      } : {}),
     },
     scenePlan,
     enhancementPlan: activeEnhancementEngine?.getActivePlan() ?? null,
@@ -389,8 +427,10 @@ const saveResultSnapshot = async (eventType: TaskResultSnapshotInput['eventType'
   try {
     await recordTaskSnapshot(JSON.parse(JSON.stringify(state)) as TaskResultSnapshotInput)
     if (selectedRunId.value === active.task.taskId) await loadHistoryRun(active.task.taskId)
+    return true
   } catch (error) {
     auditError.value = errorMessage(error)
+    return false
   }
 }
 
@@ -420,9 +460,12 @@ const selectTransientScenario = async (event: Event): Promise<void> => {
       throw error
     }
     selectedTransientScenario.value = scenario
+    const file = `transient_${scenario}.json`
+    if (!await saveResultSnapshot('asset-selection', undefined, `/data/ventilation/${file}`)) {
+      throw new Error(auditError.value || assetVersionWarning.value || '任务结果节点保存失败')
+    }
     await persistAudit({ taskId, source: 'panel', action: 'select_ventilation_asset', status: 'completed',
-      resultSummary: { resourceId: 'ventilation.transient-network', file: `transient_${scenario}.json` } })
-    await saveResultSnapshot('asset-selection')
+      resultSummary: { resourceId: 'ventilation.transient-network', file } })
     notice.value = { type: 'success', title: '通风工况已记录', message: '本次工况文件指纹已进入任务结果节点。' }
   } catch (error) {
     notice.value = { type: 'error', title: '通风工况切换失败', message: errorMessage(error) }
@@ -450,9 +493,11 @@ const selectThermalSnapshot = async (event: Event): Promise<void> => {
     viewer.scene.requestRender()
     useVentilationThermalSnapshot(file)
     selectedThermalFile.value = file
+    if (!await saveResultSnapshot('asset-selection', undefined, `/data/ventilation/${file}`)) {
+      throw new Error(auditError.value || assetVersionWarning.value || '任务结果节点保存失败')
+    }
     await persistAudit({ taskId, source: 'panel', action: 'select_ventilation_asset', status: 'completed',
       resultSummary: { resourceId: 'ventilation.thermal-field', file, timeSeconds: snapshot.t } })
-    await saveResultSnapshot('asset-selection')
     notice.value = { type: 'success', title: '热场时间片已记录', message: `t=${snapshot.t}s 文件指纹已进入任务结果节点。` }
   } catch (error) {
     notice.value = { type: 'error', title: '热场时间片切换失败', message: errorMessage(error) }
@@ -474,7 +519,68 @@ const refreshHistory = async (): Promise<void> => {
   }
 }
 
+const exitHistoryPreview = async (): Promise<void> => {
+  if (!historyPreviewRoots.length && !historyPreviewUndo) {
+    historyPreviewId.value = undefined
+    historyPreviewPartial.value = false
+    historyPreviewError.value = ''
+    return
+  }
+  historyPreviewBusy.value = true
+  const errors: unknown[] = []
+  try { await historyPreviewUndo?.() } catch (error) { errors.push(error) }
+  historyPreviewUndo = undefined
+  const roots = historyPreviewRoots
+  historyPreviewRoots = []
+  try {
+    const results = await resourceManager.release(roots)
+    errors.push(...results.filter(item => item.status === 'failed').map(item => item.error))
+  } catch (error) { errors.push(error) }
+  historyPreviewId.value = undefined
+  historyPreviewPartial.value = false
+  historyPreviewBusy.value = false
+  historyPreviewError.value = errors.length ? `历史预览退出不完整：${errors.map(errorMessage).join('；')}` : ''
+}
+
+const previewHistorySupport = async (): Promise<void> => {
+  if (busy.value || historyPreviewBusy.value || historyPreviewId.value) return
+  const selected = selectedHistorySnapshot.value
+  if (!selected) return
+  historyPreviewBusy.value = true
+  historyPreviewError.value = ''
+  let loadedRoots: string[] = []
+  try {
+    if (activeSceneExecutor?.getActiveState().plan) throw new Error('当前任务场景仍在使用，请先复位任务后预览历史节点。')
+    registerSupportModule()
+    const check = checkHistoricalSupportPreview(selected, await loadTaskAssetManifest())
+    if (check.reason) throw new Error(check.reason)
+    if (check.loadOrder.some(id => resourceManager.getState(id).status !== 'idle')) {
+      throw new Error('支护构件正被其他场景使用，请先退出当前场景。')
+    }
+    await resourceManager.load(check.roots, { viewer: viewerService.require() })
+    loadedRoots = check.roots
+    const actualPaths = collectActiveAssetPaths(check.loadOrder, resourceRegistry, resourceManager)
+    if (actualPaths.length !== check.assetPaths.length
+      || actualPaths.some(path => !check.assetPaths.includes(path))) {
+      throw new Error('历史支护资源加载后资产列表不一致。')
+    }
+    const focus = resourceRegistry.get(check.roots[0])?.getEnhanceTargets?.().find(item => item.id.endsWith(':view'))
+    historyPreviewUndo = await focus?.adapters?.['standard-view']?.({})
+    historyPreviewRoots = loadedRoots
+    historyPreviewId.value = String(selected.id)
+    historyPreviewPartial.value = check.partial
+  } catch (error) {
+    try { await historyPreviewUndo?.() } catch { /* 主错误优先显示 */ }
+    historyPreviewUndo = undefined
+    if (loadedRoots.length) await resourceManager.release(loadedRoots)
+    historyPreviewError.value = errorMessage(error)
+  } finally {
+    historyPreviewBusy.value = false
+  }
+}
+
 const loadHistoryRun = async (taskId: string): Promise<void> => {
+  await exitHistoryPreview()
   const request = ++historyRequest
   historySnapshots.value = []
   selectedSnapshotId.value = undefined
@@ -493,17 +599,24 @@ const loadHistoryRun = async (taskId: string): Promise<void> => {
   }
 }
 
-const createTask = (): TaskContext => ({
+const createTask = (): TaskContext => {
+  const start = Number(form.start)
+  const end = Number(form.end)
+  if (!chainageService.contains(start) || !chainageService.contains(end)) {
+    throw new Error('任务里程必须位于当前 YK 中线范围内；旧 DK 标签请在智能体对话中输入以便转换。')
+  }
+  return {
   taskId: `quality-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
   taskType: 'quality-check',
   description: form.description,
   tunnelId: form.tunnelId,
-  chainageRange: { start: Number(form.start), end: Number(form.end) },
+  chainageRange: { start, end },
   process: 'support-design',
   targetTypes: ['support'],
   targetState: 'preview',
   constraints: { maxLoadMb: Number(form.maxLoadMb), minFps: 30 },
-})
+  }
+}
 
 const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?: AgentSceneWorkflowInput): Promise<void> => {
   if (busy.value) return
@@ -514,6 +627,7 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
   selectedTransientScenario.value = 'fan_ramp_up'
   selectedThermalFile.value = ''
   try {
+    await exitHistoryPreview()
     if (sceneInput) form.description = sceneInput.description
     if (executor.value) await executor.value.reset()
     stopExecutor?.()
@@ -524,6 +638,8 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
       registerVentilationModule()
     }
     const sceneResources = sceneInput ? validateSceneSequence(sceneInput.resourceIds, resourceRegistry) : undefined
+    const targetChainage = sceneInput?.targetMileage === undefined
+      ? undefined : chainageService.toCanonicalChainage(sceneInput.targetMileage)
     const task: TaskContext = sceneInput ? {
       ...createTask(),
       taskId: `scene-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -533,7 +649,7 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
       process: undefined,
       targetState: undefined,
     } : createTask()
-    if (sceneResources) task.chainageRange = sceneStageTask(task, sceneResources[0]).chainageRange
+    if (sceneResources) task.chainageRange = sceneStageTask(task, sceneResources[0], targetChainage).chainageRange
     const selector = new ResourceSelector(resourceRegistry)
     const sceneExecutor = new ScenePlanExecutor(resourceRegistry, resourceManager)
     const enhancementPlanner = new EnhancementPlanner(resourceRegistry)
@@ -549,37 +665,36 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
         selectorOptions: () => ({ candidateResourceIds: ['rock.design-grade'] }),
         enhancement: { planner: enhancementPlanner, engine: enhancementEngine },
       },
-      supportScene: {
-        selector,
-        executor: sceneExecutor,
-        loadContext: () => ({ viewer: viewerService.require() }),
-        selectorOptions: () => ({ candidateResourceIds: ['support.scene'] }),
-        enhancement: { planner: enhancementPlanner, engine: enhancementEngine },
-      },
     })
     const sceneWorkflow = sceneInput ? createSceneExplorationExecutor(
       task, sceneInput.resourceIds, resourceRegistry,
       { selector, executor: sceneExecutor, loadContext: () => ({ viewer: viewerService.require() }),
-        enhancement: { planner: enhancementPlanner, engine: enhancementEngine } },
+        enhancement: { planner: enhancementPlanner, engine: enhancementEngine },
+        enhancementModes: sceneInput.enhancementModes,
+        assemblyModes: sceneInput.assemblyModes,
+        targetChainage },
     ) : undefined
     const nextExecutor = sceneWorkflow?.executor ?? qualityExecutor()
     scenePlans.value = sceneWorkflow?.scenePlans ?? nextExecutor.plan.steps.flatMap((step) => {
-      const resourceId = step.module === 'rock'
-        ? 'rock.design-grade'
-        : step.module === 'support' ? 'support.scene' : undefined
+      const resourceId = step.module === 'rock' ? 'rock.design-grade' : undefined
       return resourceId
         ? [selector.createScenePlan(task, step, { candidateResourceIds: [resourceId] })]
         : []
     })
+    sceneEnhancementModes.value = sceneInput
+      ? validateEnhancementModes(sceneInput.enhancementModes, sceneInput.resourceIds.length) : []
+    sceneAssemblyModes.value = sceneInput
+      ? validateAssemblyModes(sceneInput.assemblyModes, sceneInput.resourceIds.length) : []
     executor.value = nextExecutor
+    activeSceneWorkflow = sceneWorkflow
     activeSceneExecutor = sceneExecutor
     activeEnhancementEngine = enhancementEngine
     activeProvenance = provenance
     stopExecutor = nextExecutor.subscribe((next) => { snapshot.value = next })
     notice.value = sceneInput
       ? { type: 'success', title: '动态场景计划已生成', message: sceneInput.resourceIds.some(id => id.startsWith('support.legacy-'))
-        ? '可逐步执行。既有支护构件保留 DK278+100～DK278+167 附近原示例布置，不可参数化；围岩→支护可同屏，不代表实测或质量结论。'
-        : '可逐步执行。相邻围岩→支护阶段可同屏展示；通风 K3+805～K4+005 数据示意配准到 DK278+330，非该工点实测风场，不作联合工程结论。' }
+        ? '可逐步执行。同屏装配以各阶段校验结果为准；既有支护组合以原布置为模板沿目标中线示意重定位，不可参数化，不代表目标里程实测或质量结论。'
+        : '可逐步执行。同屏装配以各阶段校验结果为准；通风局部 K3+805～K4+005 数据示意配准到 YK1+346，非该工点实测风场，不作联合工程结论。' }
       : { type: 'success', title: '计划已通过校验', message: '可逐步确认，也可一次执行全部步骤。' }
     try {
       await recordTaskRun(task, nextExecutor.plan, scenePlans.value)
@@ -599,7 +714,10 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
     executor.value = undefined
     snapshot.value = undefined
     scenePlans.value = []
+    sceneEnhancementModes.value = []
+    sceneAssemblyModes.value = []
     activeSceneExecutor = undefined
+    activeSceneWorkflow = undefined
     activeEnhancementEngine = undefined
     activeProvenance = undefined
     notice.value = { type: 'error', title: '计划生成失败', message: errorMessage(error) }
@@ -640,6 +758,7 @@ const executeNext = async (source: 'agent' | 'panel' = 'panel'): Promise<void> =
   if (!executor.value || busy.value) return
   busy.value = true
   try {
+    await exitHistoryPreview()
     const result = await executeAuditedStep(source)
     handleResult(result.status, result.durationMs, result.error)
   } catch (error) {
@@ -655,6 +774,7 @@ const runAll = async (source: 'agent' | 'panel' = 'panel'): Promise<void> => {
   const startedAt = performance.now()
   notice.value = { type: 'info', title: '正在执行', message: executor.value.task.taskType === 'scene-exploration' ? '正在依序切换现有场景资产。' : '正在推进围岩评估、场景增强与支护检查。' }
   try {
+    await exitHistoryPreview()
     const results = []
     while (executor.value.getSnapshot().status !== 'completed') {
       if (executor.value.getSnapshot().status === 'failed') break
@@ -696,6 +816,7 @@ const resetWorkflow = async (source: 'agent' | 'panel' = 'panel'): Promise<void>
   busy.value = true
   const startedAt = performance.now()
   try {
+    await exitHistoryPreview()
     await executor.value.reset()
     activeProvenance?.clear()
     notice.value = { type: 'info', title: '工作流已复位', message: '步骤输出和任务级场景资源已清理。' }
@@ -705,6 +826,7 @@ const resetWorkflow = async (source: 'agent' | 'panel' = 'panel'): Promise<void>
       rollbackStatus: 'completed', resultSummary: { taskStatus: 'ready' },
     })
     await saveResultSnapshot('reset')
+    emit('sceneReset')
   } catch (error) {
     notice.value = { type: 'error', title: '复位不完整', message: errorMessage(error) }
     await persistAudit({
@@ -715,6 +837,23 @@ const resetWorkflow = async (source: 'agent' | 'panel' = 'panel'): Promise<void>
     await saveResultSnapshot('reset')
   } finally {
     busy.value = false
+  }
+}
+
+const lastCompletedStage = (): AgentTaskWorkflowStatus['lastCompletedStage'] => {
+  const count = snapshot.value?.completed ?? 0
+  if (!executor.value || executor.value.task.taskType !== 'scene-exploration' || count < 1) return undefined
+  const value = executor.value.plan.sharedContext[`scene.stage.${count}`]?.value
+  if (!value || typeof value !== 'object' || !('assembledResourceIds' in value)) return undefined
+  const stage = value as { assembledResourceIds: unknown; chainageRange?: { start?: unknown; end?: unknown }; note?: unknown }
+  if (!Array.isArray(stage.assembledResourceIds)
+    || typeof stage.chainageRange?.start !== 'number'
+    || typeof stage.chainageRange.end !== 'number') return undefined
+  return {
+    stepId: `scene-${count}`,
+    assembledResourceIds: stage.assembledResourceIds.filter((id): id is string => typeof id === 'string'),
+    chainageRange: { start: stage.chainageRange.start, end: stage.chainageRange.end },
+    ...(typeof stage.note === 'string' ? { note: stage.note } : {}),
   }
 }
 
@@ -730,19 +869,49 @@ const getAgentStatus = (): AgentTaskWorkflowStatus => ({
     stepId, name, module, status,
   })) ?? [],
   contextKeys: Object.keys(executor.value?.plan.sharedContext ?? {}),
-  scenePlans: scenePlans.value.map((plan) => ({
+  scenePlans: scenePlans.value.map((plan, index) => ({
     stepId: plan.stepId,
     resources: [...plan.rootResourceIds],
     estimatedMemoryMb: plan.estimatedIncrementalMemoryMb,
+    enhancementMode: sceneEnhancementModes.value[index],
+    assemblyMode: sceneAssemblyModes.value[index],
   })),
+  lastCompletedStage: lastCompletedStage(),
   notice: notice.value ? { ...notice.value } : undefined,
 })
+
+const reviseSceneAssemblyFromAgent = async (
+  input: { taskId: string; stepId: string; mode: string },
+): Promise<AgentTaskWorkflowStatus> => {
+  const active = executor.value
+  if (busy.value || !active || !activeSceneWorkflow || active.task.taskId !== input.taskId) {
+    throw new Error('场景任务不存在、已被替换或正在执行')
+  }
+  if (!['auto', 'retain', 'replace'].includes(input.mode)) throw new Error('不支持的装配方式')
+  const index = active.plan.steps.findIndex(step => step.stepId === input.stepId)
+  const previous = index >= 0 ? scenePlans.value[index]?.rootResourceIds ?? [] : []
+  const planned = activeSceneWorkflow.reviseNextAssembly(input.stepId, input.mode as SceneAssemblyMode)
+  scenePlans.value = [...planned]
+  sceneAssemblyModes.value = sceneAssemblyModes.value.map((mode, stage) => (
+    stage === index ? input.mode as SceneAssemblyMode : mode
+  ))
+  notice.value = { type: 'success', title: '后续装配计划已校验', message: `${input.stepId} 将${input.mode === 'retain' ? '保留上一场景并加入资源' : input.mode === 'replace' ? '切换到当前资源' : '采用默认装配方式'}。` }
+  await persistAudit({
+    taskId: input.taskId, source: 'agent', action: 'revise_scene_assembly', status: 'ready', stepId: input.stepId,
+    inputSummary: { mode: input.mode, previousResources: previous },
+    resultSummary: { resources: planned[index]?.rootResourceIds ?? [] },
+  })
+  await saveResultSnapshot('plan-revised', input.stepId)
+  return getAgentStatus()
+}
 
 const prepareFromAgent = async (input: AgentTaskWorkflowInput): Promise<AgentTaskWorkflowStatus> => {
   if (input.description !== undefined) form.description = input.description
   if (input.tunnelId !== undefined) form.tunnelId = input.tunnelId
-  if (input.start !== undefined) form.start = input.start
-  if (input.end !== undefined) form.end = input.end
+  if (input.start !== undefined) form.start = input.start >= chainageService.legacyDkReference.origin
+    ? chainageService.legacyDkToCanonical(input.start) : input.start
+  if (input.end !== undefined) form.end = input.end >= chainageService.legacyDkReference.origin
+    ? chainageService.legacyDkToCanonical(input.end) : input.end
   if (input.maxLoadMb !== undefined) form.maxLoadMb = input.maxLoadMb
   await prepareWorkflow('agent')
   return getAgentStatus()
@@ -750,6 +919,11 @@ const prepareFromAgent = async (input: AgentTaskWorkflowInput): Promise<AgentTas
 
 const prepareSceneFromAgent = async (input: AgentSceneWorkflowInput): Promise<AgentTaskWorkflowStatus> => {
   form.description = input.description
+  if (input.targetMileage !== undefined) {
+    const chainage = chainageService.toCanonicalChainage(input.targetMileage)
+    form.start = chainage
+    form.end = chainage
+  }
   if (input.tunnelId !== undefined) form.tunnelId = input.tunnelId
   if (input.maxLoadMb !== undefined) form.maxLoadMb = input.maxLoadMb
   await prepareWorkflow('agent', input)
@@ -761,6 +935,7 @@ onMounted(() => {
   unregisterTaskController = registerTaskWorkflowController({
     prepare: prepareFromAgent,
     prepareScene: prepareSceneFromAgent,
+    reviseSceneAssembly: reviseSceneAssemblyFromAgent,
     executeNext: async () => { await executeNext('agent'); return getAgentStatus() },
     runAll: async () => { await runAll('agent'); return getAgentStatus() },
     retryFailed: async () => { await retryFailed('agent'); return getAgentStatus() },
@@ -773,7 +948,7 @@ const statusLabel = (status: WorkflowExecutionSnapshot['status']): string => ({
   ready: '待执行', running: '执行中', completed: '已完成', failed: '失败',
 })[status]
 const snapshotEventLabel = (eventType: TaskResultSnapshotInput['eventType']): string => ({
-  prepared: '计划生成', 'step-completed': '步骤完成', 'step-failed': '步骤失败', retry: '步骤重试', reset: '任务复位', 'asset-selection': '通风资产选择',
+  prepared: '计划生成', 'plan-revised': '计划修订', 'step-completed': '步骤完成', 'step-failed': '步骤失败', retry: '步骤重试', reset: '任务复位', 'asset-selection': '通风资产选择',
 })[eventType]
 const stepStatusLabel = (status: string): string => ({
   pending: '待执行', running: '执行中', completed: '完成', failed: '失败', skipped: '跳过',
@@ -793,6 +968,7 @@ const formatValue = (value: unknown): string => {
 onBeforeUnmount(() => {
   unregisterTaskController?.()
   stopExecutor?.()
+  void exitHistoryPreview()
   if (executor.value && snapshot.value?.status !== 'running') void executor.value.reset()
 })
 </script>
@@ -854,6 +1030,8 @@ button.danger { color: #ffbdc0; border-color: rgba(255, 81, 91, .5); background:
 .history-section { padding-top: 14px; border-top: 1px solid rgba(120, 205, 240, .12); }
 .history-section label + label, .history-result { margin-top: 10px; }
 .history-hint { margin: 0 0 10px; color: #789cac; font-size: 10px; line-height: 1.5; }
+.history-preview-actions { display: flex; gap: 8px; margin-bottom: 9px; }
+.history-preview-error { color: #ff9a96 !important; }
 .history-result { padding: 10px; background: rgba(0, 177, 214, .05); border: 1px solid rgba(0, 193, 227, .13); }
 .history-result p { margin-bottom: 7px; color: #a8cbd8; font-size: 10px; line-height: 1.5; word-break: break-word; }
 .panel-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 17px; border-top: 1px solid rgba(0, 202, 255, .18); background: rgba(0, 0, 0, .18); }

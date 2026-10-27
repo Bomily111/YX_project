@@ -1,0 +1,163 @@
+[
+  {
+    "taskId": "scene-1792385618142-hqojv",
+    "snapshots": [
+      {
+        "id": "60",
+        "eventType": "prepared",
+        "assetVersions": [],
+        "resources": []
+      },
+      {
+        "id": "61",
+        "eventType": "step-completed",
+        "assetVersions": [
+          {
+            "locator": "/data/ventilation/tunnel-assembled.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "ab251005eadc5327de71b9ac69f56b0cc5580043ad5ad6eda57489bef6a8556e"
+          },
+          {
+            "locator": "/data/ventilation/transient_fan_ramp_up.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "8fa7587bdc879384bf00184ea7799a138a17615da7569326fdcccaebf6c9191c"
+          }
+        ],
+        "resources": [
+          {
+            "id": "ventilation.scene",
+            "status": "loaded",
+            "references": 1
+          },
+          {
+            "id": "ventilation.transient-network",
+            "status": "loaded",
+            "references": 1
+          }
+        ]
+      },
+      {
+        "id": "62",
+        "eventType": "asset-selection",
+        "assetVersions": [
+          {
+            "locator": "/data/ventilation/tunnel-assembled.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "ab251005eadc5327de71b9ac69f56b0cc5580043ad5ad6eda57489bef6a8556e"
+          },
+          {
+            "locator": "/data/ventilation/transient_fan_shutdown.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "c680bc6abb223647a34a574edfdf520d988a6b86c4808f46f93b2631fa815005"
+          }
+        ],
+        "resources": [
+          {
+            "id": "ventilation.scene",
+            "status": "loaded",
+            "references": 1
+          },
+          {
+            "id": "ventilation.transient-network",
+            "status": "loaded",
+            "references": 1
+          }
+        ]
+      },
+      {
+        "id": "63",
+        "eventType": "reset",
+        "assetVersions": [],
+        "resources": []
+      }
+    ]
+  },
+  {
+    "taskId": "scene-1792385665632-izc5j",
+    "snapshots": [
+      {
+        "id": "64",
+        "eventType": "prepared",
+        "assetVersions": [],
+        "resources": []
+      },
+      {
+        "id": "65",
+        "eventType": "step-completed",
+        "assetVersions": [
+          {
+            "locator": "/data/ventilation/tunnel-assembled.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "ab251005eadc5327de71b9ac69f56b0cc5580043ad5ad6eda57489bef6a8556e"
+          },
+          {
+            "locator": "/data/ventilation/cfd_transient_index.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "d9fad0da6c4900ffe8183123734ece0fe92500842e420ad731cc54b37c7707e5"
+          },
+          {
+            "locator": "/data/ventilation/transient_thermal_monitors.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "475495b2d15fd1365cb70354716c5ead1ceddaa65299e746215dfbd7c0cf1167"
+          }
+        ],
+        "resources": [
+          {
+            "id": "ventilation.scene",
+            "status": "loaded",
+            "references": 1
+          },
+          {
+            "id": "ventilation.thermal-field",
+            "status": "loaded",
+            "references": 1
+          }
+        ]
+      },
+      {
+        "id": "66",
+        "eventType": "asset-selection",
+        "assetVersions": [
+          {
+            "locator": "/data/ventilation/tunnel-assembled.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "ab251005eadc5327de71b9ac69f56b0cc5580043ad5ad6eda57489bef6a8556e"
+          },
+          {
+            "locator": "/data/ventilation/cfd_transient_index.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "d9fad0da6c4900ffe8183123734ece0fe92500842e420ad731cc54b37c7707e5"
+          },
+          {
+            "locator": "/data/ventilation/transient_thermal_monitors.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "475495b2d15fd1365cb70354716c5ead1ceddaa65299e746215dfbd7c0cf1167"
+          },
+          {
+            "locator": "/data/ventilation/cfd_transient_t200s.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "cef3b0b3280fd29264e390f6cec58f1cdfbb553121fe1b9253f7f302812a7560"
+          }
+        ],
+        "resources": [
+          {
+            "id": "ventilation.scene",
+            "status": "loaded",
+            "references": 1
+          },
+          {
+            "id": "ventilation.thermal-field",
+            "status": "loaded",
+            "references": 1
+          }
+        ]
+      },
+      {
+        "id": "67",
+        "eventType": "reset",
+        "assetVersions": [],
+        "resources": []
+      }
+    ]
+  }
+]

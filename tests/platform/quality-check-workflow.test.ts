@@ -38,8 +38,8 @@ const component = (
 ): SupportComponentRecord => ({
   id,
   componentType,
-  startChainage: 278320,
-  endChainage: 278350,
+  startChainage: 1336,
+  endChainage: 1366,
   completionPercent: 100,
   qualityGrade: '合格',
   designValue: 100,
@@ -49,12 +49,12 @@ const component = (
 })
 
 describe('RockAssessmentService', () => {
-  it('maps legacy DK chainage to the platform YK design range', async () => {
+  it('matches the platform YK design range', async () => {
     const service = new RockAssessmentService(rockSource([
       { startMileage: 'YK1+116', endMileage: 'YK1+616', grade: 'V' },
     ]))
 
-    const result = await service.assess({ start: 278330, end: 278350 })
+    const result = await service.assess({ start: 1346, end: 1366 })
 
     expect(result).toEqual(expect.objectContaining({
       grade: 'V',
@@ -64,8 +64,25 @@ describe('RockAssessmentService', () => {
     expect(result.evidence[0]).toContain('YK1+116–YK1+616')
   })
 
-  it('uses face observations as higher-confidence evidence and extracts anomalies', async () => {
-    const service = new RockAssessmentService(rockSource([], FACE_SKETCH_RECORDS.slice(0, 2)))
+  it('does not treat independent X1DK face observations as YK evidence', async () => {
+    const service = new RockAssessmentService(rockSource([
+      { startMileage: 'YK2+616', endMileage: 'YK3+116', grade: 'III' },
+    ], FACE_SKETCH_RECORDS.slice(0, 2)))
+
+    const result = await service.assess({ start: 2880, end: 2890 })
+
+    expect(result.grade).toBe('III')
+    expect(result.confidence).toBe(0.75)
+    expect(result.evidence).toEqual(['设计分级 YK2+616–YK3+116: III'])
+    expect(result.anomalies).toEqual([])
+  })
+
+  it('uses explicitly YK-labeled face observations as higher-confidence evidence', async () => {
+    const faces = FACE_SKETCH_RECORDS.slice(0, 2).map((face, index) => ({
+      ...face,
+      mileage: `YK2+${880 + index * 5}`,
+    }))
+    const service = new RockAssessmentService(rockSource([], faces))
 
     const result = await service.assess({ start: 2880, end: 2890 })
 
@@ -97,7 +114,7 @@ describe('SupportAssessmentService', () => {
       component('arch', '钢拱架'),
     ]))
 
-    const result = await service.assess('main', { start: 278330, end: 278340 }, 'IV')
+    const result = await service.assess('main', { start: 1346, end: 1356 }, 'IV')
 
     expect(result.assessment).toBe('pass')
     expect(result.deviations).toEqual([])
@@ -110,7 +127,7 @@ describe('SupportAssessmentService', () => {
       component('bolt', 'bolt'),
     ]))
 
-    const result = await service.assess('main', { start: 278330, end: 278340 }, 'V')
+    const result = await service.assess('main', { start: 1346, end: 1356 }, 'V')
 
     expect(result.assessment).toBe('fail')
     expect(result.deviations.map(({ rule }) => rule)).toEqual(expect.arrayContaining([
@@ -122,7 +139,7 @@ describe('SupportAssessmentService', () => {
 
   it('reports insufficient data without claiming pass or fail', async () => {
     const result = await new SupportAssessmentService(supportSource([]))
-      .assess('main', { start: 278330, end: 278340 }, 'IV')
+      .assess('main', { start: 1346, end: 1356 }, 'IV')
     expect(result.assessment).toBe('insufficient-data')
     expect(result.summary).toContain('无法判断')
   })
@@ -148,7 +165,7 @@ describe('quality-check workflow sample', () => {
       id: 'rock.design-grade',
       module: 'rock',
       type: 'design-rock-grade',
-      chainageRange: { start: 278100, end: 278600 },
+      chainageRange: { start: 1116, end: 1616 },
       processes: ['support-design'],
       states: ['installed'],
       estimatedMemoryMb: 1,
@@ -160,7 +177,7 @@ describe('quality-check workflow sample', () => {
       id: 'support.scene',
       module: 'support',
       type: 'initial-support',
-      chainageRange: { start: 278100, end: 278600 },
+      chainageRange: { start: 1116, end: 1616 },
       processes: ['support-design'],
       states: ['installed'],
       estimatedMemoryMb: 2,
@@ -178,9 +195,9 @@ describe('quality-check workflow sample', () => {
     const task: TaskContext = {
       taskId: 'quality-real-001',
       taskType: 'quality-check',
-      description: '检查 DK278+330 至 DK278+340 围岩变化后初期支护是否合理',
+      description: '检查 YK1+346 至 YK1+356 围岩变化后初期支护是否合理',
       tunnelId: 'main',
-      chainageRange: { start: 278330, end: 278340 },
+      chainageRange: { start: 1346, end: 1356 },
       process: 'support-design',
       targetTypes: ['initial-support'],
       targetState: 'installed',

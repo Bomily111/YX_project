@@ -160,7 +160,7 @@
         </template>
       </div>
 
-      <p v-if="props.sceneKey === 'support'" class="st-source">既有 GLB 构件 · 不可参数化<br>DK278+100～DK278+167 附近示例布置，不代表实测或质量结论。</p>
+      <p v-if="props.sceneKey === 'support'" class="st-source">既有 GLB 构件 · 不可参数化<br>YK1+116～YK1+183 附近示例布置，不代表实测或质量结论。</p>
       <p v-if="supportTreeError" role="alert" class="st-source">{{ supportTreeError }}</p>
 
       <!-- 告警提示 -->

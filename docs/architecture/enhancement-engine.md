@@ -2,6 +2,8 @@
 
 更新日期：2026-10-12
 
+以下描述现有增强引擎及其逐阶段事务接入方式。论文场景任务的目标执行时机已确定为**完整场景构建并校验之后**；现有引擎将作为构建后增强的执行基础，流程差距见[构建后增强架构约定](post-assembly-enhancement.md)。
+
 ## 计划生成
 
 `EnhancementPlanner` 在资源加载完成后读取 `SceneResource.getEnhanceTargets()`：

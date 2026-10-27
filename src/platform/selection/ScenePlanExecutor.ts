@@ -112,9 +112,14 @@ export class ScenePlanExecutor {
 
       if (toRelease.length > 0) {
         oldReleaseAttempted = true
+        for (const id of toRelease) {
+          if (!plan.loadOrder.includes(id)) await this.registry.require(id).resetTaskPlacement?.()
+        }
         released = await this.manager.release(toRelease)
         const releaseFailure = failedOperation(released)
         if (releaseFailure) throw releaseFailure.error ?? new Error(`资源释放失败：${releaseFailure.id}`)
+        const taskPlacedRoots = plan.rootResourceIds.filter(id => this.registry.require(id).resetTaskPlacement)
+        if (taskPlacedRoots.length > 0) await this.manager.update(taskPlacedRoots, task)
       }
 
       this.activePlan = plan
@@ -184,6 +189,7 @@ export class ScenePlanExecutor {
         rollbackErrors: [],
       }
     }
+    for (const id of roots) await this.registry.require(id).resetTaskPlacement?.()
     const released = await this.manager.release(roots)
     const failure = failedOperation(released)
     if (failure) {

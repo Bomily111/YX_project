@@ -188,8 +188,8 @@
             <p><span>左主洞</span><b>TBM · 6,800m · 68段</b></p><p><span>右主洞</span><b>钻爆 · 7,800m · 78段</b></p>
             <p><span>横通道</span><b>4处 · 4m×4m</b></p><p><span>附属通道</span><b>DDK + A线 + D线</b></p>
           </article>
-          <article class="info-card"><h3>稳态 CFD 风场</h3><p><span>计算点</span><b>{{ cfdCells?.meta.n || 0 }}</b></p><p><span>矢量样本</span><b>{{ cfdArrows?.meta.n || 0 }}</b></p><p><span>原始数据区间</span><b>K3+805～K4+005</b></p><p><span>展示位置</span><b>右主洞中心示意配准至 DK278+330</b></p><p><span>当前着色</span><b>{{ colorMode === 'velocity' ? '风速' : '温度' }}</b></p></article>
-          <article class="info-card note">仅调整三维展示坐标；此 CFD 数据并非 DK278+330 工点实测结果，不能据此作联合工程判断。</article>
+          <article class="info-card"><h3>稳态 CFD 风场</h3><p><span>计算点</span><b>{{ cfdCells?.meta.n || 0 }}</b></p><p><span>矢量样本</span><b>{{ cfdArrows?.meta.n || 0 }}</b></p><p><span>原始数据区间</span><b>K3+805～K4+005</b></p><p><span>展示位置</span><b>右主洞中心示意配准至 YK1+346</b></p><p><span>当前着色</span><b>{{ colorMode === 'velocity' ? '风速' : '温度' }}</b></p></article>
+          <article class="info-card note">仅调整三维展示坐标；此 CFD 数据并非 YK1+346 工点实测结果，不能据此作联合工程判断。</article>
           <article v-if="pickedInfo" class="info-card highlight"><h3>选中 CFD 采样点</h3><p><span>里程</span><b>{{ formatMileage(pickedInfo.chainage) }}</b></p><p><span>风速</span><b>{{ pickedInfo.velocity.toFixed(3) }} m/s</b></p><p><span>温度</span><b>{{ pickedInfo.temperature.toFixed(2) }} K / {{ (pickedInfo.temperature - 273.15).toFixed(1) }}°C</b></p></article>
           <article class="info-card gallery"><h3>CFD 分析图</h3><div v-for="img in analysisImages" :key="img.src"><img :src="img.src" :alt="img.label" @click="modalImage = img.src"><small>{{ img.label }}</small></div></article>
         </template>

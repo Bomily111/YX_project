@@ -7,10 +7,11 @@ import { queueLegacySupportModel, invalidateLegacySupportModels, getLegacySuppor
 import { ResourceRegistry } from '@/platform/resources/ResourceRegistry'
 import { ResourceManager } from '@/platform/resources/ResourceManager'
 import { collectActiveAssetPaths } from '@/platform/telemetry/TaskAssetVersions'
-import { createSceneExplorationExecutor } from '@/platform/tasks/samples/SceneExplorationWorkflow'
+import { createSceneExplorationExecutor, sceneStageTask } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import { ResourceSelector } from '@/platform/selection/ResourceSelector'
 import { ScenePlanExecutor } from '@/platform/selection/ScenePlanExecutor'
 import { EnhancementEngine } from '@/platform/enhancement/EnhancementEngine'
+import { demoReanchorTransform } from '@/platform/coordinates/DemoReanchor'
 
 const context = () => ({ viewer: {
   isDestroyed: () => false,
@@ -123,17 +124,61 @@ describe('legacy structure tree support resources', () => {
     expect(attach).not.toHaveBeenCalled()
   })
 
-  it('keeps the original sample chainage and composes rock with the existing assembly', () => {
+  it('keeps the original sample placement under YK chainage and composes rock with the existing assembly', () => {
     const reg = registry()
-    reg.register({ id: 'rock.design-grade', module: 'rock', type: 'rock', chainageRange: { start: 278100, end: 286400 }, processes: [], states: [], async load() {}, async unload() {} })
-    const result = createSceneExplorationExecutor({
+    reg.register({ id: 'rock.design-grade', module: 'rock', type: 'rock', chainageRange: { start: 1116, end: 9400 }, processes: [], states: [], async load() {}, async unload() {} })
+    const task = {
       taskId: 'legacy-preview', taskType: 'scene-exploration', description: '既有支护', tunnelId: 'demo',
-      chainageRange: { start: 278330, end: 278340 }, targetTypes: ['scene'], constraints: { maxLoadMb: 1200 },
-    }, ['rock.design-grade', 'support.legacy-assembly'], reg, {
+      chainageRange: { start: 1150, end: 1150 }, targetTypes: ['scene'], constraints: { maxLoadMb: 1400 },
+    } as const
+    const result = createSceneExplorationExecutor(task, ['rock.design-grade', 'support.legacy-assembly'], reg, {
       selector: new ResourceSelector(reg), executor: new ScenePlanExecutor(reg, new ResourceManager(reg)), loadContext: context(),
-    })
+    }, { targetChainage: 1150 })
     expect(result.scenePlans[1].rootResourceIds).toEqual(['rock.design-grade', 'support.legacy-assembly'])
     expect(result.scenePlans[1].loadOrder).toHaveLength(9)
-    expect(legacySupportAssembly.chainageRange).toEqual({ start: 278100, end: 278167 })
+    expect(legacySupportAssembly.chainageRange).toEqual({ start: 1116, end: 1183 })
+    expect(sceneStageTask(task, legacySupportAssembly, 1346).chainageRange).toEqual({ start: 1346, end: 1346 })
+  })
+
+  it('moves the whole existing assembly to a task mileage and restores shared matrices on release', async () => {
+    vi.spyOn(Cesium.Model, 'fromGltfAsync').mockImplementation(async options => ({
+      ...model(), modelMatrix: Cesium.Matrix4.clone(options.modelMatrix ?? Cesium.Matrix4.IDENTITY),
+    }) as Cesium.Model)
+    const reg = registry()
+    const manager = new ResourceManager(reg)
+    await manager.load([legacySupportAssembly.id], context())
+    const frame = getLegacySupportModels('steel_frame')[0]
+    const base = Cesium.Matrix4.clone(frame.modelMatrix)
+    const task = {
+      taskId: 'demo-reanchor', taskType: 'scene-exploration', description: '跨里程示意装配', tunnelId: 'demo',
+      chainageRange: { start: 1346, end: 1346 }, targetTypes: ['support'],
+    } as const
+    await manager.activate([legacySupportAssembly.id], task)
+    const expected = Cesium.Matrix4.multiply(demoReanchorTransform(1161, 1346), base, new Cesium.Matrix4())
+    expect(Cesium.Matrix4.equalsEpsilon(frame.modelMatrix, expected, 1e-7)).toBe(true)
+    await manager.release([legacySupportAssembly.id])
+    expect(Cesium.Matrix4.equalsEpsilon(frame.modelMatrix, base, 1e-7)).toBe(true)
+  })
+
+  it('reanchors an individual steel frame while preserving its original matrix for the structure tree', async () => {
+    vi.spyOn(Cesium.Model, 'fromGltfAsync').mockImplementation(async options => ({
+      ...model(), modelMatrix: Cesium.Matrix4.clone(options.modelMatrix ?? Cesium.Matrix4.IDENTITY),
+    }) as Cesium.Model)
+    const reg = registry()
+    const manager = new ResourceManager(reg)
+    await manager.load(['support.legacy-steel-frame'], context())
+    const frame = getLegacySupportModels('steel_frame')[0]
+    const base = Cesium.Matrix4.clone(frame.modelMatrix)
+    await manager.activate(['support.legacy-steel-frame'], {
+      taskId: 'single-frame', taskType: 'scene-exploration', description: '示意钢架', tunnelId: 'demo',
+      chainageRange: { start: 1346, end: 1346 }, targetTypes: ['support'],
+    })
+    const source = (reg.require('support.legacy-steel-frame').chainageRange!.start
+      + reg.require('support.legacy-steel-frame').chainageRange!.end) / 2
+    const expected = Cesium.Matrix4.multiply(demoReanchorTransform(source, 1346), base, new Cesium.Matrix4())
+    expect(Cesium.Matrix4.equalsEpsilon(frame.modelMatrix, expected, 1e-7)).toBe(true)
+    await reg.require('support.legacy-steel-frame').resetTaskPlacement?.()
+    expect(Cesium.Matrix4.equalsEpsilon(frame.modelMatrix, base, 1e-7)).toBe(true)
+    await manager.release(['support.legacy-steel-frame'])
   })
 })

@@ -1,6 +1,6 @@
 <template>
   <!-- 右下角悬浮对话气泡 -->
-  <div class="agent-root" :class="{ expanded: isOpen }">
+  <div class="agent-root" :class="{ expanded: isOpen, docked: placement === 'right' }">
 
     <!-- 收起状态：悬浮按钮 -->
     <button v-if="!isOpen" class="agent-fab" @click="isOpen = true" title="打开智能助手">
@@ -18,7 +18,8 @@
           <span class="ah-title">施工智能助手</span>
           <span v-if="currentScene" class="ah-scene">{{ currentScene }}</span>
           <span class="ah-model">{{ providerLabel }}</span>
-          <button class="ah-task" @click="openTaskWorkflow" title="任务调度">任务</button>
+          <button class="ah-task" @click="taskFormOpen = !taskFormOpen" title="在对话中通过表单建任务">表单</button>
+          <button class="ah-task" @click="openTaskWorkflow" title="查看任务运行记录">记录</button>
           <button class="ah-min" @click="isOpen = false" title="最小化">─</button>
           <button class="ah-clear" @click="clearHistory" title="清空对话">✕</button>
         </div>
@@ -33,6 +34,36 @@
               <button v-for="cmd in quickCommands" :key="cmd" class="quick-btn" @click="sendQuick(cmd)">{{ cmd }}</button>
             </div>
           </div>
+
+          <form v-if="taskFormOpen" class="chat-task-form" @submit.prevent="createTaskFromForm">
+            <strong>表单建任务</strong>
+            <label>任务类型<select v-model="taskForm.kind">
+              <option value="quality-check">初期支护质量检查</option>
+              <option value="scene-exploration">场景构建与展示</option>
+            </select></label>
+            <label>任务目标<input v-model.trim="taskForm.description" required placeholder="例如检查 YK1+346 附近支护质量" /></label>
+            <label>隧洞<select v-model="taskForm.tunnelId" required>
+              <option value="" disabled>选择隧洞</option>
+              <option v-for="tunnel in tunnelStore.tunnels" :key="tunnel.id" :value="tunnel.id">{{ tunnel.name }}</option>
+            </select></label>
+            <div v-if="taskForm.kind === 'quality-check'" class="chat-task-form-row">
+              <label>起点 YK 绝对米数<input v-model.number="taskForm.start" type="number" required /></label>
+              <label>终点 YK 绝对米数<input v-model.number="taskForm.end" type="number" required /></label>
+            </div>
+            <div v-else class="chat-scene-stages">
+              <span>场景阶段（按添加顺序执行，最多 8 个）</span>
+              <div v-for="(id, index) in taskForm.resourceIds" :key="`${index}-${id}`" class="chat-scene-stage">
+                <span>{{ index + 1 }}. {{ sceneResourceLabels[id] ?? id }}</span>
+                <button type="button" @click="taskForm.resourceIds.splice(index, 1)">移除</button>
+              </div>
+              <div class="chat-task-form-row">
+                <label>追加场景资源<select v-model="taskForm.nextResourceId"><option v-for="id in sceneResourceIds" :key="id" :value="id">{{ sceneResourceLabels[id] ?? id }}</option></select></label>
+                <button type="button" :disabled="taskForm.resourceIds.length >= 8" @click="taskForm.resourceIds.push(taskForm.nextResourceId)">添加阶段</button>
+              </div>
+            </div>
+            <label>加载预算 MB<input v-model.number="taskForm.maxLoadMb" type="number" min="1" required /></label>
+            <button type="submit" :disabled="chatTaskBusy">校验并创建计划</button>
+          </form>
 
           <!-- 对话消息 -->
           <div
@@ -77,6 +108,10 @@
               <span class="dot-pulse"></span><span class="dot-pulse"></span><span class="dot-pulse"></span>
             </div>
           </div>
+          <div v-if="chatTaskStatus?.prepared && chatTaskStatus.status !== 'completed'" class="chat-task-action">
+            <span>已校验任务 {{ chatTaskStatus.taskId }} · {{ chatTaskStatus.completed }}/{{ chatTaskStatus.total }}</span>
+            <button :disabled="chatTaskBusy || loading" @click="executeFormTask">{{ chatTaskBusy ? '执行中…' : '自主执行剩余步骤' }}</button>
+          </div>
         </div>
 
         <!-- 工具执行状态提示 -->
@@ -98,7 +133,7 @@
             @keydown.enter.exact.prevent="send"
             @input="autoResize"
           ></textarea>
-          <button class="send-btn" :disabled="!inputText.trim() || loading" @click="send">
+          <button class="send-btn" :disabled="!inputText.trim() || loading || streaming || chatTaskBusy" @click="send">
             <span>{{ loading ? '◌' : '↑' }}</span>
           </button>
         </div>
@@ -108,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, reactive, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { AgentEngine, createAgentEngine } from './AgentEngine'
 import { buildSystemPrompt } from './knowledge/prompts/system'
 import { registerTools, executeTool, unregisterModule } from './ToolRegistry'
@@ -118,6 +153,12 @@ import { getAgentConfig } from './config'
 import { aiEvents } from './events'
 import { recordTaskEvent, summarizeAuditValue } from '@/platform/telemetry/TaskAuditClient'
 import { hasTaskWorkflowController, getTaskWorkflowController } from '@/platform/tasks/TaskWorkflowBridge'
+import type { AgentTaskWorkflowStatus } from '@/platform/tasks/TaskWorkflowBridge'
+import { dispatchValidatedWorkflow } from './TaskOrchestrator'
+import { routeWorkflowToolCall } from './AgentDispatchIntent'
+import { AGENT_SCENE_RESOURCES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
+import { useTunnelStore } from '@/stores/tunnelStore'
+import { chainageService } from '@/platform/coordinates/ChainageService'
 import type { Message, ToolUseBlock, AgentContext } from './types'
 
 // ── Props ─────────────────────────────────────────────────
@@ -125,12 +166,14 @@ const props = defineProps<{
   context?: AgentContext
   welcomeIcon?: string
   welcomeText?: string
+  placement?: 'floating' | 'right'
 }>()
 
 // ── Emits ─────────────────────────────────────────────────
 const emit = defineEmits<{
   sceneOpen: [scene: string]
   taskWorkflowOpen: []
+  assemblyChange: [result: { targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }> } | null]
 }>()
 
 // ── 引擎 ──────────────────────────────────────────────────
@@ -144,7 +187,47 @@ const streamBuffer = ref('')
 const inputText = ref('')
 const toolStatus = ref('')
 const auditWarning = ref('')
+const tunnelStore = useTunnelStore()
+const taskFormOpen = ref(false)
+const chatTaskBusy = ref(false)
+const chatTaskStatus = ref<AgentTaskWorkflowStatus>()
+const taskForm = reactive<{
+  kind: 'quality-check' | 'scene-exploration'; description: string; tunnelId: string;
+  start: number; end: number; maxLoadMb: number; resourceIds: string[]; nextResourceId: string
+}>({ kind: 'quality-check', description: '', tunnelId: '', start: 1346, end: 1356,
+  maxLoadMb: 1400, resourceIds: [], nextResourceId: 'rock.design-grade' })
+const sceneResourceIds: readonly string[] = AGENT_SCENE_RESOURCES
+const sceneResourceLabels: Record<string, string> = {
+  'rock.design-grade': '围岩设计分级',
+  'rock.geophysical-grade': '物探融合围岩等级 · 示意重定位',
+  'rock.tsp-hardness': 'TSP 岩体坚硬度 · 示意锚定',
+  'rock.tsp-integrity': 'TSP 岩体完整度 · 示意锚定',
+  'rock.tem-resistivity': 'TEM 视电阻率 · 示意重定位',
+  'support.legacy-assembly': '结构树既有支护组合（示意重定位）', 'blast.effect': '爆破效果',
+  'ventilation.steady-cfd': '稳态 CFD', 'ventilation.transient-network': '瞬态风网',
+  'ventilation.thermal-field': '热场时间片',
+}
+const sceneSourceNotes = (plans: Array<{ resources: string[] }> = []): string => {
+  const ids = plans.flatMap(plan => plan.resources)
+  return [
+    ids.some(id => id.startsWith('support.legacy-')) ? '既有支护以结构树 YK1+116～YK1+183 原布置为模板沿中线示意重定位，不代表目标里程的实测支护。' : '',
+    ids.some(id => id.startsWith('rock.') && id !== 'rock.design-grade')
+      ? '物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。' : '',
+    ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity')
+      ? 'TSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。' : '',
+  ].filter(Boolean).join('\n')
+}
+const publishAssembledScene = (status: AgentTaskWorkflowStatus): void => {
+  const stage = status.lastCompletedStage
+  if (!status.taskId || !stage) return
+  emit('assemblyChange', {
+    targetMileage: chainageService.format(stage.chainageRange.start),
+    taskId: status.taskId,
+    resources: stage.assembledResourceIds.map(id => ({ id, label: sceneResourceLabels[id] ?? id })),
+  })
+}
 const workflowToolNames = new Set([
+  'assemble_scene_at_mileage', 'orchestrate_platform_task', 'prepare_platform_task', 'advance_platform_task', 'revise_next_scene_assembly',
   'create_task', 'create_workflow', 'execute_task_step', 'continue_workflow',
   'get_task_status', 'retry_task_step', 'reset_task_scene',
 ])
@@ -163,9 +246,11 @@ const providerLabel = computed(() => {
 })
 
 const currentScene = computed(() => props.context?.scene || '')
+const placement = computed(() => props.placement ?? 'floating')
 
 const defaultQuickCmds = [
-  '检查 DK278+330 至 DK278+340 初期支护质量',
+  '在 YK1+346 主场景展示设计围岩与结构树既有支护组合',
+  '自主检查 YK1+346 至 YK1+356 初期支护质量并完成任务',
   '查看当前掌子面状态',
   '飞往围岩模型区域',
   '打开爆破指挥台',
@@ -188,7 +273,7 @@ const quickCommands = computed(() => {
 
 const welcomeIcon = computed(() => props.welcomeIcon || '🏔')
 const welcomeText = computed(() =>
-  props.welcomeText || '你好！我是隧道施工数字孪生平台的智能助手。<br>可以创建跨模块任务、查看场景、查询施工状态并受控推进任务流程。'
+  props.welcomeText || '你好！请告诉我目标里程和要展示的模型。<br>我会在主场景装配，左侧和底部显示实际任务信息。'
 )
 
 // ── 反馈机制 ──────────────────────────────────────────────
@@ -215,6 +300,7 @@ function toggleFeedback(msgIndex: number, rating: 'up' | 'down') {
 // ── 初始化 ────────────────────────────────────────────────
 onMounted(() => {
   loadFeedback()
+  taskForm.tunnelId = tunnelStore.currentTunnelId ?? ''
 
   // 注册通用工具
   registerTools('common', [...commonTools, ...workflowTools])
@@ -246,7 +332,7 @@ watch(() => props.context, (ctx) => {
 // ── 发送消息 ──────────────────────────────────────────────
 const send = async () => {
   const text = inputText.value.trim()
-  if (!text || loading.value || !engine.value) return
+  if (!text || loading.value || streaming.value || chatTaskBusy.value || !engine.value) return
 
   inputText.value = ''
   autoResize()
@@ -261,6 +347,7 @@ const send = async () => {
 
   let firstChunk = true
   let assistantMsg = ''
+  let canonicalDispatchShown = false
 
   try {
     await engine.value.chat(
@@ -268,6 +355,7 @@ const send = async () => {
       props.context || {},
       {
         onText: (delta: string) => {
+          if (canonicalDispatchShown) return
           if (firstChunk) {
             loading.value = false
             streaming.value = true
@@ -278,24 +366,68 @@ const send = async () => {
           scrollToBottom()
         },
         onToolUse: async (tool: ToolUseBlock) => {
-          toolStatus.value = `执行操作：${tool.name}...`
+          const routed = routeWorkflowToolCall(tool.name, tool.input, text)
+          if (routed.name === 'assemble_scene_at_mileage') emit('assemblyChange', null)
+          toolStatus.value = `执行操作：${routed.name}...`
           const startedAt = performance.now()
-          const result = await executeTool(tool.name, tool.input)
+          const result = await executeTool(routed.name, routed.name === 'assemble_scene_at_mileage'
+            ? { ...routed.input, userRequest: text } : routed.input)
           toolStatus.value = ''
           let parsed: Record<string, any> = {}
           try { parsed = JSON.parse(result) } catch { /* 文本型模块工具 */ }
-          const taskId = parsed.taskId || (tool.name !== 'create_task' && workflowToolNames.has(tool.name) && hasTaskWorkflowController()
+          if (workflowToolNames.has(routed.name) && typeof parsed.prepared === 'boolean') {
+            chatTaskStatus.value = parsed as AgentTaskWorkflowStatus
+          }
+          if (routed.name === 'prepare_platform_task') {
+            canonicalDispatchShown = true
+            streaming.value = false
+            streamBuffer.value = ''
+            messages.value.push({ role: 'assistant', content: parsed.ok
+              ? `任务 ${parsed.taskId} 校验通过，${parsed.total} 个阶段。当前待执行：${parsed.currentStepId}。`
+              : `任务校验未通过：${parsed.notice?.message || '请检查目标与资源参数。'}` })
+            await scrollToBottom()
+          }
+          if (routed.name === 'assemble_scene_at_mileage') {
+            canonicalDispatchShown = true
+            streaming.value = false
+            streamBuffer.value = ''
+            const ids: string[] = Array.isArray(parsed.assembledResourceIds) ? parsed.assembledResourceIds : []
+            const resources = ids.map(id => sceneResourceLabels[id] ?? id).join('、')
+            if (parsed.ok) emit('assemblyChange', {
+              targetMileage: String(parsed.targetMileage), taskId: String(parsed.taskId),
+              resources: ids.map(id => ({ id, label: sceneResourceLabels[id] ?? id })),
+            })
+            messages.value.push({ role: 'assistant', content: parsed.ok
+              ? `已定位 ${parsed.targetMileage}，主场景装配完成：${resources || '无'}。${sceneSourceNotes(parsed.scenePlans)}`
+              : `场景装配未完成：${parsed.reason || parsed.notice?.message || (result.startsWith('❌') ? result : '请核对里程与资源。')}` })
+            await scrollToBottom()
+          }
+          if ((routed.name === 'advance_platform_task' || routed.name === 'orchestrate_platform_task') && Array.isArray(parsed.dispatchTrace)) {
+            if (parsed.ok && parsed.status === 'completed') publishAssembledScene(parsed as AgentTaskWorkflowStatus)
+            canonicalDispatchShown = true
+            streaming.value = false
+            streamBuffer.value = ''
+            const trace = parsed.dispatchTrace.map((step: { module: string; stepId: string; resources: string[]; after: string; completed: number }) =>
+              `${step.module}/${step.stepId} · ${step.resources.join('、') || '无场景资源'} · ${step.after} · ${step.completed}/${parsed.total}`).join('\n')
+            const sourceNotes = sceneSourceNotes(parsed.scenePlans)
+            messages.value.push({ role: 'assistant', content: `${parsed.ok ? parsed.status === 'completed' ? '自主调度完成' : '步骤完成，等待智能体判断下一步' : '自主调度已停止'}：${parsed.reason}${trace ? `\n${trace}` : ''}${sourceNotes ? `\n${sourceNotes}` : ''}` })
+            await scrollToBottom()
+          }
+          const taskId = parsed.taskId || (!['create_task', 'orchestrate_platform_task', 'prepare_platform_task'].includes(routed.name) && workflowToolNames.has(routed.name) && hasTaskWorkflowController()
             ? getTaskWorkflowController().getStatus().taskId : undefined)
           try {
             await recordTaskEvent({
-              taskId, source: 'agent', action: tool.name, callId: tool.id,
+              taskId, source: 'agent', action: routed.name, callId: tool.id,
               status: result.startsWith('❌') || parsed.ok === false ? 'failed' : 'completed',
               durationMs: performance.now() - startedAt,
-              inputSummary: summarizeAuditValue(tool.input) as Record<string, unknown>,
+              inputSummary: summarizeAuditValue({ ...routed.input, modelTool: tool.name, intentRouted: routed.routed }) as Record<string, unknown>,
               resultSummary: {
                 taskStatus: parsed.status,
                 completed: parsed.completed,
                 total: parsed.total,
+                dispatchTrace: ['assemble_scene_at_mileage', 'orchestrate_platform_task', 'advance_platform_task'].includes(routed.name) && Array.isArray(parsed.dispatchTrace)
+                  ? summarizeAuditValue(parsed.dispatchTrace) : undefined,
+                stopReason: ['assemble_scene_at_mileage', 'orchestrate_platform_task', 'advance_platform_task'].includes(routed.name) ? parsed.reason : undefined,
                 error: result.startsWith('❌') ? result.slice(0, 300) : parsed.notice?.type === 'error' ? parsed.notice.message : undefined,
               },
             })
@@ -308,7 +440,10 @@ const send = async () => {
         onComplete: (fullText: string) => {
           streaming.value = false
           streamBuffer.value = ''
-          messages.value.push({ role: 'assistant', content: fullText })
+          if (!canonicalDispatchShown) messages.value.push({ role: 'assistant', content: fullText })
+          else if (chatTaskStatus.value?.prepared && chatTaskStatus.value.status !== 'completed' && chatTaskStatus.value.status !== 'failed') {
+            messages.value.push({ role: 'assistant', content: `智能体本轮已停止。任务 ${chatTaskStatus.value.taskId} 目前完成 ${chatTaskStatus.value.completed}/${chatTaskStatus.value.total} 步，可继续要求它观察并推进。` })
+          }
           if (!isOpen.value) unread.value++
         },
         onError: (err: Error) => {
@@ -343,6 +478,55 @@ const handleTaskOpen = () => emit('taskWorkflowOpen')
 const openTaskWorkflow = () => {
   isOpen.value = true
   emit('taskWorkflowOpen')
+}
+
+const createTaskFromForm = async () => {
+  if (chatTaskBusy.value || loading.value) return
+  chatTaskBusy.value = true
+  chatTaskStatus.value = undefined
+  messages.value.push({ role: 'user', content: `表单创建${taskForm.kind === 'scene-exploration' ? '场景' : '质量检查'}任务：${taskForm.description}` })
+  try {
+    const controller = getTaskWorkflowController()
+    const status = taskForm.kind === 'scene-exploration'
+      ? await controller.prepareScene({ description: taskForm.description, tunnelId: taskForm.tunnelId,
+        resourceIds: [...taskForm.resourceIds], maxLoadMb: taskForm.maxLoadMb })
+      : await controller.prepare({ description: taskForm.description, tunnelId: taskForm.tunnelId,
+        start: taskForm.start, end: taskForm.end, maxLoadMb: taskForm.maxLoadMb })
+    if (!status.prepared || status.notice?.type === 'error') {
+      messages.value.push({ role: 'assistant', content: `任务校验未通过：${status.notice?.message || '请检查任务字段与平台规则。'}` })
+      return
+    }
+    chatTaskStatus.value = status
+    if (taskForm.kind === 'scene-exploration') emit('assemblyChange', null)
+    taskFormOpen.value = false
+    messages.value.push({ role: 'assistant', content: `结构与业务规则校验通过。任务 ${status.taskId} 已生成 ${status.total} 步：${status.steps.map(step => `${step.name}（${step.module}）`).join(' → ')}。可在对话中自主执行。` })
+  } catch (error) {
+    messages.value.push({ role: 'assistant', content: `任务创建失败：${error instanceof Error ? error.message : String(error)}` })
+  } finally {
+    chatTaskBusy.value = false
+    await scrollToBottom()
+  }
+}
+
+const executeFormTask = async () => {
+  if (chatTaskBusy.value || loading.value || !chatTaskStatus.value) return
+  chatTaskBusy.value = true
+  try {
+    const controller = getTaskWorkflowController()
+    const current = controller.getStatus()
+    if (current.taskId !== chatTaskStatus.value.taskId) throw new Error('当前任务已被替换，请重新创建或选择任务')
+    const outcome = await dispatchValidatedWorkflow(controller, current)
+    chatTaskStatus.value = outcome.status
+    if (outcome.ok) publishAssembledScene(outcome.status)
+    const trace = outcome.dispatchTrace.map(step => `${step.module}/${step.stepId} · ${step.resources.join('、') || '无场景资源'} · ${step.before} → ${step.after} · ${step.completed}/${outcome.status.total}`).join('\n')
+    const sourceNotes = sceneSourceNotes(outcome.status.scenePlans)
+    messages.value.push({ role: 'assistant', content: `${outcome.ok ? '自主调度完成' : '自主调度已停止'}：${outcome.reason}${trace ? `\n${trace}` : ''}${sourceNotes ? `\n${sourceNotes}` : ''}` })
+  } catch (error) {
+    messages.value.push({ role: 'assistant', content: `自主调度未启动：${error instanceof Error ? error.message : String(error)}` })
+  } finally {
+    chatTaskBusy.value = false
+    await scrollToBottom()
+  }
 }
 
 const clearHistory = () => {
@@ -386,6 +570,15 @@ const renderMarkdown = (text: string): string => {
   flex-direction: column;
   align-items: flex-start;
   pointer-events: none;
+}
+.agent-root.docked { left: auto; right: 18px; }
+.agent-root.docked.expanded {
+  top: 60px; right: 0; bottom: 0; width: min(380px, 100vw);
+  align-items: stretch;
+}
+.agent-root.docked .agent-window {
+  width: 100%; height: 100%; max-height: none;
+  border-radius: 0; border-top: 0; border-bottom: 0;
 }
 
 // ── FAB 按钮 ──────────────────────────────────────────────
@@ -482,6 +675,29 @@ const renderMarkdown = (text: string): string => {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 150, 255, 0.3) transparent;
 }
+
+.chat-task-form, .chat-task-action {
+  display: flex; flex-direction: column; gap: 8px; padding: 10px;
+  border: 1px solid rgba(80, 210, 255, .28); border-radius: 6px;
+  background: rgba(0, 35, 70, .72); color: #c7e6f5; font-size: 11px;
+}
+.chat-task-form strong { font-size: 12px; color: #e2f8ff; }
+.chat-task-form label { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.chat-task-form-row { display: flex; gap: 8px; }
+.chat-task-form-row label { flex: 1; }
+.chat-task-form-row select { flex: 1; }
+.chat-scene-stages { display: flex; flex-direction: column; gap: 5px; }
+.chat-scene-stage { display: flex; justify-content: space-between; align-items: center; gap: 5px; }
+.chat-scene-stage span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-task-form input, .chat-task-form select {
+  width: 100%; box-sizing: border-box; border: 1px solid rgba(95, 180, 215, .4); border-radius: 4px;
+  padding: 6px; background: #061d35; color: #e2f8ff; font: inherit;
+}
+.chat-task-form button, .chat-task-action button {
+  align-self: flex-start; border: 1px solid rgba(94, 229, 177, .5); border-radius: 4px;
+  padding: 5px 9px; background: rgba(18, 96, 83, .5); color: #d7ffec; cursor: pointer;
+}
+.chat-task-form button:disabled, .chat-task-action button:disabled { opacity: .5; cursor: default; }
 
 .welcome-msg {
   display: flex; flex-direction: column; align-items: center;

@@ -1,4 +1,5 @@
 import * as Cesium from 'cesium'
+import { chainageService } from '@/platform/coordinates/ChainageService'
 import type { SceneResource } from '@/platform/resources/types'
 import type { SceneModuleManifest } from '@/platform/modules/types'
 import { moduleRegistry } from '@/platform/modules/ModuleRegistry'
@@ -45,7 +46,7 @@ export const supportSceneResource: SceneResource = {
   id: 'support.scene',
   module: 'support',
   type: 'parametric-steel-arch-scene',
-  chainageRange: { start: 278100, end: 278600 },
+  chainageRange: { start: chainageService.legacyDkToCanonical(278100), end: chainageService.legacyDkToCanonical(278600) },
   processes: ['support-design', 'steel-arch-installation'],
   states: ['parameterized', 'preview'],
   dependencies: ['common.tunnel'],
@@ -127,7 +128,7 @@ export const supportModuleManifest: SceneModuleManifest = {
   displayName: '围岩支护',
   version: 'legacy-adapter-1.1.0',
   capabilities: ['visibility', 'opacity', 'standard-view', 'pick'],
-  coordinateFrame: { kind: 'platform-chainage', prefix: 'DK', origin: 278100, unit: 'm' },
+  coordinateFrame: { kind: 'platform-chainage', prefix: 'YK', origin: 1116, unit: 'm' },
   resources: supportResources,
 }
 

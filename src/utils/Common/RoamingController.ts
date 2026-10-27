@@ -4,6 +4,7 @@
  */
 import * as Cesium from 'cesium';
 import centerlineData from '@/assets/data/centerLine.json';
+import { chainageService } from '@/platform/coordinates/ChainageService';
 
 type Coord3 = number[];
 
@@ -98,6 +99,7 @@ export class RoamingController {
   private speed = DEFAULT_SPEED;
   private listeners: Array<() => void> = [];
   private savedView: SavedView | null = null;
+  private readonly mileageByWaypoint = new Map<number, string>();
 
   constructor() {
     this.waypoints = sampleWaypoints(WAYPOINT_INTERVAL);
@@ -111,12 +113,17 @@ export class RoamingController {
     const totalLen = this.waypoints.length > 0
       ? (this.waypoints.length - 1) * WAYPOINT_INTERVAL
       : 0;
-    const currentDist = this.currentIdx * WAYPOINT_INTERVAL;
-    const progress = totalLen > 0 ? currentDist / totalLen : 0;
+    const progress = totalLen > 0 ? this.currentIdx * WAYPOINT_INTERVAL / totalLen : 0;
 
-    const dkNum = 278100 + currentDist;
-    const dkKm = Math.floor(dkNum / 1000);
-    const dkM = Math.floor(dkNum % 1000);
+    let currentMileage = this.mileageByWaypoint.get(this.currentIdx);
+    if (!currentMileage) {
+      const waypoint = this.waypoints[this.currentIdx];
+      const match = waypoint ? chainageService.nearestPosition(waypoint[0], waypoint[1]) : undefined;
+      currentMileage = match
+        ? chainageService.format(chainageService.datasetReference.origin + match.offset)
+        : 'YK--';
+      this.mileageByWaypoint.set(this.currentIdx, currentMileage);
+    }
 
     return {
       playing: this.playing,
@@ -125,7 +132,7 @@ export class RoamingController {
       progress: Math.min(1, Math.max(0, progress)),
       currentWaypoint: this.currentIdx,
       totalWaypoints: this.waypoints.length,
-      currentMileage: `DK${dkKm}+${String(dkM).padStart(3, '0')}`,
+      currentMileage,
     };
   }
 

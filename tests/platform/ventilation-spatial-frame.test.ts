@@ -3,7 +3,7 @@ import * as Cesium from 'cesium'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import { ventilationWorkpointView } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import {
-  VENTILATION_DISPLAY_CHAINAGE,
+  VENTILATION_DISPLAY_CHAINAGE_YK,
   ventilationPositionToWorld,
   ventilationVectorToWorld,
 } from '@/views/ventilation-module/spatialFrame'
@@ -15,8 +15,8 @@ const at = (x: number, z: number) => ventilationPositionToWorld(
 )
 
 describe('通风异工点空间示意配准', () => {
-  it('将右主洞中心投影到 DK278+330 中线，保留 200 m 直线和双洞间距', () => {
-    const center = chainageService.positionAt(VENTILATION_DISPLAY_CHAINAGE, chainageService.legacyDkReference)!
+  it('将右主洞中心投影到 YK1+346 中线，保留 200 m 直线和双洞间距', () => {
+    const center = chainageService.positionAt(VENTILATION_DISPLAY_CHAINAGE_YK)!
     const centerWorld = Cesium.Cartesian3.fromDegrees(center.longitude, center.latitude, center.height + 3)
     expect(Cesium.Cartesian3.distance(at(0, sourceMidpoint), centerWorld)).toBeLessThan(0.01)
 
@@ -27,8 +27,8 @@ describe('通风异工点空间示意配准', () => {
     expect(Cesium.Cartesian3.distance(first, last)).toBeCloseTo(200, 3)
     expect(Cesium.Cartesian3.distance(at(32, sourceMidpoint), centerWorld)).toBeCloseTo(32, 3)
 
-    for (const [sourceZ, dk] of [[sourceMidpoint - 100, 278230], [sourceMidpoint + 100, 278430]]) {
-      const position = chainageService.positionAt(dk, chainageService.legacyDkReference)!
+    for (const [sourceZ, yk] of [[sourceMidpoint - 100, 1246], [sourceMidpoint + 100, 1446]]) {
+      const position = chainageService.positionAt(yk)!
       const tunnel = Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude, position.height + 3)
       expect(Cesium.Cartesian3.distance(at(0, sourceZ), tunnel)).toBeLessThan(3)
     }

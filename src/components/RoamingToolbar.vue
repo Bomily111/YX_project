@@ -95,7 +95,7 @@ const playing = ref(false);
 const paused = ref(false);
 const speed = ref(30);
 const progress = ref(0);
-const currentMileage = ref('DK278+100');
+const currentMileage = ref('YK1+116');
 const currentWaypoint = ref(0);
 const totalWaypoints = ref(0);
 

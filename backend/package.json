@@ -7,9 +7,12 @@
     "start": "node --env-file=.env src/server.js",
     "db:migrate": "node scripts/migrate.mjs",
     "db:task-audit": "node --env-file=.env scripts/apply-task-audit.mjs",
-    "db:seed": "node scripts/seed.mjs"
+    "db:seed": "node scripts/seed.mjs",
+    "agent:export-trajectories": "node --env-file=.env scripts/export-agent-trajectories.mjs"
   },
   "dependencies": {
+    "@langchain/core": "^1.2.20",
+    "@langchain/openai": "^1.6.3",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",

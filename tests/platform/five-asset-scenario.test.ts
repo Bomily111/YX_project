@@ -42,7 +42,7 @@ describe('five-asset cross-module scenario fixtures', () => {
     const assessment = await new RockAssessmentService({
       loadDesignSegments: async () => document.segments,
       loadFaceRecords: async () => FACE_SKETCH_RECORDS,
-    }).assess({ start: 278330, end: 278340 })
+    }).assess({ start: 1346, end: 1356 })
     expect(assessment.grade).toBe('V')
     expect(assessment.evidence.some(entry => entry.includes('YK1+116'))).toBe(true)
   })

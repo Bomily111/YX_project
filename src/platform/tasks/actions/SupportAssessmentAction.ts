@@ -1,4 +1,5 @@
 import { supportApi } from '@/services/api/client'
+import { chainageService } from '@/platform/coordinates/ChainageService'
 import type { ChainageRange } from '@/platform/resources/types'
 import type { StepActionHandler } from '@/platform/tasks/WorkflowExecutor'
 import type { TaskDataProvenance } from '@/platform/telemetry/TaskDataProvenance'
@@ -36,6 +37,8 @@ const optionalNumber = (value: unknown): number | undefined => {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : undefined
 }
+const apiChainageToYk = (value: number): number => value >= chainageService.legacyDkReference.origin
+  ? chainageService.legacyDkToCanonical(value) : value
 
 export class DefaultSupportAssessmentDataSource implements SupportAssessmentDataSource {
   async list(tunnelId: string): Promise<readonly SupportComponentRecord[]> {
@@ -47,8 +50,8 @@ export class DefaultSupportAssessmentDataSource implements SupportAssessmentData
       return [{
         id: record.id,
         componentType: record.component_type,
-        startChainage: start,
-        endChainage: end ?? start,
+        startChainage: apiChainageToYk(start),
+        endChainage: apiChainageToYk(end ?? start),
         completionPercent: optionalNumber(record.completion_pct) ?? 0,
         qualityGrade: typeof record.quality_grade === 'string' ? record.quality_grade : undefined,
         designValue: optionalNumber(record.design_value),

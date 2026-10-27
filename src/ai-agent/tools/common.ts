@@ -5,34 +5,8 @@ import type { ToolRegistration } from '../types'
 import { aiEvents } from '../events'
 import { DTScopeEngine } from '@/utils/Common/Viewer'
 import { activateGeoModel } from '@/utils/Common/GeoModelController'
+import { chainageService } from '@/platform/coordinates/ChainageService'
 import * as Cesium from 'cesium'
-
-// ── 里程→经纬度映射（临时，后续从后端获取）───────────────
-const MILEAGE_COORDS: Record<string, [number, number, number]> = {
-  'DK278+100': [101.942, 29.980, 3200],
-  'DK280+000': [101.923, 29.985, 3250],
-  'DK283+500': [101.892, 29.998, 3300],
-  'DK285+000': [101.878, 30.008, 3350],
-  'DK287+000': [101.860, 30.020, 3380],
-  'DK289+450': [101.838, 30.033, 3400],
-  'DK291+200': [101.820, 30.043, 3450],
-  'DK293+800': [101.797, 30.056, 3500],
-  'DK300+800': [101.730, 30.090, 3700],
-}
-
-function parseMileage(str: string): [number, number, number] | null {
-  if (MILEAGE_COORDS[str]) return MILEAGE_COORDS[str]
-  const num = parseFloat(str.replace(/DK|[+]/g, '').replace('+', '.'))
-  if (isNaN(num)) return null
-  let best: [number, number, number] = [101.84, 30.02, 3400]
-  let bestDiff = Infinity
-  for (const [k, v] of Object.entries(MILEAGE_COORDS)) {
-    const kNum = parseFloat(k.replace('DK', '').replace('+', '.'))
-    const diff = Math.abs(kNum - num)
-    if (diff < bestDiff) { bestDiff = diff; best = v }
-  }
-  return best
-}
 
 function getViewer(): any {
   if ((window as any).viewer) return (window as any).viewer
@@ -51,7 +25,7 @@ export const commonTools: ToolRegistration[] = [
       input_schema: {
         type: 'object',
         properties: {
-          mileage: { type: 'string', description: '目标里程，例如 DK289+450' },
+          mileage: { type: 'string', description: '真实中线目标里程，例如 YK2+244；旧 DK 标签会先转换为 YK' },
           zoom: { type: 'number', description: '飞行后的相机高度（米），默认 500' },
         },
         required: ['mileage'],
@@ -59,19 +33,22 @@ export const commonTools: ToolRegistration[] = [
     },
     executor: async (input) => {
       const mileage = input.mileage as string
-      const coords = parseMileage(mileage)
-      if (!coords) return `❌ 无法解析里程 ${mileage}`
+      let chainage: number
+      try { chainage = chainageService.toCanonicalChainage(mileage) }
+      catch { return `❌ 无法解析主场景 YK 里程 ${mileage}` }
+      const coords = chainageService.positionAt(chainage)
+      if (!coords) return `❌ ${chainageService.format(chainage)} 不在实测中线范围内`
       const viewer = getViewer()
       if (!viewer) return '❌ 三维地球未初始化'
       const height = (input.zoom as number) ?? 500
       viewer.scene.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(coords[0], coords[1], coords[2] + height),
+        destination: Cesium.Cartesian3.fromDegrees(coords.longitude, coords.latitude, coords.height + height),
         orientation: { heading: 0, pitch: Cesium.Math.toRadians(-30), roll: 0 },
         duration: 1.5,
       })
       // 同时通过事件总线通知（供独立 Viewer 的子模块监听）
-      aiEvents.emit('camera:fly-to', { lng: coords[0], lat: coords[1], height: coords[2] + height })
-      return `✅ 正在飞往 ${mileage}（高度偏移 ${height}m）`
+      aiEvents.emit('camera:fly-to', { lng: coords.longitude, lat: coords.latitude, height: coords.height + height })
+      return `✅ 正在飞往 ${chainageService.format(chainage)}（高度偏移 ${height}m）`
     },
   },
 
@@ -140,15 +117,7 @@ export const commonTools: ToolRegistration[] = [
       input_schema: { type: 'object', properties: {}, required: [] },
     },
     executor: async () => {
-      return [
-        '**当前掌子面状态（DK289+450）**',
-        '- 围岩等级：IV 级（软质岩，较破碎）',
-        '- 循环进尺：3.5 m / 循环',
-        '- 开挖方式：三台阶法，光面爆破',
-        '- 当前工序：爆破作业中',
-        '- 风险预警：前方 25m 富水断裂带',
-        '- TSP 结论：前方 30m 地质条件总体稳定，关注富水断裂',
-      ].join('\n')
+      return '当前工具未接入可核验的掌子面实时记录，请以任务资源和 YK 中线定位结果为准。'
     },
   },
 

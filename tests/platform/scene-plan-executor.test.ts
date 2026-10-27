@@ -47,6 +47,7 @@ const makeResource = (
     activate?: () => Promise<void>
     update?: () => Promise<void>
     deactivate?: () => Promise<void>
+    resetTaskPlacement?: () => void | Promise<void>
     unload?: () => Promise<void>
     getEnhanceTargets?: SceneResource['getEnhanceTargets']
   } = {},
@@ -61,6 +62,7 @@ const makeResource = (
   activate: options.activate,
   update: options.update,
   deactivate: options.deactivate,
+  resetTaskPlacement: options.resetTaskPlacement,
   unload: options.unload ?? (async () => undefined),
   getEnhanceTargets: options.getEnhanceTargets,
 })
@@ -85,6 +87,20 @@ const singleStepWorkflow = (): WorkflowPlan => ({
 })
 
 describe('ScenePlanExecutor', () => {
+  it('restores a task placement while a structure-tree lease keeps the model loaded', async () => {
+    const resetPlacement = vi.fn()
+    const registry = new ResourceRegistry()
+    registry.register(makeResource('support.legacy-steel-frame', { resetTaskPlacement: resetPlacement }))
+    const manager = new ResourceManager(registry)
+    await manager.load(['support.legacy-steel-frame'], loadContext)
+    const executor = new ScenePlanExecutor(registry, manager)
+    expect((await executor.apply(scenePlan(registry, 'scene', ['support.legacy-steel-frame']), task(), loadContext)).status).toBe('applied')
+    expect((await executor.clear(loadContext)).status).toBe('cleared')
+    expect(resetPlacement).toHaveBeenCalledOnce()
+    expect(manager.getState('support.legacy-steel-frame')).toMatchObject({ status: 'loaded', references: 1 })
+    await manager.release(['support.legacy-steel-frame'])
+  })
+
   it('loads the next plan before releasing the previous plan', async () => {
     const events: string[] = []
     const registry = new ResourceRegistry()

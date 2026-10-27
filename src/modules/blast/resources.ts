@@ -1,4 +1,5 @@
 import type * as Cesium from 'cesium'
+import { chainageService } from '@/platform/coordinates/ChainageService'
 import type { SceneResource } from '@/platform/resources/types'
 import { moduleRegistry } from '@/platform/modules/ModuleRegistry'
 import type { SceneModuleManifest } from '@/platform/modules/types'
@@ -11,7 +12,7 @@ export const blastEffectResource: SceneResource = {
   id: 'blast.effect',
   module: 'blast',
   type: 'blast-effect',
-  chainageRange: { start: 278330, end: 278335 },
+  chainageRange: { start: chainageService.legacyDkToCanonical(278330), end: chainageService.legacyDkToCanonical(278335) },
   processes: ['drilling', 'charging', 'blasting', 'inspection'],
   states: ['designed', 'charged', 'blasted'],
   dependencies: ['common.tunnel'],
@@ -47,7 +48,7 @@ export const blastModuleManifest: SceneModuleManifest = {
   displayName: '开挖爆破',
   version: 'legacy-adapter-1.0.0',
   capabilities: ['query', 'locate', 'visibility', 'opacity', 'standard-view', 'pick'],
-  coordinateFrame: { kind: 'platform-chainage', prefix: 'DK', origin: 278100, unit: 'm' },
+  coordinateFrame: { kind: 'platform-chainage', prefix: 'YK', origin: 1116, unit: 'm' },
   resources: blastResources,
 }
 

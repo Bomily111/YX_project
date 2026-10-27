@@ -109,6 +109,19 @@ describe('EnhancementPlanner', () => {
     expect(() => planner.create(plan, { focusOutlineWidth: Number.NaN })).toThrow('非负有限数')
   })
 
+  it('allows a context view to keep recommended labels while removing focus outlines', () => {
+    const registry = new ResourceRegistry()
+    registry.register(enhanceResource('support.focus', 'target-focus', visual(), {
+      adapters: { label: () => () => undefined },
+      recommendedEnhancements: ['label'],
+    }))
+    const plan = new EnhancementPlanner(registry).create(scenePlan([{
+      resourceId: 'support.focus', role: 'focus', relevance: 1,
+      reasons: [], estimatedMemoryMb: 1,
+    }]), { highlightFocus: false })
+    expect(plan.directives.map(({ strategy }) => strategy)).toEqual(['visibility', 'label'])
+  })
+
   it('only plans advanced strategies explicitly recommended and implemented by a target', () => {
     const registry = new ResourceRegistry()
     registry.register(enhanceResource('support.focus', 'target-focus', visual(), {

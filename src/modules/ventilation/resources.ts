@@ -12,6 +12,7 @@ import {
   type CfdData,
 } from '@/views/ventilation-module/cesiumVentilation'
 import { isTunnelGlbVisible, setTunnelGlbVisible } from '@/utils/Common/DrawLine'
+import { VENTILATION_DISPLAY_CHAINAGE_YK } from '@/views/ventilation-module/spatialFrame'
 
 let ventilationViewer: Cesium.Viewer | undefined
 let previousPublicTunnelVisibility = true
@@ -23,6 +24,8 @@ let transientScenarioPath: string | undefined
 let thermalSnapshotPath: string | undefined
 
 const ASSET = '/data/ventilation/'
+// Local K3+805–K4+005 is projected onto the YK centerline only for display.
+const DISPLAY_RANGE_YK = { start: VENTILATION_DISPLAY_CHAINAGE_YK - 100, end: VENTILATION_DISPLAY_CHAINAGE_YK + 100 }
 const transientScenarioFiles = {
   fan_ramp_up: 'transient_fan_ramp_up.json',
   fan_oscillation: 'transient_fan_oscillation.json',
@@ -242,7 +245,7 @@ export const ventilationSceneResource: SceneResource = {
   id: 'ventilation.scene',
   module: 'ventilation',
   type: 'ventilation-cfd-scene',
-  chainageRange: { start: 3805.151, end: 4005.151 },
+  chainageRange: DISPLAY_RANGE_YK,
   processes: ['ventilation', 'dust-control', 'gas-monitoring'],
   states: ['steady', 'transient', 'thermal'],
   estimatedMemoryMb: 12,
@@ -283,7 +286,7 @@ export const ventilationSteadyResource: SceneResource = {
   id: 'ventilation.steady-cfd',
   module: 'ventilation',
   type: 'steady-cfd-field',
-  chainageRange: { start: 3805.151, end: 4005.151 },
+  chainageRange: DISPLAY_RANGE_YK,
   processes: ['ventilation', 'dust-control'],
   states: ['steady'],
   dependencies: ['ventilation.scene'],
@@ -365,7 +368,7 @@ export const ventilationTransientResource: SceneResource = {
   id: 'ventilation.transient-network',
   module: 'ventilation',
   type: 'transient-ventilation-network',
-  chainageRange: { start: 3805.151, end: 4005.151 },
+  chainageRange: DISPLAY_RANGE_YK,
   processes: ['ventilation', 'risk-response'],
   states: ['transient'],
   dependencies: ['ventilation.scene'],
@@ -399,7 +402,7 @@ export const ventilationThermalResource: SceneResource = {
   id: 'ventilation.thermal-field',
   module: 'ventilation',
   type: 'transient-thermal-field',
-  chainageRange: { start: 3805.151, end: 4005.151 },
+  chainageRange: DISPLAY_RANGE_YK,
   processes: ['ventilation', 'thermal-risk'],
   states: ['thermal'],
   dependencies: ['ventilation.scene'],

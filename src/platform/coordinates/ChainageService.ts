@@ -61,6 +61,20 @@ export class ChainageService {
     }
   }
 
+  /** Canonical task mileage follows the surveyed YK centerline. DK is a legacy display alias. */
+  toCanonicalChainage(value: string): number {
+    const match = value.trim().match(/^(DK|YK)\s*\d+\s*\+\s*\d+(?:\.\d+)?$/i)
+    if (!match) throw new Error(`主场景里程须使用 YK；旧 DK 标签仅作为兼容输入：${value}`)
+    const chainage = this.parse(value)
+    return match[1].toUpperCase() === 'YK'
+      ? chainage
+      : this.fromOffset(this.toOffset(chainage, this.legacyDkReference), this.datasetReference)
+  }
+
+  legacyDkToCanonical(chainage: number): number {
+    return this.fromOffset(this.toOffset(chainage, this.legacyDkReference), this.datasetReference)
+  }
+
   format(value: number, prefix = DATASET_REFERENCE.prefix): string {
     if (!Number.isFinite(value) || value < 0) throw new Error(`无效里程数值：${value}`)
     const kilometre = Math.floor(value / 1000)

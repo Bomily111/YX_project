@@ -13,6 +13,7 @@ async function loadProvider(providerOverride) {
     case 'ollama':
       return import('../providers/ollama.js')
     case 'deepseek':
+      return import('../providers/langchain-deepseek.js')
     case 'qwen':
     default:
       return import('../providers/openai-compatible.js')

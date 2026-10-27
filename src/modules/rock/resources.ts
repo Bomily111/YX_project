@@ -1,5 +1,6 @@
 import * as Cesium from 'cesium'
 import { chainageService } from '@/platform/coordinates/ChainageService'
+import { demoReanchorTransform } from '@/platform/coordinates/DemoReanchor'
 import type { TaskContext } from '@/platform/context/TaskContext'
 import type { SceneModuleManifest } from '@/platform/modules/types'
 import { moduleRegistry } from '@/platform/modules/ModuleRegistry'
@@ -13,6 +14,7 @@ import {
   setDesignRockGradeModelEnabled,
   waitForTunnelGlbSegment,
 } from '@/utils/Common/DrawLine'
+import { activateGeoModel, deactivateGeoModel, getActiveGeoModelKey, waitForGeoModelReady } from '@/utils/Common/GeoModelController'
 
 let rockViewer: Cesium.Viewer | undefined
 let selectedSegmentIndex: number | undefined
@@ -56,7 +58,7 @@ export const rockDesignGradeResource: SceneResource = {
   id: 'rock.design-grade',
   module: 'rock',
   type: 'design-rock-grade',
-  chainageRange: { start: 278100, end: 286400 },
+  chainageRange: { start: 1116, end: 9400 },
   processes: ['rock-assessment', 'support-design'],
   states: ['baseline', 'preview'],
   dependencies: ['common.tunnel'],
@@ -149,14 +151,56 @@ export const rockDesignGradeResource: SceneResource = {
   },
 }
 
-export const rockResources = [rockDesignGradeResource] as const
+const interpretedRockLayers = [
+  { id: 'rock.geophysical-grade', key: 'geophysical_grade', type: 'fused-geophysical-grade',
+    range: { start: 2244, end: 2344 }, asset: '/data/geophysical_grade/fused_rock_grade_2345.json', texture: '/data/geophysical_grade/fused_rock_grade_2345_volume.png' },
+  { id: 'rock.tsp-hardness', key: 'tsp_hardness', type: 'tsp-interpreted-hardness',
+    range: { start: 2244, end: 2344 }, asset: '/data/tsp_actual/hardness.json', texture: '/data/tsp_actual/hardness_volume.png' },
+  { id: 'rock.tsp-integrity', key: 'tsp_integrity', type: 'tsp-interpreted-integrity',
+    range: { start: 2244, end: 2344 }, asset: '/data/tsp_actual/integrity.json', texture: '/data/tsp_actual/integrity_volume.png' },
+  { id: 'rock.tem-resistivity', key: 'tem', type: 'tem-apparent-resistivity',
+    range: { start: 2244, end: 2303 }, asset: '/data/geophysical_tem/resistivity_contrast.json', texture: '/data/geophysical_tem/resistivity_contrast_volume.png' },
+] as const
+
+/** These legacy ShareVolume layers are mutually exclusive and anchored to the YK2+244 demo scene. */
+export const rockInterpretationResources: SceneResource[] = interpretedRockLayers.map(layer => ({
+  id: layer.id, module: 'rock', type: layer.type,
+  chainageRange: layer.range, processes: ['scene-exploration'], states: ['preview'],
+  estimatedMemoryMb: 80, lifetime: 'task',
+  async load(context) {
+    if (context.viewer.isDestroyed()) throw new Error('Cesium Viewer 已销毁')
+    const response = await fetch(layer.asset, { method: 'HEAD', signal: context.signal })
+    if (!response.ok) throw new Error(`围岩解释层数据不可用：${layer.asset} (${response.status})`)
+    const previousKey = getActiveGeoModelKey()
+    try {
+      const target = context.task?.chainageRange.start
+      const demoTransform = target !== undefined && (target < layer.range.start || target > layer.range.end)
+        ? demoReanchorTransform(2244, target) : undefined
+      activateGeoModel(layer.key, context.viewer, undefined, demoTransform)
+      await waitForGeoModelReady(layer.key)
+    } catch (error) {
+      if (getActiveGeoModelKey() === layer.key) {
+        if (previousKey && previousKey !== layer.key) activateGeoModel(previousKey, context.viewer)
+        else deactivateGeoModel(context.viewer)
+      }
+      throw error
+    }
+    context.reportProgress?.(1, `${layer.type} 已显示`)
+  },
+  async unload() {
+    if (getActiveGeoModelKey() === layer.key) deactivateGeoModel()
+  },
+  getActiveAssetPaths() { return getActiveGeoModelKey() === layer.key ? [layer.asset, layer.texture] : [] },
+}))
+
+export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources] as const
 
 export const rockModuleManifest: SceneModuleManifest = {
   id: 'rock',
   displayName: '隧洞围岩',
   version: 'legacy-adapter-1.0.0',
   capabilities: ['query', 'locate', 'visibility', 'highlight', 'standard-view'],
-  coordinateFrame: { kind: 'platform-chainage', prefix: 'DK', origin: 278100, unit: 'm' },
+  coordinateFrame: { kind: 'platform-chainage', prefix: 'YK', origin: 1116, unit: 'm' },
   resources: rockResources,
 }
 

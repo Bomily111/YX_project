@@ -7,6 +7,12 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const output = resolve(root, 'public/data/task-asset-manifest.json')
 const supportAssets = JSON.parse(readFileSync(resolve(root, 'src/modules/support/legacy-assets.json'), 'utf8'))
 const paths = [
+  '/data/geophysical_grade/fused_rock_grade_2345.json',
+  '/data/geophysical_grade/fused_rock_grade_2345_volume.png',
+  '/data/tsp_actual/hardness.json', '/data/tsp_actual/hardness_volume.png',
+  '/data/tsp_actual/integrity.json', '/data/tsp_actual/integrity_volume.png',
+  '/data/geophysical_tem/resistivity_contrast.json',
+  '/data/geophysical_tem/resistivity_contrast_volume.png',
   ...supportAssets.flatMap(asset => asset.paths),
   ...Array.from({ length: 17 }, (_, index) =>
     `/data/tunnel/tunnel${String(index).padStart(3, '0')}.glb`),

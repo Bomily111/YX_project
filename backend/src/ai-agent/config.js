@@ -2,9 +2,9 @@
 
 const config = {
   provider: process.env.LLM_PROVIDER || 'deepseek',
-  model: process.env.LLM_MODEL || 'deepseek-chat',
+  model: process.env.LLM_MODEL || 'deepseek-flash',
   apiKey: process.env.LLM_API_KEY || '',
-  baseUrl: process.env.LLM_BASE_URL || 'https://api.deepseek.com/v1',
+  baseUrl: process.env.LLM_BASE_URL || 'https://api.deepseek.com',
 
   // 备用模型配置
   claudeApiKey: process.env.CLAUDE_API_KEY || '',

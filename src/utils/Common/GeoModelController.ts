@@ -324,6 +324,56 @@ let fusedGradeReloadTimer: number | null = null;
 let tspAttributeOpacity = 0.68;
 let tspAttributeContrast = 1.2;
 let activeGeoModelKey: string | null = null;
+let activeDemoVolumeTransform: Cesium.Matrix4 | undefined;
+let pendingGeoModelReady: { key: string; promise: Promise<void> } | undefined;
+function placedVolumeConfig(config?: ModelConfig['cesiumConfig']): ModelConfig['cesiumConfig'] {
+  if (!activeDemoVolumeTransform || !config?.matrix) return config;
+  const placed = Cesium.Matrix4.multiply(
+    activeDemoVolumeTransform,
+    Cesium.Matrix4.fromArray(config.matrix),
+    new Cesium.Matrix4(),
+  );
+  return { ...config, matrix: Array.from(placed) };
+}
+
+export function getActiveGeoModelKey(): string | null { return activeGeoModelKey; }
+
+/** Redraw the WebGL overlay after a hidden host becomes visible in the main scene. */
+export function refreshActiveGeoVolume(): void {
+  const renderer = Previous.SVData?.[1];
+  if (!Previous.SVData?.showVolume || !renderer?.properties || typeof renderer.draw !== 'function') return;
+  renderer.properties.firstLoop = true;
+  renderer.draw();
+}
+
+/** ShareVolume loads JSON and its texture asynchronously after activateGeoModel returns. */
+export async function waitForGeoModelReady(key: string, timeoutMs = 15000): Promise<void> {
+  const pending = pendingGeoModelReady?.key === key ? pendingGeoModelReady.promise : undefined;
+  if (pending) {
+    await new Promise<void>((resolve, reject) => {
+      const timer = window.setTimeout(() => reject(new Error(`地质模型 ${key} 体数据加载超时`)), timeoutMs);
+      pending.then(() => { window.clearTimeout(timer); resolve(); }, error => { window.clearTimeout(timer); reject(error); });
+    });
+    if (activeGeoModelKey !== key) throw new Error(`地质模型 ${key} 已被其他图层替换`);
+    return;
+  }
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    if (activeGeoModelKey !== key) throw new Error(`地质模型 ${key} 已被其他图层替换`);
+    const volume = Previous.SVData?.[1];
+    if (volume?.properties && typeof volume.draw === 'function') return;
+    await new Promise(resolve => window.setTimeout(resolve, 100));
+  }
+  console.error('[GeoModelController] 体数据就绪检查超时', {
+    key,
+    activeKey: activeGeoModelKey,
+    rendererPresent: !!Previous.SVData?.[1],
+    propertiesPresent: !!Previous.SVData?.[1]?.properties,
+    drawPresent: typeof Previous.SVData?.[1]?.draw === 'function',
+    canvasPresent: !!document.getElementById('volume-canvas'),
+  });
+  throw new Error(`地质模型 ${key} 体数据加载超时`);
+}
 // 掌子面照片模型统一下移 1.15 m：原相对锚点抬高 5 m，现调整为 3.85 m。
 const FACE_SKETCH_VERTICAL_OFFSET = 3.85;
 let selectedFaceSketchMileage = FACE_SKETCH_RECORDS[FACE_SKETCH_RECORDS.length - 1].mileage;
@@ -485,7 +535,7 @@ function reloadFusedGradeVolume() {
   // Coalesce rapid multi-select changes so only the final grade combination is loaded.
   fusedGradeReloadTimer = window.setTimeout(() => {
     fusedGradeReloadTimer = null;
-    initVolume(fusedGradeVolumeUrl(), MODEL_CONFIGS.geophysical_grade.cesiumConfig);
+    initVolume(fusedGradeVolumeUrl(), placedVolumeConfig(MODEL_CONFIGS.geophysical_grade.cesiumConfig));
     // JSON and atlas loading is asynchronous; reapply display tuning after replacement.
     for (const delay of [120, 400, 900]) {
       window.setTimeout(() => scheduleFusedGradeControlApply(), delay);
@@ -542,7 +592,7 @@ function applyDifferenceHighlight(model: any) {
 }
 
 /** 激活指定 key 的地质模型：加载体数据/GLB + 摆放随道参考 + 飞相机 */
-export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface') {
+export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface', demoVolumeTransform?: Cesium.Matrix4) {
   const cfg = MODEL_CONFIGS[key];
   if (!cfg) return;
 
@@ -580,6 +630,7 @@ export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?:
     // 清理上一个模型
     _cleanup(viewer);
     activeGeoModelKey = key;
+    activeDemoVolumeTransform = demoVolumeTransform;
 
     // ── 启动体数据渲染循环（Previous 构造器会重置 SVData 并 start drawVolume）──
     new (Previous as any)(viewer);
@@ -587,7 +638,12 @@ export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?:
 
     // ── 体数据渲染（shareVolume WebGL canvas 覆盖层）────────
     if (volumeUrl) {
-      try { initVolume(volumeUrl, cfg.cesiumConfig); } catch (e) { console.warn('[GeoModelController] volume init failed:', e) }
+      let resolveReady!: () => void;
+      const readyPromise = new Promise<void>(resolve => { resolveReady = resolve; });
+      pendingGeoModelReady = { key, promise: readyPromise };
+      initVolume(volumeUrl, placedVolumeConfig(cfg.cesiumConfig), () => {
+        if (activeGeoModelKey === key) resolveReady();
+      });
       if (key === 'tem') scheduleTemVolumeControlApply();
       if (key === 'geophysical_grade') scheduleFusedGradeControlApply();
       if (key === 'tsp_hardness' || key === 'tsp_integrity') scheduleTspAttributeControlApply();
@@ -684,6 +740,14 @@ export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?:
       selectFaceSketchMileage(selectedFaceSketchMileage, true, viewer);
       return;
     }
+    if (demoVolumeTransform) {
+      const sourceView = Cesium.Cartesian3.fromDegrees(cfg.lookAtPos[0], cfg.lookAtPos[1], cfg.lookAtPos[2]);
+      const targetView = Cesium.Matrix4.multiplyByPoint(demoVolumeTransform, sourceView, new Cesium.Cartesian3());
+      viewer.scene.camera.lookAt(targetView, new Cesium.HeadingPitchRange(0.3, -0.35, 180));
+      viewer.scene.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+      viewer.scene.requestRender();
+      return;
+    }
     const useLookAt = !cfg.skipLookAt;
     viewer.scene.camera.flyTo({
       destination: new Cesium.Cartesian3(cfg.flyDest.x, cfg.flyDest.y, cfg.flyDest.z),
@@ -725,7 +789,7 @@ export function switchTSPLayer(subKey: 'vp' | 'vs' | 'hardness' | 'ratio' | 'ano
     anomaly: MODEL_CONFIGS.tsp.cesiumConfig,
     integrity: MODEL_CONFIGS.tsp.cesiumConfig,
   };
-  initVolume(urlMap[subKey], cesiumMap[subKey]);
+  initVolume(urlMap[subKey], placedVolumeConfig(cesiumMap[subKey]));
 }
 
 /** 切换综合物探 TEM 体素子类型。 */
@@ -738,7 +802,7 @@ export function switchTEMLayer(subKey: 'resistivity' | 'water', customViewer?: a
     resistivity: MODEL_CONFIGS.tem.cesiumConfig,
     water: MODEL_CONFIGS.tem.cesiumConfig,
   };
-  initVolume(urlMap[subKey], cesiumMap[subKey]);
+  initVolume(urlMap[subKey], placedVolumeConfig(cesiumMap[subKey]));
 }
 
 /** 控制隧道参考模型（finaltunnel1.glb）的显示/隐藏 */
@@ -945,6 +1009,8 @@ export function setGeoModelDifferenceHighlight(enabled: boolean) {
 
 function _cleanup(viewer: any) {
   activeGeoModelKey = null;
+  pendingGeoModelReady = undefined;
+  activeDemoVolumeTransform = undefined;
   if (tunnelEntity) {
     viewer.entities.remove(tunnelEntity);
     tunnelEntity = null;

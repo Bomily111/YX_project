@@ -26,7 +26,11 @@ const context = () => ({
     isDestroyed: () => false,
     scene: { primitives: { add: vi.fn(), remove: vi.fn() }, requestRender: vi.fn() },
   } as unknown as Cesium.Viewer,
-  task: { taskType: 'scene-exploration' } as never,
+  task: {
+    taskId: 'support-version-check', taskType: 'scene-exploration' as const,
+    description: 'YK1+346 支护钢架示例', tunnelId: 'main',
+    chainageRange: { start: 1346, end: 1346 }, targetTypes: ['support'],
+  },
 })
 
 afterEach(async () => {

@@ -55,19 +55,11 @@ const normalizeGrade = (grade: string): KnownGrade | undefined => {
 
 const overlaps = (a: ChainageRange, b: ChainageRange): boolean => a.start <= b.end && b.start <= a.end
 
-const toDesignRange = (range: ChainageRange): ChainageRange => {
-  if (range.start < chainageService.legacyDkReference.origin) return range
-  return {
-    start: chainageService.fromOffset(
-      chainageService.toOffset(range.start, chainageService.legacyDkReference),
-      chainageService.datasetReference,
-    ),
-    end: chainageService.fromOffset(
-      chainageService.toOffset(range.end, chainageService.legacyDkReference),
-      chainageService.datasetReference,
-    ),
-  }
-}
+// Source reports labeled X1DK belong to a separate engineering coordinate frame.
+// Only records explicitly labeled YK can support a task on the surveyed YK centerline.
+const ykMileage = (value: string): number | undefined => /^YK\d+\s*\+\s*\d+(?:\.\d+)?$/i.test(value.trim())
+  ? chainageService.tryParse(value)
+  : undefined
 
 const worstGrade = (grades: readonly KnownGrade[]): KnownGrade | undefined => (
   [...grades].sort((a, b) => GRADE_ORDER[b] - GRADE_ORDER[a])[0]
@@ -90,18 +82,18 @@ export class RockAssessmentService {
         this.provenance.capture('rock.face-sketch', 'bundled:face-sketch/data.ts', faces),
       ])
     }
-    const designRange = toDesignRange(range)
     const designMatches = segments.flatMap((segment) => {
-      const start = chainageService.tryParse(segment.startMileage)
-      const end = chainageService.tryParse(segment.endMileage)
+      const start = ykMileage(segment.startMileage)
+      const end = ykMileage(segment.endMileage)
       const grade = normalizeGrade(segment.grade)
-      return start !== undefined && end !== undefined && grade && overlaps(designRange, { start, end })
+      return start !== undefined && end !== undefined && grade && overlaps(range, { start, end })
         ? [{ grade, segment }]
         : []
     })
-    const faceMatches = faces.filter((face) => (
-      face.mileageValue >= range.start && face.mileageValue <= range.end
-    ))
+    const faceMatches = faces.filter((face) => {
+      const mileage = ykMileage(face.mileage)
+      return mileage !== undefined && mileage >= range.start && mileage <= range.end
+    })
     const faceGrades = faceMatches
       .map((face) => normalizeGrade(face.correctedGrade))
       .filter((grade): grade is KnownGrade => grade !== undefined)

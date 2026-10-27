@@ -2,6 +2,46 @@
   "schemaVersion": 1,
   "assets": [
     {
+      "path": "/data/geophysical_grade/fused_rock_grade_2345.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "a280577fbccf68d6f9892c05fc1f27ef88e9612b0df34d8b76d784b1aab0a760"
+    },
+    {
+      "path": "/data/geophysical_grade/fused_rock_grade_2345_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "dfdd6b859698a8398bf2cc34b56b7d94758df7e8d24a4c9b855628486cc94771"
+    },
+    {
+      "path": "/data/tsp_actual/hardness.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "a5690b2f9f9489960ce22b76de470263c9658aa20c7c259f0948acc6b2702369"
+    },
+    {
+      "path": "/data/tsp_actual/hardness_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "4bbaefecbeb255b17ca45ff7ab7a64a579dc67df84b929a88ac855039e32ddd2"
+    },
+    {
+      "path": "/data/tsp_actual/integrity.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+    },
+    {
+      "path": "/data/tsp_actual/integrity_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+    },
+    {
+      "path": "/data/geophysical_tem/resistivity_contrast.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "7c952264ca080ba36660c128ea027ee1368017736a02f4b7e934aff336b0fe4c"
+    },
+    {
+      "path": "/data/geophysical_tem/resistivity_contrast_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "540c4255a2f91274de5ecec37ae8927b5bb7c0909c48a4ee8399b2ac7eebf94e"
+    },
+    {
       "path": "/data/zhihu/Z-PM-23m/Z-PM-钢筋第一层.glb",
       "algorithm": "sha256-bytes-v1",
       "digest": "cc67ceb9f1e63f9078e07d2e8330c324c97a050afb2328976a84b99f93496944"

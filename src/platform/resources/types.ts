@@ -52,6 +52,8 @@ export interface SceneResource {
   activate?(context: TaskContext): Promise<void>
   update?(context: TaskContext): Promise<void>
   deactivate?(): Promise<void>
+  /** Restore task-specific placement even when another owner keeps the resource loaded. */
+  resetTaskPlacement?(): void | Promise<void>
   unload(): Promise<void>
   getEnhanceTargets?(): readonly EnhanceTarget[]
   /** 仅报告此刻已加载/已使用的 public 资产路径，供结果快照关联构建时内容指纹。 */

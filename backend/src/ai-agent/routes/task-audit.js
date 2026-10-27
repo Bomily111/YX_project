@@ -81,10 +81,11 @@ router.post('/task-events', async (req, res) => {
 router.post('/task-snapshots', async (req, res) => {
   const snapshot = req.body ?? {}
   if (!text(snapshot.taskId, 120)
-    || !['prepared', 'step-completed', 'step-failed', 'retry', 'reset', 'asset-selection'].includes(snapshot.eventType)
+    || !['prepared', 'plan-revised', 'step-completed', 'step-failed', 'retry', 'reset', 'asset-selection'].includes(snapshot.eventType)
     || (snapshot.stepId !== undefined && !text(snapshot.stepId, 200))
     || !jsonObject(snapshot.workflowState)
     || !['ready', 'running', 'completed', 'failed'].includes(snapshot.workflowState.status)
+    || (snapshot.workflowState.chainageFrame !== undefined && snapshot.workflowState.chainageFrame !== 'YK')
     || !Array.isArray(snapshot.workflowState.steps)
     || !jsonObject(snapshot.workflowState.sharedContext)
     || (snapshot.scenePlan !== null && snapshot.scenePlan !== undefined && !jsonObject(snapshot.scenePlan))

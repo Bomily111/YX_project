@@ -21,9 +21,14 @@ export interface TaskAuditEvent {
 
 export interface TaskResultSnapshotInput {
   taskId: string
-  eventType: 'prepared' | 'step-completed' | 'step-failed' | 'retry' | 'reset' | 'asset-selection'
+  eventType: 'prepared' | 'plan-revised' | 'step-completed' | 'step-failed' | 'retry' | 'reset' | 'asset-selection'
   stepId?: string
-  workflowState: WorkflowExecutionSnapshot & Pick<WorkflowPlan, 'steps' | 'sharedContext'>
+  workflowState: WorkflowExecutionSnapshot & Pick<WorkflowPlan, 'steps' | 'sharedContext'> & {
+    chainageFrame?: 'YK'
+    sceneEnhancementModes?: string[]
+    sceneAssemblyModes?: string[]
+    plannedSceneRoots?: Array<{ stepId: string; resources: string[] }>
+  }
   scenePlan: ScenePlan | null
   enhancementPlan: EnhancementPlan | null
   resources: Pick<ResourceRuntimeState, 'id' | 'status' | 'references'>[]

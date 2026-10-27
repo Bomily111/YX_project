@@ -2,14 +2,13 @@ import * as Cesium from 'cesium'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 
 // 通风 CFD 原始数据仍属于 K3+805～K4+005。这里只做展示配准：
-// 将其中一条主洞的 200 m 直线段中心放到示范工点 DK278+330，不能视为该工点实测风场。
+// 将其中一条主洞的 200 m 直线段中心放到示范工点 YK1+346，不能视为该工点实测风场。
 // 局部轴：X=横向、Y=高程、Z=通风数据原始里程方向。
 export const VENTILATION_LOCAL_REFERENCE = new Cesium.Cartesian3(20.001704, 3.764577, 3905.151001)
-export const VENTILATION_DISPLAY_CHAINAGE = 278330
-const reference = chainageService.legacyDkReference
-const start = chainageService.positionAt(VENTILATION_DISPLAY_CHAINAGE - 100, reference)!
-const center = chainageService.positionAt(VENTILATION_DISPLAY_CHAINAGE, reference)!
-const end = chainageService.positionAt(VENTILATION_DISPLAY_CHAINAGE + 100, reference)!
+export const VENTILATION_DISPLAY_CHAINAGE_YK = 1346
+const start = chainageService.positionAt(VENTILATION_DISPLAY_CHAINAGE_YK - 100)!
+const center = chainageService.positionAt(VENTILATION_DISPLAY_CHAINAGE_YK)!
+const end = chainageService.positionAt(VENTILATION_DISPLAY_CHAINAGE_YK + 100)!
 // 用区间弦线定向，避免取单个采样点的切线方向把直段端头甩离中线。
 const metresPerDegreeLongitude = 111320 * Math.cos(Cesium.Math.toRadians(center.latitude))
 const heading = Math.atan2(

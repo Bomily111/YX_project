@@ -294,14 +294,35 @@ export default class Previous {
 
   drawVolume() {
     const generation = this.volumeLoopGeneration;
-    const loopRender = () => {
+    let lastVolumeDrawAt = 0;
+    let lastCameraMatrix;
+    let lastProjectionMatrix;
+    let lastCanvasSize;
+    let lastRenderer;
+    const loopRender = (frameTime = 0) => {
       if (generation !== Previous.volumeLoopGeneration) return;
       const viewer = Previous.SVData[0];
       if (!viewer || (typeof viewer.isDestroyed === 'function' && viewer.isDestroyed())) return;
       requestAnimationFrame(loopRender);
-      if (Previous.SVData[1]) {
-        Previous.SVData[1].draw();
-      }
+      // The volume overlay only changes when the camera, viewport or renderer
+      // changes. Repeated ray marching on a static view can starve the UI,
+      // particularly with software WebGL.
+      const renderer = Previous.SVData[1];
+      if (!renderer || frameTime - lastVolumeDrawAt < 50) return;
+      const matrix = viewer.camera.viewMatrix;
+      const cameraMatrix = Array.from(matrix);
+      const projectionMatrix = Array.from(viewer.camera.frustum.projectionMatrix);
+      const canvas = viewer.canvas;
+      const canvasSize = `${canvas.width}x${canvas.height}`;
+      const cameraChanged = !lastCameraMatrix || cameraMatrix.some((value, index) => value !== lastCameraMatrix[index]);
+      const projectionChanged = !lastProjectionMatrix || projectionMatrix.some((value, index) => value !== lastProjectionMatrix[index]);
+      if (renderer === lastRenderer && !cameraChanged && !projectionChanged && canvasSize === lastCanvasSize) return;
+      lastVolumeDrawAt = frameTime;
+      lastRenderer = renderer;
+      lastCameraMatrix = cameraMatrix;
+      lastProjectionMatrix = projectionMatrix;
+      lastCanvasSize = canvasSize;
+      renderer.draw();
     };
     loopRender();
   }

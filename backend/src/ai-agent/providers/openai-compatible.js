@@ -24,6 +24,10 @@ export async function streamChat(params, onEvent) {
     max_tokens: 2048,
   }
 
+  // The current DeepSeek models default to thinking mode. Keep the existing
+  // tool loop in non-thinking mode until reasoning_content is round-tripped.
+  if (llmConfig.provider === 'deepseek') body.thinking = { type: 'disabled' }
+
   if (tools && tools.length > 0) {
     body.tools = tools.map(t => ({
       type: 'function',

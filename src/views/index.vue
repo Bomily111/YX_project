@@ -28,8 +28,8 @@
           type="button"
           class="header-icon-btn"
           :class="{ active: showTaskWorkflow }"
-          title="任务流程"
-          aria-label="任务流程"
+          title="任务运行记录"
+          aria-label="任务运行记录"
           @click="showTaskWorkflow = !showTaskWorkflow"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h10M7 12h10M7 19h10"></path><circle cx="4" cy="5" r="1.2"></circle><circle cx="4" cy="12" r="1.2"></circle><circle cx="4" cy="19" r="1.2"></circle></svg>
@@ -76,7 +76,7 @@
     <!-- 漫游控制弹窗 -->
     <RoamingToolbar :visible="activeTool === 'roaming'" @close="activeTool = null" />
 
-    <div v-show="!showGeophysicalVoxelWorkbench" class="floating-panel"
+    <div v-show="!showGeophysicalVoxelWorkbench && !agentAssembly" class="floating-panel"
          :style="{ left: drag.left + 'px', top: drag.top + 'px' }"
          @mousedown="startDrag">
       <div class="drag-header" @mousedown="startDrag">
@@ -133,11 +133,11 @@
     />
 
     <!-- 体数据渲染覆盖层（进入模型视图后挂载，始终保持 DOM） -->
-    <DTVolume v-show="isModelViewMode" />
-    <RockGradeColorBar v-if="isModelViewMode && currentActiveKey === 'geophysical_grade'" />
+    <DTVolume v-show="showVolumeOverlay" />
+    <RockGradeColorBar v-if="(isModelViewMode && currentActiveKey === 'geophysical_grade') || agentVolumeKey === 'geophysical_grade'" />
     <TSPColorBar
-      v-if="isModelViewMode && (isTSP || ['tsp', 'tsp_hardness', 'tsp_integrity'].includes(currentActiveKey))"
-      :active-type="currentActiveKey === 'tsp' ? tspInitialType : currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity'"
+      v-if="(isModelViewMode && (isTSP || ['tsp', 'tsp_hardness', 'tsp_integrity'].includes(currentActiveKey))) || ['tsp_hardness', 'tsp_integrity'].includes(agentVolumeKey ?? '')"
+      :active-type="agentVolumeKey === 'tsp_hardness' ? 'hardness' : agentVolumeKey === 'tsp_integrity' ? 'integrity' : currentActiveKey === 'tsp' ? tspInitialType : currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity'"
     />
     <GeophysicalVoxelWorkbench
       v-if="showGeophysicalVoxelWorkbench"
@@ -156,7 +156,14 @@
 
 
     <!-- 左侧掌子面信息面板（总览模式下显示，场景/模型视图模式下隐藏） -->
-    <WorkfaceInfoPanel v-show="!activeScene && !isModelViewMode" />
+    <WorkfaceInfoPanel v-show="!activeScene && !isModelViewMode && !agentAssembly" />
+    <aside v-if="agentAssembly && !activeScene" class="agent-assembly-info" aria-label="当前任务场景信息">
+      <div class="agent-assembly-kicker">任务场景</div>
+      <h2>{{ agentAssembly.targetMileage }}</h2>
+      <p>已沿中线定位，并装配以下模型：</p>
+      <ul><li v-for="resource in agentAssembly.resources" :key="resource.id">{{ resource.label }}</li></ul>
+      <small>以实际加载结果为准；示例场景不代表工程质量结论。</small>
+    </aside>
 
     <!-- 隧洞围岩左侧阶段目录 -->
     <RockStageDirectory
@@ -230,17 +237,23 @@
     <DispatchGantt v-if="showDispatchGantt" @close="showDispatchGantt = false" />
 
     <!-- 底部状态与进度栏（仅总览模式显示） -->
-    <div class="bottom-metrics-bar" v-show="!activeScene">
+    <div v-if="agentAssembly && !activeScene" class="agent-assembly-bottom" aria-label="当前任务场景状态">
+      <strong>{{ agentAssembly.targetMileage }}</strong>
+      <span>中线定位完成</span>
+      <span>已装配 {{ agentAssembly.resources.length }} 类模型</span>
+      <span class="agent-assembly-run">任务 {{ agentAssembly.taskId }}</span>
+    </div>
+    <div class="bottom-metrics-bar" v-show="!activeScene && !agentAssembly">
       <div class="mileage-progress-wrap">
-        <span class="mileage-start">DK278+100</span>
+        <span class="mileage-start">YK1+116</span>
         <div class="mileage-track">
           <div class="mileage-filled" :style="{ width: mileageProgress + '%' }"></div>
-          <div class="mileage-cursor" :style="{ left: mileageProgress + '%' }" title="当前掌子面 DK281+500">
-            <span class="cursor-label">DK281+500</span>
+          <div class="mileage-cursor" :style="{ left: mileageProgress + '%' }" title="示例掌子面 YK4+516">
+            <span class="cursor-label">YK4+516</span>
           </div>
         </div>
-        <span class="mileage-end">DK286+400</span>
-        <button class="workface-locate-btn" @click="flyToWorkFace" title="定位到当前工作面">📍 当前掌子面</button>
+        <span class="mileage-end">YK9+400</span>
+        <button class="workface-locate-btn" @click="flyToWorkFace" title="定位到示例掌子面">📍 示例掌子面</button>
       </div>
       <div class="header-metrics">
         <!-- 系统状态灯 -->
@@ -267,12 +280,14 @@
 
     <!-- AI 智能助手 -->
     <AgentChat
+      placement="right"
       :context="{ scene: activeScene || undefined }"
       @scene-open="handleAgentSceneOpen"
       @task-workflow-open="showTaskWorkflow = true"
+      @assembly-change="agentAssembly = $event"
     />
 
-    <TaskWorkflowPanel :show="showTaskWorkflow" @close="showTaskWorkflow = false" />
+    <TaskWorkflowPanel :show="showTaskWorkflow" @close="showTaskWorkflow = false" @scene-reset="agentAssembly = null" />
 
     <!-- 隧道加载动画 -->
     <Transition name="tunnel-loading-fade">
@@ -285,7 +300,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, reactive, computed, nextTick, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as Cesium from 'cesium'; // 引入 Cesium
 import { type ScreenSpaceEventHandler, ScreenSpaceEventType } from 'cesium'; // 引入事件处理器
@@ -323,8 +338,9 @@ import { DTScopeEngine } from '@/utils/Common/Viewer';
 import { loadCenterLine, enableBlackModelMode, restoreEarthMode, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
 import { createMileageRuler, getMileageRuler, destroyMileageRuler } from '@/utils/Common/MileageRuler';
 import { resourceManager } from '@/platform/resources/ResourceManager';
+import { chainageService } from '@/platform/coordinates/ChainageService';
 import { registerCommonResources } from '@/platform/resources/common';
-import { activateGeoModel, deactivateGeoModel, loadRockModel, setRockModelVisible, loadJumboModel, removeJumboModel, mergeModelConfigsFromApi, setGeoModelDifferenceHighlight } from '@/utils/Common/GeoModelController';
+import { activateGeoModel, deactivateGeoModel, refreshActiveGeoVolume, loadRockModel, setRockModelVisible, loadJumboModel, removeJumboModel, mergeModelConfigsFromApi, setGeoModelDifferenceHighlight } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
 import { removeVectorField } from '@/utils/Common/WindVectorField';
@@ -347,9 +363,25 @@ const modelStore = useModelStore();
 const isModelViewMode = ref(false);
 const showGeophysicalVoxelWorkbench = ref(false);
 const showTaskWorkflow = ref(false);
+const agentAssembly = ref<{ targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }> } | null>(null);
+const activeScene = ref<string | null>(null);
+const agentVolumeKey = computed(() => {
+  if (activeScene.value) return null;
+  const ids = agentAssembly.value?.resources.map(resource => resource.id) ?? [];
+  if (ids.includes('rock.geophysical-grade')) return 'geophysical_grade';
+  if (ids.includes('rock.tsp-hardness')) return 'tsp_hardness';
+  if (ids.includes('rock.tsp-integrity')) return 'tsp_integrity';
+  if (ids.includes('rock.tem-resistivity')) return 'tem';
+  return null;
+});
+const showVolumeOverlay = computed(() => isModelViewMode.value || !!agentVolumeKey.value);
+watch(showVolumeOverlay, async visible => {
+  if (!visible) return;
+  await nextTick();
+  requestAnimationFrame(() => refreshActiveGeoVolume());
+});
 
 // ── 总览/场景模式状态 ─────────────────────────────────────
-const activeScene = ref<string | null>(null);
 type RockStage = 'baseline' | 'prediction' | 'correction';
 const rockStage = ref<RockStage>('baseline');
 type RockDirectoryNode = RockStage | 'monitoring';
@@ -410,8 +442,8 @@ const OVERVIEW_MODE_VIEW = {
 };
 
 // ── Header：里程进度 & 系统状态灯 ─────────────────────────
-// 线路总里程 DK278+100 ~ DK286+400，当前掌子面 DK281+500
-const mileageProgress = ((281500 - 278100) / (286400 - 278100) * 100).toFixed(1);
+// 真实中线 YK1+116～YK9+400；当前演示掌子面 YK4+516。
+const mileageProgress = ((4516 - 1116) / (9400 - 1116) * 100).toFixed(1);
 
 const sysStatus = [
   { name: '围岩', cls: 'dot-yellow' },
@@ -468,11 +500,14 @@ type Worksite = {
 // 从 tunnelStore 动态获取工点列表，API 不可用时使用本地默认值
 const worksiteList = computed<Worksite[]>(() => {
   const store = useTunnelStore();
-  if (store.worksites.length) {
-    return store.worksites.map(w => ({
+  const positioned = store.worksites.flatMap(w => {
+    const match = chainageService.nearestPosition(w.lon, w.lat);
+    // 旧数据库还可能包含另一工程坐标，不能强行标成当前 YK 工点。
+    if (match.distance > 200) return [];
+    return [{
       id: w.id,
       name: w.name,
-      mileage: 'DK' + (w.dk_number / 1000).toFixed(3).replace('.', '+'),
+      mileage: chainageService.format(chainageService.datasetReference.origin + match.offset),
       lon: w.lon,
       lat: w.lat,
       height: w.height,
@@ -481,12 +516,13 @@ const worksiteList = computed<Worksite[]>(() => {
       method: w.excavation_method === 'drill_blast' ? '钻爆法' : w.excavation_method === 'bench_method' ? '台阶法' : w.excavation_method === 'full_face' ? '全断面法' : w.excavation_method,
       hardness: '--',
       riskLevel: w.risk_level === 'high' ? '高风险' : w.risk_level === 'medium' ? '中风险' : w.risk_level === 'low' ? '低风险' : w.risk_level,
-    }));
-  }
+    }];
+  });
+  if (positioned.length) return positioned;
   // fallback
   return [
-    { id: 'worksite_a', name: 'DK工点A', mileage: 'DK279+200', lon: 94.905619, lat: 29.533374, height: 2945.5, rockLevel: 'IV级', area: '76.5 m²', method: '台阶法', hardness: '较硬岩', riskLevel: '中风险' },
-    { id: 'worksite_b', name: 'DK工点B', mileage: 'DK283+100', lon: 94.938499, lat: 29.513774, height: 2965.0, rockLevel: 'V级', area: '82.3 m²', method: '全断面法', hardness: '软岩', riskLevel: '高风险' },
+    { id: 'worksite_a', name: '工点A', mileage: 'YK2+218', lon: 94.905619, lat: 29.533374, height: 2945.5, rockLevel: 'IV级', area: '76.5 m²', method: '台阶法', hardness: '较硬岩', riskLevel: '中风险' },
+    { id: 'worksite_b', name: '工点B', mileage: 'YK6+118', lon: 94.938499, lat: 29.513774, height: 2965.0, rockLevel: 'V级', area: '82.3 m²', method: '全断面法', hardness: '软岩', riskLevel: '高风险' },
   ];
 });
 
@@ -642,18 +678,19 @@ const openWorksiteOverview = () => {
   requestAnimationFrame(() => flyToOverview());
 };
 
-// ── 定位到当前工作面（DK281+500）──────────────────────────
+// ── 定位到进度条上的示例掌子面 YK4+516 ────────────────────
 const flyToWorkFace = () => {
   activeScene.value = null;
   const viewer = getViewer();
   if (!viewer) return;
-  // 飞行过程中预加载目标段，减少到达后的等待
-  prepareTunnelSegmentsAt(94.924554, 29.522403, 2980.4, viewer);
+  const target = chainageService.positionAt(4516);
+  if (!target) return;
+  prepareTunnelSegmentsAt(target.longitude, target.latitude, target.height, viewer);
   viewer.scene.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees(94.924554, 29.522403, 2980.4),
+    destination: Cesium.Cartesian3.fromDegrees(target.longitude, target.latitude, target.height + 300),
     orientation: {
-      heading: Cesium.Math.toRadians(80.33),
-      pitch: Cesium.Math.toRadians(-8.85),
+      heading: 0,
+      pitch: Cesium.Math.toRadians(-75),
       roll: 0,
     },
     duration: 2,
@@ -1637,6 +1674,33 @@ onBeforeUnmount(() => {
 .date-time-group .date { font-size: 14px; color: rgba(200, 240, 255, 0.8); letter-spacing: 1px; margin-top: 2px; }
 
 /* Left Panel */
+.agent-assembly-info {
+  position: absolute; z-index: 10; top: 80px; left: 20px;
+  width: 280px; box-sizing: border-box; padding: 16px;
+  color: #d9eff9; background: rgba(1, 17, 36, .91);
+  border: 1px solid rgba(0, 190, 255, .4); border-left: 4px solid #00aaff;
+  border-radius: 5px; box-shadow: 0 12px 30px rgba(0, 0, 0, .38);
+}
+.agent-assembly-kicker { color: #45d5ff; font-size: 11px; letter-spacing: 2px; }
+.agent-assembly-info h2 { margin: 6px 0 12px; color: white; font-size: 22px; }
+.agent-assembly-info p, .agent-assembly-info small { color: #a9c8d8; font-size: 12px; line-height: 1.5; }
+.agent-assembly-info ul { margin: 10px 0 12px; padding-left: 20px; font-size: 13px; line-height: 1.8; }
+.agent-assembly-info li::marker { color: #00d4ff; }
+.agent-assembly-bottom {
+  position: absolute; z-index: 10; bottom: 0; left: 20px; right: 380px;
+  min-height: 46px; box-sizing: border-box; padding: 8px 18px;
+  display: flex; align-items: center; gap: 24px;
+  color: #c5e9f7; background: rgba(0, 18, 39, .92);
+  border: 1px solid rgba(0, 190, 255, .3); border-bottom: 0;
+  border-radius: 8px 8px 0 0; font-size: 12px;
+}
+.agent-assembly-bottom strong { color: #45d5ff; font-size: 14px; }
+.agent-assembly-run { margin-left: auto; opacity: .65; font-family: Consolas, monospace; }
+@media (max-width: 850px) {
+  .agent-assembly-info { width: min(280px, calc(100vw - 40px)); }
+  .agent-assembly-bottom { right: 0; gap: 10px; }
+  .agent-assembly-run { display: none; }
+}
 .left-panel {
   position: absolute; top: 80px; left: 20px; 
   max-height: calc(100% - 100px); width: 280px;

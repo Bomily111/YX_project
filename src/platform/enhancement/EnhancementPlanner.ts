@@ -12,6 +12,7 @@ export interface EnhancementPlannerOptions {
   focusColor?: RgbaColor
   focusOutlineWidth?: number
   referenceOpacity?: number
+  highlightFocus?: boolean
 }
 
 const DEFAULT_FOCUS_COLOR: RgbaColor = { red: 1, green: 0.65, blue: 0, alpha: 1 }
@@ -57,7 +58,7 @@ export class EnhancementPlanner {
           })
         }
         if (decision.role === 'focus') {
-          if (target.object) {
+          if (target.object && options.highlightFocus !== false) {
             directives.push({
               id: `${scenePlan.stepId}:${target.id}:highlight`,
               resourceId: resource.id,

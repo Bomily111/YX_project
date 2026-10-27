@@ -47,4 +47,4 @@ CREATE INDEX IF NOT EXISTS idx_task_snapshot_task_time ON task_run_snapshots(tas
 ALTER TABLE task_run_snapshots ADD COLUMN IF NOT EXISTS data_versions JSONB NOT NULL DEFAULT '[]'::jsonb;
 ALTER TABLE task_run_snapshots DROP CONSTRAINT IF EXISTS task_run_snapshots_event_type_check;
 ALTER TABLE task_run_snapshots ADD CONSTRAINT task_run_snapshots_event_type_check
-  CHECK (event_type IN ('prepared', 'step-completed', 'step-failed', 'retry', 'reset', 'asset-selection'));
+  CHECK (event_type IN ('prepared', 'plan-revised', 'step-completed', 'step-failed', 'retry', 'reset', 'asset-selection'));
