@@ -2,11 +2,6 @@ import * as Cesium from 'cesium'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { supportSceneResource } from '@/modules/support/resources'
 
-vi.mock('@/modules/support/legacy-resources', () => ({
-  legacySupportResources: [],
-  legacySupportAssembly: { id: 'support.legacy-assembly' },
-}))
-
 vi.mock('@/utils/Common/DrawLine', () => ({
   isDesignRockGradeModelEnabled: () => false,
   isTunnelGlbVisible: () => true,

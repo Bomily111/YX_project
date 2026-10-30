@@ -34,10 +34,10 @@ const MODEL_RIGHT = Cesium.Cartesian3.normalize(
   new Cesium.Cartesian3(),
 )
 
-function cameraUpForModel(direction: Cesium.Cartesian3) {
-  let right = Cesium.Cartesian3.cross(direction, MODEL_UP, new Cesium.Cartesian3())
+function cameraUpForModel(direction: Cesium.Cartesian3, modelUp = MODEL_UP, modelRight = MODEL_RIGHT) {
+  let right = Cesium.Cartesian3.cross(direction, modelUp, new Cesium.Cartesian3())
   if (Cesium.Cartesian3.magnitudeSquared(right) < Cesium.Math.EPSILON8) {
-    right = Cesium.Cartesian3.clone(MODEL_RIGHT)
+    right = Cesium.Cartesian3.clone(modelRight)
   }
   Cesium.Cartesian3.normalize(right, right)
   return Cesium.Cartesian3.normalize(
@@ -216,10 +216,23 @@ export function flyToLocal(
  * 隧道虽然已锚定到真实地理坐标，但交互仍按原工程模型的局部 Y-up
  * 坐标进行环绕，保持加入地形前的旋转手感。
  */
+export interface ModelControlFrame {
+  up: Cesium.Cartesian3
+  right: Cesium.Cartesian3
+  toLocal: (position: Cesium.Cartesian3) => Cesium.Cartesian3
+  toWorld: (position: Cesium.Cartesian3) => Cesium.Cartesian3
+}
+
 export function installModelControls(
   viewer: Cesium.Viewer,
   getDefaultFocus: () => Cesium.Cartesian3,
   onFocusChange?: (focus: Cesium.Cartesian3) => void,
+  frame: ModelControlFrame = {
+    up: MODEL_UP,
+    right: MODEL_RIGHT,
+    toLocal: ventilationPositionToLocal,
+    toWorld: ventilationPositionToWorld,
+  },
 ) {
   const scene = viewer.scene
   const camera = viewer.camera
@@ -284,7 +297,7 @@ export function installModelControls(
       Cesium.Cartesian3.subtract(target, position, new Cesium.Cartesian3()),
       new Cesium.Cartesian3(),
     )
-    const up = cameraUpForModel(direction)
+    const up = cameraUpForModel(direction, frame.up, frame.right)
     camera.setView({ destination: position, orientation: { direction, up } })
   }
 
@@ -336,8 +349,8 @@ export function installModelControls(
   }
 
   const orbitByPixels = (dx: number, dy: number) => {
-    const localPivot = ventilationPositionToLocal(pivot)
-    const localCamera = ventilationPositionToLocal(camera.positionWC)
+    const localPivot = frame.toLocal(pivot)
+    const localCamera = frame.toLocal(camera.positionWC)
     const offset = Cesium.Cartesian3.subtract(localCamera, localPivot, new Cesium.Cartesian3())
     const distance = Math.max(Cesium.Cartesian3.magnitude(offset), MIN_DISTANCE)
     const horizontal = Math.hypot(offset.x, offset.z)
@@ -350,7 +363,7 @@ export function installModelControls(
       localPivot.y + Math.sin(pitch) * distance,
       localPivot.z + Math.cos(yaw) * projected,
     )
-    const position = ventilationPositionToWorld(localPosition)
+    const position = frame.toWorld(localPosition)
     setLookAt(position, pivot)
   }
 

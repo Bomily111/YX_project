@@ -849,7 +849,7 @@ const handlePanelAction = (action: { key: string; subType?: 'vp' | 'vs' | 'hardn
 
   // 支护场景的"钢架试验"按钮 → 跳转参数化试验子模块
   if (activeScene.value === 'support' && action.key === 'experiment') {
-    router.push('/support-experiment');
+    router.push('/support-modeler');
     return;
   }
 
@@ -1083,7 +1083,7 @@ const handleAgentSceneOpen = (scene: string) => {
     return
   }
   if (scene === 'support') {
-    router.push('/support-experiment')
+    router.push('/support-modeler')
     return
   }
   if (scene === 'vent') {
@@ -1107,6 +1107,11 @@ const handleSelectScene = (key: string) => {
   // 开挖爆破：跳转孪生子模块
   if (key === 'blast') {
     router.push('/blast-twin');
+    return;
+  }
+
+  if (key === 'support') {
+    router.push('/support-modeler');
     return;
   }
 

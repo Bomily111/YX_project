@@ -1,0 +1,76 @@
+/* Platform layout skin for the delivered editor and alignment pages. */
+.app { grid-template-columns: minmax(0, 1fr) 332px !important; width: 100%; height: 100dvh; }
+.view { min-width: 0; }
+.side {
+  width: 332px;
+  min-width: 0;
+  padding: 18px !important;
+  color: #c7d5ea;
+  background: rgba(2, 10, 22, .96) !important;
+  border-left: 1px solid rgba(0, 170, 255, .2) !important;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, .5);
+  scrollbar-color: #345773 #071827;
+}
+.side h1 { margin: 0 0 8px; color: #7dd3fc; font-size: 18px; font-weight: 650; }
+.side .subtitle { color: #789bb4; font-size: 12px; }
+.side .panel { background: rgba(3, 29, 51, .62); border: 1px solid rgba(0, 170, 255, .17); border-radius: 4px; }
+.side details.panel > summary,
+.side .panel > b:first-child {
+  color: #7dd3fc;
+  background: rgba(0, 80, 130, .13);
+  border-bottom: 1px solid rgba(0, 170, 255, .13);
+  font-size: 14px;
+  font-weight: 650;
+}
+.side .panel > b:first-child { display: block; margin: -12px -13px 10px; padding: 10px 13px; }
+.side .inside { padding: 10px 12px; }
+.side .row { border-bottom-color: rgba(100, 180, 225, .12); }
+.side button, .side input, .side select, .side .download {
+  background-color: rgba(5, 43, 70, .78);
+  border-color: rgba(90, 170, 215, .4);
+  border-radius: 4px;
+}
+.side button:hover:not(:disabled), .side .download:hover { background-color: rgba(0, 112, 174, .44); border-color: #5bc9ee; }
+.side button.active, .side .buttons button.active { background: rgba(0, 132, 210, .56); border-color: #63dcff; }
+.side input[type="checkbox"] { accent-color: #25c8f2; }
+.side .small { color: #a8c1d3; }
+.side .tree-row { grid-template-columns: 22px minmax(0, 1fr) 108px; gap: 4px; padding-inline: 3px; }
+.side .tree-row b { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side .select-component { padding-inline: 3px; }
+.support-panel-toggle { display: none; }
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr) !important; }
+  .side {
+    position: fixed !important;
+    inset: 0 0 0 auto !important;
+    width: min(360px, 92vw) !important;
+    max-width: 100vw;
+    z-index: 15 !important;
+    transform: translateX(100%);
+    transition: transform .2s ease;
+  }
+  body.support-panel-open .side { transform: translateX(0); }
+  .support-panel-toggle {
+    display: block;
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 20;
+    min-height: 38px;
+    padding: 7px 12px;
+    border: 1px solid #80b7d5;
+    border-radius: 5px;
+    background: #075580;
+    color: #fff;
+    font: 700 13px system-ui, "Microsoft YaHei", sans-serif;
+    cursor: pointer;
+  }
+  .selection, .hint { top: 58px; right: 12px; }
+}
+
+/* The platform owns the visible Cesium scene; the delivered page keeps its controls and geometry logic. */
+html.support-cesium-panel .app { display: block !important; width: 100%; height: 100dvh; }
+html.support-cesium-panel .view { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; opacity: 0; pointer-events: none; }
+html.support-cesium-panel .side { position: relative !important; inset: auto !important; display: block !important; width: 100% !important; height: 100dvh; transform: none !important; box-shadow: none; }
+html.support-cesium-panel .support-panel-toggle { display: none !important; }

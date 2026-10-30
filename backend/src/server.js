@@ -8,6 +8,7 @@ import personnelRouter from './routes/personnel.js'
 import equipmentRouter from './routes/equipment.js'
 import blastRouter from './routes/blast.js'
 import supportRouter from './routes/support.js'
+import supportModelerRouter from './routes/support-modeler.js'
 import alertsRouter from './routes/alerts.js'
 import jobsRouter from './routes/jobs.js'
 import processRouter from './routes/process.js'
@@ -38,6 +39,7 @@ app.use('/api/personnel', personnelRouter)
 app.use('/api/equipment', equipmentRouter)
 app.use('/api/blast', blastRouter)
 app.use('/api/support', supportRouter)
+app.use('/api/support-modeler', supportModelerRouter)
 app.use('/api/alerts', alertsRouter)
 app.use('/api/jobs', jobsRouter)
 app.use('/api/process', processRouter)

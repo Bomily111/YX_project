@@ -121,47 +121,7 @@
         </template>
       </div>
 
-      <!-- 结构树（支护场景） -->
-      <div v-if="structureTree.length" class="sdp-structure-tree">
-        <div class="sdp-list-title">
-          <span class="sdp-chart-icon">▸</span>结构树
-        </div>
-        <template v-for="node in structureTree" :key="node.id">
-          <!-- 父节点 -->
-          <div class="st-group">
-            <div class="st-parent" @click="toggleNodeExpand(node.id)">
-              <span class="st-arrow" :class="{ open: isNodeExpanded(node) }">▶</span>
-              <span class="st-icon">{{ node.icon }}</span>
-              <span class="st-label">{{ node.label }}</span>
-            </div>
-            <!-- 子节点 -->
-            <div v-show="isNodeExpanded(node)" class="st-children">
-              <div
-                v-for="child in node.children"
-                :key="child.id"
-                class="st-leaf"
-                @click="toggleNodeVisible(child.id)"
-              >
-                <span class="st-check" :class="{ on: nodeVisible[child.id] ?? false }">
-                  {{ (nodeVisible[child.id] ?? false) ? '✓' : '' }}
-                </span>
-                <span class="st-icon">{{ child.icon }}</span>
-                <span class="st-label">{{ child.label }}{{ supportTreeBusy[kindForNode(child.id)] ? '（加载/释放中…）' : '' }}</span>
-                <button
-                  class="st-hl"
-                  :class="{ on: nodeHighlight[child.id] }"
-                  @click.stop="toggleNodeHighlight(child.id)"
-                  :disabled="!nodeVisible[child.id] || supportTreeBusy[kindForNode(child.id)]"
-                >高亮</button>
-              </div>
-              <div v-if="!node.children?.length" class="st-empty">暂无部件</div>
-            </div>
-          </div>
-        </template>
-      </div>
-
-      <p v-if="props.sceneKey === 'support'" class="st-source">既有 GLB 构件 · 不可参数化<br>YK1+116～YK1+183 附近示例布置，不代表实测或质量结论。</p>
-      <p v-if="supportTreeError" role="alert" class="st-source">{{ supportTreeError }}</p>
+      <p v-if="props.sceneKey === 'support'" class="st-source">支护模型请在新支护模块中查看和编辑。</p>
 
       <!-- 告警提示 -->
       <div v-if="alerts.length" class="sdp-alerts">
@@ -178,11 +138,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch, onBeforeUnmount } from 'vue';
-import { setLegacySupportHighlight, legacySupportCatalog } from '@/modules/support/legacy-resources';
-import { registerSupportModule } from '@/modules/support/resources';
-import { resourceManager } from '@/platform/resources/ResourceManager';
-import type { LegacySupportKind } from '@/modules/support/LegacySupportLifecycle';
+import { computed, reactive, ref, watch } from 'vue';
 import { startWind, changePower, removeFlowLine, getCurrentPower } from '@/utils/Common/WindFieldSimulation';
 import { startVectorField, removeVectorField, changeVectorPower, getVectorPower } from '@/utils/Common/WindVectorField';
 import { startProceduralWind, removeProceduralWind, changeProceduralPower, setProceduralFlow } from '@/utils/Common/TunnelWindSimulation';
@@ -195,7 +151,6 @@ export interface LayerItem { key: string; name: string; }
 interface Metric  { label: string; val: string; unit: string; level?: string }
 interface Status  { label: string; val: string; pct: number; level?: string }
 interface Alert   { id: string; text: string; level: 'warn' | 'info' }
-interface TreeNode { id: string; label: string; icon?: string; visible?: boolean; children?: TreeNode[]; defaultExpanded?: boolean }
 
 // 场景数据定义
 interface SceneData {
@@ -205,7 +160,6 @@ interface SceneData {
   metrics: Metric[];
   statusList: Status[];
   alerts: Alert[];
-  structureTree?: TreeNode[];
 }
 
 const SCENE_DATA: Record<string, SceneData> = {
@@ -250,39 +204,6 @@ const SCENE_DATA: Record<string, SceneData> = {
       { label: '二衬进度', val: '72%', pct: 72, level: 'good' },
     ],
     alerts: [],
-    structureTree: [
-      {
-        id: 'advance_support',
-        label: '超前支护',
-        icon: '⊕',
-        defaultExpanded: true,
-        children: [
-          { id: 'pipe_shed', label: 'ZZ-QJsx-φ76中管棚', icon: '⬡', visible: false },
-        ],
-      },
-      {
-        id: 'primary_support',
-        label: '初支',
-        icon: '◈',
-        defaultExpanded: true,
-        children: [
-          { id: 'anchor', label: 'ZZ-QJsx-φ25自进式中空注浆锚杆', icon: '⊙', visible: false },
-          { id: 'conduit', label: 'ZZ-QJsx-φ42注浆小导管', icon: '≋', visible: false },
-          { id: 'lock_anchor', label: 'ZZ-QJsx-φ42锁脚锚杆', icon: '⊕', visible: false },
-        ],
-      },
-      {
-        id: 'secondary_lining',
-        label: '二衬',
-        icon: '⬡',
-        defaultExpanded: true,
-        children: [
-          { id: 'rebar', label: 'Z-PM-洞口钢筋网', icon: '⬡', visible: false },
-          { id: 'lining_rebar', label: 'ZZ-QJsx-二衬钢筋', icon: '⬡', visible: false },
-          { id: 'steel_frame', label: 'ZZ-QJsx-钢架', icon: '⊞', visible: false },
-        ],
-      },
-    ],
   },
   vent: {
     icon: '≋', name: '通风系统', color: '#44ff88',
@@ -358,7 +279,6 @@ const monitorStore = useMonitorStore();
 const liveAlerts = ref<Alert[]>([]);
 const liveChartValues = ref<number[]>([]);
 const liveChartLabels = ref<string[]>([]);
-const liveStructureTree = ref<TreeNode[]>([]);
 
 const SCENE_PRIMARY_METRIC: Record<string, string> = {
   workface: 'daily_advance', support: 'arch_settlement', vent: 'wind_speed', dispatch: 'muck_volume',
@@ -405,31 +325,6 @@ watch(() => props.sceneKey, async (key) => {
       } catch { liveChartValues.value = []; }
     }
 
-    // 结构树：支护场景加载
-    if (key === 'support') {
-      try {
-        const suppRes = await fetch('/api/support');
-        const comps = await suppRes.json();
-        const groups = new Map<string, any[]>();
-        for (const c of comps) {
-          const type = c.component_type;
-          if (!groups.has(type)) groups.set(type, []);
-          groups.get(type)!.push(c);
-        }
-        const TYPE_GROUPS: Record<string, { id: string; label: string; icon: string; types: string[] }> = {
-          advance_support: { id: 'advance_support', label: '超前支护', icon: '⊕', types: ['pipe_shed'] },
-          primary_support: { id: 'primary_support', label: '初支', icon: '◈', types: ['anchor', 'conduit', 'lock_anchor'] },
-          secondary_lining: { id: 'secondary_lining', label: '二衬', icon: '⬡', types: ['rebar', 'lining_rebar', 'steel_frame'] },
-        };
-        liveStructureTree.value = Object.values(TYPE_GROUPS).map(g => ({
-          id: g.id, label: g.label, icon: g.icon, defaultExpanded: true,
-          children: g.types.flatMap(t => (groups.get(t) || []).map(c => {
-            componentTypeMap[c.id] = t;
-            return { id: c.id, label: c.material_spec || t, icon: '⬡', visible: c.is_visible };
-          })),
-        }));
-      } catch { liveStructureTree.value = []; }
-    }
   }
 }, { immediate: true });
 
@@ -467,9 +362,6 @@ const data = computed(() => {
     merged.chartLabels = liveChartLabels.value;
   }
   // 用 API 结构树覆盖硬编码
-  if (liveStructureTree.value.length) {
-    merged.structureTree = liveStructureTree.value;
-  }
   return merged;
 });
 const sceneIcon  = computed(() => data.value?.icon  ?? '');
@@ -481,12 +373,6 @@ const metrics    = computed(() => data.value?.metrics    ?? []);
 const statusList = computed(() => data.value?.statusList ?? []);
 
 const alerts        = computed(() => data.value?.alerts        ?? []);
-const structureTree = computed(() => data.value?.structureTree ?? []);
-
-// 结构树展开/折叠状态
-const expandedNodes = reactive<Record<string, boolean>>({});
-// 节点可见性（默认从 tree 定义读取）
-const nodeVisible = reactive<Record<string, boolean>>({});
 
 // ── 风场模拟状态 ─────────────────────────────────────────
 const windEnabled = ref(false);
@@ -557,92 +443,6 @@ watch(() => props.sceneKey, (key) => {
     windFlow.value = false;
   }
 });
-
-// 场景切换时重置展开状态
-watch(() => props.sceneKey, () => {
-  for (const key of Object.keys(expandedNodes)) delete expandedNodes[key];
-});
-
-function toggleNodeExpand(nodeId: string) {
-  expandedNodes[nodeId] = !expandedNodes[nodeId];
-}
-
-function isNodeExpanded(node: TreeNode): boolean {
-  if (expandedNodes[node.id] !== undefined) return expandedNodes[node.id];
-  return node.defaultExpanded ?? false;
-}
-
-// 节点高亮状态
-const nodeHighlight = reactive<Record<string, boolean>>({});
-// node UUID → component_type 映射（API 加载时填充）
-const componentTypeMap = reactive<Record<string, string>>({});
-
-const supportTreeLeases = new Set<LegacySupportKind>();
-const supportTreeBusy = reactive<Record<string, boolean>>({});
-const supportTreeError = ref('');
-let supportTreeGeneration = 0;
-const kindForNode = (id: string) => (componentTypeMap[id] || id) as LegacySupportKind;
-const setKindVisible = (kind: LegacySupportKind, visible: boolean) => {
-  for (const node of structureTree.value.flatMap(group => group.children || [])) {
-    if (kindForNode(node.id) === kind) nodeVisible[node.id] = visible;
-  }
-};
-async function releaseTreeSupport() {
-  supportTreeGeneration++;
-  const ids = legacySupportCatalog.filter(asset => supportTreeLeases.has(asset.kind)).map(asset => asset.id);
-  for (const kind of supportTreeLeases) setLegacySupportHighlight(kind, false);
-  supportTreeLeases.clear();
-  for (const key of Object.keys(nodeVisible)) nodeVisible[key] = false;
-  for (const key of Object.keys(nodeHighlight)) nodeHighlight[key] = false;
-  if (ids.length) await resourceManager.release(ids);
-}
-watch(() => [props.sceneKey, props.show], () => {
-  if (props.sceneKey !== 'support' || !props.show) void releaseTreeSupport();
-});
-onBeforeUnmount(() => { void releaseTreeSupport(); });
-
-async function toggleNodeVisible(nodeId: string) {
-  const kind = kindForNode(nodeId);
-  const asset = legacySupportCatalog.find(item => item.kind === kind);
-  if (!asset || supportTreeBusy[kind]) return;
-  const generation = supportTreeGeneration;
-  supportTreeBusy[kind] = true;
-  supportTreeError.value = '';
-  try {
-    registerSupportModule();
-    if (supportTreeLeases.has(kind)) {
-      supportTreeLeases.delete(kind);
-      setLegacySupportHighlight(kind, false);
-      await resourceManager.release([asset.id]);
-      setKindVisible(kind, false);
-      nodeHighlight[nodeId] = false;
-    } else {
-      const viewer = DTScopeEngine.viewer;
-      if (!viewer) throw new Error('场景尚未初始化');
-      await resourceManager.load([asset.id], { viewer });
-      if (generation !== supportTreeGeneration || props.sceneKey !== 'support' || !props.show) {
-        await resourceManager.release([asset.id]);
-        return;
-      }
-      supportTreeLeases.add(kind);
-      setKindVisible(kind, true);
-    }
-    DTScopeEngine.viewer?.scene.requestRender();
-  } catch (error) {
-    setKindVisible(kind, false);
-    supportTreeError.value = error instanceof Error ? error.message : String(error);
-  } finally {
-    supportTreeBusy[kind] = false;
-  }
-}
-
-function toggleNodeHighlight(nodeId: string) {
-  const kind = kindForNode(nodeId);
-  if (!supportTreeLeases.has(kind)) return;
-  nodeHighlight[nodeId] = !nodeHighlight[nodeId];
-  setLegacySupportHighlight(kind, nodeHighlight[nodeId]);
-  DTScopeEngine.viewer?.scene.requestRender();
-}
 
 // SVG 折线坐标
 const linePoints = computed(() => {

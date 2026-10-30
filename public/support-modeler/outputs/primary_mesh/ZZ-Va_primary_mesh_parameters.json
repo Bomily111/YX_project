@@ -1,0 +1,99 @@
+{
+  "support_type": "ZZ-Va",
+  "status": "PRIMARY_MESH_PARAMETERS_READY",
+  "circumferential_bar": {
+    "diameter_mm": 8.0,
+    "spacing_mm": 200.0,
+    "status": "FOUND_CONFIRMED",
+    "source_page": 109,
+    "source_text": "环向φ8；网格间距20cm×20cm",
+    "drawing_reference": "第109页 ZZ-Va型衬砌断面图"
+  },
+  "longitudinal_bar": {
+    "diameter_mm": 8.0,
+    "spacing_mm": 200.0,
+    "status": "FOUND_CONFIRMED",
+    "source_page": 109,
+    "source_text": "纵向φ8；网格间距20cm×20cm",
+    "drawing_reference": "第109页 ZZ-Va型衬砌断面图"
+  },
+  "reference_relation": {
+    "reference_surface": "PRIMARY_SUPPORT_INNER_SURFACE",
+    "offset_to_bar_centerline_mm": 40.0,
+    "bar_radius_mm": 4.0,
+    "nearest_bar_surface_from_inner_mm": 36.0,
+    "farthest_bar_surface_from_inner_mm": 44.0,
+    "status": "FOUND_CONFIRMED",
+    "source_page": 109,
+    "source_text": "钢筋网平面示意图标注初支总厚26cm，并分解为4cm与22cm；参数识别.docx：与初支混凝土内表面的距离为4cm，半径=初支半径+4",
+    "source_method": "DRAWING_REVIEW_AND_PARAMETER_DEFINITION_DOCX"
+  },
+  "derived_profile": {
+    "top_radius_mm": 6140.0,
+    "side_radius_mm": 10640.0,
+    "top_angle_deg": 180.0,
+    "side_angle_deg": 15.6664,
+    "status": "FOUND_CONFIRMED"
+  },
+  "layer": {
+    "single_layer": true,
+    "status": "FOUND_CONFIRMED",
+    "source_page": 109,
+    "source_text": "钢筋网：单层、拱墙设置"
+  },
+  "regions": {
+    "top": {
+      "status": "READY",
+      "evidence": "拱墙设置"
+    },
+    "side": {
+      "status": "READY",
+      "evidence": "拱墙设置"
+    },
+    "invert_transition": {
+      "value": null,
+      "status": "NOT_APPLICABLE"
+    },
+    "invert_bottom": {
+      "value": null,
+      "status": "NOT_APPLICABLE"
+    }
+  },
+  "lap_length": {
+    "value": null,
+    "status": "NOT_FOUND"
+  },
+  "stagger_rule": {
+    "value": null,
+    "status": "NOT_FOUND",
+    "note": "第109页梅花形布置属于锚杆，不得套用于钢筋网"
+  },
+  "steel_relation": {
+    "design_relation": "网片紧贴被支护面，并与锚杆、钢拱架或其他锚定装置联结牢固",
+    "status": "RELATION_CONFIRMED",
+    "local_connection_status": "LOCAL_STEEL_ARCH_CONNECTION_UNRESOLVED",
+    "note": "施工方案确认应与钢拱架联结，但未明确I20a处的绑扎/焊接面、终止、搭接或避让细节"
+  },
+  "provenance": [
+    {
+      "page": 109,
+      "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+      "source_text": "钢筋网：单层、拱墙设置，环向φ8×纵向φ8，网格间距20cm×20cm。"
+    },
+    {
+      "page": 109,
+      "source_method": "DRAWING_DETAIL_REVIEW",
+      "source_text": "钢筋网平面示意图：φ8、N1×20、N2×20；剖面标注4+22=26cm"
+    },
+    {
+      "page": null,
+      "source_method": "PARAMETER_RECOGNITION_DOCX",
+      "source_text": "与初支混凝土内表面的距离为4cm；顶拱/侧拱半径=初支半径+4"
+    },
+    {
+      "page": 81,
+      "source_method": "CONSTRUCTION_PLAN_TABLE_4_7_2",
+      "source_text": "紧贴被支护面，与锚杆、钢拱架或其他锚定装置联结牢固；混凝土保护层应不小于20mm。"
+    }
+  ]
+}

@@ -157,6 +157,7 @@ import type { AgentTaskWorkflowStatus } from '@/platform/tasks/TaskWorkflowBridg
 import { dispatchValidatedWorkflow } from './TaskOrchestrator'
 import { routeWorkflowToolCall } from './AgentDispatchIntent'
 import { AGENT_SCENE_RESOURCES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
+import { modelerSupportCatalog } from '@/modules/support/modeler-resources'
 import { useTunnelStore } from '@/stores/tunnelStore'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import type { Message, ToolUseBlock, AgentContext } from './types'
@@ -203,14 +204,16 @@ const sceneResourceLabels: Record<string, string> = {
   'rock.tsp-hardness': 'TSP 岩体坚硬度 · 示意锚定',
   'rock.tsp-integrity': 'TSP 岩体完整度 · 示意锚定',
   'rock.tem-resistivity': 'TEM 视电阻率 · 示意重定位',
-  'support.legacy-assembly': '结构树既有支护组合（示意重定位）', 'blast.effect': '爆破效果',
+  'blast.effect': '爆破效果',
+  'support.modeler-zz-va': '新支护模块 ZZ-Va · 1 m 断面',
+  ...Object.fromEntries(modelerSupportCatalog.map(asset => [asset.id, `新支护模块 ${asset.type} · 1 m 断面`])),
   'ventilation.steady-cfd': '稳态 CFD', 'ventilation.transient-network': '瞬态风网',
   'ventilation.thermal-field': '热场时间片',
 }
 const sceneSourceNotes = (plans: Array<{ resources: string[] }> = []): string => {
   const ids = plans.flatMap(plan => plan.resources)
   return [
-    ids.some(id => id.startsWith('support.legacy-')) ? '既有支护以结构树 YK1+116～YK1+183 原布置为模板沿中线示意重定位，不代表目标里程的实测支护。' : '',
+    ids.some(id => id.startsWith('support.modeler-')) ? '新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。' : '',
     ids.some(id => id.startsWith('rock.') && id !== 'rock.design-grade')
       ? '物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。' : '',
     ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity')
@@ -249,7 +252,7 @@ const currentScene = computed(() => props.context?.scene || '')
 const placement = computed(() => props.placement ?? 'floating')
 
 const defaultQuickCmds = [
-  '在 YK1+346 主场景展示设计围岩与结构树既有支护组合',
+  '在 YK1+346 主场景展示设计围岩与新模块 ZZ-Va 支护组合',
   '自主检查 YK1+346 至 YK1+356 初期支护质量并完成任务',
   '查看当前掌子面状态',
   '飞往围岩模型区域',

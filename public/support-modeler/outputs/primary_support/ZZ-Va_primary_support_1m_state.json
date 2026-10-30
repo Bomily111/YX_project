@@ -1,0 +1,468 @@
+{
+  "support_type": "ZZ-Va",
+  "status": "PRIMARY_SUPPORT_1M_ASSEMBLY_IMPLEMENTED",
+  "primary_support_mesh": {
+    "status": "PRIMARY_SUPPORT_MESH_PARTIAL",
+    "reason": "LOCAL_STEEL_ARCH_CONNECTION_SIDE_PROVISIONAL",
+    "invert": "NOT_APPLICABLE"
+  },
+  "mesh_steel_relation": {
+    "connection_required": true,
+    "connection_type": "TIED_OR_WELDED",
+    "connection_side": "ROCK_SIDE",
+    "connection_side_status": "PROVISIONAL",
+    "engineering_confirmation": "PENDING",
+    "reference_source": "FIELD_REFERENCE_IMAGE",
+    "switchable": true,
+    "status": "PRIMARY_MESH_STEEL_RELATION_PROVISIONAL",
+    "formula_inputs": {
+      "steel_radial_height_mm": 200,
+      "mesh_diameter_mm": 8
+    },
+    "mesh_centerline": {
+      "top_radius_mm": 6324.0,
+      "side_radius_mm": 10824.0,
+      "formula": "steel_center_radius + side_sign * (steel_radial_height/2 + mesh_diameter/2)"
+    },
+    "connection_reports": {
+      "steelArch_001": {
+        "connection_side": "ROCK_SIDE",
+        "mesh_centerline_radii": {
+          "top_radius_mm": 6324.0,
+          "side_radius_mm": 10824.0,
+          "formula": "steel_center_radius + side_sign * (steel_radial_height/2 + mesh_diameter/2)"
+        },
+        "steel_centerline_radii_mm": {
+          "top": 6220.0,
+          "side": 10720.0
+        },
+        "steel_radial_inner_edges_mm": {
+          "top": 6120.0,
+          "side": 10620.0
+        },
+        "steel_radial_outer_edges_mm": {
+          "top": 6320.0,
+          "side": 10820.0
+        },
+        "mesh_radius_mm": 4.0,
+        "minimum_entity_distance_mm": 0.0,
+        "contact_status": "DESIGN_CONNECTION_ZONE",
+        "maximum_penetration_mm": 0.0,
+        "large_area_penetration": false,
+        "calculation": "radial centerline separation - I20a radial half-height - mesh bar radius"
+      },
+      "steelArch_002": {
+        "connection_side": "ROCK_SIDE",
+        "mesh_centerline_radii": {
+          "top_radius_mm": 6324.0,
+          "side_radius_mm": 10824.0,
+          "formula": "steel_center_radius + side_sign * (steel_radial_height/2 + mesh_diameter/2)"
+        },
+        "steel_centerline_radii_mm": {
+          "top": 6220.0,
+          "side": 10720.0
+        },
+        "steel_radial_inner_edges_mm": {
+          "top": 6120.0,
+          "side": 10620.0
+        },
+        "steel_radial_outer_edges_mm": {
+          "top": 6320.0,
+          "side": 10820.0
+        },
+        "mesh_radius_mm": 4.0,
+        "minimum_entity_distance_mm": 0.0,
+        "contact_status": "DESIGN_CONNECTION_ZONE",
+        "maximum_penetration_mm": 0.0,
+        "large_area_penetration": false,
+        "calculation": "radial centerline separation - I20a radial half-height - mesh bar radius"
+      }
+    }
+  },
+  "steel_arch_layout": {
+    "profile": "I20a",
+    "spacing_mm": 800.0,
+    "scope": "ARCH_AND_WALL_ONLY",
+    "support_type": "ZZ-Va",
+    "window_length_mm": 1000.0,
+    "positions_mm": [
+      100.0,
+      900.0
+    ],
+    "status": "FOUND_CONFIRMED",
+    "layout_window_convention": "1m演示窗内保留一个完整800mm设计间距；不代表实际施工段起点",
+    "source": {
+      "document": "施工方案",
+      "table": "4.7-1"
+    },
+    "final_status": "STEEL_ARCH_LONGITUDINAL_LAYOUT_IMPLEMENTED",
+    "reuse_method": "validatedSingleSteelArch -> clone -> translate along z",
+    "same_pitch_as_system_anchor": "CONFIRMED",
+    "phase_alignment": "DEMO_ASSUMPTION"
+  },
+  "geometry": {
+    "length_mm": 1000,
+    "steel_arch_positions_mm": [
+      100,
+      900
+    ],
+    "steel_arch_count": 2,
+    "system_anchor_count": 43,
+    "system_anchor_layers_mm": [
+      100,
+      900
+    ],
+    "mesh_profile": {
+      "top_radius_mm": 6324.0,
+      "side_radius_mm": 10824.0,
+      "formula": "steel_center_radius + side_sign * (steel_radial_height/2 + mesh_diameter/2)"
+    }
+  },
+  "validation": {
+    "steel_arch_spacing_mm": 800.0,
+    "steel_spacing_exact": true,
+    "steel_count": 2,
+    "steel_positions_mm": [
+      100.0,
+      900.0
+    ],
+    "steel_geometries_identical": true,
+    "steel_scope_arch_wall_only": true,
+    "steel_inside_primary_support": true,
+    "mesh_connection_side": "ROCK_SIDE",
+    "mesh_side_provisional": true,
+    "mesh_side_switchable": true,
+    "no_magic_offset": true,
+    "design_connection_zone_count": 2,
+    "unexpected_penetration": false,
+    "maximum_penetration_mm": 0.0,
+    "anchor_count": 43,
+    "anchor_length_mm": [
+      4000.0
+    ],
+    "anchor_longitudinal_positions_mm": [
+      100.0,
+      900.0
+    ],
+    "anchor_layer_counts": [
+      21,
+      22
+    ],
+    "same_longitudinal_pitch": "CONFIRMED",
+    "phase_alignment": "DEMO_ASSUMPTION",
+    "unit_scale_valid": true,
+    "axis_not_flipped": true,
+    "all_checks_passed": true,
+    "protected_sources_unchanged": true,
+    "primary_glb_valid": true,
+    "section_glb_valid": true
+  },
+  "source_hashes": {
+    "outputs/I20a_validation/ZZ-Va_I20a_steel_arch.glb": "e582151f4d7df66ea133faadb3a024142740011fc184326424a762e2ce7796b9",
+    "outputs/system_anchor/ZZ-Va_system_anchor_state.json": "27f8c4482086ad6990203ff5ad6107f73f56e5d65b1be84c95d40616cde1941a",
+    "outputs/base_profile/ZZ-Va_section_geometry.json": "fe4694257ad682c207f832aca84e2357639719c57f6056477c866e6f84f8117f",
+    "outputs/secondary_rebar_assembly/ZZ-Va_secondary_rebar_assembly_state.json": "4e1bad7f96d74ec3a54adadb30b2816d2b724ba92074e3a4f05e5eb9c06ddd3b"
+  },
+  "glb": {
+    "primary_support_1m": {
+      "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\primary_support\\ZZ-Va_primary_support_1m.glb",
+      "byte_length": 1254352,
+      "mesh_count": 48,
+      "mesh_names": [
+        "primarySupportConcrete",
+        "primaryMeshCircumferentialBars",
+        "primaryMeshLongitudinalBars",
+        "steelArch_001",
+        "steelArch_002",
+        "SystemAnchorMesh_01_001",
+        "SystemAnchorMesh_01_002",
+        "SystemAnchorMesh_01_003",
+        "SystemAnchorMesh_01_004",
+        "SystemAnchorMesh_01_005",
+        "SystemAnchorMesh_01_006",
+        "SystemAnchorMesh_01_007",
+        "SystemAnchorMesh_01_008",
+        "SystemAnchorMesh_01_009",
+        "SystemAnchorMesh_01_010",
+        "SystemAnchorMesh_01_011",
+        "SystemAnchorMesh_01_012",
+        "SystemAnchorMesh_01_013",
+        "SystemAnchorMesh_01_014",
+        "SystemAnchorMesh_01_015",
+        "SystemAnchorMesh_01_016",
+        "SystemAnchorMesh_01_017",
+        "SystemAnchorMesh_01_018",
+        "SystemAnchorMesh_01_019",
+        "SystemAnchorMesh_01_020",
+        "SystemAnchorMesh_01_021",
+        "SystemAnchorMesh_02_001",
+        "SystemAnchorMesh_02_002",
+        "SystemAnchorMesh_02_003",
+        "SystemAnchorMesh_02_004",
+        "SystemAnchorMesh_02_005",
+        "SystemAnchorMesh_02_006",
+        "SystemAnchorMesh_02_007",
+        "SystemAnchorMesh_02_008",
+        "SystemAnchorMesh_02_009",
+        "SystemAnchorMesh_02_010",
+        "SystemAnchorMesh_02_011",
+        "SystemAnchorMesh_02_012",
+        "SystemAnchorMesh_02_013",
+        "SystemAnchorMesh_02_014",
+        "SystemAnchorMesh_02_015",
+        "SystemAnchorMesh_02_016",
+        "SystemAnchorMesh_02_017",
+        "SystemAnchorMesh_02_018",
+        "SystemAnchorMesh_02_019",
+        "SystemAnchorMesh_02_020",
+        "SystemAnchorMesh_02_021",
+        "SystemAnchorMesh_02_022"
+      ],
+      "node_names": [
+        "ZZVaPrimarySupport1mGroup",
+        "primarySupportConcreteGroup",
+        "primarySupportConcrete",
+        "primarySupportMeshGroup",
+        "primaryMeshCircumferentialBars",
+        "primaryMeshLongitudinalBars",
+        "steelArchArrayGroup",
+        "steelArch_001",
+        "steelArch_002",
+        "systemAnchorGroup",
+        "SystemAnchorMesh_01_001",
+        "SystemAnchorMesh_01_002",
+        "SystemAnchorMesh_01_003",
+        "SystemAnchorMesh_01_004",
+        "SystemAnchorMesh_01_005",
+        "SystemAnchorMesh_01_006",
+        "SystemAnchorMesh_01_007",
+        "SystemAnchorMesh_01_008",
+        "SystemAnchorMesh_01_009",
+        "SystemAnchorMesh_01_010",
+        "SystemAnchorMesh_01_011",
+        "SystemAnchorMesh_01_012",
+        "SystemAnchorMesh_01_013",
+        "SystemAnchorMesh_01_014",
+        "SystemAnchorMesh_01_015",
+        "SystemAnchorMesh_01_016",
+        "SystemAnchorMesh_01_017",
+        "SystemAnchorMesh_01_018",
+        "SystemAnchorMesh_01_019",
+        "SystemAnchorMesh_01_020",
+        "SystemAnchorMesh_01_021",
+        "SystemAnchorMesh_02_001",
+        "SystemAnchorMesh_02_002",
+        "SystemAnchorMesh_02_003",
+        "SystemAnchorMesh_02_004",
+        "SystemAnchorMesh_02_005",
+        "SystemAnchorMesh_02_006",
+        "SystemAnchorMesh_02_007",
+        "SystemAnchorMesh_02_008",
+        "SystemAnchorMesh_02_009",
+        "SystemAnchorMesh_02_010",
+        "SystemAnchorMesh_02_011",
+        "SystemAnchorMesh_02_012",
+        "SystemAnchorMesh_02_013",
+        "SystemAnchorMesh_02_014",
+        "SystemAnchorMesh_02_015",
+        "SystemAnchorMesh_02_016",
+        "SystemAnchorMesh_02_017",
+        "SystemAnchorMesh_02_018",
+        "SystemAnchorMesh_02_019",
+        "SystemAnchorMesh_02_020",
+        "SystemAnchorMesh_02_021",
+        "SystemAnchorMesh_02_022"
+      ],
+      "metadata": {
+        "support_type": "ZZ-Va",
+        "length_m": 1.0,
+        "steel_arch_spacing_mm": 800,
+        "steel_arch_count": 2,
+        "mesh_arch_connection_side": "ROCK_SIDE",
+        "mesh_arch_connection_side_status": "PROVISIONAL",
+        "anchor_spacing_longitudinal_mm": 800,
+        "scope": "ARCH_AND_WALL_PRIMARY_SUPPORT",
+        "same_longitudinal_pitch": "CONFIRMED",
+        "phase_alignment": "DEMO_ASSUMPTION",
+        "status": "PRIMARY_SUPPORT_1M_ASSEMBLY_IMPLEMENTED"
+      },
+      "bbox_m": {
+        "min": [
+          -10.35745843518892,
+          -3.548240506371696,
+          0.0
+        ],
+        "max": [
+          10.35745843518892,
+          10.36,
+          1.0
+        ],
+        "size": [
+          20.71491687037784,
+          13.908240506371696,
+          1.0
+        ]
+      }
+    },
+    "section_1m": {
+      "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\section_assembly\\ZZ-Va_section_1m.glb",
+      "byte_length": 3920076,
+      "mesh_count": 53,
+      "mesh_names": [
+        "primarySupportConcrete",
+        "primaryMeshCircumferentialBars",
+        "primaryMeshLongitudinalBars",
+        "steelArch_001",
+        "steelArch_002",
+        "SystemAnchorMesh_01_001",
+        "SystemAnchorMesh_01_002",
+        "SystemAnchorMesh_01_003",
+        "SystemAnchorMesh_01_004",
+        "SystemAnchorMesh_01_005",
+        "SystemAnchorMesh_01_006",
+        "SystemAnchorMesh_01_007",
+        "SystemAnchorMesh_01_008",
+        "SystemAnchorMesh_01_009",
+        "SystemAnchorMesh_01_010",
+        "SystemAnchorMesh_01_011",
+        "SystemAnchorMesh_01_012",
+        "SystemAnchorMesh_01_013",
+        "SystemAnchorMesh_01_014",
+        "SystemAnchorMesh_01_015",
+        "SystemAnchorMesh_01_016",
+        "SystemAnchorMesh_01_017",
+        "SystemAnchorMesh_01_018",
+        "SystemAnchorMesh_01_019",
+        "SystemAnchorMesh_01_020",
+        "SystemAnchorMesh_01_021",
+        "SystemAnchorMesh_02_001",
+        "SystemAnchorMesh_02_002",
+        "SystemAnchorMesh_02_003",
+        "SystemAnchorMesh_02_004",
+        "SystemAnchorMesh_02_005",
+        "SystemAnchorMesh_02_006",
+        "SystemAnchorMesh_02_007",
+        "SystemAnchorMesh_02_008",
+        "SystemAnchorMesh_02_009",
+        "SystemAnchorMesh_02_010",
+        "SystemAnchorMesh_02_011",
+        "SystemAnchorMesh_02_012",
+        "SystemAnchorMesh_02_013",
+        "SystemAnchorMesh_02_014",
+        "SystemAnchorMesh_02_015",
+        "SystemAnchorMesh_02_016",
+        "SystemAnchorMesh_02_017",
+        "SystemAnchorMesh_02_018",
+        "SystemAnchorMesh_02_019",
+        "SystemAnchorMesh_02_020",
+        "SystemAnchorMesh_02_021",
+        "SystemAnchorMesh_02_022",
+        "secondaryLining",
+        "N1",
+        "N2",
+        "N3",
+        "N4"
+      ],
+      "node_names": [
+        "ZZVaSectionAssemblyGroup",
+        "primarySupportGroup",
+        "primarySupportConcreteGroup",
+        "primarySupportConcrete",
+        "primarySupportMeshGroup",
+        "primaryMeshCircumferentialBars",
+        "primaryMeshLongitudinalBars",
+        "steelArchArrayGroup",
+        "steelArch_001",
+        "steelArch_002",
+        "systemAnchorGroup",
+        "SystemAnchorMesh_01_001",
+        "SystemAnchorMesh_01_002",
+        "SystemAnchorMesh_01_003",
+        "SystemAnchorMesh_01_004",
+        "SystemAnchorMesh_01_005",
+        "SystemAnchorMesh_01_006",
+        "SystemAnchorMesh_01_007",
+        "SystemAnchorMesh_01_008",
+        "SystemAnchorMesh_01_009",
+        "SystemAnchorMesh_01_010",
+        "SystemAnchorMesh_01_011",
+        "SystemAnchorMesh_01_012",
+        "SystemAnchorMesh_01_013",
+        "SystemAnchorMesh_01_014",
+        "SystemAnchorMesh_01_015",
+        "SystemAnchorMesh_01_016",
+        "SystemAnchorMesh_01_017",
+        "SystemAnchorMesh_01_018",
+        "SystemAnchorMesh_01_019",
+        "SystemAnchorMesh_01_020",
+        "SystemAnchorMesh_01_021",
+        "SystemAnchorMesh_02_001",
+        "SystemAnchorMesh_02_002",
+        "SystemAnchorMesh_02_003",
+        "SystemAnchorMesh_02_004",
+        "SystemAnchorMesh_02_005",
+        "SystemAnchorMesh_02_006",
+        "SystemAnchorMesh_02_007",
+        "SystemAnchorMesh_02_008",
+        "SystemAnchorMesh_02_009",
+        "SystemAnchorMesh_02_010",
+        "SystemAnchorMesh_02_011",
+        "SystemAnchorMesh_02_012",
+        "SystemAnchorMesh_02_013",
+        "SystemAnchorMesh_02_014",
+        "SystemAnchorMesh_02_015",
+        "SystemAnchorMesh_02_016",
+        "SystemAnchorMesh_02_017",
+        "SystemAnchorMesh_02_018",
+        "SystemAnchorMesh_02_019",
+        "SystemAnchorMesh_02_020",
+        "SystemAnchorMesh_02_021",
+        "SystemAnchorMesh_02_022",
+        "secondarySystemGroup",
+        "secondaryLiningGroup",
+        "secondaryLining",
+        "secondaryRebarGroup",
+        "N1Group",
+        "N1",
+        "N2Group",
+        "N2",
+        "N3Group",
+        "N3",
+        "N4Group",
+        "N4"
+      ],
+      "metadata": {
+        "support_type": "ZZ-Va",
+        "length_m": 1.0,
+        "steel_arch_spacing_mm": 800,
+        "steel_arch_count": 2,
+        "mesh_arch_connection_side": "ROCK_SIDE",
+        "mesh_arch_connection_side_status": "PROVISIONAL",
+        "anchor_spacing_longitudinal_mm": 800,
+        "scope": "ARCH_AND_WALL_PRIMARY_SUPPORT",
+        "same_longitudinal_pitch": "CONFIRMED",
+        "phase_alignment": "DEMO_ASSUMPTION",
+        "status": "PRIMARY_SUPPORT_1M_ASSEMBLY_IMPLEMENTED",
+        "assembly": "ZZVaSectionAssemblyGroup",
+        "secondary_system_reused": true
+      },
+      "bbox_m": {
+        "min": [
+          -10.35745843518892,
+          -4.300006051818082,
+          0.0
+        ],
+        "max": [
+          10.35745843518892,
+          10.36,
+          1.0
+        ],
+        "size": [
+          20.71491687037784,
+          14.660006051818081,
+          1.0
+        ]
+      }
+    }
+  }
+}

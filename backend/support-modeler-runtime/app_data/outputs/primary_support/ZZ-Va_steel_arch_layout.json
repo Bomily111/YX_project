@@ -1,0 +1,21 @@
+{
+  "profile": "I20a",
+  "spacing_mm": 800.0,
+  "scope": "ARCH_AND_WALL_ONLY",
+  "support_type": "ZZ-Va",
+  "window_length_mm": 1000.0,
+  "positions_mm": [
+    100.0,
+    900.0
+  ],
+  "status": "FOUND_CONFIRMED",
+  "layout_window_convention": "1m演示窗内保留一个完整800mm设计间距；不代表实际施工段起点",
+  "source": {
+    "document": "施工方案",
+    "table": "4.7-1"
+  },
+  "final_status": "STEEL_ARCH_LONGITUDINAL_LAYOUT_IMPLEMENTED",
+  "reuse_method": "validatedSingleSteelArch -> clone -> translate along z",
+  "same_pitch_as_system_anchor": "CONFIRMED",
+  "phase_alignment": "DEMO_ASSUMPTION"
+}

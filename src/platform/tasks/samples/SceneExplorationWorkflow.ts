@@ -11,18 +11,18 @@ import type { TaskStep, WorkflowPlan } from '../TaskStep'
 import { getBlastModel } from '@/views/tunnel-module/blast'
 import { getTunnelModel as getVentilationModel } from '@/views/ventilation-module/cesiumVentilation'
 import { ventilationPositionToWorld, ventilationVectorToWorld } from '@/views/ventilation-module/spatialFrame'
-import supportAssets from '@/modules/support/legacy-assets.json'
+import { modelerSupportCatalog } from '@/modules/support/modeler-resources'
 
 /** 只允许现有四类可展示资产进入智能体的场景编排，不能把任意路径当作资源加载。 */
 export const SCENE_EXPLORATION_RESOURCES = [
   'rock.design-grade', 'rock.geophysical-grade', 'rock.tsp-hardness',
   'rock.tsp-integrity', 'rock.tem-resistivity', 'support.scene', 'blast.effect',
   'ventilation.steady-cfd', 'ventilation.transient-network', 'ventilation.thermal-field',
-  'support.legacy-assembly', ...supportAssets.map(asset => asset.id),
+  ...modelerSupportCatalog.map(asset => asset.id),
 ] as const
 
 export type SceneExplorationResourceId = typeof SCENE_EXPLORATION_RESOURCES[number]
-/** Public agent routes use fixed structure-tree support until the external support module arrives. */
+/** Exclude the old internal steel-arch experiment from public agent routes. */
 export const AGENT_SCENE_RESOURCES = SCENE_EXPLORATION_RESOURCES.filter(id => id !== 'support.scene')
 
 export const SCENE_ENHANCEMENT_MODES = ['auto', 'emphasis', 'context'] as const
@@ -76,14 +76,11 @@ export function validateSceneSequence(ids: readonly string[], registry: Resource
 
 export function sceneStageTask(task: TaskContext, resource: SceneResource, requestedChainage?: number): TaskContext {
   // Task and registered resource ranges are always in the surveyed YK frame.
-  const focusChainage = requestedChainage ?? (resource.id.startsWith('support.legacy-')
-    ? (resource.chainageRange!.start + resource.chainageRange!.end) / 2
-    : resource.module === 'ventilation' ? 1346
+  const focusChainage = requestedChainage ?? (resource.module === 'ventilation' ? 1346
       : resource.module === 'rock' && resource.id !== 'rock.design-grade' ? 2244
         : 1346)
   const chainageRange = resource.chainageRange!
-  const demoRelocatable = resource.id.startsWith('support.legacy-')
-    || resource.module === 'rock' && resource.id !== 'rock.design-grade'
+  const demoRelocatable = resource.module === 'rock' && resource.id !== 'rock.design-grade'
   if (requestedChainage !== undefined && !demoRelocatable && (requestedChainage < chainageRange.start || requestedChainage > chainageRange.end)) {
     throw new Error(`目标里程不在 ${resource.id} 的资产覆盖范围 ${chainageRange.start}–${chainageRange.end} 内`)
   }
@@ -102,11 +99,11 @@ export function sceneStageTask(task: TaskContext, resource: SceneResource, reque
 function compatibleAssembly(ids: readonly string[]): boolean {
   const unique = new Set(ids)
   if (unique.size !== ids.length) return false
-  const legacy = ids.filter(id => id.startsWith('support.legacy-'))
-  if (legacy.length > 0) {
-    return legacy.length === 1
+  const support = ids.filter(id => id.startsWith('support.modeler-'))
+  if (support.length > 0) {
+    return support.length === 1
       && ids.filter(id => id.startsWith('rock.')).length <= 1
-      && ids.every(id => id.startsWith('rock.') || id === legacy[0])
+      && ids.every(id => id.startsWith('rock.') || id === support[0])
   }
   const worksite = new Set(['rock.design-grade', 'support.scene', 'blast.effect'])
   return ids.every(id => worksite.has(id))
@@ -119,7 +116,7 @@ export function resolveAssemblyStages(
   for (const [index, current] of resources.entries()) {
     const previous = stages[index - 1] ?? []
     const autoRetain = modes[index] === 'auto' && (
-      current.id.startsWith('support.legacy-') && resources[index - 1]?.id.startsWith('rock.')
+      current.id.startsWith('support.modeler-') && resources[index - 1]?.id.startsWith('rock.')
       || current.id === 'support.scene' && resources[index - 1]?.id === 'rock.design-grade'
     )
     const retain = modes[index] === 'retain' || autoRetain
@@ -192,7 +189,7 @@ export function ventilationWorkpointView(): {
   return { target, destination, direction, up }
 }
 
-async function focusScene(resource: SceneResource, viewer: Cesium.Viewer): Promise<(() => void) | undefined> {
+async function focusScene(resource: SceneResource, viewer: Cesium.Viewer, retainedSupport?: SceneResource): Promise<(() => void) | undefined> {
   if (!viewer?.camera || viewer.isDestroyed?.()) return undefined
   const camera = viewer.camera
   const before = {
@@ -200,7 +197,13 @@ async function focusScene(resource: SceneResource, viewer: Cesium.Viewer): Promi
     direction: Cesium.Cartesian3.clone(camera.directionWC),
     up: Cesium.Cartesian3.clone(camera.upWC),
   }
-  if (resource.module === 'ventilation' && getVentilationModel()) {
+  const supportModel = (resource.id.startsWith('support.modeler-') ? resource : retainedSupport)
+    ?.getEnhanceTargets?.()[0]?.object as Cesium.Model | undefined
+  if (supportModel) {
+    await waitForModelReady(supportModel, () => viewer.scene.requestRender())
+    camera.viewBoundingSphere(supportModel.boundingSphere, new Cesium.HeadingPitchRange(0, -0.25, 42))
+    camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
+  } else if (resource.module === 'ventilation' && getVentilationModel()) {
     const { destination, direction, up } = ventilationWorkpointView()
     camera.setView({ destination, orientation: { direction, up } })
   } else if (resource.id === 'blast.effect') {
@@ -291,7 +294,9 @@ export function createSceneExplorationExecutor(
       async (context) => {
         const loadContext = typeof options.loadContext === 'function'
           ? options.loadContext(context) : options.loadContext
-        const rollback = await focusScene(resource, loadContext.viewer)
+        const retainedSupport = stageResources(assemblyStages, index)
+          .find(item => item.id.startsWith('support.modeler-'))
+        const rollback = await focusScene(resource, loadContext.viewer, retainedSupport)
         return { outputs: { [outputKey]: {
         resourceId: resource.id,
         module: resource.module,
@@ -303,8 +308,8 @@ export function createSceneExplorationExecutor(
             ? '围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论'
           : resource.module === 'rock' && resource.id !== 'rock.design-grade'
             ? '围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；不能视作目标工点实测结论'
-          : resource.id.startsWith('support.legacy-')
-            ? '结构树既有 GLB 构件；以 YK1+116～YK1+183 原布置为模板沿中线示意装配，不可参数化，不代表目标里程实测支护或质量结论'
+          : resource.id.startsWith('support.modeler-')
+            ? '新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论'
           : stageResources(assemblyStages, index).length > 1
             ? `同屏装配 ${stageResources(assemblyStages, index).map(item => item.id).join('、')}；示例设计不代表质量或风险结论`
           : '场景展示已完成；不代表工程质量或风险结论',

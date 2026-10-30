@@ -1,0 +1,47 @@
+{
+  "support_type": "ZZ-Va",
+  "source_page": 110,
+  "N3": {
+    "diameter_mm": 12,
+    "length_mm": 1000,
+    "circumferential_spacing_mm": 250,
+    "longitudinal_spacing_mm": null,
+    "layout_mode": "CENTER_ALIGNED_TWO_LAYERS",
+    "layers": [
+      "N1_OUTER",
+      "N2_INNER"
+    ],
+    "source_page": 110,
+    "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+    "status": "N3_IMPLEMENTED"
+  },
+  "N4": {
+    "diameter_mm": 8,
+    "length_mm": 552,
+    "circumferential_spacing_mm": 500,
+    "longitudinal_spacing_mm": 250,
+    "hook_angle_deg": 135,
+    "hook_length_mm": 87,
+    "hook_straight_mm": 40,
+    "bend_radius_mm": 20,
+    "layout_mode": "STAGGERED_GRID",
+    "connection": "N1_TO_N2",
+    "source_page": 110,
+    "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+    "status": "N4_IMPLEMENTED"
+  },
+  "field_status": {
+    "N3.diameter_mm": "FOUND_CONFIRMED",
+    "N3.length_mm": "FOUND_CONFIRMED",
+    "N3.circumferential_spacing_mm": "FOUND_CONFIRMED",
+    "N3.longitudinal_spacing_mm": "NOT_APPLICABLE",
+    "N3.layout_mode": "FOUND_CONFIRMED",
+    "N4.diameter_mm": "FOUND_CONFIRMED",
+    "N4.length_mm": "FOUND_CONFIRMED",
+    "N4.circumferential_spacing_mm": "FOUND_CONFIRMED",
+    "N4.longitudinal_spacing_mm": "FOUND_CONFIRMED",
+    "N4.hook_angle_deg": "FOUND_CONFIRMED",
+    "N4.hook_length_mm": "FOUND_CONFIRMED",
+    "N4.bend_radius_mm": "FOUND_CONFIRMED"
+  }
+}

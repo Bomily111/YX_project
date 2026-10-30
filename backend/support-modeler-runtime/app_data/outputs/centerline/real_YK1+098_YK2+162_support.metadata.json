@@ -1,0 +1,3527 @@
+{
+  "glb": {
+    "path": "outputs/centerline/real_YK1+098_YK2+162_support.glb",
+    "byte_length": 12045744,
+    "mesh_definition_count": 67,
+    "node_count": 117,
+    "scene_root_count": 1,
+    "metadata": {
+      "status": "REAL_YK1+098_YK2+162_SUPPORT_IMPLEMENTED",
+      "centerline_source": "data/centerline/centerLine.json",
+      "centerline_source_status": "PROJECT_INPUT",
+      "coordinate_system": {
+        "kind": "WGS84_UTM_LOCAL",
+        "source_crs": "EPSG:4326",
+        "utm_zone": 46,
+        "axis": "x=easting, y=elevation, z=-northing",
+        "unit": "m"
+      },
+      "section_reference": {
+        "mode": "DESIGN_ELEVATION_POINT",
+        "source_local_m": [
+          0.0,
+          -2.1,
+          0.0
+        ],
+        "placement_offset_local_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "status": "CONFIRMED_FROM_DRAWING",
+        "schema": "SectionReference/V1",
+        "source_support_type": "ZZ-IVa",
+        "source_pages": [
+          76,
+          95
+        ],
+        "source_relation": "inner_profile_crown_to_design_elevation=7.60m; inner_top_radius=5.50m; existing template origin=top-arch circle center; design elevation y=-(7.60-5.50)=-2.10m",
+        "applies_to": "existing section templates sharing the 5.50m inner top radius and top-arch circle-center origin",
+        "note": "设计高程点作为断面局部原点；placement_offset_local_m仅用于后续经项目确认的定位修正。"
+      },
+      "section_transform": "local x/y/z -> centerLine right/up/tangent; source design-elevation point -> centerLine position",
+      "section_reference_validation": {
+        "support_type": "ZZ-IVa",
+        "centerline_distance_m": 287.0,
+        "engineering_chainage_m": 1385.0,
+        "mapped_design_elevation_point": [
+          279.150860438574,
+          1.4375572326296413,
+          -65.93382569870369
+        ],
+        "centerline_position": [
+          279.150860438574,
+          1.4375572326296413,
+          -65.93382569870369
+        ],
+        "alignment_error_m": 0.0,
+        "passed": true
+      },
+      "start_chainage": 1098.0,
+      "end_chainage": 2162.0,
+      "centerline_start_distance_m": 0.0,
+      "centerline_end_distance_m": 1064.0,
+      "chainage_offset_m": 1098.0,
+      "support_segments": [
+        {
+          "segment_index": 1,
+          "start_chainage": 1098.0,
+          "end_chainage": 1121.0,
+          "centerline_start_distance_m": 0.0,
+          "centerline_end_distance_m": 23.0,
+          "support_type": "Z-PM",
+          "model_status": "MODEL_INCOMPLETE",
+          "implementation_status": "SPECIAL_GEOMETRY_NOT_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_IMPLEMENTED"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": null,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 0,
+          "component_counts": {},
+          "missing_reason": "SOURCE_MODEL_NOT_AVAILABLE"
+        },
+        {
+          "segment_index": 2,
+          "start_chainage": 1121.0,
+          "end_chainage": 1165.0,
+          "centerline_start_distance_m": 23.0,
+          "centerline_end_distance_m": 67.0,
+          "support_type": "ZZ-QJsx",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "READY"
+            },
+            {
+              "id": "system_anchor",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "lock_foot",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "READY"
+            },
+            {
+              "id": "N2",
+              "status": "READY"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_IMPLEMENTED"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 0.5,
+            "system_anchor_m": null,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 352,
+          "component_counts": {
+            "primary_concrete": 44,
+            "primary_mesh": 88,
+            "secondary_lining": 44,
+            "steel_arch": 88,
+            "lock_foot_anchor": 704
+          }
+        },
+        {
+          "segment_index": 3,
+          "start_chainage": 1165.0,
+          "end_chainage": 1185.0,
+          "centerline_start_distance_m": 67.0,
+          "centerline_end_distance_m": 87.0,
+          "support_type": "ZZ-Vsx",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "READY"
+            },
+            {
+              "id": "system_anchor",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "lock_foot",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "READY"
+            },
+            {
+              "id": "N2",
+              "status": "READY"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_IMPLEMENTED"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 0.6,
+            "system_anchor_m": null,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 148,
+          "component_counts": {
+            "primary_concrete": 20,
+            "primary_mesh": 40,
+            "secondary_lining": 20,
+            "steel_arch": 34,
+            "lock_foot_anchor": 272
+          }
+        },
+        {
+          "segment_index": 4,
+          "start_chainage": 1185.0,
+          "end_chainage": 1197.0,
+          "centerline_start_distance_m": 87.0,
+          "centerline_end_distance_m": 99.0,
+          "support_type": "ZZ-IVsx",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "system_anchor",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "READY"
+            },
+            {
+              "id": "N2",
+              "status": "READY"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_IMPLEMENTED"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 0.8,
+            "system_anchor_m": null,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 48,
+          "component_counts": {
+            "primary_concrete": 12,
+            "primary_mesh": 24,
+            "secondary_lining": 12
+          }
+        },
+        {
+          "segment_index": 5,
+          "start_chainage": 1197.0,
+          "end_chainage": 1265.0,
+          "centerline_start_distance_m": 99.0,
+          "centerline_end_distance_m": 167.0,
+          "support_type": "ZZ-IVx",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "system_anchor",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "READY"
+            },
+            {
+              "id": "N2",
+              "status": "READY"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_IMPLEMENTED"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 0.8,
+            "system_anchor_m": null,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 272,
+          "component_counts": {
+            "primary_concrete": 68,
+            "primary_mesh": 136,
+            "secondary_lining": 68
+          }
+        },
+        {
+          "segment_index": 6,
+          "start_chainage": 1265.0,
+          "end_chainage": 1285.0,
+          "centerline_start_distance_m": 167.0,
+          "centerline_end_distance_m": 187.0,
+          "support_type": "ZZ-IIIx",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": 1.2,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 40,
+          "component_counts": {
+            "primary_concrete": 20,
+            "secondary_lining": 20
+          }
+        },
+        {
+          "segment_index": 7,
+          "start_chainage": 1285.0,
+          "end_chainage": 1330.0,
+          "centerline_start_distance_m": 187.0,
+          "centerline_end_distance_m": 232.0,
+          "support_type": "ZZ-IVx",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "system_anchor",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "READY"
+            },
+            {
+              "id": "N2",
+              "status": "READY"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_IMPLEMENTED"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 0.8,
+            "system_anchor_m": null,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 180,
+          "component_counts": {
+            "primary_concrete": 45,
+            "primary_mesh": 90,
+            "secondary_lining": 45
+          }
+        },
+        {
+          "segment_index": 8,
+          "start_chainage": 1330.0,
+          "end_chainage": 1360.0,
+          "centerline_start_distance_m": 232.0,
+          "centerline_end_distance_m": 262.0,
+          "support_type": "ZZ-IIIx",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": 1.2,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 60,
+          "component_counts": {
+            "primary_concrete": 30,
+            "secondary_lining": 30
+          }
+        },
+        {
+          "segment_index": 9,
+          "start_chainage": 1360.0,
+          "end_chainage": 1385.0,
+          "centerline_start_distance_m": 262.0,
+          "centerline_end_distance_m": 287.0,
+          "support_type": "ZZ-III",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": 1.2,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 50,
+          "component_counts": {
+            "primary_concrete": 25,
+            "secondary_lining": 25
+          }
+        },
+        {
+          "segment_index": 10,
+          "start_chainage": 1385.0,
+          "end_chainage": 1425.0,
+          "centerline_start_distance_m": 287.0,
+          "centerline_end_distance_m": 327.0,
+          "support_type": "ZZ-IVa",
+          "model_status": "PARTIAL",
+          "implementation_status": "SECOND_SUPPORT_TYPE_MOSTLY_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "READY"
+            },
+            {
+              "id": "system_anchor",
+              "status": "READY"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 1.0,
+            "system_anchor_m": 1.0,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 240,
+          "component_counts": {
+            "primary_concrete": 40,
+            "primary_mesh": 80,
+            "secondary_lining": 40,
+            "steel_arch": 40,
+            "system_anchor": 840
+          }
+        },
+        {
+          "segment_index": 11,
+          "start_chainage": 1425.0,
+          "end_chainage": 1465.0,
+          "centerline_start_distance_m": 327.0,
+          "centerline_end_distance_m": 367.0,
+          "support_type": "ZZ-III",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": 1.2,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 80,
+          "component_counts": {
+            "primary_concrete": 40,
+            "secondary_lining": 40
+          }
+        },
+        {
+          "segment_index": 12,
+          "start_chainage": 1465.0,
+          "end_chainage": 1540.0,
+          "centerline_start_distance_m": 367.0,
+          "centerline_end_distance_m": 442.0,
+          "support_type": "ZZ-IVa",
+          "model_status": "PARTIAL",
+          "implementation_status": "SECOND_SUPPORT_TYPE_MOSTLY_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "READY"
+            },
+            {
+              "id": "system_anchor",
+              "status": "READY"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 1.0,
+            "system_anchor_m": 1.0,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 450,
+          "component_counts": {
+            "primary_concrete": 75,
+            "primary_mesh": 150,
+            "secondary_lining": 75,
+            "steel_arch": 75,
+            "system_anchor": 1575
+          }
+        },
+        {
+          "segment_index": 13,
+          "start_chainage": 1540.0,
+          "end_chainage": 1600.0,
+          "centerline_start_distance_m": 442.0,
+          "centerline_end_distance_m": 502.0,
+          "support_type": "ZZ-III",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": 1.2,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 120,
+          "component_counts": {
+            "primary_concrete": 60,
+            "secondary_lining": 60
+          }
+        },
+        {
+          "segment_index": 14,
+          "start_chainage": 1600.0,
+          "end_chainage": 1660.0,
+          "centerline_start_distance_m": 502.0,
+          "centerline_end_distance_m": 562.0,
+          "support_type": "ZZ-II",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": null,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 120,
+          "component_counts": {
+            "primary_concrete": 60,
+            "secondary_lining": 60
+          }
+        },
+        {
+          "segment_index": 15,
+          "start_chainage": 1660.0,
+          "end_chainage": 1772.0,
+          "centerline_start_distance_m": 562.0,
+          "centerline_end_distance_m": 674.0,
+          "support_type": "ZZ-III",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": 1.2,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 224,
+          "component_counts": {
+            "primary_concrete": 112,
+            "secondary_lining": 112
+          }
+        },
+        {
+          "segment_index": 16,
+          "start_chainage": 1772.0,
+          "end_chainage": 1832.0,
+          "centerline_start_distance_m": 674.0,
+          "centerline_end_distance_m": 734.0,
+          "support_type": "ZZ-IVa",
+          "model_status": "PARTIAL",
+          "implementation_status": "SECOND_SUPPORT_TYPE_MOSTLY_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "READY"
+            },
+            {
+              "id": "system_anchor",
+              "status": "READY"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 1.0,
+            "system_anchor_m": 1.0,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 360,
+          "component_counts": {
+            "primary_concrete": 60,
+            "primary_mesh": 120,
+            "secondary_lining": 60,
+            "steel_arch": 60,
+            "system_anchor": 1260
+          }
+        },
+        {
+          "segment_index": 17,
+          "start_chainage": 1832.0,
+          "end_chainage": 1852.0,
+          "centerline_start_distance_m": 734.0,
+          "centerline_end_distance_m": 754.0,
+          "support_type": "ZZ-IVc",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "system_anchor",
+              "status": "READY"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "READY"
+            },
+            {
+              "id": "N2",
+              "status": "READY"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_IMPLEMENTED"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 0.8,
+            "system_anchor_m": 0.8,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 105,
+          "component_counts": {
+            "primary_concrete": 20,
+            "primary_mesh": 40,
+            "secondary_lining": 20,
+            "system_anchor": 525
+          }
+        },
+        {
+          "segment_index": 18,
+          "start_chainage": 1852.0,
+          "end_chainage": 1902.0,
+          "centerline_start_distance_m": 754.0,
+          "centerline_end_distance_m": 804.0,
+          "support_type": "ZZ-S",
+          "model_status": "PARTIAL",
+          "implementation_status": "FOURTH_SUPPORT_TYPE_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "READY"
+            },
+            {
+              "id": "system_anchor",
+              "status": "READY"
+            },
+            {
+              "id": "lock_foot",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "READY"
+            },
+            {
+              "id": "N2",
+              "status": "READY"
+            },
+            {
+              "id": "N3",
+              "status": "READY"
+            },
+            {
+              "id": "N4",
+              "status": "READY"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 0.5,
+            "system_anchor_m": 0.5,
+            "secondary_ring_m": 0.25
+          },
+          "mesh_instance_count": 1000,
+          "component_counts": {
+            "primary_concrete": 50,
+            "primary_mesh": 100,
+            "secondary_lining": 50,
+            "steel_arch": 100,
+            "lock_foot_anchor": 800,
+            "system_anchor": 2100,
+            "secondary_rebar_N3": 50,
+            "secondary_rebar_N4": 50,
+            "secondary_rebar_N1": 200,
+            "secondary_rebar_N2": 200
+          }
+        },
+        {
+          "segment_index": 19,
+          "start_chainage": 1902.0,
+          "end_chainage": 1937.0,
+          "centerline_start_distance_m": 804.0,
+          "centerline_end_distance_m": 839.0,
+          "support_type": "ZZ-Va",
+          "model_status": "PARTIAL",
+          "implementation_status": "FULLY_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "READY"
+            },
+            {
+              "id": "system_anchor",
+              "status": "READY"
+            },
+            {
+              "id": "lock_foot",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "READY"
+            },
+            {
+              "id": "N2",
+              "status": "READY"
+            },
+            {
+              "id": "N3",
+              "status": "READY"
+            },
+            {
+              "id": "N4",
+              "status": "READY"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 0.8,
+            "system_anchor_m": 0.8,
+            "secondary_ring_m": 0.25
+          },
+          "mesh_instance_count": 622,
+          "component_counts": {
+            "primary_concrete": 35,
+            "primary_mesh": 70,
+            "secondary_lining": 35,
+            "steel_arch": 44,
+            "lock_foot_anchor": 352,
+            "system_anchor": 924,
+            "secondary_rebar_N3": 35,
+            "secondary_rebar_N4": 35,
+            "secondary_rebar_N1": 140,
+            "secondary_rebar_N2": 140
+          }
+        },
+        {
+          "segment_index": 20,
+          "start_chainage": 1937.0,
+          "end_chainage": 1972.0,
+          "centerline_start_distance_m": 839.0,
+          "centerline_end_distance_m": 874.0,
+          "support_type": "ZZ-IVb",
+          "model_status": "PARTIAL",
+          "implementation_status": "THIRD_SUPPORT_TYPE_PARTIALLY_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "steel_arch",
+              "status": "READY"
+            },
+            {
+              "id": "system_anchor",
+              "status": "READY"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_IMPLEMENTED"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": 1.0,
+            "system_anchor_m": 1.0,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 210,
+          "component_counts": {
+            "primary_concrete": 35,
+            "primary_mesh": 70,
+            "secondary_lining": 35,
+            "steel_arch": 35,
+            "system_anchor": 665
+          }
+        },
+        {
+          "segment_index": 21,
+          "start_chainage": 1972.0,
+          "end_chainage": 2022.0,
+          "centerline_start_distance_m": 874.0,
+          "centerline_end_distance_m": 924.0,
+          "support_type": "TZ-III",
+          "model_status": "MODEL_INCOMPLETE",
+          "implementation_status": "NOT_REGISTERED",
+          "component_status": [],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": null,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 0,
+          "component_counts": {},
+          "missing_reason": "SUPPORT_TYPE_NOT_REGISTERED"
+        },
+        {
+          "segment_index": 22,
+          "start_chainage": 2022.0,
+          "end_chainage": 2132.0,
+          "centerline_start_distance_m": 924.0,
+          "centerline_end_distance_m": 1034.0,
+          "support_type": "ZZ-III",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": 1.2,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 220,
+          "component_counts": {
+            "primary_concrete": 110,
+            "secondary_lining": 110
+          }
+        },
+        {
+          "segment_index": 23,
+          "start_chainage": 2132.0,
+          "end_chainage": 2162.0,
+          "centerline_start_distance_m": 1034.0,
+          "centerline_end_distance_m": 1064.0,
+          "support_type": "ZZ-Y1",
+          "model_status": "PARTIAL",
+          "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+          "component_status": [
+            {
+              "id": "primary_concrete",
+              "status": "READY"
+            },
+            {
+              "id": "primary_mesh",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "steel_arch",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "system_anchor",
+              "status": "NOT_IMPLEMENTED"
+            },
+            {
+              "id": "lock_foot",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "secondary_lining",
+              "status": "READY"
+            },
+            {
+              "id": "N1",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N2",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N3",
+              "status": "NOT_APPLICABLE"
+            },
+            {
+              "id": "N4",
+              "status": "NOT_APPLICABLE"
+            }
+          ],
+          "spacing_m": {
+            "steel_arch_m": null,
+            "system_anchor_m": 1.2,
+            "secondary_ring_m": null
+          },
+          "mesh_instance_count": 60,
+          "component_counts": {
+            "primary_concrete": 30,
+            "secondary_lining": 30
+          }
+        }
+      ],
+      "segment_transition": [
+        {
+          "chainage": 1121.0,
+          "centerline_distance": 23.0,
+          "from": "Z-PM",
+          "to": "ZZ-QJsx",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1165.0,
+          "centerline_distance": 67.0,
+          "from": "ZZ-QJsx",
+          "to": "ZZ-Vsx",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1185.0,
+          "centerline_distance": 87.0,
+          "from": "ZZ-Vsx",
+          "to": "ZZ-IVsx",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1197.0,
+          "centerline_distance": 99.0,
+          "from": "ZZ-IVsx",
+          "to": "ZZ-IVx",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1265.0,
+          "centerline_distance": 167.0,
+          "from": "ZZ-IVx",
+          "to": "ZZ-IIIx",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1285.0,
+          "centerline_distance": 187.0,
+          "from": "ZZ-IIIx",
+          "to": "ZZ-IVx",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1330.0,
+          "centerline_distance": 232.0,
+          "from": "ZZ-IVx",
+          "to": "ZZ-IIIx",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1360.0,
+          "centerline_distance": 262.0,
+          "from": "ZZ-IIIx",
+          "to": "ZZ-III",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1385.0,
+          "centerline_distance": 287.0,
+          "from": "ZZ-III",
+          "to": "ZZ-IVa",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1425.0,
+          "centerline_distance": 327.0,
+          "from": "ZZ-IVa",
+          "to": "ZZ-III",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1465.0,
+          "centerline_distance": 367.0,
+          "from": "ZZ-III",
+          "to": "ZZ-IVa",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1540.0,
+          "centerline_distance": 442.0,
+          "from": "ZZ-IVa",
+          "to": "ZZ-III",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1600.0,
+          "centerline_distance": 502.0,
+          "from": "ZZ-III",
+          "to": "ZZ-II",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1660.0,
+          "centerline_distance": 562.0,
+          "from": "ZZ-II",
+          "to": "ZZ-III",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1772.0,
+          "centerline_distance": 674.0,
+          "from": "ZZ-III",
+          "to": "ZZ-IVa",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1832.0,
+          "centerline_distance": 734.0,
+          "from": "ZZ-IVa",
+          "to": "ZZ-IVc",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1852.0,
+          "centerline_distance": 754.0,
+          "from": "ZZ-IVc",
+          "to": "ZZ-S",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1902.0,
+          "centerline_distance": 804.0,
+          "from": "ZZ-S",
+          "to": "ZZ-Va",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1937.0,
+          "centerline_distance": 839.0,
+          "from": "ZZ-Va",
+          "to": "ZZ-IVb",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 1972.0,
+          "centerline_distance": 874.0,
+          "from": "ZZ-IVb",
+          "to": "TZ-III",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 2022.0,
+          "centerline_distance": 924.0,
+          "from": "TZ-III",
+          "to": "ZZ-III",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        },
+        {
+          "chainage": 2132.0,
+          "centerline_distance": 1034.0,
+          "from": "ZZ-III",
+          "to": "ZZ-Y1",
+          "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+          "duplicate_station": false,
+          "continuous_gap_m": 0.0,
+          "boundary_station_owner": "FOLLOWING_SEGMENT"
+        }
+      ],
+      "component_counts": {
+        "primary_concrete": 991,
+        "primary_mesh": 1008,
+        "secondary_lining": 991,
+        "steel_arch": 476,
+        "lock_foot_anchor": 2128,
+        "system_anchor": 7889,
+        "secondary_rebar_N3": 85,
+        "secondary_rebar_N4": 85,
+        "secondary_rebar_N1": 340,
+        "secondary_rebar_N2": 340
+      },
+      "support_type_counts": {
+        "ZZ-QJsx": 968,
+        "ZZ-Vsx": 386,
+        "ZZ-IVsx": 48,
+        "ZZ-IVx": 452,
+        "ZZ-IIIx": 100,
+        "ZZ-III": 694,
+        "ZZ-IVa": 4550,
+        "ZZ-II": 120,
+        "ZZ-IVc": 605,
+        "ZZ-S": 3700,
+        "ZZ-Va": 1810,
+        "ZZ-IVb": 840,
+        "ZZ-Y1": 60
+      },
+      "mesh_instance_count": 14333,
+      "mesh_definition_count": 67,
+      "modeled_segment_count": 21,
+      "incomplete_segment_count": 2,
+      "boundary_rule": "START_INCLUSIVE_END_EXCLUSIVE",
+      "frame_validation": {
+        "sample_count": 2129,
+        "minimum_consecutive_right_dot": 0.9999994016999705,
+        "minimum_consecutive_up_dot": 0.9999999999842276,
+        "maximum_axis_dot_error": 5.551115123125783e-17,
+        "section_flip_detected": false
+      },
+      "assembly_reuse": "EXISTING_1M_SUPPORT_ASSEMBLIES_ONLY",
+      "source_centerline": "data/centerline/centerLine.json",
+      "source_centerline_sha256": "bc73122b0198483850073467b97db3aba5e8348e2c9500caf87d1caa9ca84d21",
+      "source_support_segment_plan": "outputs/centerline/real_support_segment_plan.json",
+      "source_support_segment_plan_sha256": "0224f061d8e4fc0d0e91e7cd2953e9dcf87f3b3c06d13e2381b2f3b97920ef30",
+      "source_page": 63,
+      "support_plan_segment_count": 23,
+      "centerline_direction": "IMPORT_TO_EXPORT",
+      "mapping_formula": "engineering_chainage_m = 1098.0 + centerline_cumulative_distance_m",
+      "modeled_centerline_range_m": [
+        0.0,
+        1064.0
+      ],
+      "unmodeled_centerline_range_m": [
+        1064.0,
+        8280.791700791988
+      ],
+      "after_end_support_status": "SUPPORT_PLAN_NOT_PROVIDED"
+    }
+  },
+  "metadata": {
+    "status": "REAL_YK1+098_YK2+162_SUPPORT_IMPLEMENTED",
+    "centerline_source": "data/centerline/centerLine.json",
+    "centerline_source_status": "PROJECT_INPUT",
+    "coordinate_system": {
+      "kind": "WGS84_UTM_LOCAL",
+      "source_crs": "EPSG:4326",
+      "utm_zone": 46,
+      "axis": "x=easting, y=elevation, z=-northing",
+      "unit": "m"
+    },
+    "section_reference": {
+      "mode": "DESIGN_ELEVATION_POINT",
+      "source_local_m": [
+        0.0,
+        -2.1,
+        0.0
+      ],
+      "placement_offset_local_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "status": "CONFIRMED_FROM_DRAWING",
+      "schema": "SectionReference/V1",
+      "source_support_type": "ZZ-IVa",
+      "source_pages": [
+        76,
+        95
+      ],
+      "source_relation": "inner_profile_crown_to_design_elevation=7.60m; inner_top_radius=5.50m; existing template origin=top-arch circle center; design elevation y=-(7.60-5.50)=-2.10m",
+      "applies_to": "existing section templates sharing the 5.50m inner top radius and top-arch circle-center origin",
+      "note": "设计高程点作为断面局部原点；placement_offset_local_m仅用于后续经项目确认的定位修正。"
+    },
+    "section_transform": "local x/y/z -> centerLine right/up/tangent; source design-elevation point -> centerLine position",
+    "section_reference_validation": {
+      "support_type": "ZZ-IVa",
+      "centerline_distance_m": 287.0,
+      "engineering_chainage_m": 1385.0,
+      "mapped_design_elevation_point": [
+        279.150860438574,
+        1.4375572326296413,
+        -65.93382569870369
+      ],
+      "centerline_position": [
+        279.150860438574,
+        1.4375572326296413,
+        -65.93382569870369
+      ],
+      "alignment_error_m": 0.0,
+      "passed": true
+    },
+    "start_chainage": 1098.0,
+    "end_chainage": 2162.0,
+    "centerline_start_distance_m": 0.0,
+    "centerline_end_distance_m": 1064.0,
+    "chainage_offset_m": 1098.0,
+    "support_segments": [
+      {
+        "segment_index": 1,
+        "start_chainage": 1098.0,
+        "end_chainage": 1121.0,
+        "centerline_start_distance_m": 0.0,
+        "centerline_end_distance_m": 23.0,
+        "support_type": "Z-PM",
+        "model_status": "MODEL_INCOMPLETE",
+        "implementation_status": "SPECIAL_GEOMETRY_NOT_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_IMPLEMENTED"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": null,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 0,
+        "component_counts": {},
+        "missing_reason": "SOURCE_MODEL_NOT_AVAILABLE"
+      },
+      {
+        "segment_index": 2,
+        "start_chainage": 1121.0,
+        "end_chainage": 1165.0,
+        "centerline_start_distance_m": 23.0,
+        "centerline_end_distance_m": 67.0,
+        "support_type": "ZZ-QJsx",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "READY"
+          },
+          {
+            "id": "system_anchor",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "lock_foot",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "READY"
+          },
+          {
+            "id": "N2",
+            "status": "READY"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_IMPLEMENTED"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 0.5,
+          "system_anchor_m": null,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 352,
+        "component_counts": {
+          "primary_concrete": 44,
+          "primary_mesh": 88,
+          "secondary_lining": 44,
+          "steel_arch": 88,
+          "lock_foot_anchor": 704
+        }
+      },
+      {
+        "segment_index": 3,
+        "start_chainage": 1165.0,
+        "end_chainage": 1185.0,
+        "centerline_start_distance_m": 67.0,
+        "centerline_end_distance_m": 87.0,
+        "support_type": "ZZ-Vsx",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "READY"
+          },
+          {
+            "id": "system_anchor",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "lock_foot",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "READY"
+          },
+          {
+            "id": "N2",
+            "status": "READY"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_IMPLEMENTED"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 0.6,
+          "system_anchor_m": null,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 148,
+        "component_counts": {
+          "primary_concrete": 20,
+          "primary_mesh": 40,
+          "secondary_lining": 20,
+          "steel_arch": 34,
+          "lock_foot_anchor": 272
+        }
+      },
+      {
+        "segment_index": 4,
+        "start_chainage": 1185.0,
+        "end_chainage": 1197.0,
+        "centerline_start_distance_m": 87.0,
+        "centerline_end_distance_m": 99.0,
+        "support_type": "ZZ-IVsx",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "system_anchor",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "READY"
+          },
+          {
+            "id": "N2",
+            "status": "READY"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_IMPLEMENTED"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 0.8,
+          "system_anchor_m": null,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 48,
+        "component_counts": {
+          "primary_concrete": 12,
+          "primary_mesh": 24,
+          "secondary_lining": 12
+        }
+      },
+      {
+        "segment_index": 5,
+        "start_chainage": 1197.0,
+        "end_chainage": 1265.0,
+        "centerline_start_distance_m": 99.0,
+        "centerline_end_distance_m": 167.0,
+        "support_type": "ZZ-IVx",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "system_anchor",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "READY"
+          },
+          {
+            "id": "N2",
+            "status": "READY"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_IMPLEMENTED"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 0.8,
+          "system_anchor_m": null,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 272,
+        "component_counts": {
+          "primary_concrete": 68,
+          "primary_mesh": 136,
+          "secondary_lining": 68
+        }
+      },
+      {
+        "segment_index": 6,
+        "start_chainage": 1265.0,
+        "end_chainage": 1285.0,
+        "centerline_start_distance_m": 167.0,
+        "centerline_end_distance_m": 187.0,
+        "support_type": "ZZ-IIIx",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": 1.2,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 40,
+        "component_counts": {
+          "primary_concrete": 20,
+          "secondary_lining": 20
+        }
+      },
+      {
+        "segment_index": 7,
+        "start_chainage": 1285.0,
+        "end_chainage": 1330.0,
+        "centerline_start_distance_m": 187.0,
+        "centerline_end_distance_m": 232.0,
+        "support_type": "ZZ-IVx",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "system_anchor",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "READY"
+          },
+          {
+            "id": "N2",
+            "status": "READY"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_IMPLEMENTED"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 0.8,
+          "system_anchor_m": null,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 180,
+        "component_counts": {
+          "primary_concrete": 45,
+          "primary_mesh": 90,
+          "secondary_lining": 45
+        }
+      },
+      {
+        "segment_index": 8,
+        "start_chainage": 1330.0,
+        "end_chainage": 1360.0,
+        "centerline_start_distance_m": 232.0,
+        "centerline_end_distance_m": 262.0,
+        "support_type": "ZZ-IIIx",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": 1.2,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 60,
+        "component_counts": {
+          "primary_concrete": 30,
+          "secondary_lining": 30
+        }
+      },
+      {
+        "segment_index": 9,
+        "start_chainage": 1360.0,
+        "end_chainage": 1385.0,
+        "centerline_start_distance_m": 262.0,
+        "centerline_end_distance_m": 287.0,
+        "support_type": "ZZ-III",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": 1.2,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 50,
+        "component_counts": {
+          "primary_concrete": 25,
+          "secondary_lining": 25
+        }
+      },
+      {
+        "segment_index": 10,
+        "start_chainage": 1385.0,
+        "end_chainage": 1425.0,
+        "centerline_start_distance_m": 287.0,
+        "centerline_end_distance_m": 327.0,
+        "support_type": "ZZ-IVa",
+        "model_status": "PARTIAL",
+        "implementation_status": "SECOND_SUPPORT_TYPE_MOSTLY_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "READY"
+          },
+          {
+            "id": "system_anchor",
+            "status": "READY"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 1.0,
+          "system_anchor_m": 1.0,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 240,
+        "component_counts": {
+          "primary_concrete": 40,
+          "primary_mesh": 80,
+          "secondary_lining": 40,
+          "steel_arch": 40,
+          "system_anchor": 840
+        }
+      },
+      {
+        "segment_index": 11,
+        "start_chainage": 1425.0,
+        "end_chainage": 1465.0,
+        "centerline_start_distance_m": 327.0,
+        "centerline_end_distance_m": 367.0,
+        "support_type": "ZZ-III",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": 1.2,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 80,
+        "component_counts": {
+          "primary_concrete": 40,
+          "secondary_lining": 40
+        }
+      },
+      {
+        "segment_index": 12,
+        "start_chainage": 1465.0,
+        "end_chainage": 1540.0,
+        "centerline_start_distance_m": 367.0,
+        "centerline_end_distance_m": 442.0,
+        "support_type": "ZZ-IVa",
+        "model_status": "PARTIAL",
+        "implementation_status": "SECOND_SUPPORT_TYPE_MOSTLY_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "READY"
+          },
+          {
+            "id": "system_anchor",
+            "status": "READY"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 1.0,
+          "system_anchor_m": 1.0,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 450,
+        "component_counts": {
+          "primary_concrete": 75,
+          "primary_mesh": 150,
+          "secondary_lining": 75,
+          "steel_arch": 75,
+          "system_anchor": 1575
+        }
+      },
+      {
+        "segment_index": 13,
+        "start_chainage": 1540.0,
+        "end_chainage": 1600.0,
+        "centerline_start_distance_m": 442.0,
+        "centerline_end_distance_m": 502.0,
+        "support_type": "ZZ-III",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": 1.2,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 120,
+        "component_counts": {
+          "primary_concrete": 60,
+          "secondary_lining": 60
+        }
+      },
+      {
+        "segment_index": 14,
+        "start_chainage": 1600.0,
+        "end_chainage": 1660.0,
+        "centerline_start_distance_m": 502.0,
+        "centerline_end_distance_m": 562.0,
+        "support_type": "ZZ-II",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": null,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 120,
+        "component_counts": {
+          "primary_concrete": 60,
+          "secondary_lining": 60
+        }
+      },
+      {
+        "segment_index": 15,
+        "start_chainage": 1660.0,
+        "end_chainage": 1772.0,
+        "centerline_start_distance_m": 562.0,
+        "centerline_end_distance_m": 674.0,
+        "support_type": "ZZ-III",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": 1.2,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 224,
+        "component_counts": {
+          "primary_concrete": 112,
+          "secondary_lining": 112
+        }
+      },
+      {
+        "segment_index": 16,
+        "start_chainage": 1772.0,
+        "end_chainage": 1832.0,
+        "centerline_start_distance_m": 674.0,
+        "centerline_end_distance_m": 734.0,
+        "support_type": "ZZ-IVa",
+        "model_status": "PARTIAL",
+        "implementation_status": "SECOND_SUPPORT_TYPE_MOSTLY_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "READY"
+          },
+          {
+            "id": "system_anchor",
+            "status": "READY"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 1.0,
+          "system_anchor_m": 1.0,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 360,
+        "component_counts": {
+          "primary_concrete": 60,
+          "primary_mesh": 120,
+          "secondary_lining": 60,
+          "steel_arch": 60,
+          "system_anchor": 1260
+        }
+      },
+      {
+        "segment_index": 17,
+        "start_chainage": 1832.0,
+        "end_chainage": 1852.0,
+        "centerline_start_distance_m": 734.0,
+        "centerline_end_distance_m": 754.0,
+        "support_type": "ZZ-IVc",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "system_anchor",
+            "status": "READY"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "READY"
+          },
+          {
+            "id": "N2",
+            "status": "READY"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_IMPLEMENTED"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 0.8,
+          "system_anchor_m": 0.8,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 105,
+        "component_counts": {
+          "primary_concrete": 20,
+          "primary_mesh": 40,
+          "secondary_lining": 20,
+          "system_anchor": 525
+        }
+      },
+      {
+        "segment_index": 18,
+        "start_chainage": 1852.0,
+        "end_chainage": 1902.0,
+        "centerline_start_distance_m": 754.0,
+        "centerline_end_distance_m": 804.0,
+        "support_type": "ZZ-S",
+        "model_status": "PARTIAL",
+        "implementation_status": "FOURTH_SUPPORT_TYPE_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "READY"
+          },
+          {
+            "id": "system_anchor",
+            "status": "READY"
+          },
+          {
+            "id": "lock_foot",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "READY"
+          },
+          {
+            "id": "N2",
+            "status": "READY"
+          },
+          {
+            "id": "N3",
+            "status": "READY"
+          },
+          {
+            "id": "N4",
+            "status": "READY"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 0.5,
+          "system_anchor_m": 0.5,
+          "secondary_ring_m": 0.25
+        },
+        "mesh_instance_count": 1000,
+        "component_counts": {
+          "primary_concrete": 50,
+          "primary_mesh": 100,
+          "secondary_lining": 50,
+          "steel_arch": 100,
+          "lock_foot_anchor": 800,
+          "system_anchor": 2100,
+          "secondary_rebar_N3": 50,
+          "secondary_rebar_N4": 50,
+          "secondary_rebar_N1": 200,
+          "secondary_rebar_N2": 200
+        }
+      },
+      {
+        "segment_index": 19,
+        "start_chainage": 1902.0,
+        "end_chainage": 1937.0,
+        "centerline_start_distance_m": 804.0,
+        "centerline_end_distance_m": 839.0,
+        "support_type": "ZZ-Va",
+        "model_status": "PARTIAL",
+        "implementation_status": "FULLY_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "READY"
+          },
+          {
+            "id": "system_anchor",
+            "status": "READY"
+          },
+          {
+            "id": "lock_foot",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "READY"
+          },
+          {
+            "id": "N2",
+            "status": "READY"
+          },
+          {
+            "id": "N3",
+            "status": "READY"
+          },
+          {
+            "id": "N4",
+            "status": "READY"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 0.8,
+          "system_anchor_m": 0.8,
+          "secondary_ring_m": 0.25
+        },
+        "mesh_instance_count": 622,
+        "component_counts": {
+          "primary_concrete": 35,
+          "primary_mesh": 70,
+          "secondary_lining": 35,
+          "steel_arch": 44,
+          "lock_foot_anchor": 352,
+          "system_anchor": 924,
+          "secondary_rebar_N3": 35,
+          "secondary_rebar_N4": 35,
+          "secondary_rebar_N1": 140,
+          "secondary_rebar_N2": 140
+        }
+      },
+      {
+        "segment_index": 20,
+        "start_chainage": 1937.0,
+        "end_chainage": 1972.0,
+        "centerline_start_distance_m": 839.0,
+        "centerline_end_distance_m": 874.0,
+        "support_type": "ZZ-IVb",
+        "model_status": "PARTIAL",
+        "implementation_status": "THIRD_SUPPORT_TYPE_PARTIALLY_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "PARTIAL"
+          },
+          {
+            "id": "steel_arch",
+            "status": "READY"
+          },
+          {
+            "id": "system_anchor",
+            "status": "READY"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_IMPLEMENTED"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": 1.0,
+          "system_anchor_m": 1.0,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 210,
+        "component_counts": {
+          "primary_concrete": 35,
+          "primary_mesh": 70,
+          "secondary_lining": 35,
+          "steel_arch": 35,
+          "system_anchor": 665
+        }
+      },
+      {
+        "segment_index": 21,
+        "start_chainage": 1972.0,
+        "end_chainage": 2022.0,
+        "centerline_start_distance_m": 874.0,
+        "centerline_end_distance_m": 924.0,
+        "support_type": "TZ-III",
+        "model_status": "MODEL_INCOMPLETE",
+        "implementation_status": "NOT_REGISTERED",
+        "component_status": [],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": null,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 0,
+        "component_counts": {},
+        "missing_reason": "SUPPORT_TYPE_NOT_REGISTERED"
+      },
+      {
+        "segment_index": 22,
+        "start_chainage": 2022.0,
+        "end_chainage": 2132.0,
+        "centerline_start_distance_m": 924.0,
+        "centerline_end_distance_m": 1034.0,
+        "support_type": "ZZ-III",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": 1.2,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 220,
+        "component_counts": {
+          "primary_concrete": 110,
+          "secondary_lining": 110
+        }
+      },
+      {
+        "segment_index": 23,
+        "start_chainage": 2132.0,
+        "end_chainage": 2162.0,
+        "centerline_start_distance_m": 1034.0,
+        "centerline_end_distance_m": 1064.0,
+        "support_type": "ZZ-Y1",
+        "model_status": "PARTIAL",
+        "implementation_status": "BATCH_PARTIAL_IMPLEMENTED",
+        "component_status": [
+          {
+            "id": "primary_concrete",
+            "status": "READY"
+          },
+          {
+            "id": "primary_mesh",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "steel_arch",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "system_anchor",
+            "status": "NOT_IMPLEMENTED"
+          },
+          {
+            "id": "lock_foot",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "secondary_lining",
+            "status": "READY"
+          },
+          {
+            "id": "N1",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N2",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N3",
+            "status": "NOT_APPLICABLE"
+          },
+          {
+            "id": "N4",
+            "status": "NOT_APPLICABLE"
+          }
+        ],
+        "spacing_m": {
+          "steel_arch_m": null,
+          "system_anchor_m": 1.2,
+          "secondary_ring_m": null
+        },
+        "mesh_instance_count": 60,
+        "component_counts": {
+          "primary_concrete": 30,
+          "secondary_lining": 30
+        }
+      }
+    ],
+    "segment_transition": [
+      {
+        "chainage": 1121.0,
+        "centerline_distance": 23.0,
+        "from": "Z-PM",
+        "to": "ZZ-QJsx",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1165.0,
+        "centerline_distance": 67.0,
+        "from": "ZZ-QJsx",
+        "to": "ZZ-Vsx",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1185.0,
+        "centerline_distance": 87.0,
+        "from": "ZZ-Vsx",
+        "to": "ZZ-IVsx",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1197.0,
+        "centerline_distance": 99.0,
+        "from": "ZZ-IVsx",
+        "to": "ZZ-IVx",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1265.0,
+        "centerline_distance": 167.0,
+        "from": "ZZ-IVx",
+        "to": "ZZ-IIIx",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1285.0,
+        "centerline_distance": 187.0,
+        "from": "ZZ-IIIx",
+        "to": "ZZ-IVx",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1330.0,
+        "centerline_distance": 232.0,
+        "from": "ZZ-IVx",
+        "to": "ZZ-IIIx",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1360.0,
+        "centerline_distance": 262.0,
+        "from": "ZZ-IIIx",
+        "to": "ZZ-III",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1385.0,
+        "centerline_distance": 287.0,
+        "from": "ZZ-III",
+        "to": "ZZ-IVa",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1425.0,
+        "centerline_distance": 327.0,
+        "from": "ZZ-IVa",
+        "to": "ZZ-III",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1465.0,
+        "centerline_distance": 367.0,
+        "from": "ZZ-III",
+        "to": "ZZ-IVa",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1540.0,
+        "centerline_distance": 442.0,
+        "from": "ZZ-IVa",
+        "to": "ZZ-III",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1600.0,
+        "centerline_distance": 502.0,
+        "from": "ZZ-III",
+        "to": "ZZ-II",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1660.0,
+        "centerline_distance": 562.0,
+        "from": "ZZ-II",
+        "to": "ZZ-III",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1772.0,
+        "centerline_distance": 674.0,
+        "from": "ZZ-III",
+        "to": "ZZ-IVa",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1832.0,
+        "centerline_distance": 734.0,
+        "from": "ZZ-IVa",
+        "to": "ZZ-IVc",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1852.0,
+        "centerline_distance": 754.0,
+        "from": "ZZ-IVc",
+        "to": "ZZ-S",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1902.0,
+        "centerline_distance": 804.0,
+        "from": "ZZ-S",
+        "to": "ZZ-Va",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1937.0,
+        "centerline_distance": 839.0,
+        "from": "ZZ-Va",
+        "to": "ZZ-IVb",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 1972.0,
+        "centerline_distance": 874.0,
+        "from": "ZZ-IVb",
+        "to": "TZ-III",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 2022.0,
+        "centerline_distance": 924.0,
+        "from": "TZ-III",
+        "to": "ZZ-III",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      },
+      {
+        "chainage": 2132.0,
+        "centerline_distance": 1034.0,
+        "from": "ZZ-III",
+        "to": "ZZ-Y1",
+        "rule": "START_INCLUSIVE_END_EXCLUSIVE",
+        "duplicate_station": false,
+        "continuous_gap_m": 0.0,
+        "boundary_station_owner": "FOLLOWING_SEGMENT"
+      }
+    ],
+    "component_counts": {
+      "primary_concrete": 991,
+      "primary_mesh": 1008,
+      "secondary_lining": 991,
+      "steel_arch": 476,
+      "lock_foot_anchor": 2128,
+      "system_anchor": 7889,
+      "secondary_rebar_N3": 85,
+      "secondary_rebar_N4": 85,
+      "secondary_rebar_N1": 340,
+      "secondary_rebar_N2": 340
+    },
+    "support_type_counts": {
+      "ZZ-QJsx": 968,
+      "ZZ-Vsx": 386,
+      "ZZ-IVsx": 48,
+      "ZZ-IVx": 452,
+      "ZZ-IIIx": 100,
+      "ZZ-III": 694,
+      "ZZ-IVa": 4550,
+      "ZZ-II": 120,
+      "ZZ-IVc": 605,
+      "ZZ-S": 3700,
+      "ZZ-Va": 1810,
+      "ZZ-IVb": 840,
+      "ZZ-Y1": 60
+    },
+    "mesh_instance_count": 14333,
+    "mesh_definition_count": 67,
+    "modeled_segment_count": 21,
+    "incomplete_segment_count": 2,
+    "boundary_rule": "START_INCLUSIVE_END_EXCLUSIVE",
+    "frame_validation": {
+      "sample_count": 2129,
+      "minimum_consecutive_right_dot": 0.9999994016999705,
+      "minimum_consecutive_up_dot": 0.9999999999842276,
+      "maximum_axis_dot_error": 5.551115123125783e-17,
+      "section_flip_detected": false
+    },
+    "assembly_reuse": "EXISTING_1M_SUPPORT_ASSEMBLIES_ONLY",
+    "source_centerline": "data/centerline/centerLine.json",
+    "source_centerline_sha256": "bc73122b0198483850073467b97db3aba5e8348e2c9500caf87d1caa9ca84d21",
+    "source_support_segment_plan": "outputs/centerline/real_support_segment_plan.json",
+    "source_support_segment_plan_sha256": "0224f061d8e4fc0d0e91e7cd2953e9dcf87f3b3c06d13e2381b2f3b97920ef30",
+    "source_page": 63,
+    "support_plan_segment_count": 23,
+    "centerline_direction": "IMPORT_TO_EXPORT",
+    "mapping_formula": "engineering_chainage_m = 1098.0 + centerline_cumulative_distance_m",
+    "modeled_centerline_range_m": [
+      0.0,
+      1064.0
+    ],
+    "unmodeled_centerline_range_m": [
+      1064.0,
+      8280.791700791988
+    ],
+    "after_end_support_status": "SUPPORT_PLAN_NOT_PROVIDED"
+  }
+}

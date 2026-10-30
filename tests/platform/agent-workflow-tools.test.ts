@@ -81,11 +81,11 @@ describe('agent workflow tools', () => {
     unregister = registerTaskWorkflowController({ prepareScene } as unknown as TaskWorkflowController)
     await tool('prepare_platform_task').executor({
       kind: 'scene-exploration', description: '先突出围岩，再看支护与背景关系',
-      resourceIds: ['rock.design-grade', 'support.legacy-assembly'],
+      resourceIds: ['rock.design-grade', 'support.modeler-zz-va'],
       enhancementModes: ['emphasis', 'context'], assemblyModes: ['replace', 'retain'],
     })
     expect(prepareScene).toHaveBeenCalledWith(expect.objectContaining({
-      resourceIds: ['rock.design-grade', 'support.legacy-assembly'],
+      resourceIds: ['rock.design-grade', 'support.modeler-zz-va'],
       enhancementModes: ['emphasis', 'context'],
       assemblyModes: ['replace', 'retain'],
     }))

@@ -1,0 +1,80 @@
+{
+  "support_type": "ZZ-Va",
+  "status": "SYSTEM_ANCHOR_PARAMETERS_READY",
+  "type": {
+    "value": "low_prestress_resin_cartridge_anchor",
+    "unit": "enum",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "Φ25低预应力树脂药卷锚杆",
+    "source_method": "施工方案表4.7-1（PDF版第69页）",
+    "source_page": 69
+  },
+  "diameter_mm": {
+    "value": 25.0,
+    "unit": "mm",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "Φ25低预应力树脂药卷锚杆",
+    "source_method": "ZZ-Va施工图第109页",
+    "source_page": 109
+  },
+  "length_mm": {
+    "value": 4000.0,
+    "unit": "mm",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "每根长度L-4.0m",
+    "source_method": "ZZ-Va施工图第109页",
+    "source_page": 109
+  },
+  "circumferential_spacing_mm": {
+    "value": 1200.0,
+    "unit": "mm",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "环向间距120cm",
+    "source_method": "ZZ-Va施工图第109页",
+    "source_page": 109
+  },
+  "longitudinal_spacing_mm": {
+    "value": 800.0,
+    "unit": "mm",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "纵向间距80cm",
+    "source_method": "ZZ-Va施工图第109页",
+    "source_page": 109
+  },
+  "scope": {
+    "value": "ARCH_AND_WALL_ONLY",
+    "unit": "enum",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "锚杆：拱墙设置",
+    "source_method": "ZZ-Va施工图第109页",
+    "source_page": 109
+  },
+  "reference_surface": {
+    "value": "EXCAVATION_BOUNDARY",
+    "unit": "enum",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "锚杆布设基线：开挖面",
+    "source_method": "参数识别.docx / Schema V2 dependency graph",
+    "source_page": null
+  },
+  "direction_rule": {
+    "value": "LOCAL_RADIAL_OUTWARD_WITH_GEOLOGICAL_OVERRIDE",
+    "unit": "enum",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "锚杆设置时一般应沿隧道周边径向布置；结构面或岩层层面明显时，应与主结构面或岩层层面呈大角度布置。",
+    "source_method": "ZZ-Va施工图第109页",
+    "source_page": 109
+  },
+  "layout_rule": {
+    "value": "CROWN_CENTERED_SYMMETRIC_STAGGERED",
+    "unit": "enum",
+    "status": "FOUND_CONFIRMED",
+    "source_text": "梅花形布置；图中系统锚杆仅示一半，另一侧相同布设。",
+    "source_method": "ZZ-Va施工图第109页",
+    "source_page": 109
+  },
+  "source_pages": [
+    69,
+    109
+  ]
+}

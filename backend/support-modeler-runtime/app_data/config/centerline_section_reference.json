@@ -1,0 +1,12 @@
+{
+  "schema": "SectionReference/V1",
+  "mode": "DESIGN_ELEVATION_POINT",
+  "source_local_m": [0.0, -2.1, 0.0],
+  "placement_offset_local_m": [0.0, 0.0, 0.0],
+  "status": "CONFIRMED_FROM_DRAWING",
+  "source_support_type": "ZZ-IVa",
+  "source_pages": [76, 95],
+  "source_relation": "inner_profile_crown_to_design_elevation=7.60m; inner_top_radius=5.50m; existing template origin=top-arch circle center; design elevation y=-(7.60-5.50)=-2.10m",
+  "applies_to": "existing section templates sharing the 5.50m inner top radius and top-arch circle-center origin",
+  "note": "设计高程点作为断面局部原点；placement_offset_local_m仅用于后续经项目确认的定位修正。"
+}

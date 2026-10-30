@@ -1,0 +1,483 @@
+{
+  "support_type": "ZZ-S",
+  "status_categories": [
+    "CONFIRMED",
+    "PROVISIONAL",
+    "MISSING"
+  ],
+  "final_status": "FOURTH_SUPPORT_TYPE_IMPLEMENTED",
+  "components": {
+    "inner_profile": {
+      "status": "READY",
+      "reference_chain": "第74页目录 → 第76页主隧道钻爆法共用有仰拱内轮廓 → 第113页 ZZ-S",
+      "parameters": {
+        "top_radius_mm": {
+          "value": 5500,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页主隧道钻爆法共用有仰拱内轮廓 → 第113页 ZZ-S",
+          "pages": [
+            74,
+            76,
+            113
+          ]
+        },
+        "side_radius_mm": {
+          "value": 10000,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页主隧道钻爆法共用有仰拱内轮廓 → 第113页 ZZ-S",
+          "pages": [
+            74,
+            76,
+            113
+          ]
+        },
+        "side_angle_deg": {
+          "value": 11.699444444444445,
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "第76页 11°41′58″",
+          "pages": [
+            76
+          ]
+        },
+        "invert_transition_radius_mm": {
+          "value": 1200,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页主隧道钻爆法共用有仰拱内轮廓 → 第113页 ZZ-S",
+          "pages": [
+            76
+          ]
+        },
+        "invert_transition_angle_deg": {
+          "value": 55.89138888888889,
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页主隧道钻爆法共用有仰拱内轮廓 → 第113页 ZZ-S",
+          "pages": [
+            76
+          ]
+        },
+        "invert_bottom_radius_mm": {
+          "value": 12000,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页主隧道钻爆法共用有仰拱内轮廓 → 第113页 ZZ-S",
+          "pages": [
+            76
+          ]
+        },
+        "invert_bottom_angle_deg": {
+          "value": 44.818333333333335,
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页主隧道钻爆法共用有仰拱内轮廓 → 第113页 ZZ-S",
+          "pages": [
+            76
+          ]
+        }
+      }
+    },
+    "primary_concrete": {
+      "status": "READY",
+      "parameters": {
+        "material": {
+          "value": "C25高性能喷射混凝土",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "thickness_mm": {
+          "value": 260,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "reserved_deformation_mm": {
+          "value": 120,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "scope": {
+          "value": "ARCH_AND_WALL_ONLY",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        }
+      }
+    },
+    "primary_mesh": {
+      "status": "PARTIAL",
+      "parameters": {
+        "diameter_mm": {
+          "value": 8,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "circumferential_spacing_mm": {
+          "value": 200,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "longitudinal_spacing_mm": {
+          "value": 200,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "layers": {
+          "value": 1,
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "第113页：单层、拱墙设置",
+          "pages": [
+            113
+          ]
+        },
+        "reference_side": {
+          "value": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+          "unit": null,
+          "status": "PROVISIONAL",
+          "source": "参数识别.docx；I20a局部连接侧别未明确",
+          "pages": [
+            113
+          ]
+        }
+      }
+    },
+    "steel_arch": {
+      "status": "READY",
+      "parameters": {
+        "R1_mm": {
+          "value": 6240,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            115
+          ]
+        },
+        "R2_mm": {
+          "value": 10740,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            115
+          ]
+        },
+        "beta_deg": {
+          "value": 15.6383,
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "15°38′18″；左右对称标注",
+          "pages": [
+            115
+          ]
+        },
+        "steel_profile": {
+          "value": "I20a",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            113,
+            115,
+            116
+          ]
+        },
+        "longitudinal_spacing_mm": {
+          "value": 500,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        }
+      }
+    },
+    "system_anchor": {
+      "status": "READY",
+      "parameters": {
+        "type": {
+          "value": "Φ25自进式中空注浆锚杆",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "diameter_mm": {
+          "value": 25,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "length_mm": {
+          "value": 4500,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "circumferential_spacing_mm": {
+          "value": 1200,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        },
+        "longitudinal_spacing_mm": {
+          "value": 500,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护专项施工方案 表4.7-1",
+          "pages": [
+            113
+          ]
+        }
+      }
+    },
+    "lock_foot": {
+      "status": "PARTIAL",
+      "parameters": {
+        "outer_diameter_mm": {
+          "value": 42,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            113,
+            115
+          ]
+        },
+        "wall_thickness_mm": {
+          "value": 4,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "施工方案Φ42×4小导管规格",
+          "pages": [
+            69
+          ]
+        },
+        "length_mm": {
+          "value": 3500,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            113,
+            115
+          ]
+        },
+        "count_per_arch": {
+          "value": 8,
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "第115页：每榀钢架8根",
+          "pages": [
+            115
+          ]
+        },
+        "upper_height_mm": {
+          "value": 250,
+          "unit": "mm",
+          "status": "PROVISIONAL",
+          "source": "现有可调锁脚参考值，待节点确认",
+          "pages": []
+        },
+        "lower_height_mm": {
+          "value": 100,
+          "unit": "mm",
+          "status": "PROVISIONAL",
+          "source": "现有可调锁脚参考值，待节点确认",
+          "pages": []
+        },
+        "upper_angle_deg": {
+          "value": 7.5,
+          "unit": "deg",
+          "status": "PROVISIONAL",
+          "source": "现有可调锁脚参考值，待节点确认",
+          "pages": []
+        },
+        "lower_angle_deg": {
+          "value": 45,
+          "unit": "deg",
+          "status": "PROVISIONAL",
+          "source": "现有可调锁脚参考值，待节点确认",
+          "pages": []
+        },
+        "pair_spread_deg": {
+          "value": 10,
+          "unit": "deg",
+          "status": "PROVISIONAL",
+          "source": "现有可调锁脚参考值，待节点确认",
+          "pages": []
+        }
+      }
+    },
+    "secondary_lining": {
+      "status": "READY",
+      "parameters": {
+        "material": {
+          "value": "C35钢筋混凝土",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            113
+          ]
+        },
+        "thickness_mm": {
+          "value": 500,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            113
+          ]
+        },
+        "has_invert": {
+          "value": true,
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "第113页工程数量表分别列拱墙和仰拱",
+          "pages": [
+            113
+          ]
+        }
+      }
+    },
+    "secondary_rebar": {
+      "status": "READY",
+      "parameters": {
+        "N1": {
+          "value": {
+            "diameter_mm": 22,
+            "length_mm": 35849,
+            "radii_mm": [
+              5939,
+              10439,
+              1639,
+              12439
+            ]
+          },
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            114
+          ]
+        },
+        "N2": {
+          "value": {
+            "diameter_mm": 22,
+            "length_mm": 33474,
+            "radii_mm": [
+              5561,
+              10061,
+              1261,
+              12061
+            ]
+          },
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            114
+          ]
+        },
+        "angles_deg": {
+          "value": [
+            22.409166666666664,
+            11.699444444444445,
+            55.89138888888889
+          ],
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            114
+          ]
+        },
+        "N3": {
+          "value": {
+            "diameter_mm": 12,
+            "length_mm": 1000,
+            "circumferential_spacing_mm": 250
+          },
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            114
+          ]
+        },
+        "N4": {
+          "value": {
+            "diameter_mm": 8,
+            "length_mm": 552,
+            "circumferential_spacing_mm": 500,
+            "longitudinal_spacing_mm": 250
+          },
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            114
+          ]
+        }
+      }
+    }
+  },
+  "confirmed_parameters": [
+    "inner_profile",
+    "primary_concrete",
+    "primary_mesh.specification",
+    "steel_arch",
+    "system_anchor",
+    "lock_foot.specification",
+    "secondary_lining",
+    "secondary_rebar"
+  ],
+  "provisional_parameters": [
+    "primary_mesh.reference_side",
+    "lock_foot.installation_geometry"
+  ],
+  "missing_parameters": []
+}

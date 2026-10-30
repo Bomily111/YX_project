@@ -1,0 +1,69 @@
+{
+  "support_type": "ZZ-II",
+  "definition": {
+    "pages": [
+      89,
+      90,
+      91
+    ],
+    "invert": false,
+    "primary": 80,
+    "reserve": 30,
+    "secondary": 350,
+    "mesh": null,
+    "steel": null,
+    "anchor": null,
+    "lock": false,
+    "rebar": null
+  },
+  "glb": {
+    "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\multi_support\\ZZ-II_support_1m.glb",
+    "byte_length": 57572,
+    "mesh_count": 2,
+    "mesh_names": [
+      "primarySupportConcrete",
+      "secondaryLining"
+    ],
+    "node_names": [
+      "ZZIISectionAssemblyGroup",
+      "primarySupportGroup",
+      "secondarySystemGroup",
+      "primarySupportConcreteGroup",
+      "primarySupportConcrete",
+      "secondaryLiningGroup",
+      "secondaryLining"
+    ],
+    "metadata": {
+      "support_type": "ZZ-II",
+      "length_m": 1.0,
+      "source_pages": [
+        89,
+        90,
+        91
+      ],
+      "assembly": "EXISTING_GEOMETRY_MODULES_ONLY",
+      "component_meshes": [
+        "primarySupportConcrete",
+        "secondaryLining"
+      ],
+      "steel_arch_dynamic_rebuild": false
+    },
+    "bbox_m": {
+      "min": [
+        -5.96,
+        -3.0281754923456266,
+        0.0
+      ],
+      "max": [
+        5.96,
+        5.96,
+        1.0
+      ],
+      "size": [
+        11.92,
+        8.988175492345626,
+        1.0
+      ]
+    }
+  }
+}

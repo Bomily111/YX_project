@@ -1,0 +1,3856 @@
+{
+  "ZZ-III": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-III",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        92,
+        93,
+        94
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 120,
+        "reserved_deformation_mm": 50,
+        "status": "CONFIRMED",
+        "source_pages": [
+          92
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 350,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          92
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED"
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 3500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1200,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED",
+        "source_pages": [
+          92
+        ]
+      }
+    },
+    "provisional": {},
+    "pending": {
+      "primary_mesh": {
+        "reason": "CROWN_180_GEOMETRY_MODE_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      },
+      "system_anchor": {
+        "reason": "CROWN_180_GEOMETRY_MODE_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "NOT_IMPLEMENTED",
+      "steel_arch": "NOT_APPLICABLE",
+      "system_anchor": "NOT_IMPLEMENTED",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "N1": "NOT_APPLICABLE",
+      "N2": "NOT_APPLICABLE",
+      "N3": "NOT_APPLICABLE",
+      "N4": "NOT_APPLICABLE"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 120,
+        "reserved_deformation_mm": 50,
+        "status": "CONFIRMED",
+        "source_pages": [
+          92
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 350,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          92
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED"
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 3500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1200,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED",
+        "source_pages": [
+          92
+        ]
+      }
+    }
+  },
+  "ZZ-IVa": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-IVa",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pdf_sha256": "93b107f4fd5cf04bea82950294fdc4652085647d3411e9379922d0938d9c8c57",
+      "pages": [
+        95,
+        96,
+        97,
+        98,
+        99
+      ],
+      "extraction_time": "2026-10-12T16:10:53.167046+00:00",
+      "extraction_source": "PREVIOUS_REAL_OCR_CACHE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "top_angle_deg": 180,
+        "width_mm": 11000,
+        "height_mm": 8395,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76,
+          95
+        ]
+      },
+      "primary_support": {
+        "material": "C25喷射混凝土",
+        "total_thickness_mm": 220,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "reserved_deformation_mm": 80,
+        "status": "CONFIRMED",
+        "source_pages": [
+          95
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 2,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "status": "CONFIRMED",
+        "source_pages": [
+          95
+        ]
+      },
+      "steel_arch": {
+        "R1_mm": 6080,
+        "R2_mm": 10580,
+        "beta_deg": 15.8797,
+        "steel_profile": "I16",
+        "longitudinal_spacing_mm": 1000,
+        "status": "CONFIRMED",
+        "source_pages": [
+          95,
+          98,
+          99
+        ]
+      },
+      "system_anchor": {
+        "type": "Φ25低预应力树脂卷锚杆",
+        "diameter_mm": 25,
+        "length_mm": 4000,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1000,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "status": "CONFIRMED",
+        "source_pages": [
+          95
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 400,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          95
+        ]
+      }
+    },
+    "provisional": {
+      "primary_mesh": {
+        "reference_relation": {
+          "reference_surface": "I16_INNER_AND_ROCK_SIDE",
+          "status": "PROVISIONAL",
+          "reason": "沿用已验收的可调参考关系；图纸未明确局部连接侧别"
+        }
+      }
+    },
+    "pending": {},
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "top_angle_deg": 180,
+        "width_mm": 11000,
+        "height_mm": 8395,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76,
+          95
+        ]
+      },
+      "primary_support": {
+        "material": "C25喷射混凝土",
+        "total_thickness_mm": 220,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "reserved_deformation_mm": 80,
+        "status": "CONFIRMED",
+        "source_pages": [
+          95
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 2,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "status": "CONFIRMED",
+        "source_pages": [
+          95
+        ],
+        "reference_relation": {
+          "reference_surface": "I16_INNER_AND_ROCK_SIDE",
+          "status": "PROVISIONAL",
+          "reason": "沿用已验收的可调参考关系；图纸未明确局部连接侧别"
+        }
+      },
+      "steel_arch": {
+        "R1_mm": 6080,
+        "R2_mm": 10580,
+        "beta_deg": 15.8797,
+        "steel_profile": "I16",
+        "longitudinal_spacing_mm": 1000,
+        "status": "CONFIRMED",
+        "source_pages": [
+          95,
+          98,
+          99
+        ]
+      },
+      "system_anchor": {
+        "type": "Φ25低预应力树脂卷锚杆",
+        "diameter_mm": 25,
+        "length_mm": 4000,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1000,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "status": "CONFIRMED",
+        "source_pages": [
+          95
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 400,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          95
+        ]
+      }
+    },
+    "component_status": {
+      "steel_arch": "READY",
+      "primary_support": "READY",
+      "primary_mesh": "READY_WITH_PROVISIONAL_RELATION",
+      "system_anchor": "READY",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "secondary_rebar": "NOT_APPLICABLE"
+    },
+    "parameter_sources": {
+      "extraction": "existing support_parameters.json (steel arch only)",
+      "drawing": "support_drawings.pdf pages 74, 76, 95-99",
+      "construction_plan": "Construction plan Table 4.7-1",
+      "inventory": "outputs/multi_support/ZZ-IVa_parameter_inventory.json"
+    },
+    "model_ready": true,
+    "implementation_status": "SECOND_SUPPORT_TYPE_MOSTLY_IMPLEMENTED"
+  },
+  "ZZ-IVb": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-IVb",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pdf_sha256": "93b107f4fd5cf04bea82950294fdc4652085647d3411e9379922d0938d9c8c57",
+      "pages": [
+        100,
+        101,
+        102,
+        103,
+        104
+      ],
+      "extraction_time": "2026-10-12T16:10:53.167046+00:00",
+      "extraction_source": "PREVIOUS_REAL_OCR_CACHE"
+    },
+    "confirmed": {
+      "steel_arch": {
+        "R1_mm": 6080,
+        "R2_mm": 10580,
+        "beta_deg": 15.8797,
+        "steel_profile": "I16",
+        "status": "EXTRACTED",
+        "source_pages": [
+          103
+        ],
+        "longitudinal_spacing_mm": 1000
+      },
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "source_pages": [
+          74,
+          76,
+          100
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 220,
+        "reserved_deformation_mm": 80,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "source_pages": [
+          100
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "source_pages": [
+          100
+        ]
+      },
+      "system_anchor": {
+        "type": "Φ25低预应力树脂药卷锚杆",
+        "diameter_mm": 25,
+        "length_mm": 4000,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1000,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "source_pages": [
+          100
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 400,
+        "has_invert": true,
+        "source_pages": [
+          100
+        ]
+      }
+    },
+    "provisional": {
+      "primary_mesh": {
+        "reference_relation": {
+          "reference_surface": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+          "status": "PROVISIONAL",
+          "reason": "参数识别.docx给出距初支内表面40mm；I16局部连接侧别待确认"
+        }
+      }
+    },
+    "pending": {
+      "secondary_rebar": {
+        "status": "NOT_IMPLEMENTED",
+        "source_pages": [
+          101,
+          102
+        ],
+        "reason": "图纸中的N1/N2钢筋网及三肢格栅N3-N8与现有ZZ-Va闭合主筋模块语义不同，本轮未新增几何"
+      }
+    },
+    "resolved_parameters": {
+      "steel_arch": {
+        "R1_mm": 6080,
+        "R2_mm": 10580,
+        "beta_deg": 15.8797,
+        "steel_profile": "I16",
+        "status": "EXTRACTED",
+        "source_pages": [
+          103
+        ],
+        "longitudinal_spacing_mm": 1000
+      },
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "source_pages": [
+          74,
+          76,
+          100
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 220,
+        "reserved_deformation_mm": 80,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "source_pages": [
+          100
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "source_pages": [
+          100
+        ],
+        "reference_relation": {
+          "reference_surface": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+          "status": "PROVISIONAL",
+          "reason": "参数识别.docx给出距初支内表面40mm；I16局部连接侧别待确认"
+        }
+      },
+      "system_anchor": {
+        "type": "Φ25低预应力树脂药卷锚杆",
+        "diameter_mm": 25,
+        "length_mm": 4000,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1000,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "source_pages": [
+          100
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 400,
+        "has_invert": true,
+        "source_pages": [
+          100
+        ]
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "PARTIAL",
+      "steel_arch": "READY",
+      "system_anchor": "READY",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "N1": "NOT_IMPLEMENTED",
+      "N2": "NOT_IMPLEMENTED",
+      "N3": "NOT_IMPLEMENTED",
+      "N4": "NOT_IMPLEMENTED"
+    },
+    "parameter_sources": {
+      "extraction": "existing support_parameters.json / REAL_OCR_CACHE",
+      "construction_plan": "表4.7-1",
+      "drawing_pages": [
+        100,
+        101,
+        102,
+        103,
+        104
+      ],
+      "common_inner_profile_pages": [
+        74,
+        76,
+        100
+      ],
+      "inventory": "outputs/multi_support/ZZ-IVb_parameter_inventory.json"
+    },
+    "model_ready": true
+  },
+  "ZZ-Va": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-Va",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pdf_sha256": "93b107f4fd5cf04bea82950294fdc4652085647d3411e9379922d0938d9c8c57",
+      "pages": [
+        109,
+        110,
+        111,
+        112
+      ],
+      "extraction_time": "2026-10-12T16:10:53.169055+00:00",
+      "extraction_source": "PREVIOUS_REAL_OCR_CACHE"
+    },
+    "confirmed": {
+      "steel_arch": {
+        "R1_mm": 6220,
+        "R2_mm": 10720,
+        "beta_deg": 15.6664,
+        "steel_profile": "I20a",
+        "status": "EXTRACTED",
+        "source_pages": [
+          111
+        ]
+      },
+      "primary_support": {
+        "support_type": "ZZ-Va",
+        "status": "PRIMARY_SUPPORT_CONCRETE_IMPLEMENTED",
+        "scope": "ARCH_AND_WALL_ONLY",
+        "invert": "NOT_APPLICABLE",
+        "total_thickness_mm": 260.0,
+        "reserved_deformation_mm": 100.0,
+        "secondary_lining_thickness_mm": 500.0,
+        "steel_profile": "I20a",
+        "steel_radial_depth_mm": 200.0,
+        "steel_centerline": {
+          "top_radius_mm": 6220.0,
+          "side_radius_mm": 10720.0,
+          "beta_deg": 15.6664
+        },
+        "regions": {
+          "top": {
+            "inner_radius_mm": 6100.0,
+            "outer_radius_mm": 6360.0,
+            "status": "CONFIRMED"
+          },
+          "side": {
+            "inner_radius_mm": 10600.0,
+            "outer_radius_mm": 10860.0,
+            "angle_deg": 15.6664,
+            "status": "CONFIRMED"
+          },
+          "invert_transition": {
+            "value": null,
+            "status": "NOT_APPLICABLE"
+          },
+          "invert_bottom": {
+            "value": null,
+            "status": "NOT_APPLICABLE"
+          }
+        },
+        "layer_relation": {
+          "inner_material": "复喷混凝土",
+          "inner_cover_to_steel_mm": 20.0,
+          "steel_radial_depth_mm": 200.0,
+          "outer_material": "初喷混凝土",
+          "outer_cover_mm": 40.0,
+          "sum_mm": 260.0,
+          "status": "CONFIRMED",
+          "evidence": [
+            "参数识别.docx：初支混凝土半径=钢架半径-钢架厚度/2-复喷混凝土厚度",
+            "参数识别.docx：厚度20+200+40或者直接识别厚度",
+            "第109页：C25高性能喷射混凝土厚26cm"
+          ]
+        },
+        "sources": [
+          {
+            "page": 109,
+            "source_text": "C25高性能喷射混凝土厚：26cm",
+            "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+            "status": "CONFIRMED"
+          },
+          {
+            "page": 109,
+            "source_text": "预留变形量 10cm；C35钢筋混凝土 50cm",
+            "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+            "status": "CONFIRMED"
+          },
+          {
+            "page": 111,
+            "source_text": "I20a钢架 R1=6220, R2=10720, beta=15.6664°",
+            "source_method": "EXISTING_VERIFIED_STEEL_ARCH",
+            "status": "CONFIRMED"
+          },
+          {
+            "page": null,
+            "source_text": "初支混凝土半径公式；厚度20+200+40",
+            "source_method": "PARAMETER_RECOGNITION_DOCX",
+            "status": "CONFIRMED"
+          }
+        ],
+        "readiness": {
+          "PRIMARY_SUPPORT_CONCRETE_READY": true,
+          "PRIMARY_SUPPORT_TOP_SIDE_READY": true,
+          "PRIMARY_SUPPORT_INVERT_READY": "NOT_APPLICABLE",
+          "EXCAVATION_FULL_READY": false,
+          "SYSTEM_ANCHOR_READY": true
+        }
+      },
+      "primary_mesh": {
+        "support_type": "ZZ-Va",
+        "status": "PRIMARY_MESH_PARAMETERS_READY",
+        "circumferential_bar": {
+          "diameter_mm": 8.0,
+          "spacing_mm": 200.0,
+          "status": "FOUND_CONFIRMED",
+          "source_page": 109,
+          "source_text": "环向φ8；网格间距20cm×20cm",
+          "drawing_reference": "第109页 ZZ-Va型衬砌断面图"
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8.0,
+          "spacing_mm": 200.0,
+          "status": "FOUND_CONFIRMED",
+          "source_page": 109,
+          "source_text": "纵向φ8；网格间距20cm×20cm",
+          "drawing_reference": "第109页 ZZ-Va型衬砌断面图"
+        },
+        "reference_relation": {
+          "reference_surface": "PRIMARY_SUPPORT_INNER_SURFACE",
+          "offset_to_bar_centerline_mm": 40.0,
+          "bar_radius_mm": 4.0,
+          "nearest_bar_surface_from_inner_mm": 36.0,
+          "farthest_bar_surface_from_inner_mm": 44.0,
+          "status": "FOUND_CONFIRMED",
+          "source_page": 109,
+          "source_text": "钢筋网平面示意图标注初支总厚26cm，并分解为4cm与22cm；参数识别.docx：与初支混凝土内表面的距离为4cm，半径=初支半径+4",
+          "source_method": "DRAWING_REVIEW_AND_PARAMETER_DEFINITION_DOCX"
+        },
+        "derived_profile": {
+          "top_radius_mm": 6140.0,
+          "side_radius_mm": 10640.0,
+          "top_angle_deg": 180.0,
+          "side_angle_deg": 15.6664,
+          "status": "FOUND_CONFIRMED"
+        },
+        "layer": {
+          "single_layer": true,
+          "status": "FOUND_CONFIRMED",
+          "source_page": 109,
+          "source_text": "钢筋网：单层、拱墙设置"
+        },
+        "regions": {
+          "top": {
+            "status": "READY",
+            "evidence": "拱墙设置"
+          },
+          "side": {
+            "status": "READY",
+            "evidence": "拱墙设置"
+          },
+          "invert_transition": {
+            "value": null,
+            "status": "NOT_APPLICABLE"
+          },
+          "invert_bottom": {
+            "value": null,
+            "status": "NOT_APPLICABLE"
+          }
+        },
+        "lap_length": {
+          "value": null,
+          "status": "NOT_FOUND"
+        },
+        "stagger_rule": {
+          "value": null,
+          "status": "NOT_FOUND",
+          "note": "第109页梅花形布置属于锚杆，不得套用于钢筋网"
+        },
+        "steel_relation": {
+          "design_relation": "网片紧贴被支护面，并与锚杆、钢拱架或其他锚定装置联结牢固",
+          "status": "RELATION_CONFIRMED",
+          "local_connection_status": "LOCAL_STEEL_ARCH_CONNECTION_UNRESOLVED",
+          "note": "施工方案确认应与钢拱架联结，但未明确I20a处的绑扎/焊接面、终止、搭接或避让细节"
+        },
+        "provenance": [
+          {
+            "page": 109,
+            "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+            "source_text": "钢筋网：单层、拱墙设置，环向φ8×纵向φ8，网格间距20cm×20cm。"
+          },
+          {
+            "page": 109,
+            "source_method": "DRAWING_DETAIL_REVIEW",
+            "source_text": "钢筋网平面示意图：φ8、N1×20、N2×20；剖面标注4+22=26cm"
+          },
+          {
+            "page": null,
+            "source_method": "PARAMETER_RECOGNITION_DOCX",
+            "source_text": "与初支混凝土内表面的距离为4cm；顶拱/侧拱半径=初支半径+4"
+          },
+          {
+            "page": 81,
+            "source_method": "CONSTRUCTION_PLAN_TABLE_4_7_2",
+            "source_text": "紧贴被支护面，与锚杆、钢拱架或其他锚定装置联结牢固；混凝土保护层应不小于20mm。"
+          }
+        ]
+      },
+      "system_anchor": {
+        "support_type": "ZZ-Va",
+        "status": "SYSTEM_ANCHOR_PARAMETERS_READY",
+        "type": {
+          "value": "low_prestress_resin_cartridge_anchor",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "Φ25低预应力树脂药卷锚杆",
+          "source_method": "施工方案表4.7-1（PDF版第69页）",
+          "source_page": 69
+        },
+        "diameter_mm": {
+          "value": 25.0,
+          "unit": "mm",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "Φ25低预应力树脂药卷锚杆",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "length_mm": {
+          "value": 4000.0,
+          "unit": "mm",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "每根长度L-4.0m",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "circumferential_spacing_mm": {
+          "value": 1200.0,
+          "unit": "mm",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "环向间距120cm",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "longitudinal_spacing_mm": {
+          "value": 800.0,
+          "unit": "mm",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "纵向间距80cm",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "scope": {
+          "value": "ARCH_AND_WALL_ONLY",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "锚杆：拱墙设置",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "reference_surface": {
+          "value": "EXCAVATION_BOUNDARY",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "锚杆布设基线：开挖面",
+          "source_method": "参数识别.docx / Schema V2 dependency graph",
+          "source_page": null
+        },
+        "direction_rule": {
+          "value": "LOCAL_RADIAL_OUTWARD_WITH_GEOLOGICAL_OVERRIDE",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "锚杆设置时一般应沿隧道周边径向布置；结构面或岩层层面明显时，应与主结构面或岩层层面呈大角度布置。",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "layout_rule": {
+          "value": "CROWN_CENTERED_SYMMETRIC_STAGGERED",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "梅花形布置；图中系统锚杆仅示一半，另一侧相同布设。",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "source_pages": [
+          69,
+          109
+        ]
+      },
+      "secondary_lining": {
+        "support_type": "ZZ-Va",
+        "thickness_mm": 500.0,
+        "inner_profile_source": "sectionGeometryState.inner_profile",
+        "has_invert": true,
+        "source_page": 109,
+        "source_text": "C35钢筋混凝土 50cm",
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "parameter_type": "DIRECT",
+        "confidence": 1.0,
+        "material": "C35 reinforced concrete",
+        "extrusion_depth_mm": 1000.0
+      },
+      "secondary_rebar": {
+        "N1": {
+          "geometry_source": "verified N1 geometry",
+          "profile": {
+            "coordinate_system": "x_right_y_up_mm",
+            "construction": "VERIFIED_N1_N2_TANGENT_CHAIN_MIRRORED",
+            "right_segments": [
+              {
+                "name": "top",
+                "center_mm": [
+                  -3.636588670068065e-13,
+                  0.0
+                ],
+                "radius_mm": 5939.0,
+                "start_angle_deg": 90.0,
+                "end_angle_deg": 0.0,
+                "start_mm": [
+                  0.0,
+                  5939.0
+                ],
+                "end_mm": [
+                  5939.0,
+                  0.0
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "side",
+                "center_mm": [
+                  -4500.0,
+                  0.0
+                ],
+                "radius_mm": 10439.0,
+                "start_angle_deg": 0.0,
+                "end_angle_deg": -11.699444444444445,
+                "start_mm": [
+                  5939.0,
+                  0.0
+                ],
+                "end_mm": [
+                  5722.127445608516,
+                  -2116.79745978143
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_transition",
+                "center_mm": [
+                  4117.17803634016,
+                  -1784.444644705104
+                ],
+                "radius_mm": 1639.0,
+                "start_angle_deg": -11.699444444444453,
+                "end_angle_deg": -67.59083333333335,
+                "start_mm": [
+                  5722.127445608516,
+                  -2116.79745978143
+                ],
+                "end_mm": [
+                  4741.994810731745,
+                  -3299.6756496805483
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_bottom",
+                "center_mm": [
+                  0.02052357071897859,
+                  8199.99394817763
+                ],
+                "radius_mm": 12439.0,
+                "start_angle_deg": -67.59083333333335,
+                "end_angle_deg": -90.00000000000003,
+                "start_mm": [
+                  4741.994810731745,
+                  -3299.6756496805483
+                ],
+                "end_mm": [
+                  0.020523570714216233,
+                  -4239.006051822371
+                ],
+                "connection": "TANGENT"
+              }
+            ],
+            "left_segments": [
+              {
+                "name": "invert_bottom_mirrored",
+                "center_mm": [
+                  -0.02052357071897859,
+                  8199.99394817763
+                ],
+                "radius_mm": 12439.0,
+                "start_angle_deg": 270.0,
+                "end_angle_deg": 247.59083333333336,
+                "start_mm": [
+                  -0.020523570714216233,
+                  -4239.006051822371
+                ],
+                "end_mm": [
+                  -4741.994810731745,
+                  -3299.6756496805483
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_transition_mirrored",
+                "center_mm": [
+                  -4117.17803634016,
+                  -1784.444644705104
+                ],
+                "radius_mm": 1639.0,
+                "start_angle_deg": 247.59083333333336,
+                "end_angle_deg": 191.69944444444445,
+                "start_mm": [
+                  -4741.994810731745,
+                  -3299.6756496805483
+                ],
+                "end_mm": [
+                  -5722.127445608516,
+                  -2116.79745978143
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "side_mirrored",
+                "center_mm": [
+                  4500.0,
+                  0.0
+                ],
+                "radius_mm": 10439.0,
+                "start_angle_deg": 191.69944444444445,
+                "end_angle_deg": 180.0,
+                "start_mm": [
+                  -5722.127445608516,
+                  -2116.79745978143
+                ],
+                "end_mm": [
+                  -5939.0,
+                  0.0
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "top_mirrored",
+                "center_mm": [
+                  3.636588670068065e-13,
+                  0.0
+                ],
+                "radius_mm": 5939.0,
+                "start_angle_deg": 180.0,
+                "end_angle_deg": 90.0,
+                "start_mm": [
+                  -5939.0,
+                  0.0
+                ],
+                "end_mm": [
+                  -0.0,
+                  5939.0
+                ],
+                "connection": "TANGENT"
+              }
+            ],
+            "axis_closure_residual_mm": 0.020523570714216233,
+            "closed": true
+          },
+          "diameter_mm": 22
+        },
+        "N2": {
+          "geometry_source": "verified N2 geometry",
+          "profile": {
+            "coordinate_system": "x_right_y_up_mm",
+            "construction": "VERIFIED_N1_N2_TANGENT_CHAIN_MIRRORED",
+            "right_segments": [
+              {
+                "name": "top",
+                "center_mm": [
+                  -3.4051304250292155e-13,
+                  0.0
+                ],
+                "radius_mm": 5561.0,
+                "start_angle_deg": 90.0,
+                "end_angle_deg": 0.0,
+                "start_mm": [
+                  0.0,
+                  5561.0
+                ],
+                "end_mm": [
+                  5561.0,
+                  0.0
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "side",
+                "center_mm": [
+                  -4500.0,
+                  0.0
+                ],
+                "radius_mm": 10061.0,
+                "start_angle_deg": 0.0,
+                "end_angle_deg": -11.699444444444445,
+                "start_mm": [
+                  5561.0,
+                  0.0
+                ],
+                "end_mm": [
+                  5351.980479956632,
+                  -2040.1474511793244
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_transition",
+                "center_mm": [
+                  4117.178036340161,
+                  -1784.444644705104
+                ],
+                "radius_mm": 1261.0,
+                "start_angle_deg": -11.699444444444453,
+                "end_angle_deg": -67.59083333333335,
+                "start_mm": [
+                  5351.980479956632,
+                  -2040.1474511793244
+                ],
+                "end_mm": [
+                  4597.8942977848155,
+                  -2950.220298929653
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_bottom",
+                "center_mm": [
+                  0.020523570719888085,
+                  8199.99394817763
+                ],
+                "radius_mm": 12061.0,
+                "start_angle_deg": -67.59083333333335,
+                "end_angle_deg": -90.00000000000003,
+                "start_mm": [
+                  4597.8942977848155,
+                  -2950.220298929653
+                ],
+                "end_mm": [
+                  0.02052357071527045,
+                  -3861.006051822371
+                ],
+                "connection": "TANGENT"
+              }
+            ],
+            "left_segments": [
+              {
+                "name": "invert_bottom_mirrored",
+                "center_mm": [
+                  -0.020523570719888085,
+                  8199.99394817763
+                ],
+                "radius_mm": 12061.0,
+                "start_angle_deg": 270.0,
+                "end_angle_deg": 247.59083333333336,
+                "start_mm": [
+                  -0.02052357071527045,
+                  -3861.006051822371
+                ],
+                "end_mm": [
+                  -4597.8942977848155,
+                  -2950.220298929653
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_transition_mirrored",
+                "center_mm": [
+                  -4117.178036340161,
+                  -1784.444644705104
+                ],
+                "radius_mm": 1261.0,
+                "start_angle_deg": 247.59083333333336,
+                "end_angle_deg": 191.69944444444445,
+                "start_mm": [
+                  -4597.8942977848155,
+                  -2950.220298929653
+                ],
+                "end_mm": [
+                  -5351.980479956632,
+                  -2040.1474511793244
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "side_mirrored",
+                "center_mm": [
+                  4500.0,
+                  0.0
+                ],
+                "radius_mm": 10061.0,
+                "start_angle_deg": 191.69944444444445,
+                "end_angle_deg": 180.0,
+                "start_mm": [
+                  -5351.980479956632,
+                  -2040.1474511793244
+                ],
+                "end_mm": [
+                  -5561.0,
+                  0.0
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "top_mirrored",
+                "center_mm": [
+                  3.4051304250292155e-13,
+                  0.0
+                ],
+                "radius_mm": 5561.0,
+                "start_angle_deg": 180.0,
+                "end_angle_deg": 90.0,
+                "start_mm": [
+                  -5561.0,
+                  0.0
+                ],
+                "end_mm": [
+                  -0.0,
+                  5561.0
+                ],
+                "connection": "TANGENT"
+              }
+            ],
+            "axis_closure_residual_mm": 0.02052357071527045,
+            "closed": true
+          },
+          "diameter_mm": 22
+        },
+        "N3": {
+          "diameter_mm": 12,
+          "length_mm": 1000,
+          "circumferential_spacing_mm": 250,
+          "longitudinal_spacing_mm": null,
+          "layout_mode": "CENTER_ALIGNED_TWO_LAYERS",
+          "layers": [
+            "N1_OUTER",
+            "N2_INNER"
+          ],
+          "source_page": 110,
+          "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+          "status": "N3_IMPLEMENTED"
+        },
+        "N4": {
+          "diameter_mm": 8,
+          "length_mm": 552,
+          "circumferential_spacing_mm": 500,
+          "longitudinal_spacing_mm": 250,
+          "hook_angle_deg": 135,
+          "hook_length_mm": 87,
+          "hook_straight_mm": 40,
+          "bend_radius_mm": 20,
+          "layout_mode": "STAGGERED_GRID",
+          "connection": "N1_TO_N2",
+          "source_page": 110,
+          "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+          "status": "N4_IMPLEMENTED"
+        }
+      },
+      "lock_foot": {
+        "outer_diameter_mm": 42.0,
+        "wall_thickness_mm": 4.0,
+        "length_mm": 3500.0,
+        "count_per_arch": 8,
+        "count_left": 4,
+        "count_right": 4,
+        "levels_per_side": 2,
+        "pipes_per_level": 2,
+        "grouted": true,
+        "installed_per_steel_arch": true,
+        "steel_arch_spacing_mm": 800.0,
+        "connection_type": "SINGLE_SIDE_WELDED",
+        "weld_length_min_mm": 180.0,
+        "straight_hook_mm": 200.0
+      }
+    },
+    "provisional": {
+      "primary_mesh_connection_side": "ROCK_SIDE",
+      "lock_foot": {
+        "upper_install_height_mm": 250.0,
+        "lower_install_height_mm": 100.0,
+        "upper_angle_deg": 7.5,
+        "lower_angle_deg": 45.0,
+        "pair_spread_angle_deg": 10.0,
+        "connection_location_on_section": "WEB_SIDE_APPROX"
+      }
+    },
+    "pending": {
+      "primary_mesh_connection_side_project_confirmation": null,
+      "lock_foot_project_geometry_confirmation": null
+    },
+    "resolved_parameters": {
+      "primary_mesh_connection_side_project_confirmation": null,
+      "lock_foot_project_geometry_confirmation": null,
+      "primary_mesh_connection_side": "ROCK_SIDE",
+      "lock_foot": {
+        "outer_diameter_mm": 42.0,
+        "wall_thickness_mm": 4.0,
+        "length_mm": 3500.0,
+        "count_per_arch": 8,
+        "count_left": 4,
+        "count_right": 4,
+        "levels_per_side": 2,
+        "pipes_per_level": 2,
+        "grouted": true,
+        "installed_per_steel_arch": true,
+        "steel_arch_spacing_mm": 800.0,
+        "connection_type": "SINGLE_SIDE_WELDED",
+        "weld_length_min_mm": 180.0,
+        "straight_hook_mm": 200.0
+      },
+      "steel_arch": {
+        "R1_mm": 6220,
+        "R2_mm": 10720,
+        "beta_deg": 15.6664,
+        "steel_profile": "I20a",
+        "status": "EXTRACTED",
+        "source_pages": [
+          111
+        ]
+      },
+      "primary_support": {
+        "support_type": "ZZ-Va",
+        "status": "PRIMARY_SUPPORT_CONCRETE_IMPLEMENTED",
+        "scope": "ARCH_AND_WALL_ONLY",
+        "invert": "NOT_APPLICABLE",
+        "total_thickness_mm": 260.0,
+        "reserved_deformation_mm": 100.0,
+        "secondary_lining_thickness_mm": 500.0,
+        "steel_profile": "I20a",
+        "steel_radial_depth_mm": 200.0,
+        "steel_centerline": {
+          "top_radius_mm": 6220.0,
+          "side_radius_mm": 10720.0,
+          "beta_deg": 15.6664
+        },
+        "regions": {
+          "top": {
+            "inner_radius_mm": 6100.0,
+            "outer_radius_mm": 6360.0,
+            "status": "CONFIRMED"
+          },
+          "side": {
+            "inner_radius_mm": 10600.0,
+            "outer_radius_mm": 10860.0,
+            "angle_deg": 15.6664,
+            "status": "CONFIRMED"
+          },
+          "invert_transition": {
+            "value": null,
+            "status": "NOT_APPLICABLE"
+          },
+          "invert_bottom": {
+            "value": null,
+            "status": "NOT_APPLICABLE"
+          }
+        },
+        "layer_relation": {
+          "inner_material": "复喷混凝土",
+          "inner_cover_to_steel_mm": 20.0,
+          "steel_radial_depth_mm": 200.0,
+          "outer_material": "初喷混凝土",
+          "outer_cover_mm": 40.0,
+          "sum_mm": 260.0,
+          "status": "CONFIRMED",
+          "evidence": [
+            "参数识别.docx：初支混凝土半径=钢架半径-钢架厚度/2-复喷混凝土厚度",
+            "参数识别.docx：厚度20+200+40或者直接识别厚度",
+            "第109页：C25高性能喷射混凝土厚26cm"
+          ]
+        },
+        "sources": [
+          {
+            "page": 109,
+            "source_text": "C25高性能喷射混凝土厚：26cm",
+            "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+            "status": "CONFIRMED"
+          },
+          {
+            "page": 109,
+            "source_text": "预留变形量 10cm；C35钢筋混凝土 50cm",
+            "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+            "status": "CONFIRMED"
+          },
+          {
+            "page": 111,
+            "source_text": "I20a钢架 R1=6220, R2=10720, beta=15.6664°",
+            "source_method": "EXISTING_VERIFIED_STEEL_ARCH",
+            "status": "CONFIRMED"
+          },
+          {
+            "page": null,
+            "source_text": "初支混凝土半径公式；厚度20+200+40",
+            "source_method": "PARAMETER_RECOGNITION_DOCX",
+            "status": "CONFIRMED"
+          }
+        ],
+        "readiness": {
+          "PRIMARY_SUPPORT_CONCRETE_READY": true,
+          "PRIMARY_SUPPORT_TOP_SIDE_READY": true,
+          "PRIMARY_SUPPORT_INVERT_READY": "NOT_APPLICABLE",
+          "EXCAVATION_FULL_READY": false,
+          "SYSTEM_ANCHOR_READY": true
+        }
+      },
+      "primary_mesh": {
+        "support_type": "ZZ-Va",
+        "status": "PRIMARY_MESH_PARAMETERS_READY",
+        "circumferential_bar": {
+          "diameter_mm": 8.0,
+          "spacing_mm": 200.0,
+          "status": "FOUND_CONFIRMED",
+          "source_page": 109,
+          "source_text": "环向φ8；网格间距20cm×20cm",
+          "drawing_reference": "第109页 ZZ-Va型衬砌断面图"
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8.0,
+          "spacing_mm": 200.0,
+          "status": "FOUND_CONFIRMED",
+          "source_page": 109,
+          "source_text": "纵向φ8；网格间距20cm×20cm",
+          "drawing_reference": "第109页 ZZ-Va型衬砌断面图"
+        },
+        "reference_relation": {
+          "reference_surface": "PRIMARY_SUPPORT_INNER_SURFACE",
+          "offset_to_bar_centerline_mm": 40.0,
+          "bar_radius_mm": 4.0,
+          "nearest_bar_surface_from_inner_mm": 36.0,
+          "farthest_bar_surface_from_inner_mm": 44.0,
+          "status": "FOUND_CONFIRMED",
+          "source_page": 109,
+          "source_text": "钢筋网平面示意图标注初支总厚26cm，并分解为4cm与22cm；参数识别.docx：与初支混凝土内表面的距离为4cm，半径=初支半径+4",
+          "source_method": "DRAWING_REVIEW_AND_PARAMETER_DEFINITION_DOCX"
+        },
+        "derived_profile": {
+          "top_radius_mm": 6140.0,
+          "side_radius_mm": 10640.0,
+          "top_angle_deg": 180.0,
+          "side_angle_deg": 15.6664,
+          "status": "FOUND_CONFIRMED"
+        },
+        "layer": {
+          "single_layer": true,
+          "status": "FOUND_CONFIRMED",
+          "source_page": 109,
+          "source_text": "钢筋网：单层、拱墙设置"
+        },
+        "regions": {
+          "top": {
+            "status": "READY",
+            "evidence": "拱墙设置"
+          },
+          "side": {
+            "status": "READY",
+            "evidence": "拱墙设置"
+          },
+          "invert_transition": {
+            "value": null,
+            "status": "NOT_APPLICABLE"
+          },
+          "invert_bottom": {
+            "value": null,
+            "status": "NOT_APPLICABLE"
+          }
+        },
+        "lap_length": {
+          "value": null,
+          "status": "NOT_FOUND"
+        },
+        "stagger_rule": {
+          "value": null,
+          "status": "NOT_FOUND",
+          "note": "第109页梅花形布置属于锚杆，不得套用于钢筋网"
+        },
+        "steel_relation": {
+          "design_relation": "网片紧贴被支护面，并与锚杆、钢拱架或其他锚定装置联结牢固",
+          "status": "RELATION_CONFIRMED",
+          "local_connection_status": "LOCAL_STEEL_ARCH_CONNECTION_UNRESOLVED",
+          "note": "施工方案确认应与钢拱架联结，但未明确I20a处的绑扎/焊接面、终止、搭接或避让细节"
+        },
+        "provenance": [
+          {
+            "page": 109,
+            "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+            "source_text": "钢筋网：单层、拱墙设置，环向φ8×纵向φ8，网格间距20cm×20cm。"
+          },
+          {
+            "page": 109,
+            "source_method": "DRAWING_DETAIL_REVIEW",
+            "source_text": "钢筋网平面示意图：φ8、N1×20、N2×20；剖面标注4+22=26cm"
+          },
+          {
+            "page": null,
+            "source_method": "PARAMETER_RECOGNITION_DOCX",
+            "source_text": "与初支混凝土内表面的距离为4cm；顶拱/侧拱半径=初支半径+4"
+          },
+          {
+            "page": 81,
+            "source_method": "CONSTRUCTION_PLAN_TABLE_4_7_2",
+            "source_text": "紧贴被支护面，与锚杆、钢拱架或其他锚定装置联结牢固；混凝土保护层应不小于20mm。"
+          }
+        ]
+      },
+      "system_anchor": {
+        "support_type": "ZZ-Va",
+        "status": "SYSTEM_ANCHOR_PARAMETERS_READY",
+        "type": {
+          "value": "low_prestress_resin_cartridge_anchor",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "Φ25低预应力树脂药卷锚杆",
+          "source_method": "施工方案表4.7-1（PDF版第69页）",
+          "source_page": 69
+        },
+        "diameter_mm": {
+          "value": 25.0,
+          "unit": "mm",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "Φ25低预应力树脂药卷锚杆",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "length_mm": {
+          "value": 4000.0,
+          "unit": "mm",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "每根长度L-4.0m",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "circumferential_spacing_mm": {
+          "value": 1200.0,
+          "unit": "mm",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "环向间距120cm",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "longitudinal_spacing_mm": {
+          "value": 800.0,
+          "unit": "mm",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "纵向间距80cm",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "scope": {
+          "value": "ARCH_AND_WALL_ONLY",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "锚杆：拱墙设置",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "reference_surface": {
+          "value": "EXCAVATION_BOUNDARY",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "锚杆布设基线：开挖面",
+          "source_method": "参数识别.docx / Schema V2 dependency graph",
+          "source_page": null
+        },
+        "direction_rule": {
+          "value": "LOCAL_RADIAL_OUTWARD_WITH_GEOLOGICAL_OVERRIDE",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "锚杆设置时一般应沿隧道周边径向布置；结构面或岩层层面明显时，应与主结构面或岩层层面呈大角度布置。",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "layout_rule": {
+          "value": "CROWN_CENTERED_SYMMETRIC_STAGGERED",
+          "unit": "enum",
+          "status": "FOUND_CONFIRMED",
+          "source_text": "梅花形布置；图中系统锚杆仅示一半，另一侧相同布设。",
+          "source_method": "ZZ-Va施工图第109页",
+          "source_page": 109
+        },
+        "source_pages": [
+          69,
+          109
+        ]
+      },
+      "secondary_lining": {
+        "support_type": "ZZ-Va",
+        "thickness_mm": 500.0,
+        "inner_profile_source": "sectionGeometryState.inner_profile",
+        "has_invert": true,
+        "source_page": 109,
+        "source_text": "C35钢筋混凝土 50cm",
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "parameter_type": "DIRECT",
+        "confidence": 1.0,
+        "material": "C35 reinforced concrete",
+        "extrusion_depth_mm": 1000.0
+      },
+      "secondary_rebar": {
+        "N1": {
+          "geometry_source": "verified N1 geometry",
+          "profile": {
+            "coordinate_system": "x_right_y_up_mm",
+            "construction": "VERIFIED_N1_N2_TANGENT_CHAIN_MIRRORED",
+            "right_segments": [
+              {
+                "name": "top",
+                "center_mm": [
+                  -3.636588670068065e-13,
+                  0.0
+                ],
+                "radius_mm": 5939.0,
+                "start_angle_deg": 90.0,
+                "end_angle_deg": 0.0,
+                "start_mm": [
+                  0.0,
+                  5939.0
+                ],
+                "end_mm": [
+                  5939.0,
+                  0.0
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "side",
+                "center_mm": [
+                  -4500.0,
+                  0.0
+                ],
+                "radius_mm": 10439.0,
+                "start_angle_deg": 0.0,
+                "end_angle_deg": -11.699444444444445,
+                "start_mm": [
+                  5939.0,
+                  0.0
+                ],
+                "end_mm": [
+                  5722.127445608516,
+                  -2116.79745978143
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_transition",
+                "center_mm": [
+                  4117.17803634016,
+                  -1784.444644705104
+                ],
+                "radius_mm": 1639.0,
+                "start_angle_deg": -11.699444444444453,
+                "end_angle_deg": -67.59083333333335,
+                "start_mm": [
+                  5722.127445608516,
+                  -2116.79745978143
+                ],
+                "end_mm": [
+                  4741.994810731745,
+                  -3299.6756496805483
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_bottom",
+                "center_mm": [
+                  0.02052357071897859,
+                  8199.99394817763
+                ],
+                "radius_mm": 12439.0,
+                "start_angle_deg": -67.59083333333335,
+                "end_angle_deg": -90.00000000000003,
+                "start_mm": [
+                  4741.994810731745,
+                  -3299.6756496805483
+                ],
+                "end_mm": [
+                  0.020523570714216233,
+                  -4239.006051822371
+                ],
+                "connection": "TANGENT"
+              }
+            ],
+            "left_segments": [
+              {
+                "name": "invert_bottom_mirrored",
+                "center_mm": [
+                  -0.02052357071897859,
+                  8199.99394817763
+                ],
+                "radius_mm": 12439.0,
+                "start_angle_deg": 270.0,
+                "end_angle_deg": 247.59083333333336,
+                "start_mm": [
+                  -0.020523570714216233,
+                  -4239.006051822371
+                ],
+                "end_mm": [
+                  -4741.994810731745,
+                  -3299.6756496805483
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_transition_mirrored",
+                "center_mm": [
+                  -4117.17803634016,
+                  -1784.444644705104
+                ],
+                "radius_mm": 1639.0,
+                "start_angle_deg": 247.59083333333336,
+                "end_angle_deg": 191.69944444444445,
+                "start_mm": [
+                  -4741.994810731745,
+                  -3299.6756496805483
+                ],
+                "end_mm": [
+                  -5722.127445608516,
+                  -2116.79745978143
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "side_mirrored",
+                "center_mm": [
+                  4500.0,
+                  0.0
+                ],
+                "radius_mm": 10439.0,
+                "start_angle_deg": 191.69944444444445,
+                "end_angle_deg": 180.0,
+                "start_mm": [
+                  -5722.127445608516,
+                  -2116.79745978143
+                ],
+                "end_mm": [
+                  -5939.0,
+                  0.0
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "top_mirrored",
+                "center_mm": [
+                  3.636588670068065e-13,
+                  0.0
+                ],
+                "radius_mm": 5939.0,
+                "start_angle_deg": 180.0,
+                "end_angle_deg": 90.0,
+                "start_mm": [
+                  -5939.0,
+                  0.0
+                ],
+                "end_mm": [
+                  -0.0,
+                  5939.0
+                ],
+                "connection": "TANGENT"
+              }
+            ],
+            "axis_closure_residual_mm": 0.020523570714216233,
+            "closed": true
+          },
+          "diameter_mm": 22
+        },
+        "N2": {
+          "geometry_source": "verified N2 geometry",
+          "profile": {
+            "coordinate_system": "x_right_y_up_mm",
+            "construction": "VERIFIED_N1_N2_TANGENT_CHAIN_MIRRORED",
+            "right_segments": [
+              {
+                "name": "top",
+                "center_mm": [
+                  -3.4051304250292155e-13,
+                  0.0
+                ],
+                "radius_mm": 5561.0,
+                "start_angle_deg": 90.0,
+                "end_angle_deg": 0.0,
+                "start_mm": [
+                  0.0,
+                  5561.0
+                ],
+                "end_mm": [
+                  5561.0,
+                  0.0
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "side",
+                "center_mm": [
+                  -4500.0,
+                  0.0
+                ],
+                "radius_mm": 10061.0,
+                "start_angle_deg": 0.0,
+                "end_angle_deg": -11.699444444444445,
+                "start_mm": [
+                  5561.0,
+                  0.0
+                ],
+                "end_mm": [
+                  5351.980479956632,
+                  -2040.1474511793244
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_transition",
+                "center_mm": [
+                  4117.178036340161,
+                  -1784.444644705104
+                ],
+                "radius_mm": 1261.0,
+                "start_angle_deg": -11.699444444444453,
+                "end_angle_deg": -67.59083333333335,
+                "start_mm": [
+                  5351.980479956632,
+                  -2040.1474511793244
+                ],
+                "end_mm": [
+                  4597.8942977848155,
+                  -2950.220298929653
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_bottom",
+                "center_mm": [
+                  0.020523570719888085,
+                  8199.99394817763
+                ],
+                "radius_mm": 12061.0,
+                "start_angle_deg": -67.59083333333335,
+                "end_angle_deg": -90.00000000000003,
+                "start_mm": [
+                  4597.8942977848155,
+                  -2950.220298929653
+                ],
+                "end_mm": [
+                  0.02052357071527045,
+                  -3861.006051822371
+                ],
+                "connection": "TANGENT"
+              }
+            ],
+            "left_segments": [
+              {
+                "name": "invert_bottom_mirrored",
+                "center_mm": [
+                  -0.020523570719888085,
+                  8199.99394817763
+                ],
+                "radius_mm": 12061.0,
+                "start_angle_deg": 270.0,
+                "end_angle_deg": 247.59083333333336,
+                "start_mm": [
+                  -0.02052357071527045,
+                  -3861.006051822371
+                ],
+                "end_mm": [
+                  -4597.8942977848155,
+                  -2950.220298929653
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "invert_transition_mirrored",
+                "center_mm": [
+                  -4117.178036340161,
+                  -1784.444644705104
+                ],
+                "radius_mm": 1261.0,
+                "start_angle_deg": 247.59083333333336,
+                "end_angle_deg": 191.69944444444445,
+                "start_mm": [
+                  -4597.8942977848155,
+                  -2950.220298929653
+                ],
+                "end_mm": [
+                  -5351.980479956632,
+                  -2040.1474511793244
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "side_mirrored",
+                "center_mm": [
+                  4500.0,
+                  0.0
+                ],
+                "radius_mm": 10061.0,
+                "start_angle_deg": 191.69944444444445,
+                "end_angle_deg": 180.0,
+                "start_mm": [
+                  -5351.980479956632,
+                  -2040.1474511793244
+                ],
+                "end_mm": [
+                  -5561.0,
+                  0.0
+                ],
+                "connection": "TANGENT"
+              },
+              {
+                "name": "top_mirrored",
+                "center_mm": [
+                  3.4051304250292155e-13,
+                  0.0
+                ],
+                "radius_mm": 5561.0,
+                "start_angle_deg": 180.0,
+                "end_angle_deg": 90.0,
+                "start_mm": [
+                  -5561.0,
+                  0.0
+                ],
+                "end_mm": [
+                  -0.0,
+                  5561.0
+                ],
+                "connection": "TANGENT"
+              }
+            ],
+            "axis_closure_residual_mm": 0.02052357071527045,
+            "closed": true
+          },
+          "diameter_mm": 22
+        },
+        "N3": {
+          "diameter_mm": 12,
+          "length_mm": 1000,
+          "circumferential_spacing_mm": 250,
+          "longitudinal_spacing_mm": null,
+          "layout_mode": "CENTER_ALIGNED_TWO_LAYERS",
+          "layers": [
+            "N1_OUTER",
+            "N2_INNER"
+          ],
+          "source_page": 110,
+          "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+          "status": "N3_IMPLEMENTED"
+        },
+        "N4": {
+          "diameter_mm": 8,
+          "length_mm": 552,
+          "circumferential_spacing_mm": 500,
+          "longitudinal_spacing_mm": 250,
+          "hook_angle_deg": 135,
+          "hook_length_mm": 87,
+          "hook_straight_mm": 40,
+          "bend_radius_mm": 20,
+          "layout_mode": "STAGGERED_GRID",
+          "connection": "N1_TO_N2",
+          "source_page": 110,
+          "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+          "status": "N4_IMPLEMENTED"
+        }
+      }
+    },
+    "component_status": {
+      "steel_arch": "IMPLEMENTED",
+      "primary_support": "IMPLEMENTED",
+      "system_anchor": "IMPLEMENTED",
+      "lock_foot": "PROVISIONAL_COMPONENT",
+      "secondary_lining": "IMPLEMENTED",
+      "secondary_rebar": "IMPLEMENTED",
+      "primary_mesh": "PARTIAL"
+    },
+    "parameter_sources": {
+      "extraction": "existing support_parameters.json",
+      "primary_support": "outputs/primary_support/ZZ-Va_primary_support_parameters.json",
+      "primary_mesh": "outputs/primary_mesh/ZZ-Va_primary_mesh_parameters.json",
+      "system_anchor": "outputs/system_anchor/ZZ-Va_system_anchor_parameters.json",
+      "lock_foot": "outputs/lock_foot_anchor/ZZ-Va_lock_foot_anchor_parameters.json",
+      "secondary_lining": "outputs/secondary_lining/ZZ-Va_secondary_lining_parameters.json",
+      "secondary_rebar_N1_N2": "outputs/secondary_rebar_assembly/ZZ-Va_N1_N2_assembly_state.json",
+      "secondary_rebar_N3_N4": "outputs/secondary_rebar_assembly/ZZ-Va_N3_N4_parameters.json"
+    },
+    "model_ready": true
+  },
+  "ZZ-S": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-S",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pdf_sha256": "93b107f4fd5cf04bea82950294fdc4652085647d3411e9379922d0938d9c8c57",
+      "pages": [
+        74,
+        76,
+        113,
+        114,
+        115,
+        116
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "invert_transition_radius_mm": 1200,
+        "invert_transition_angle_deg": 55.89138888888889,
+        "invert_bottom_radius_mm": 12000,
+        "invert_bottom_angle_deg": 44.818333333333335,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76,
+          113
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 260,
+        "reserved_deformation_mm": 120,
+        "status": "CONFIRMED",
+        "source_pages": [
+          113
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 200
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 200
+        },
+        "layers": 1,
+        "scope": "ARCH_AND_WALL_ONLY",
+        "status": "CONFIRMED",
+        "source_pages": [
+          113
+        ]
+      },
+      "steel_arch": {
+        "R1_mm": 6240,
+        "R2_mm": 10740,
+        "beta_deg": 15.6383,
+        "steel_profile": "I20a",
+        "longitudinal_spacing_mm": 500,
+        "status": "CONFIRMED",
+        "source_pages": [
+          113,
+          115,
+          116
+        ]
+      },
+      "system_anchor": {
+        "type": "Φ25自进式中空注浆锚杆",
+        "diameter_mm": 25,
+        "length_mm": 4500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 500,
+        "status": "CONFIRMED",
+        "source_pages": [
+          113
+        ]
+      },
+      "lock_foot": {
+        "outer_diameter_mm": 42,
+        "wall_thickness_mm": 4,
+        "length_mm": 3500,
+        "count_per_arch": 8,
+        "status": "CONFIRMED",
+        "source_pages": [
+          69,
+          113,
+          115
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 500,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          113
+        ]
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "length_mm": 35849,
+          "R1_mm": 5939,
+          "R2_mm": 10439,
+          "R3_mm": 1639,
+          "R4_mm": 12439,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "length_mm": 33474,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "N3": {
+          "diameter_mm": 12,
+          "length_mm": 1000,
+          "circumferential_spacing_mm": 250,
+          "status": "CONFIRMED"
+        },
+        "N4": {
+          "diameter_mm": 8,
+          "length_mm": 552,
+          "circumferential_spacing_mm": 500,
+          "longitudinal_spacing_mm": 250,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          114
+        ]
+      }
+    },
+    "provisional": {
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "lock_foot": {
+        "upper_height_mm": 250,
+        "lower_height_mm": 100,
+        "upper_angle_deg": 7.5,
+        "lower_angle_deg": 45,
+        "pair_spread_deg": 10,
+        "status": "PROVISIONAL"
+      }
+    },
+    "pending": {},
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "PARTIAL",
+      "steel_arch": "READY",
+      "system_anchor": "READY",
+      "lock_foot": "PARTIAL",
+      "secondary_lining": "READY",
+      "N1": "READY",
+      "N2": "READY",
+      "N3": "READY",
+      "N4": "READY"
+    },
+    "parameter_sources": {
+      "drawing": "support_drawings.pdf pages 113-116",
+      "common_inner_profile": "support_drawings.pdf pages 74 and 76",
+      "construction_plan": "table 4.7-1",
+      "parameter_definition": "参数识别.docx"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "invert_transition_radius_mm": 1200,
+        "invert_transition_angle_deg": 55.89138888888889,
+        "invert_bottom_radius_mm": 12000,
+        "invert_bottom_angle_deg": 44.818333333333335,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76,
+          113
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 260,
+        "reserved_deformation_mm": 120,
+        "status": "CONFIRMED",
+        "source_pages": [
+          113
+        ]
+      },
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "steel_arch": {
+        "R1_mm": 6240,
+        "R2_mm": 10740,
+        "beta_deg": 15.6383,
+        "steel_profile": "I20a",
+        "longitudinal_spacing_mm": 500,
+        "status": "CONFIRMED",
+        "source_pages": [
+          113,
+          115,
+          116
+        ]
+      },
+      "system_anchor": {
+        "type": "Φ25自进式中空注浆锚杆",
+        "diameter_mm": 25,
+        "length_mm": 4500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 500,
+        "status": "CONFIRMED",
+        "source_pages": [
+          113
+        ]
+      },
+      "lock_foot": {
+        "upper_height_mm": 250,
+        "lower_height_mm": 100,
+        "upper_angle_deg": 7.5,
+        "lower_angle_deg": 45,
+        "pair_spread_deg": 10,
+        "status": "PROVISIONAL"
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 500,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          113
+        ]
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "length_mm": 35849,
+          "R1_mm": 5939,
+          "R2_mm": 10439,
+          "R3_mm": 1639,
+          "R4_mm": 12439,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "length_mm": 33474,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "N3": {
+          "diameter_mm": 12,
+          "length_mm": 1000,
+          "circumferential_spacing_mm": 250,
+          "status": "CONFIRMED"
+        },
+        "N4": {
+          "diameter_mm": 8,
+          "length_mm": 552,
+          "circumferential_spacing_mm": 500,
+          "longitudinal_spacing_mm": 250,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          114
+        ]
+      }
+    }
+  },
+  "ZZ-II": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-II",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        89,
+        90,
+        91
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 80,
+        "reserved_deformation_mm": 30,
+        "status": "CONFIRMED",
+        "source_pages": [
+          89
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 350,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          89
+        ]
+      }
+    },
+    "provisional": {},
+    "pending": {
+      "system_anchor": {
+        "reason": "CIRCUMFERENTIAL_AND_LONGITUDINAL_SPACING_MISSING",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "NOT_APPLICABLE",
+      "steel_arch": "NOT_APPLICABLE",
+      "system_anchor": "NOT_IMPLEMENTED",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "N1": "NOT_APPLICABLE",
+      "N2": "NOT_APPLICABLE",
+      "N3": "NOT_APPLICABLE",
+      "N4": "NOT_APPLICABLE"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 80,
+        "reserved_deformation_mm": 30,
+        "status": "CONFIRMED",
+        "source_pages": [
+          89
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 350,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          89
+        ]
+      }
+    }
+  },
+  "ZZ-IIIx": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-IIIx",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        117,
+        118,
+        119
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 150,
+        "reserved_deformation_mm": 50,
+        "status": "CONFIRMED",
+        "source_pages": [
+          117
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 350,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          117
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED"
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 3500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1200,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED",
+        "source_pages": [
+          117
+        ]
+      }
+    },
+    "provisional": {},
+    "pending": {
+      "primary_mesh": {
+        "reason": "CROWN_180_GEOMETRY_MODE_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      },
+      "system_anchor": {
+        "reason": "CROWN_180_GEOMETRY_MODE_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "NOT_IMPLEMENTED",
+      "steel_arch": "NOT_APPLICABLE",
+      "system_anchor": "NOT_IMPLEMENTED",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "N1": "NOT_APPLICABLE",
+      "N2": "NOT_APPLICABLE",
+      "N3": "NOT_APPLICABLE",
+      "N4": "NOT_APPLICABLE"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 150,
+        "reserved_deformation_mm": 50,
+        "status": "CONFIRMED",
+        "source_pages": [
+          117
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 350,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          117
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED"
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 3500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1200,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED",
+        "source_pages": [
+          117
+        ]
+      }
+    }
+  },
+  "ZZ-Y1": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-Y1",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        136,
+        137,
+        138
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 120,
+        "reserved_deformation_mm": 50,
+        "status": "CONFIRMED",
+        "source_pages": [
+          136
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 350,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          136
+        ]
+      },
+      "primary_mesh": {
+        "type": "ENERGY_ABSORPTION_NET",
+        "scope": "CROWN_180",
+        "status": "CONFIRMED"
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 3500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1200,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED",
+        "source_pages": [
+          136
+        ]
+      }
+    },
+    "provisional": {},
+    "pending": {
+      "primary_mesh": {
+        "reason": "ENERGY_ABSORPTION_NET_GENERATOR_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      },
+      "system_anchor": {
+        "reason": "CROWN_180_GEOMETRY_MODE_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "NOT_IMPLEMENTED",
+      "steel_arch": "NOT_APPLICABLE",
+      "system_anchor": "NOT_IMPLEMENTED",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "N1": "NOT_APPLICABLE",
+      "N2": "NOT_APPLICABLE",
+      "N3": "NOT_APPLICABLE",
+      "N4": "NOT_APPLICABLE"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 16.828055555555554,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 120,
+        "reserved_deformation_mm": 50,
+        "status": "CONFIRMED",
+        "source_pages": [
+          136
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35混凝土",
+        "thickness_mm": 350,
+        "has_invert": false,
+        "status": "CONFIRMED",
+        "source_pages": [
+          136
+        ]
+      },
+      "primary_mesh": {
+        "type": "ENERGY_ABSORPTION_NET",
+        "scope": "CROWN_180",
+        "status": "CONFIRMED"
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 3500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 1200,
+        "scope": "CROWN_180",
+        "status": "CONFIRMED",
+        "source_pages": [
+          136
+        ]
+      }
+    }
+  },
+  "ZZ-IVc": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-IVc",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        105,
+        106,
+        107,
+        108
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 240,
+        "reserved_deformation_mm": 80,
+        "status": "CONFIRMED",
+        "source_pages": [
+          105
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 450,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          105
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "ARCH_AND_WALL",
+        "status": "CONFIRMED"
+      },
+      "steel_arch": {
+        "R1_mm": 6140,
+        "R2_mm": 10640,
+        "beta_deg": 15.7869,
+        "steel_profile": "I18",
+        "longitudinal_spacing_mm": 800,
+        "status": "CONFIRMED",
+        "source_pages": [
+          107,
+          108
+        ]
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 4000,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 800,
+        "scope": "ARCH_AND_WALL",
+        "status": "CONFIRMED",
+        "source_pages": [
+          105
+        ]
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "R1_mm": 5889,
+          "R2_mm": 10389,
+          "R3_mm": 1589,
+          "R4_mm": 12389,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          106
+        ]
+      }
+    },
+    "provisional": {
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      }
+    },
+    "pending": {
+      "steel_arch": {
+        "reason": "I18_SECTION_DIMENSIONS_NOT_CONFIRMED",
+        "missing_fields": [
+          "height",
+          "width",
+          "web_thickness",
+          "flange_thickness"
+        ],
+        "status": "MISSING"
+      },
+      "secondary_rebar": {
+        "reason": "N3_N4_TYPE_SPECIFIC_PARAMETERS_NOT_IN_CURRENT_15_FIELD_SCHEMA",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "PARTIAL",
+      "steel_arch": "NOT_IMPLEMENTED",
+      "system_anchor": "READY",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "N1": "READY",
+      "N2": "READY",
+      "N3": "NOT_IMPLEMENTED",
+      "N4": "NOT_IMPLEMENTED"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 240,
+        "reserved_deformation_mm": 80,
+        "status": "CONFIRMED",
+        "source_pages": [
+          105
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 450,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          105
+        ]
+      },
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "steel_arch": {
+        "R1_mm": 6140,
+        "R2_mm": 10640,
+        "beta_deg": 15.7869,
+        "steel_profile": "I18",
+        "longitudinal_spacing_mm": 800,
+        "status": "CONFIRMED",
+        "source_pages": [
+          107,
+          108
+        ]
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 4000,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 800,
+        "scope": "ARCH_AND_WALL",
+        "status": "CONFIRMED",
+        "source_pages": [
+          105
+        ]
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "R1_mm": 5889,
+          "R2_mm": 10389,
+          "R3_mm": 1589,
+          "R4_mm": 12389,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          106
+        ]
+      }
+    }
+  },
+  "ZZ-IVx": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-IVx",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        120,
+        121,
+        122,
+        123
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 240,
+        "reserved_deformation_mm": 80,
+        "status": "CONFIRMED",
+        "source_pages": [
+          120
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 450,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          120
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "ARCH_AND_WALL",
+        "status": "CONFIRMED"
+      },
+      "steel_arch": {
+        "R1_mm": 6140,
+        "R2_mm": 10640,
+        "beta_deg": 15.7861,
+        "steel_profile": "I18",
+        "longitudinal_spacing_mm": 800,
+        "status": "CONFIRMED",
+        "source_pages": [
+          122,
+          123
+        ]
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 4500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 800,
+        "scope": "MIXED_MIDDLE_PILLAR",
+        "status": "CONFIRMED",
+        "source_pages": [
+          120
+        ]
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "R1_mm": 5889,
+          "R2_mm": 10389,
+          "R3_mm": 1589,
+          "R4_mm": 12389,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          121
+        ]
+      }
+    },
+    "provisional": {
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "system_anchor": {
+        "region_assignment": "MIXED_MIDDLE_PILLAR",
+        "status": "PROVISIONAL"
+      }
+    },
+    "pending": {
+      "steel_arch": {
+        "reason": "I18_SECTION_DIMENSIONS_NOT_CONFIRMED",
+        "missing_fields": [
+          "height",
+          "width",
+          "web_thickness",
+          "flange_thickness"
+        ],
+        "status": "MISSING"
+      },
+      "secondary_rebar": {
+        "reason": "N3_N4_TYPE_SPECIFIC_PARAMETERS_NOT_IN_CURRENT_15_FIELD_SCHEMA",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "PARTIAL",
+      "steel_arch": "NOT_IMPLEMENTED",
+      "system_anchor": "PARTIAL",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "N1": "READY",
+      "N2": "READY",
+      "N3": "NOT_IMPLEMENTED",
+      "N4": "NOT_IMPLEMENTED"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 240,
+        "reserved_deformation_mm": 80,
+        "status": "CONFIRMED",
+        "source_pages": [
+          120
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 450,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          120
+        ]
+      },
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "steel_arch": {
+        "R1_mm": 6140,
+        "R2_mm": 10640,
+        "beta_deg": 15.7861,
+        "steel_profile": "I18",
+        "longitudinal_spacing_mm": 800,
+        "status": "CONFIRMED",
+        "source_pages": [
+          122,
+          123
+        ]
+      },
+      "system_anchor": {
+        "region_assignment": "MIXED_MIDDLE_PILLAR",
+        "status": "PROVISIONAL"
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "R1_mm": 5889,
+          "R2_mm": 10389,
+          "R3_mm": 1589,
+          "R4_mm": 12389,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          121
+        ]
+      }
+    }
+  },
+  "ZZ-IVsx": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-IVsx",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        124,
+        125,
+        126,
+        127
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 240,
+        "reserved_deformation_mm": 80,
+        "status": "CONFIRMED",
+        "source_pages": [
+          124
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 450,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          124
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 250
+        },
+        "layers": 1,
+        "scope": "ARCH_AND_WALL",
+        "status": "CONFIRMED"
+      },
+      "steel_arch": {
+        "R1_mm": 6140,
+        "R2_mm": 10640,
+        "beta_deg": 15.7861,
+        "steel_profile": "I18",
+        "longitudinal_spacing_mm": 800,
+        "status": "CONFIRMED",
+        "source_pages": [
+          126,
+          127
+        ]
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 4500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 800,
+        "scope": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "CONFIRMED",
+        "source_pages": [
+          124
+        ]
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "R1_mm": 5889,
+          "R2_mm": 10389,
+          "R3_mm": 1589,
+          "R4_mm": 12389,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          125
+        ]
+      }
+    },
+    "provisional": {
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "system_anchor": {
+        "region_assignment": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "PROVISIONAL"
+      }
+    },
+    "pending": {
+      "steel_arch": {
+        "reason": "I18_SECTION_DIMENSIONS_NOT_CONFIRMED",
+        "missing_fields": [
+          "height",
+          "width",
+          "web_thickness",
+          "flange_thickness"
+        ],
+        "status": "MISSING"
+      },
+      "secondary_rebar": {
+        "reason": "N3_N4_TYPE_SPECIFIC_PARAMETERS_NOT_IN_CURRENT_15_FIELD_SCHEMA",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "PARTIAL",
+      "steel_arch": "NOT_IMPLEMENTED",
+      "system_anchor": "PARTIAL",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "READY",
+      "N1": "READY",
+      "N2": "READY",
+      "N3": "NOT_IMPLEMENTED",
+      "N4": "NOT_IMPLEMENTED"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 240,
+        "reserved_deformation_mm": 80,
+        "status": "CONFIRMED",
+        "source_pages": [
+          124
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 450,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          124
+        ]
+      },
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "steel_arch": {
+        "R1_mm": 6140,
+        "R2_mm": 10640,
+        "beta_deg": 15.7861,
+        "steel_profile": "I18",
+        "longitudinal_spacing_mm": 800,
+        "status": "CONFIRMED",
+        "source_pages": [
+          126,
+          127
+        ]
+      },
+      "system_anchor": {
+        "region_assignment": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "PROVISIONAL"
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "R1_mm": 5889,
+          "R2_mm": 10389,
+          "R3_mm": 1589,
+          "R4_mm": 12389,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          125
+        ]
+      }
+    }
+  },
+  "ZZ-Vsx": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-Vsx",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        128,
+        129,
+        130,
+        131
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 260,
+        "reserved_deformation_mm": 100,
+        "status": "CONFIRMED",
+        "source_pages": [
+          128
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 500,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          128
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 200
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 200
+        },
+        "layers": 1,
+        "scope": "ARCH_AND_WALL",
+        "status": "CONFIRMED"
+      },
+      "steel_arch": {
+        "R1_mm": 6220,
+        "R2_mm": 10720,
+        "beta_deg": 15.6669,
+        "steel_profile": "I20a",
+        "longitudinal_spacing_mm": 600,
+        "status": "CONFIRMED",
+        "source_pages": [
+          130,
+          131
+        ]
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 4500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 600,
+        "scope": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "CONFIRMED",
+        "source_pages": [
+          128
+        ]
+      },
+      "lock_foot": {
+        "outer_diameter_mm": 42,
+        "wall_thickness_mm": 4,
+        "length_mm": 3500,
+        "count_per_arch": 8,
+        "status": "CONFIRMED"
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "R1_mm": 5939,
+          "R2_mm": 10439,
+          "R3_mm": 1639,
+          "R4_mm": 12439,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          129
+        ]
+      }
+    },
+    "provisional": {
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "system_anchor": {
+        "region_assignment": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "PROVISIONAL"
+      },
+      "lock_foot": {
+        "upper_height_mm": 250,
+        "lower_height_mm": 100,
+        "upper_angle_deg": 7.5,
+        "lower_angle_deg": 45,
+        "pair_spread_deg": 10,
+        "status": "PROVISIONAL"
+      }
+    },
+    "pending": {
+      "secondary_rebar": {
+        "reason": "N3_N4_TYPE_SPECIFIC_PARAMETERS_NOT_IN_CURRENT_15_FIELD_SCHEMA",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "PARTIAL",
+      "steel_arch": "READY",
+      "system_anchor": "PARTIAL",
+      "lock_foot": "PARTIAL",
+      "secondary_lining": "READY",
+      "N1": "READY",
+      "N2": "READY",
+      "N3": "NOT_IMPLEMENTED",
+      "N4": "NOT_IMPLEMENTED"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 260,
+        "reserved_deformation_mm": 100,
+        "status": "CONFIRMED",
+        "source_pages": [
+          128
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 500,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          128
+        ]
+      },
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "steel_arch": {
+        "R1_mm": 6220,
+        "R2_mm": 10720,
+        "beta_deg": 15.6669,
+        "steel_profile": "I20a",
+        "longitudinal_spacing_mm": 600,
+        "status": "CONFIRMED",
+        "source_pages": [
+          130,
+          131
+        ]
+      },
+      "system_anchor": {
+        "region_assignment": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "PROVISIONAL"
+      },
+      "lock_foot": {
+        "upper_height_mm": 250,
+        "lower_height_mm": 100,
+        "upper_angle_deg": 7.5,
+        "lower_angle_deg": 45,
+        "pair_spread_deg": 10,
+        "status": "PROVISIONAL"
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 22,
+          "R1_mm": 5939,
+          "R2_mm": 10439,
+          "R3_mm": 1639,
+          "R4_mm": 12439,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 22,
+          "r1_mm": 5561,
+          "r2_mm": 10061,
+          "r3_mm": 1261,
+          "r4_mm": 12061,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          129
+        ]
+      }
+    }
+  },
+  "ZZ-QJsx": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZZ-QJsx",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        132,
+        133,
+        134,
+        135
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 260,
+        "reserved_deformation_mm": 120,
+        "status": "CONFIRMED",
+        "source_pages": [
+          132
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 550,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          132
+        ]
+      },
+      "primary_mesh": {
+        "circumferential_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 200
+        },
+        "longitudinal_bar": {
+          "diameter_mm": 8,
+          "spacing_mm": 200
+        },
+        "layers": 1,
+        "scope": "ARCH_AND_WALL",
+        "status": "CONFIRMED"
+      },
+      "steel_arch": {
+        "R1_mm": 6290,
+        "R2_mm": 10790,
+        "beta_deg": 15.5422,
+        "steel_profile": "I20a",
+        "longitudinal_spacing_mm": 500,
+        "status": "CONFIRMED",
+        "source_pages": [
+          134,
+          135
+        ]
+      },
+      "system_anchor": {
+        "diameter_mm": 25,
+        "length_mm": 4500,
+        "circumferential_spacing_mm": 1200,
+        "longitudinal_spacing_mm": 500,
+        "scope": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "CONFIRMED",
+        "source_pages": [
+          132
+        ]
+      },
+      "lock_foot": {
+        "outer_diameter_mm": 42,
+        "wall_thickness_mm": 4,
+        "length_mm": 3500,
+        "count_per_arch": 8,
+        "status": "CONFIRMED"
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 25,
+          "R1_mm": 5988,
+          "R2_mm": 10488,
+          "R3_mm": 1688,
+          "R4_mm": 12488,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 25,
+          "r1_mm": 5563,
+          "r2_mm": 10063,
+          "r3_mm": 1263,
+          "r4_mm": 12063,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          133
+        ]
+      }
+    },
+    "provisional": {
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "system_anchor": {
+        "region_assignment": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "PROVISIONAL"
+      },
+      "lock_foot": {
+        "upper_height_mm": 250,
+        "lower_height_mm": 100,
+        "upper_angle_deg": 7.5,
+        "lower_angle_deg": 45,
+        "pair_spread_deg": 10,
+        "status": "PROVISIONAL"
+      }
+    },
+    "pending": {
+      "secondary_rebar": {
+        "reason": "N3_N4_TYPE_SPECIFIC_PARAMETERS_NOT_IN_CURRENT_15_FIELD_SCHEMA",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "READY",
+      "primary_mesh": "PARTIAL",
+      "steel_arch": "READY",
+      "system_anchor": "PARTIAL",
+      "lock_foot": "PARTIAL",
+      "secondary_lining": "READY",
+      "N1": "READY",
+      "N2": "READY",
+      "N3": "NOT_IMPLEMENTED",
+      "N4": "NOT_IMPLEMENTED"
+    },
+    "model_ready": true,
+    "resolved_parameters": {
+      "inner_profile": {
+        "top_radius_mm": 5500,
+        "side_radius_mm": 10000,
+        "side_angle_deg": 11.699444444444445,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          74,
+          76
+        ]
+      },
+      "primary_support": {
+        "material": "C25高性能喷射混凝土",
+        "total_thickness_mm": 260,
+        "reserved_deformation_mm": 120,
+        "status": "CONFIRMED",
+        "source_pages": [
+          132
+        ]
+      },
+      "secondary_lining": {
+        "material": "C35钢筋混凝土",
+        "thickness_mm": 550,
+        "has_invert": true,
+        "status": "CONFIRMED",
+        "source_pages": [
+          132
+        ]
+      },
+      "primary_mesh": {
+        "reference_side": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+        "status": "PROVISIONAL"
+      },
+      "steel_arch": {
+        "R1_mm": 6290,
+        "R2_mm": 10790,
+        "beta_deg": 15.5422,
+        "steel_profile": "I20a",
+        "longitudinal_spacing_mm": 500,
+        "status": "CONFIRMED",
+        "source_pages": [
+          134,
+          135
+        ]
+      },
+      "system_anchor": {
+        "region_assignment": "MIXED_BILATERAL_MIDDLE_PILLAR",
+        "status": "PROVISIONAL"
+      },
+      "lock_foot": {
+        "upper_height_mm": 250,
+        "lower_height_mm": 100,
+        "upper_angle_deg": 7.5,
+        "lower_angle_deg": 45,
+        "pair_spread_deg": 10,
+        "status": "PROVISIONAL"
+      },
+      "secondary_rebar": {
+        "N1": {
+          "diameter_mm": 25,
+          "R1_mm": 5988,
+          "R2_mm": 10488,
+          "R3_mm": 1688,
+          "R4_mm": 12488,
+          "status": "CONFIRMED"
+        },
+        "N2": {
+          "diameter_mm": 25,
+          "r1_mm": 5563,
+          "r2_mm": 10063,
+          "r3_mm": 1263,
+          "r4_mm": 12063,
+          "status": "CONFIRMED"
+        },
+        "angles_deg": {
+          "A": 22.409166666666664,
+          "B": 11.699444444444445,
+          "C": 55.89138888888889
+        },
+        "source_pages": [
+          133
+        ]
+      }
+    }
+  },
+  "Z-PM": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "Z-PM",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        84,
+        85
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "secondary_lining": {
+        "thickness_mm": 550,
+        "status": "CONFIRMED",
+        "source_pages": [
+          84
+        ]
+      }
+    },
+    "provisional": {},
+    "pending": {
+      "inner_profile": {
+        "reason": "SPECIAL_PORTAL_PROFILE_GENERATOR_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      },
+      "secondary_rebar": {
+        "reason": "SPECIAL_SEGMENTED_REBAR_GENERATOR_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "NOT_APPLICABLE",
+      "primary_mesh": "NOT_APPLICABLE",
+      "steel_arch": "NOT_APPLICABLE",
+      "system_anchor": "NOT_APPLICABLE",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "NOT_IMPLEMENTED",
+      "N1": "NOT_IMPLEMENTED",
+      "N2": "NOT_IMPLEMENTED",
+      "N3": "NOT_IMPLEMENTED",
+      "N4": "NOT_IMPLEMENTED"
+    },
+    "resolved_parameters": {
+      "secondary_lining": {
+        "thickness_mm": 550,
+        "status": "CONFIRMED"
+      }
+    },
+    "model_ready": false
+  },
+  "ZB-PM": {
+    "schema": "SupportParameterPayload/V1",
+    "support_type": "ZB-PM",
+    "source": {
+      "pdf_name": "support_drawings.pdf",
+      "pages": [
+        62,
+        86,
+        87,
+        88,
+        315
+      ],
+      "extraction_source": "EXISTING_REAL_OCR_AND_PROJECT_EVIDENCE"
+    },
+    "confirmed": {
+      "secondary_lining": {
+        "thickness_mm": 600,
+        "status": "CONFIRMED",
+        "source_pages": [
+          62
+        ]
+      }
+    },
+    "provisional": {},
+    "pending": {
+      "inner_profile": {
+        "reason": "SPECIAL_PORTAL_PROFILE_GENERATOR_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      },
+      "secondary_rebar": {
+        "reason": "SPECIAL_SEGMENTED_REBAR_GENERATOR_NOT_IMPLEMENTED",
+        "status": "MISSING"
+      }
+    },
+    "component_status": {
+      "primary_concrete": "NOT_APPLICABLE",
+      "primary_mesh": "NOT_APPLICABLE",
+      "steel_arch": "NOT_APPLICABLE",
+      "system_anchor": "NOT_APPLICABLE",
+      "lock_foot": "NOT_APPLICABLE",
+      "secondary_lining": "NOT_IMPLEMENTED",
+      "N1": "NOT_IMPLEMENTED",
+      "N2": "NOT_IMPLEMENTED",
+      "N3": "NOT_IMPLEMENTED",
+      "N4": "NOT_IMPLEMENTED"
+    },
+    "resolved_parameters": {
+      "secondary_lining": {
+        "thickness_mm": 600,
+        "status": "CONFIRMED"
+      }
+    },
+    "model_ready": false
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "support_type": "ZZ-Va",
+  "version": 2,
+  "source": "施工方案表4.7-1及表4.7-2审计",
+  "production_support_parameters_modified": false,
+  "PRIMARY_SUPPORT_CONCRETE": {
+    "status": "PRIMARY_SUPPORT_CONCRETE_IMPLEMENTED",
+    "scope": "ARCH_AND_WALL_ONLY",
+    "invert": "NOT_APPLICABLE",
+    "thickness_mm": 260
+  },
+  "PRIMARY_SUPPORT_MESH": {
+    "status": "PRIMARY_SUPPORT_MESH_PARTIAL",
+    "scope": "ARCH_AND_WALL_ONLY",
+    "top": "IMPLEMENTED",
+    "side": "IMPLEMENTED",
+    "invert": "NOT_APPLICABLE",
+    "unresolved_reason": "LOCAL_STEEL_ARCH_CONNECTION_SIDE_PROVISIONAL",
+    "connection_required": true,
+    "connection_type": "TIED_OR_WELDED",
+    "connection_side": "ROCK_SIDE",
+    "connection_side_status": "PROVISIONAL",
+    "engineering_confirmation": "PENDING"
+  },
+  "steel_arch": {
+    "status": "STEEL_ARCH_IMPLEMENTED",
+    "scope": "ARCH_AND_WALL_ONLY",
+    "invert": "NOT_APPLICABLE",
+    "profile": "I20a",
+    "longitudinal_spacing_mm": 800
+  },
+  "readiness": {
+    "PRIMARY_SUPPORT_CONCRETE_READY": true,
+    "PRIMARY_SUPPORT_MESH_TOP_SIDE_READY": true,
+    "PRIMARY_SUPPORT_MESH_INVERT_READY": "NOT_APPLICABLE",
+    "STEEL_ARCH_INVERT_READY": "NOT_APPLICABLE",
+    "EXCAVATION_FULL_READY": false,
+    "SYSTEM_ANCHOR_READY": true
+  }
+}

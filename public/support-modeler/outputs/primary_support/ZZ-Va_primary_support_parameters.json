@@ -1,0 +1,84 @@
+{
+  "support_type": "ZZ-Va",
+  "status": "PRIMARY_SUPPORT_CONCRETE_IMPLEMENTED",
+  "scope": "ARCH_AND_WALL_ONLY",
+  "invert": "NOT_APPLICABLE",
+  "total_thickness_mm": 260.0,
+  "reserved_deformation_mm": 100.0,
+  "secondary_lining_thickness_mm": 500.0,
+  "steel_profile": "I20a",
+  "steel_radial_depth_mm": 200.0,
+  "steel_centerline": {
+    "top_radius_mm": 6220.0,
+    "side_radius_mm": 10720.0,
+    "beta_deg": 15.6664
+  },
+  "regions": {
+    "top": {
+      "inner_radius_mm": 6100.0,
+      "outer_radius_mm": 6360.0,
+      "status": "CONFIRMED"
+    },
+    "side": {
+      "inner_radius_mm": 10600.0,
+      "outer_radius_mm": 10860.0,
+      "angle_deg": 15.6664,
+      "status": "CONFIRMED"
+    },
+    "invert_transition": {
+      "value": null,
+      "status": "NOT_APPLICABLE"
+    },
+    "invert_bottom": {
+      "value": null,
+      "status": "NOT_APPLICABLE"
+    }
+  },
+  "layer_relation": {
+    "inner_material": "复喷混凝土",
+    "inner_cover_to_steel_mm": 20.0,
+    "steel_radial_depth_mm": 200.0,
+    "outer_material": "初喷混凝土",
+    "outer_cover_mm": 40.0,
+    "sum_mm": 260.0,
+    "status": "CONFIRMED",
+    "evidence": [
+      "参数识别.docx：初支混凝土半径=钢架半径-钢架厚度/2-复喷混凝土厚度",
+      "参数识别.docx：厚度20+200+40或者直接识别厚度",
+      "第109页：C25高性能喷射混凝土厚26cm"
+    ]
+  },
+  "sources": [
+    {
+      "page": 109,
+      "source_text": "C25高性能喷射混凝土厚：26cm",
+      "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+      "status": "CONFIRMED"
+    },
+    {
+      "page": 109,
+      "source_text": "预留变形量 10cm；C35钢筋混凝土 50cm",
+      "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+      "status": "CONFIRMED"
+    },
+    {
+      "page": 111,
+      "source_text": "I20a钢架 R1=6220, R2=10720, beta=15.6664°",
+      "source_method": "EXISTING_VERIFIED_STEEL_ARCH",
+      "status": "CONFIRMED"
+    },
+    {
+      "page": null,
+      "source_text": "初支混凝土半径公式；厚度20+200+40",
+      "source_method": "PARAMETER_RECOGNITION_DOCX",
+      "status": "CONFIRMED"
+    }
+  ],
+  "readiness": {
+    "PRIMARY_SUPPORT_CONCRETE_READY": true,
+    "PRIMARY_SUPPORT_TOP_SIDE_READY": true,
+    "PRIMARY_SUPPORT_INVERT_READY": "NOT_APPLICABLE",
+    "EXCAVATION_FULL_READY": false,
+    "SYSTEM_ANCHOR_READY": true
+  }
+}

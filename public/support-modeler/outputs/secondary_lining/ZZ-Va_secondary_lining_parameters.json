@@ -1,0 +1,13 @@
+{
+  "support_type": "ZZ-Va",
+  "thickness_mm": 500.0,
+  "inner_profile_source": "sectionGeometryState.inner_profile",
+  "has_invert": true,
+  "source_page": 109,
+  "source_text": "C35钢筋混凝土 50cm",
+  "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+  "parameter_type": "DIRECT",
+  "confidence": 1.0,
+  "material": "C35 reinforced concrete",
+  "extrusion_depth_mm": 1000.0
+}

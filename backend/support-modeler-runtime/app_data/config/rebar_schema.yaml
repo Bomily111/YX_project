@@ -1,0 +1,30 @@
+schema_version: 1
+supported_types:
+  - ZZ-Va
+  - ZZ-S
+title_anchors:
+  - N1、N2钢筋大样
+render_dpi: 400
+fields:
+  N1:
+    - diameter_mm
+    - length_mm
+    - R1_mm
+    - R2_mm
+    - R3_mm
+    - R4_mm
+  N2:
+    - diameter_mm
+    - length_mm
+    - r1_mm
+    - r2_mm
+    - r3_mm
+    - r4_mm
+  common:
+    - angle_A
+    - angle_B
+    - angle_C
+angle_assignment:
+  angle_A: top_symmetric_control_angle
+  angle_B: middle_control_angle_near_R1_r1
+  angle_C: lower_arc_control_angle

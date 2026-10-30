@@ -1,0 +1,538 @@
+{
+  "support_type": "ZZ-Va",
+  "status": "PRIMARY_SUPPORT_CONCRETE_IMPLEMENTED",
+  "sectionGeometryState_extension": {
+    "primary_support": {
+      "concrete": {
+        "status": "IMPLEMENTED",
+        "scope": "ARCH_AND_WALL_ONLY",
+        "invert": "NOT_APPLICABLE",
+        "top": {
+          "inner_radius_mm": 6100.0,
+          "outer_radius_mm": 6360.0,
+          "status": "CONFIRMED"
+        },
+        "side": {
+          "inner_radius_mm": 10600.0,
+          "outer_radius_mm": 10860.0,
+          "angle_deg": 15.6664,
+          "status": "CONFIRMED"
+        },
+        "invert_transition": {
+          "status": "NOT_APPLICABLE"
+        },
+        "invert_bottom": {
+          "status": "NOT_APPLICABLE"
+        },
+        "thickness_mm": 260.0,
+        "profile": {
+          "inner": {
+            "role": "PRIMARY_SUPPORT_INNER_REFERENCE",
+            "coordinate_system": "x_right_y_up_mm",
+            "construction": "STEEL_ARCH_REFERENCED_THREE_ARC_OPEN_PROFILE",
+            "top_radius_mm": 6100.0,
+            "side_radius_mm": 10600.0,
+            "side_angle_deg": 15.6664,
+            "center_offset_mm": 4500.0,
+            "segments": [
+              {
+                "name": "left_side",
+                "center_mm": [
+                  4500.0,
+                  0.0
+                ],
+                "radius_mm": 10600.0,
+                "start_angle_deg": 195.6664,
+                "end_angle_deg": 180.0,
+                "start_mm": [
+                  -5706.212854280757,
+                  -2862.379984054219
+                ],
+                "end_mm": [
+                  -6100.0,
+                  1.2981256070961944e-12
+                ],
+                "status": "CONFIRMED"
+              },
+              {
+                "name": "top",
+                "center_mm": [
+                  0.0,
+                  0.0
+                ],
+                "radius_mm": 6100.0,
+                "start_angle_deg": 180.0,
+                "end_angle_deg": 0.0,
+                "start_mm": [
+                  -6100.0,
+                  7.470345474798854e-13
+                ],
+                "end_mm": [
+                  6100.0,
+                  0.0
+                ],
+                "status": "CONFIRMED"
+              },
+              {
+                "name": "right_side",
+                "center_mm": [
+                  -4500.0,
+                  0.0
+                ],
+                "radius_mm": 10600.0,
+                "start_angle_deg": 0.0,
+                "end_angle_deg": -15.6664,
+                "start_mm": [
+                  6100.0,
+                  0.0
+                ],
+                "end_mm": [
+                  5706.212854280757,
+                  -2862.379984054219
+                ],
+                "status": "CONFIRMED"
+              }
+            ],
+            "open_at_invert": true,
+            "omitted_segments": [
+              "invert_transition",
+              "invert_bottom"
+            ]
+          },
+          "outer": {
+            "role": "EXCAVATION_OUTER_BOUNDARY",
+            "coordinate_system": "x_right_y_up_mm",
+            "construction": "STEEL_ARCH_REFERENCED_THREE_ARC_OPEN_PROFILE",
+            "top_radius_mm": 6360.0,
+            "side_radius_mm": 10860.0,
+            "side_angle_deg": 15.6664,
+            "center_offset_mm": 4500.0,
+            "segments": [
+              {
+                "name": "left_side",
+                "center_mm": [
+                  4500.0,
+                  0.0
+                ],
+                "radius_mm": 10860.0,
+                "start_angle_deg": 195.6664,
+                "end_angle_deg": 180.0,
+                "start_mm": [
+                  -5956.5539242914165,
+                  -2932.5893044178133
+                ],
+                "end_mm": [
+                  -6360.0,
+                  1.3299664238740256e-12
+                ],
+                "status": "CONFIRMED"
+              },
+              {
+                "name": "top",
+                "center_mm": [
+                  0.0,
+                  0.0
+                ],
+                "radius_mm": 6360.0,
+                "start_angle_deg": 180.0,
+                "end_angle_deg": 0.0,
+                "start_mm": [
+                  -6360.0,
+                  7.788753642577167e-13
+                ],
+                "end_mm": [
+                  6360.0,
+                  0.0
+                ],
+                "status": "CONFIRMED"
+              },
+              {
+                "name": "right_side",
+                "center_mm": [
+                  -4500.0,
+                  0.0
+                ],
+                "radius_mm": 10860.0,
+                "start_angle_deg": 0.0,
+                "end_angle_deg": -15.6664,
+                "start_mm": [
+                  6360.0,
+                  0.0
+                ],
+                "end_mm": [
+                  5956.5539242914165,
+                  -2932.5893044178133
+                ],
+                "status": "CONFIRMED"
+              }
+            ],
+            "open_at_invert": true,
+            "omitted_segments": [
+              "invert_transition",
+              "invert_bottom"
+            ]
+          },
+          "thickness_mm": 260.0,
+          "scope": "ARCH_AND_WALL_ONLY",
+          "invert": "NOT_APPLICABLE",
+          "unresolved": null
+        }
+      },
+      "steel_arch": {
+        "profile": "I20a",
+        "centerline": {
+          "top_radius_mm": 6220.0,
+          "side_radius_mm": 10720.0,
+          "beta_deg": 15.6664
+        },
+        "relation": {
+          "inner_material": "复喷混凝土",
+          "inner_cover_to_steel_mm": 20.0,
+          "steel_radial_depth_mm": 200.0,
+          "outer_material": "初喷混凝土",
+          "outer_cover_mm": 40.0,
+          "sum_mm": 260.0,
+          "status": "CONFIRMED",
+          "evidence": [
+            "参数识别.docx：初支混凝土半径=钢架半径-钢架厚度/2-复喷混凝土厚度",
+            "参数识别.docx：厚度20+200+40或者直接识别厚度",
+            "第109页：C25高性能喷射混凝土厚26cm"
+          ]
+        },
+        "scope": "ARCH_AND_WALL_ONLY",
+        "invert": "NOT_APPLICABLE",
+        "longitudinal_spacing_mm": 800.0
+      }
+    }
+  },
+  "geometry": {
+    "profiles": {
+      "inner": {
+        "role": "PRIMARY_SUPPORT_INNER_REFERENCE",
+        "coordinate_system": "x_right_y_up_mm",
+        "construction": "STEEL_ARCH_REFERENCED_THREE_ARC_OPEN_PROFILE",
+        "top_radius_mm": 6100.0,
+        "side_radius_mm": 10600.0,
+        "side_angle_deg": 15.6664,
+        "center_offset_mm": 4500.0,
+        "segments": [
+          {
+            "name": "left_side",
+            "center_mm": [
+              4500.0,
+              0.0
+            ],
+            "radius_mm": 10600.0,
+            "start_angle_deg": 195.6664,
+            "end_angle_deg": 180.0,
+            "start_mm": [
+              -5706.212854280757,
+              -2862.379984054219
+            ],
+            "end_mm": [
+              -6100.0,
+              1.2981256070961944e-12
+            ],
+            "status": "CONFIRMED"
+          },
+          {
+            "name": "top",
+            "center_mm": [
+              0.0,
+              0.0
+            ],
+            "radius_mm": 6100.0,
+            "start_angle_deg": 180.0,
+            "end_angle_deg": 0.0,
+            "start_mm": [
+              -6100.0,
+              7.470345474798854e-13
+            ],
+            "end_mm": [
+              6100.0,
+              0.0
+            ],
+            "status": "CONFIRMED"
+          },
+          {
+            "name": "right_side",
+            "center_mm": [
+              -4500.0,
+              0.0
+            ],
+            "radius_mm": 10600.0,
+            "start_angle_deg": 0.0,
+            "end_angle_deg": -15.6664,
+            "start_mm": [
+              6100.0,
+              0.0
+            ],
+            "end_mm": [
+              5706.212854280757,
+              -2862.379984054219
+            ],
+            "status": "CONFIRMED"
+          }
+        ],
+        "open_at_invert": true,
+        "omitted_segments": [
+          "invert_transition",
+          "invert_bottom"
+        ]
+      },
+      "outer": {
+        "role": "EXCAVATION_OUTER_BOUNDARY",
+        "coordinate_system": "x_right_y_up_mm",
+        "construction": "STEEL_ARCH_REFERENCED_THREE_ARC_OPEN_PROFILE",
+        "top_radius_mm": 6360.0,
+        "side_radius_mm": 10860.0,
+        "side_angle_deg": 15.6664,
+        "center_offset_mm": 4500.0,
+        "segments": [
+          {
+            "name": "left_side",
+            "center_mm": [
+              4500.0,
+              0.0
+            ],
+            "radius_mm": 10860.0,
+            "start_angle_deg": 195.6664,
+            "end_angle_deg": 180.0,
+            "start_mm": [
+              -5956.5539242914165,
+              -2932.5893044178133
+            ],
+            "end_mm": [
+              -6360.0,
+              1.3299664238740256e-12
+            ],
+            "status": "CONFIRMED"
+          },
+          {
+            "name": "top",
+            "center_mm": [
+              0.0,
+              0.0
+            ],
+            "radius_mm": 6360.0,
+            "start_angle_deg": 180.0,
+            "end_angle_deg": 0.0,
+            "start_mm": [
+              -6360.0,
+              7.788753642577167e-13
+            ],
+            "end_mm": [
+              6360.0,
+              0.0
+            ],
+            "status": "CONFIRMED"
+          },
+          {
+            "name": "right_side",
+            "center_mm": [
+              -4500.0,
+              0.0
+            ],
+            "radius_mm": 10860.0,
+            "start_angle_deg": 0.0,
+            "end_angle_deg": -15.6664,
+            "start_mm": [
+              6360.0,
+              0.0
+            ],
+            "end_mm": [
+              5956.5539242914165,
+              -2932.5893044178133
+            ],
+            "status": "CONFIRMED"
+          }
+        ],
+        "open_at_invert": true,
+        "omitted_segments": [
+          "invert_transition",
+          "invert_bottom"
+        ]
+      },
+      "thickness_mm": 260.0,
+      "scope": "ARCH_AND_WALL_ONLY",
+      "invert": "NOT_APPLICABLE",
+      "unresolved": null
+    },
+    "three_geometry": {
+      "coordinate_system": "x_right_y_up_z_forward_m",
+      "unit": "m",
+      "depth_m": 1.0,
+      "mesh_count": 1,
+      "vertex_count": 772,
+      "triangle_count": 1540,
+      "bbox_m": {
+        "min": [
+          -6.36,
+          -2.9325893044178133,
+          0.0
+        ],
+        "max": [
+          6.36,
+          6.36,
+          1.0
+        ],
+        "size": [
+          12.72,
+          9.292589304417813,
+          1.0
+        ]
+      },
+      "open_at_invert": true
+    }
+  },
+  "validation": {
+    "total_thickness_mm": 260.0,
+    "top_thickness_mm": 260.0,
+    "side_thickness_mm": 260.0,
+    "layer_sum_mm": 260.0,
+    "steel_radial_extent_from_centerline_mm": {
+      "min_mm": -100.00026141901853,
+      "max_mm": 100.00028908483839
+    },
+    "steel_inside_confirmed_top_side_layer": true,
+    "inner_surface_to_steel_inner_mm": 20.0,
+    "steel_outer_to_excavation_mm": 40.0,
+    "secondary_outer_to_primary_inner_mm": 100.0,
+    "profile_open_at_invert": true,
+    "invert_transition_absent": true,
+    "invert_bottom_absent": true,
+    "mesh_open_scope": true,
+    "all_confirmed_scope_checks_passed": true,
+    "source_artifacts_unchanged": true,
+    "primary_glb_valid": true,
+    "combined_glb_valid": true
+  },
+  "readiness": {
+    "PRIMARY_SUPPORT_CONCRETE_READY": true,
+    "PRIMARY_SUPPORT_TOP_SIDE_READY": true,
+    "PRIMARY_SUPPORT_INVERT_READY": "NOT_APPLICABLE",
+    "EXCAVATION_FULL_READY": false,
+    "SYSTEM_ANCHOR_READY": true
+  },
+  "unresolved": [],
+  "source_hashes": {
+    "config/zz_va_base_profile_sources.json": "b6ccd36f736d202eb46ecbf76435d691a6583d608a827f6f003a370e8997157f",
+    "outputs/base_profile/ZZ-Va_section_geometry.json": "fe4694257ad682c207f832aca84e2357639719c57f6056477c866e6f84f8117f",
+    "outputs/I20a_validation/ZZ-Va_I20a_steel_arch.glb": "e582151f4d7df66ea133faadb3a024142740011fc184326424a762e2ce7796b9",
+    "outputs/secondary_rebar_assembly/ZZ-Va_secondary_rebar_assembly_state.json": "4e1bad7f96d74ec3a54adadb30b2816d2b724ba92074e3a4f05e5eb9c06ddd3b"
+  },
+  "glb": {
+    "primary_partial": {
+      "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\primary_support\\ZZ-Va_primary_support.glb",
+      "byte_length": 28956,
+      "mesh_count": 1,
+      "mesh_names": [
+        "primarySupportConcreteTopSideMesh"
+      ],
+      "node_names": [
+        "primarySupportConcreteGroup",
+        "primarySupportConcreteTopSideMesh"
+      ],
+      "metadata": {
+        "support_type": "ZZ-Va",
+        "primary_support_scope": "ARCH_AND_WALL_ONLY",
+        "invert": "NOT_APPLICABLE",
+        "unresolved": null,
+        "status": "PRIMARY_SUPPORT_CONCRETE_IMPLEMENTED"
+      },
+      "bbox_m": {
+        "min": [
+          -6.36,
+          -2.9325893044178133,
+          0.0
+        ],
+        "max": [
+          6.36,
+          6.36,
+          1.0
+        ],
+        "size": [
+          12.72,
+          9.292589304417813,
+          1.0
+        ]
+      }
+    },
+    "combined_assembly": {
+      "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\section_assembly\\ZZ-Va_implemented_components_with_primary_partial.glb",
+      "byte_length": 3042344,
+      "mesh_count": 7,
+      "mesh_names": [
+        "primarySupportConcreteTopSideMesh",
+        "steelArchMesh",
+        "secondaryLiningMesh",
+        "N1Mesh",
+        "N2Mesh",
+        "N3Mesh",
+        "N4Mesh"
+      ],
+      "node_names": [
+        "ZZVaSectionAssemblyGroup",
+        "primarySupportGroup",
+        "primarySupportConcreteGroup",
+        "primarySupportConcreteTopSideMesh",
+        "steelArchGroup",
+        "secondarySystemGroup",
+        "secondaryLiningGroup",
+        "secondaryLiningMesh",
+        "secondaryRebarGroup",
+        "assemblyMetadata",
+        "steelArchMesh",
+        "N1Group",
+        "N1Mesh",
+        "N2Group",
+        "N2Mesh",
+        "N3Group",
+        "N3Mesh",
+        "N4Group",
+        "N4Mesh"
+      ],
+      "metadata": {
+        "support_type": "ZZ-Va",
+        "assembly_scope": "IMPLEMENTED_COMPONENTS_WITH_PRIMARY_SUPPORT",
+        "primary_support_scope": "ARCH_AND_WALL_ONLY",
+        "primary_support_status": "PRIMARY_SUPPORT_CONCRETE_IMPLEMENTED",
+        "invert": "NOT_APPLICABLE",
+        "unresolved": null,
+        "contains": [
+          "primary_support_concrete_top_side",
+          "steel_arch",
+          "secondary_lining",
+          "N1",
+          "N2",
+          "N3",
+          "N4"
+        ],
+        "missing": [
+          "primary_support_invert",
+          "primary_support_rebar_mesh",
+          "anchors",
+          "advance_support"
+        ],
+        "coordinate_system": "x_right_y_up_z_forward_m"
+      },
+      "bbox_m": {
+        "min": [
+          -6.36,
+          -4.300006051818082,
+          0.0
+        ],
+        "max": [
+          6.36,
+          6.36,
+          1.0
+        ],
+        "size": [
+          12.72,
+          10.660006051818083,
+          1.0
+        ]
+      }
+    }
+  }
+}

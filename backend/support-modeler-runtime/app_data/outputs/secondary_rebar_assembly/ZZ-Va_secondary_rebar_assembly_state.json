@@ -1,0 +1,163 @@
+{
+  "support_type": "ZZ-Va",
+  "status": "SECONDARY_REBAR_ASSEMBLY_IMPLEMENTED",
+  "component_status": {
+    "N3": "N3_IMPLEMENTED",
+    "N4": "N4_IMPLEMENTED"
+  },
+  "coordinate_system": {
+    "engineering": "x right, y up, z tunnel longitudinal; mm",
+    "three_js": "m"
+  },
+  "sectionAssemblyState": {
+    "secondary_lining": {
+      "reference": "sectionGeometryState.secondary_lining",
+      "reused": true
+    },
+    "rebar": {
+      "N1": {
+        "reference": "verified N1",
+        "unchanged": true
+      },
+      "N2": {
+        "reference": "verified N2",
+        "unchanged": true
+      },
+      "N3": {
+        "parameters": {
+          "diameter_mm": 12,
+          "length_mm": 1000,
+          "circumferential_spacing_mm": 250,
+          "longitudinal_spacing_mm": null,
+          "layout_mode": "CENTER_ALIGNED_TWO_LAYERS",
+          "layers": [
+            "N1_OUTER",
+            "N2_INNER"
+          ],
+          "source_page": 110,
+          "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+          "status": "N3_IMPLEMENTED"
+        },
+        "layout": [
+          {
+            "layer": "N1_OUTER",
+            "count": 144,
+            "actual_spacing_mm": 248.94709802116202,
+            "target_spacing_mm": 250,
+            "center_started": true,
+            "symmetric": true
+          },
+          {
+            "layer": "N2_INNER",
+            "count": 134,
+            "actual_spacing_mm": 249.8013099954642,
+            "target_spacing_mm": 250,
+            "center_started": true,
+            "symmetric": true
+          }
+        ]
+      },
+      "N4": {
+        "parameters": {
+          "diameter_mm": 8,
+          "length_mm": 552,
+          "circumferential_spacing_mm": 500,
+          "longitudinal_spacing_mm": 250,
+          "hook_angle_deg": 135,
+          "hook_length_mm": 87,
+          "hook_straight_mm": 40,
+          "bend_radius_mm": 20,
+          "layout_mode": "STAGGERED_GRID",
+          "connection": "N1_TO_N2",
+          "source_page": 110,
+          "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+          "status": "N4_IMPLEMENTED"
+        },
+        "layout": [
+          {
+            "z_mm": 125,
+            "count": 70,
+            "actual_circumferential_spacing_mm": 495.1554118174246,
+            "stagger_offset_mm": 0
+          },
+          {
+            "z_mm": 375,
+            "count": 69,
+            "actual_circumferential_spacing_mm": 502.3315772060829,
+            "stagger_offset_mm": 251.16578860304145
+          },
+          {
+            "z_mm": 625,
+            "count": 70,
+            "actual_circumferential_spacing_mm": 495.1554118174246,
+            "stagger_offset_mm": 0
+          },
+          {
+            "z_mm": 875,
+            "count": 69,
+            "actual_circumferential_spacing_mm": 502.3315772060829,
+            "stagger_offset_mm": 251.16578860304145
+          }
+        ],
+        "developed_length_mm": 552.2477796076938
+      }
+    }
+  },
+  "validation": {
+    "N3_inside_concrete": true,
+    "N4_inside_concrete": true,
+    "N3_no_self_intersection": true,
+    "N4_no_self_intersection": true,
+    "N3_N4_no_negative_spacing": true,
+    "N3_symmetric": true,
+    "N4_staggered": true,
+    "N3_count": 278,
+    "N4_count": 278,
+    "N1_N2_unchanged": true,
+    "secondary_lining_unchanged": true,
+    "all_passed": true
+  },
+  "glb": {
+    "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\secondary_rebar_assembly\\ZZ-Va_secondary_N1_N2_N3_N4_assembly.glb",
+    "byte_length": 2665960,
+    "mesh_count": 5,
+    "mesh_names": [
+      "secondaryLiningMesh",
+      "N1Mesh",
+      "N2Mesh",
+      "N3Mesh",
+      "N4Mesh"
+    ],
+    "node_names": [
+      "secondaryRebarAssemblyGroup",
+      "secondaryLiningGroup",
+      "N1Group",
+      "N2Group",
+      "N3Group",
+      "N4Group",
+      "secondaryLiningMesh",
+      "N1Mesh",
+      "N2Mesh",
+      "N3Mesh",
+      "N4Mesh"
+    ],
+    "generator": "SupportParameterExtractor full secondary rebar"
+  },
+  "model_structure": {
+    "root": "secondaryRebarAssemblyGroup",
+    "groups": [
+      "secondaryLiningGroup",
+      "N1Group",
+      "N2Group",
+      "N3Group",
+      "N4Group"
+    ],
+    "meshes": [
+      "secondaryLiningMesh",
+      "N1Mesh",
+      "N2Mesh",
+      "N3Mesh",
+      "N4Mesh"
+    ]
+  }
+}

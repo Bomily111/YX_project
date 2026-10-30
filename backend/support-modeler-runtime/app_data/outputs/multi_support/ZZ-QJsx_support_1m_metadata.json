@@ -1,0 +1,172 @@
+{
+  "support_type": "ZZ-QJsx",
+  "definition": {
+    "pages": [
+      132,
+      133,
+      134,
+      135
+    ],
+    "invert": true,
+    "primary": 260,
+    "reserve": 120,
+    "secondary": 550,
+    "mesh": {
+      "diameter": 8,
+      "spacing": 200,
+      "scope": "ARCH_AND_WALL"
+    },
+    "steel": {
+      "R1": 6290,
+      "R2": 10790,
+      "beta": 15.5422,
+      "profile": "I20a",
+      "spacing": 500
+    },
+    "anchor": {
+      "diameter": 25,
+      "length": 4500,
+      "circ": 1200,
+      "long": 500,
+      "scope": "MIXED_BILATERAL_MIDDLE_PILLAR"
+    },
+    "lock": true,
+    "rebar": {
+      "N1": [
+        5988,
+        10488,
+        1688,
+        12488
+      ],
+      "N2": [
+        5563,
+        10063,
+        1263,
+        12063
+      ],
+      "diameter": 25
+    }
+  },
+  "glb": {
+    "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\multi_support\\ZZ-QJsx_support_1m.glb",
+    "byte_length": 1529380,
+    "mesh_count": 24,
+    "mesh_names": [
+      "primarySupportConcrete",
+      "secondaryLining",
+      "primaryMeshCircumferentialBars",
+      "primaryMeshLongitudinalBars",
+      "steelArch_001",
+      "steelArch_002",
+      "lockFootAnchor_arch001_left_upper_01",
+      "lockFootAnchor_arch001_left_upper_02",
+      "lockFootAnchor_arch001_left_lower_01",
+      "lockFootAnchor_arch001_left_lower_02",
+      "lockFootAnchor_arch001_right_upper_01",
+      "lockFootAnchor_arch001_right_upper_02",
+      "lockFootAnchor_arch001_right_lower_01",
+      "lockFootAnchor_arch001_right_lower_02",
+      "lockFootAnchor_arch002_left_upper_01",
+      "lockFootAnchor_arch002_left_upper_02",
+      "lockFootAnchor_arch002_left_lower_01",
+      "lockFootAnchor_arch002_left_lower_02",
+      "lockFootAnchor_arch002_right_upper_01",
+      "lockFootAnchor_arch002_right_upper_02",
+      "lockFootAnchor_arch002_right_lower_01",
+      "lockFootAnchor_arch002_right_lower_02",
+      "N1",
+      "N2"
+    ],
+    "node_names": [
+      "ZZQJsxSectionAssemblyGroup",
+      "primarySupportGroup",
+      "secondarySystemGroup",
+      "primarySupportConcreteGroup",
+      "primarySupportConcrete",
+      "primarySupportMeshGroup",
+      "primaryMeshCircumferentialBars",
+      "primaryMeshLongitudinalBars",
+      "steelArchArrayGroup",
+      "steelArch_001",
+      "steelArch_002",
+      "lockFootAnchorGroup",
+      "lockFootAnchor_arch001_left_upper_01",
+      "lockFootAnchor_arch001_left_upper_02",
+      "lockFootAnchor_arch001_left_lower_01",
+      "lockFootAnchor_arch001_left_lower_02",
+      "lockFootAnchor_arch001_right_upper_01",
+      "lockFootAnchor_arch001_right_upper_02",
+      "lockFootAnchor_arch001_right_lower_01",
+      "lockFootAnchor_arch001_right_lower_02",
+      "lockFootAnchor_arch002_left_upper_01",
+      "lockFootAnchor_arch002_left_upper_02",
+      "lockFootAnchor_arch002_left_lower_01",
+      "lockFootAnchor_arch002_left_lower_02",
+      "lockFootAnchor_arch002_right_upper_01",
+      "lockFootAnchor_arch002_right_upper_02",
+      "lockFootAnchor_arch002_right_lower_01",
+      "lockFootAnchor_arch002_right_lower_02",
+      "secondaryLiningGroup",
+      "secondaryLining",
+      "N1Group",
+      "N1",
+      "N2Group",
+      "N2"
+    ],
+    "metadata": {
+      "support_type": "ZZ-QJsx",
+      "length_m": 1.0,
+      "source_pages": [
+        132,
+        133,
+        134,
+        135
+      ],
+      "assembly": "EXISTING_GEOMETRY_MODULES_ONLY",
+      "component_meshes": [
+        "primarySupportConcrete",
+        "secondaryLining",
+        "primaryMeshCircumferentialBars",
+        "primaryMeshLongitudinalBars",
+        "steelArch_001",
+        "steelArch_002",
+        "lockFootAnchor_arch001_left_upper_01",
+        "lockFootAnchor_arch001_left_upper_02",
+        "lockFootAnchor_arch001_left_lower_01",
+        "lockFootAnchor_arch001_left_lower_02",
+        "lockFootAnchor_arch001_right_upper_01",
+        "lockFootAnchor_arch001_right_upper_02",
+        "lockFootAnchor_arch001_right_lower_01",
+        "lockFootAnchor_arch001_right_lower_02",
+        "lockFootAnchor_arch002_left_upper_01",
+        "lockFootAnchor_arch002_left_upper_02",
+        "lockFootAnchor_arch002_left_lower_01",
+        "lockFootAnchor_arch002_left_lower_02",
+        "lockFootAnchor_arch002_right_upper_01",
+        "lockFootAnchor_arch002_right_upper_02",
+        "lockFootAnchor_arch002_right_lower_01",
+        "lockFootAnchor_arch002_right_lower_02",
+        "N1",
+        "N2"
+      ],
+      "steel_arch_dynamic_rebuild": true
+    },
+    "bbox_m": {
+      "min": [
+        -9.421314815981127,
+        -5.272583080615255,
+        -0.07604509961680356
+      ],
+      "max": [
+        9.421314815981127,
+        6.43,
+        1.0760450996168034
+      ],
+      "size": [
+        18.842629631962254,
+        11.702583080615256,
+        1.152090199233607
+      ]
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "support_type": "ZZ-Va",
+  "length_m": 1.0,
+  "component_list": [
+    "primary_support_concrete",
+    "primary_support_mesh",
+    "steel_arch_I20a",
+    "system_anchor",
+    "lock_foot_anchor",
+    "secondary_lining",
+    "N1",
+    "N2",
+    "N3",
+    "N4"
+  ],
+  "component_count": {
+    "primary_support_concrete": 1,
+    "primary_support_mesh": 2,
+    "steel_arch_I20a": 2,
+    "system_anchor": 43,
+    "lock_foot_anchor": 16,
+    "secondary_lining": 1,
+    "N1": 1,
+    "N2": 1,
+    "N3": 278,
+    "N4": 278
+  },
+  "mesh_object_count": 69,
+  "confirmed_parameters": {
+    "primary_support_thickness_mm": 260,
+    "primary_mesh": "Φ8 @200×200",
+    "steel_profile": "I20a",
+    "steel_arch_spacing_mm": 800,
+    "system_anchor": {
+      "diameter_mm": 25,
+      "length_mm": 4000,
+      "spacing_mm": [
+        1200,
+        800
+      ]
+    },
+    "lock_foot": {
+      "outer_diameter_mm": 42,
+      "wall_thickness_mm": 4,
+      "length_mm": 3500,
+      "count_per_arch": 8
+    }
+  },
+  "provisional_parameters": {
+    "primary_mesh_connection_side": "ROCK_SIDE",
+    "lock_foot": {
+      "upper_install_height_mm": 250.0,
+      "lower_install_height_mm": 100.0,
+      "upper_angle_deg": 7.5,
+      "lower_angle_deg": 45.0,
+      "pair_spread_angle_deg": 10.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX"
+    }
+  },
+  "pending_parameters": {
+    "primary_mesh_connection_side_project_confirmation": "PENDING",
+    "lock_foot_project_geometry_confirmation": "PENDING"
+  },
+  "coordinate_system": "x transverse, y vertical, z longitudinal",
+  "engineering_unit": "mm",
+  "three_js_unit": "m",
+  "export_coordinate_state": "FORMAL_ASSEMBLY_COORDINATES",
+  "exploded_view_applied": false
+}

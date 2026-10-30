@@ -9,7 +9,7 @@ import { getArchModelMatrix, loadTunnelModel } from '@/views/support-module/cesi
 import { generateSteelArchGLB, generateWorkfaceGLB } from '@/views/support-module/steelArch'
 import { fingerprintGeneratedAsset } from '@/platform/telemetry/GeneratedAssetVersions'
 import type { DataVersion } from '@/platform/telemetry/TaskDataProvenance'
-import { legacySupportResources, legacySupportAssembly } from './legacy-resources'
+import { modelerSupportResources } from './modeler-resources'
 
 let supportViewer: Cesium.Viewer | undefined
 let referenceTunnel: Cesium.Model | undefined
@@ -121,7 +121,7 @@ export const supportSceneResource: SceneResource = {
   },
 }
 
-export const supportResources = [supportSceneResource, ...legacySupportResources, legacySupportAssembly] as const
+export const supportResources = [supportSceneResource, ...modelerSupportResources] as const
 
 export const supportModuleManifest: SceneModuleManifest = {
   id: 'support',

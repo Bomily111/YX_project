@@ -1,17 +1,16 @@
-# 智能体动态场景编排（现有数据）
+# 智能体动态场景装配
 
-在首页智能体输入展示目标，例如：“依次展示 DK278+330 附近的围岩、钢架支护、爆破点云，再切到通风 CFD 流线”。在线模型可调用 `compose_scene_workflow`，从以下受控资源选择顺序并生成执行计划：
+智能体从施工任务中提取目标 YK 里程和展示需求，调用 `assemble_scene_at_mileage`。平台校验资源、里程与同屏组合后，在主场景装配并保存任务快照；明确只要求计划时使用 `compose_scene_workflow`。
 
-| 资源 ID | 展示内容 | 展示位置 |
-| --- | --- | --- |
-| `rock.design-grade` | 设计围岩分级模型 | DK278+330 附近 |
-| `support.scene` | 公共隧道参考段、默认 I16 钢架和工作面 | DK278+330 附近 |
-| `support.legacy-assembly` | 结构树既有 7 类支护构件，复用 9 个静态 GLB | 保留 DK278+100～DK278+167 附近原示例布置 |
-| `blast.effect` | 既有爆破效果 GLB/点云 | DK278+330 附近 |
-| `ventilation.steady-cfd` | 通风专用隧道、CFD 点、箭头、流线和粒子 | 原始 K3+805～K4+005；直线场示意配准到 DK278+330 附近 |
+| 资源 | 用途 |
+| --- | --- |
+| `rock.design-grade` | 设计围岩分级 |
+| `rock.geophysical-grade`、`rock.tsp-hardness`、`rock.tsp-integrity`、`rock.tem-resistivity` | 物探解释层，按任务语义选择；四层互斥 |
+| `support.modeler-zz-va` | 新支护模块已导出的 ZZ-Va 1 m 断面，默认支护组合 |
+| `support.modeler-zz-*` | 用户指定其他已交付的 ZZ 支护类型时选择对应断面 |
+| `blast.effect` | 爆破效果 |
+| `ventilation.steady-cfd`、`ventilation.transient-network`、`ventilation.thermal-field` | 通风示例工况 |
 
-公共隧道和通风专用隧道会按依赖自动加载。计划生成后由用户确认执行下一步或执行全部；每一步会切换资源、定位视角、写入结果快照，复位时逆序释放任务资源和临时支护模型。白名单之外的资源、空计划、超过 8 个阶段及加载预算不足都会被拒绝。
+支护断面在平台 YK 中线目标里程放置，设计高程点映射到中线位置。任务快照记录实际使用的 GLB 内容指纹。当前装配的是已导出模型，尚未按对话参数重新生成构件；也不能把示例数据解释为目标工点实测或质量结论。
 
-任务面板的“生成围岩与既有支护预览”可直接创建围岩→既有支护组合计划，仍需确认执行。7 类构件分别为洞口钢筋网、二衬钢筋、钢架、中管棚、注浆锚杆、小导管和锁脚锚杆；也可通过 `support.legacy-rebar`、`support.legacy-lining-rebar`、`support.legacy-steel-frame`、`support.legacy-pipe-shed`、`support.legacy-anchor`、`support.legacy-conduit`、`support.legacy-lock-anchor` 单独选择。结构树与任务共享资源引用，离开结构树只释放其自身引用。既有构件不可参数化，且不作为实测质量证据；后续可在资源空闲时替换构件提供方，维持上层编排接口。`support.scene` 的参数化钢架试验继续保留。
-
-相邻的“围岩分级→支护钢架”阶段会在第二阶段保留围岩并同屏加载支护；爆破、通风仍按阶段切换。通风直线场保留原始形态及双洞间距，仅将一条主洞的显示中心示意配准到 DK278+330 中线附近，并不是该工点实测风场，不能据此推导同一掌子面的联合工程结论。支护钢架使用页面已有的默认参数动态生成，不代表现场实测支护状态。`compose_scene_workflow` 负责展示编排；质量检查仍由 `create_task` 的独立流程处理。
+旧结构树支护已从智能体白名单、场景模块注册表和当前任务面板入口移除。历史任务的文字与快照继续保留供查阅，旧模型不再作为新任务资源加载。

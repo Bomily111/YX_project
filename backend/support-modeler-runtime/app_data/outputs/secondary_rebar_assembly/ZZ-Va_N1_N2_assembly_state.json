@@ -1,0 +1,436 @@
+{
+  "support_type": "ZZ-Va",
+  "status": "N1_N2_ASSEMBLY_IMPLEMENTED",
+  "coordinate_system": {
+    "engineering": "x right, y up, z tunnel longitudinal; mm",
+    "three_js": "x right, y up, z tunnel longitudinal; m",
+    "conversion": "mm / 1000 exactly once",
+    "origin": "top-arch circle center"
+  },
+  "sectionAssemblyState": {
+    "inner_profile": {
+      "reference": "sectionGeometryState.inner_profile",
+      "reused": true
+    },
+    "secondary_lining": {
+      "reference": "sectionGeometryState.secondary_lining",
+      "reused": true
+    },
+    "rebar": {
+      "N1": {
+        "geometry_source": "verified N1 geometry",
+        "profile": {
+          "coordinate_system": "x_right_y_up_mm",
+          "construction": "VERIFIED_N1_N2_TANGENT_CHAIN_MIRRORED",
+          "right_segments": [
+            {
+              "name": "top",
+              "center_mm": [
+                -3.636588670068065e-13,
+                0.0
+              ],
+              "radius_mm": 5939.0,
+              "start_angle_deg": 90.0,
+              "end_angle_deg": 0.0,
+              "start_mm": [
+                0.0,
+                5939.0
+              ],
+              "end_mm": [
+                5939.0,
+                0.0
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "side",
+              "center_mm": [
+                -4500.0,
+                0.0
+              ],
+              "radius_mm": 10439.0,
+              "start_angle_deg": 0.0,
+              "end_angle_deg": -11.699444444444445,
+              "start_mm": [
+                5939.0,
+                0.0
+              ],
+              "end_mm": [
+                5722.127445608516,
+                -2116.79745978143
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "invert_transition",
+              "center_mm": [
+                4117.17803634016,
+                -1784.444644705104
+              ],
+              "radius_mm": 1639.0,
+              "start_angle_deg": -11.699444444444453,
+              "end_angle_deg": -67.59083333333335,
+              "start_mm": [
+                5722.127445608516,
+                -2116.79745978143
+              ],
+              "end_mm": [
+                4741.994810731745,
+                -3299.6756496805483
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "invert_bottom",
+              "center_mm": [
+                0.02052357071897859,
+                8199.99394817763
+              ],
+              "radius_mm": 12439.0,
+              "start_angle_deg": -67.59083333333335,
+              "end_angle_deg": -90.00000000000003,
+              "start_mm": [
+                4741.994810731745,
+                -3299.6756496805483
+              ],
+              "end_mm": [
+                0.020523570714216233,
+                -4239.006051822371
+              ],
+              "connection": "TANGENT"
+            }
+          ],
+          "left_segments": [
+            {
+              "name": "invert_bottom_mirrored",
+              "center_mm": [
+                -0.02052357071897859,
+                8199.99394817763
+              ],
+              "radius_mm": 12439.0,
+              "start_angle_deg": 270.0,
+              "end_angle_deg": 247.59083333333336,
+              "start_mm": [
+                -0.020523570714216233,
+                -4239.006051822371
+              ],
+              "end_mm": [
+                -4741.994810731745,
+                -3299.6756496805483
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "invert_transition_mirrored",
+              "center_mm": [
+                -4117.17803634016,
+                -1784.444644705104
+              ],
+              "radius_mm": 1639.0,
+              "start_angle_deg": 247.59083333333336,
+              "end_angle_deg": 191.69944444444445,
+              "start_mm": [
+                -4741.994810731745,
+                -3299.6756496805483
+              ],
+              "end_mm": [
+                -5722.127445608516,
+                -2116.79745978143
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "side_mirrored",
+              "center_mm": [
+                4500.0,
+                0.0
+              ],
+              "radius_mm": 10439.0,
+              "start_angle_deg": 191.69944444444445,
+              "end_angle_deg": 180.0,
+              "start_mm": [
+                -5722.127445608516,
+                -2116.79745978143
+              ],
+              "end_mm": [
+                -5939.0,
+                0.0
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "top_mirrored",
+              "center_mm": [
+                3.636588670068065e-13,
+                0.0
+              ],
+              "radius_mm": 5939.0,
+              "start_angle_deg": 180.0,
+              "end_angle_deg": 90.0,
+              "start_mm": [
+                -5939.0,
+                0.0
+              ],
+              "end_mm": [
+                -0.0,
+                5939.0
+              ],
+              "connection": "TANGENT"
+            }
+          ],
+          "axis_closure_residual_mm": 0.020523570714216233,
+          "closed": true
+        },
+        "diameter_mm": 22
+      },
+      "N2": {
+        "geometry_source": "verified N2 geometry",
+        "profile": {
+          "coordinate_system": "x_right_y_up_mm",
+          "construction": "VERIFIED_N1_N2_TANGENT_CHAIN_MIRRORED",
+          "right_segments": [
+            {
+              "name": "top",
+              "center_mm": [
+                -3.4051304250292155e-13,
+                0.0
+              ],
+              "radius_mm": 5561.0,
+              "start_angle_deg": 90.0,
+              "end_angle_deg": 0.0,
+              "start_mm": [
+                0.0,
+                5561.0
+              ],
+              "end_mm": [
+                5561.0,
+                0.0
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "side",
+              "center_mm": [
+                -4500.0,
+                0.0
+              ],
+              "radius_mm": 10061.0,
+              "start_angle_deg": 0.0,
+              "end_angle_deg": -11.699444444444445,
+              "start_mm": [
+                5561.0,
+                0.0
+              ],
+              "end_mm": [
+                5351.980479956632,
+                -2040.1474511793244
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "invert_transition",
+              "center_mm": [
+                4117.178036340161,
+                -1784.444644705104
+              ],
+              "radius_mm": 1261.0,
+              "start_angle_deg": -11.699444444444453,
+              "end_angle_deg": -67.59083333333335,
+              "start_mm": [
+                5351.980479956632,
+                -2040.1474511793244
+              ],
+              "end_mm": [
+                4597.8942977848155,
+                -2950.220298929653
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "invert_bottom",
+              "center_mm": [
+                0.020523570719888085,
+                8199.99394817763
+              ],
+              "radius_mm": 12061.0,
+              "start_angle_deg": -67.59083333333335,
+              "end_angle_deg": -90.00000000000003,
+              "start_mm": [
+                4597.8942977848155,
+                -2950.220298929653
+              ],
+              "end_mm": [
+                0.02052357071527045,
+                -3861.006051822371
+              ],
+              "connection": "TANGENT"
+            }
+          ],
+          "left_segments": [
+            {
+              "name": "invert_bottom_mirrored",
+              "center_mm": [
+                -0.020523570719888085,
+                8199.99394817763
+              ],
+              "radius_mm": 12061.0,
+              "start_angle_deg": 270.0,
+              "end_angle_deg": 247.59083333333336,
+              "start_mm": [
+                -0.02052357071527045,
+                -3861.006051822371
+              ],
+              "end_mm": [
+                -4597.8942977848155,
+                -2950.220298929653
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "invert_transition_mirrored",
+              "center_mm": [
+                -4117.178036340161,
+                -1784.444644705104
+              ],
+              "radius_mm": 1261.0,
+              "start_angle_deg": 247.59083333333336,
+              "end_angle_deg": 191.69944444444445,
+              "start_mm": [
+                -4597.8942977848155,
+                -2950.220298929653
+              ],
+              "end_mm": [
+                -5351.980479956632,
+                -2040.1474511793244
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "side_mirrored",
+              "center_mm": [
+                4500.0,
+                0.0
+              ],
+              "radius_mm": 10061.0,
+              "start_angle_deg": 191.69944444444445,
+              "end_angle_deg": 180.0,
+              "start_mm": [
+                -5351.980479956632,
+                -2040.1474511793244
+              ],
+              "end_mm": [
+                -5561.0,
+                0.0
+              ],
+              "connection": "TANGENT"
+            },
+            {
+              "name": "top_mirrored",
+              "center_mm": [
+                3.4051304250292155e-13,
+                0.0
+              ],
+              "radius_mm": 5561.0,
+              "start_angle_deg": 180.0,
+              "end_angle_deg": 90.0,
+              "start_mm": [
+                -5561.0,
+                0.0
+              ],
+              "end_mm": [
+                -0.0,
+                5561.0
+              ],
+              "connection": "TANGENT"
+            }
+          ],
+          "axis_closure_residual_mm": 0.02052357071527045,
+          "closed": true
+        },
+        "diameter_mm": 22
+      }
+    }
+  },
+  "relations": {
+    "N1": {
+      "layer": "OUTER",
+      "reference": "secondary_lining.outer_surface",
+      "centerline_offset_mm": 61,
+      "clear_cover_mm": 50,
+      "source_page": 110,
+      "source_text": "主筋净保护层厚度5cm；钢筋尺寸均以轴线计",
+      "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+      "status": "COVER_RELATION_CONFIRMED"
+    },
+    "N2": {
+      "layer": "INNER",
+      "reference": "sectionGeometryState.inner_profile",
+      "centerline_offset_mm": 61,
+      "clear_cover_mm": 50,
+      "source_page": 110,
+      "source_text": "主筋净保护层厚度5cm；钢筋尺寸均以轴线计",
+      "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+      "status": "COVER_RELATION_CONFIRMED"
+    }
+  },
+  "radial_difference": {
+    "value_mm": 378,
+    "status": "RADIAL_DIFFERENCE_CONFIRMED",
+    "meaning": "N1/N2 corresponding-arc centerline spacing",
+    "cover_meaning": "not cover"
+  },
+  "metrics": {
+    "N1_to_inner_surface_centerline_mm": 439,
+    "N1_to_outer_surface_centerline_mm": 61,
+    "N1_entity_to_inner_surface_mm": 428,
+    "N1_entity_to_outer_surface_mm": 50,
+    "N2_to_inner_surface_centerline_mm": 61,
+    "N2_to_outer_surface_centerline_mm": 439,
+    "N2_entity_to_inner_surface_mm": 50,
+    "N2_entity_to_outer_surface_mm": 428,
+    "N1_N2_min_centerline_distance_mm": 378,
+    "N1_N2_min_entity_distance_mm": 356
+  },
+  "validation": {
+    "N1_closed": true,
+    "N2_closed": true,
+    "N1_symmetric": true,
+    "N2_symmetric": true,
+    "N1_inside_concrete": true,
+    "N2_inside_concrete": true,
+    "N1_N2_no_intersection": true,
+    "diameter_included": true,
+    "section_geometry_unchanged": true,
+    "all_passed": true
+  },
+  "glb": {
+    "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\secondary_rebar_assembly\\ZZ-Va_secondary_N1_N2_assembly.glb",
+    "byte_length": 315756,
+    "mesh_count": 3,
+    "mesh_names": [
+      "secondaryLiningMesh",
+      "N1Mesh",
+      "N2Mesh"
+    ],
+    "node_names": [
+      "secondaryRebarAssemblyGroup",
+      "secondaryLiningMesh",
+      "N1Mesh",
+      "N2Mesh"
+    ],
+    "generator": "SupportParameterExtractor N1/N2 assembly"
+  },
+  "model_structure": {
+    "root": "secondaryRebarAssemblyGroup",
+    "groups": [
+      "secondaryLiningGroup",
+      "N1Group",
+      "N2Group"
+    ],
+    "meshes": [
+      "secondaryLiningMesh",
+      "N1Mesh",
+      "N2Mesh"
+    ]
+  }
+}

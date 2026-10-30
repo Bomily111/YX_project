@@ -21,9 +21,13 @@ const routes: RouteRecordRaw[] = [
     component: BlastTwinPage
   },
   {
-    path: '/support-experiment',
-    name: 'SupportTwin',
+    path: '/support-modeler',
+    name: 'SupportModeler',
     component: SupportTwinPage
+  },
+  {
+    path: '/support-experiment',
+    redirect: '/support-modeler'
   },
   {
     path: '/ventilation-twin',

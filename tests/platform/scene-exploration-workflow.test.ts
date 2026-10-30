@@ -55,6 +55,7 @@ describe('智能体动态场景编排', () => {
   it('拒绝任意资源 ID，并且不把跨里程资产当作同一位置', () => {
     const { registry } = setup()
     expect(() => validateSceneSequence(['unexpected.file'], registry)).toThrow('不支持')
+    expect(() => validateSceneSequence(['support.legacy-assembly'], registry)).toThrow('不支持')
     expect(() => validateSceneSequence([], registry)).toThrow('1–8')
     const rock = sceneStageTask(task(), registry.require('rock.design-grade'))
     const vent = sceneStageTask(task(), registry.require('ventilation.steady-cfd'))
@@ -107,18 +108,19 @@ describe('智能体动态场景编排', () => {
     expect(tspNote).toContain('X1DK2+937')
   })
 
-  it('将异地物探围岩层与结构树支护组合示意装配到同一目标里程', () => {
+  it('将物探围岩层与新模块支护断面装配到同一目标里程', () => {
     const { registry, executor } = setup()
     registry.register({
-      id: 'support.legacy-assembly', module: 'support', type: 'legacy-support-assembly',
-      chainageRange: { start: 1116, end: 1183 }, processes: [], states: [],
+      id: 'support.modeler-zz-va', module: 'support', type: 'modeler-section',
+      chainageRange: { start: 1116, end: 2180 }, processes: [], states: [],
       async load() {}, async unload() {},
     })
-    const result = createSceneExplorationExecutor(task(), ['rock.geophysical-grade', 'support.legacy-assembly'], registry, {
+    const result = createSceneExplorationExecutor(task(), ['rock.geophysical-grade', 'support.modeler-zz-va'], registry, {
       selector: new ResourceSelector(registry), executor, loadContext: { viewer: {} as never },
       targetChainage: 1346,
     })
-    expect(result.scenePlans[1].rootResourceIds).toEqual(['rock.geophysical-grade', 'support.legacy-assembly'])
+    expect(result.scenePlans[1].rootResourceIds).toHaveLength(2)
+    expect(result.scenePlans[1].rootResourceIds).toEqual(expect.arrayContaining(['rock.geophysical-grade', 'support.modeler-zz-va']))
   })
 
   it('在准备阶段校验逐阶段增强选择，并形成不同的可执行增强参数', () => {

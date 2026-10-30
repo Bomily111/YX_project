@@ -24,13 +24,13 @@ it.skipIf(process.env.RUN_DEEPSEEK_EVAL !== '1')('DeepSeek selects the intended 
   }
 
   const assemblyCases = [
-    { query: '在 YK1+346 同屏展示 TSP 围岩坚硬度和结构树支护组合', mileage: 'YK1+346', resources: ['rock.tsp-hardness', 'support.legacy-assembly'] },
+    { query: '在 YK1+346 同屏展示 TSP 围岩坚硬度和新模块 ZZ-Va 支护组合', mileage: 'YK1+346', resources: ['rock.tsp-hardness', 'support.modeler-zz-va'] },
     { query: '在 YK2+244 展示瞬变电磁视电阻率模型', mileage: 'YK2+244', resources: ['rock.tem-resistivity'] },
     { query: '在 YK1+346 展示 TSP 围岩完整度', mileage: 'YK1+346', resources: ['rock.tsp-integrity'] },
     { query: '在 YK2+244 装配物探融合围岩分级场景', mileage: 'YK2+244', resources: ['rock.geophysical-grade'] },
     { query: '在 YK1+346 展示设计围岩分级模型', mileage: 'YK1+346', resources: ['rock.design-grade'] },
-    { query: '在 YK1+346 只展示结构树的钢架构件', mileage: 'YK1+346', resources: ['support.legacy-steel-frame'] },
-    { query: 'YK1+346 即将进行初期支护施工交底，请把岩体坚硬程度和现有支护布置放到同一场景查看', mileage: 'YK1+346', resources: ['rock.tsp-hardness', 'support.legacy-assembly'] },
+    { query: '在 YK1+346 只展示新模块 ZZ-IVa 支护断面', mileage: 'YK1+346', resources: ['support.modeler-zz-iva'] },
+    { query: 'YK1+346 即将进行初期支护施工交底，请把岩体坚硬程度和新模块支护布置放到同一场景查看', mileage: 'YK1+346', resources: ['rock.tsp-hardness', 'support.modeler-zz-va'] },
     { query: 'YK2+244 掌子面超前地质预报交底，需要查看前方岩体完整性变化', mileage: 'YK2+244', resources: ['rock.tsp-integrity'] },
     { query: 'YK2+244 掌子面疑似富水，调出前方电阻率异常分布供施工研判', mileage: 'YK2+244', resources: ['rock.tem-resistivity'] },
   ]

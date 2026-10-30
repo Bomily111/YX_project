@@ -179,7 +179,7 @@ onBeforeMount(() => {
 
 .position-container {
   position: absolute;
-  right: 12px;
+  left: 12px;
   bottom: 12px;
   z-index: 100;
   display: flex;

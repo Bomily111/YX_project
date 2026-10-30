@@ -16,7 +16,8 @@ export interface TaskAssetManifest {
 const isEntry = (value: unknown): value is AssetManifestEntry => {
   if (!value || typeof value !== 'object') return false
   const entry = value as Partial<AssetManifestEntry>
-  return typeof entry.path === 'string' && entry.path.startsWith('/data/')
+  return typeof entry.path === 'string'
+    && (entry.path.startsWith('/data/') || entry.path.startsWith('/support-modeler/outputs/'))
     && entry.algorithm === 'sha256-bytes-v1'
     && typeof entry.digest === 'string' && /^[a-f0-9]{64}$/.test(entry.digest)
 }

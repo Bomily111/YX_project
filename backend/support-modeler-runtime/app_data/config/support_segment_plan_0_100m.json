@@ -1,0 +1,26 @@
+{
+  "schema": "SupportSegmentPlan/V1",
+  "boundary_rule": "START_INCLUSIVE_END_EXCLUSIVE",
+  "segments": [
+    {
+      "start_chainage": 0,
+      "end_chainage": 20,
+      "support_type": "ZZ-IVa"
+    },
+    {
+      "start_chainage": 20,
+      "end_chainage": 50,
+      "support_type": "ZZ-IVb"
+    },
+    {
+      "start_chainage": 50,
+      "end_chainage": 80,
+      "support_type": "ZZ-Va"
+    },
+    {
+      "start_chainage": 80,
+      "end_chainage": 100,
+      "support_type": "ZZ-S"
+    }
+  ]
+}

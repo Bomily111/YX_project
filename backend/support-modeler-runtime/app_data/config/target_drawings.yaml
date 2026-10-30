@@ -1,0 +1,37 @@
+target_types:
+  - Z-PM
+  - ZB-PM
+  - ZZ-II
+  - ZZ-III
+  - ZZ-IVa
+  - ZZ-IVb
+  - ZZ-IVc
+  - ZZ-Va
+  - ZZ-S
+  - ZZ-IIIx
+  - ZZ-IVx
+  - ZZ-IVsx
+  - ZZ-Vsx
+  - ZZ-QJsx
+  - ZZ-Y1
+type_aliases:
+  ZB-PM:
+    - ZYB-PM
+stage_one_type: ZZ-IVa
+validation_types:
+  - ZZ-III
+  - ZZ-IVa
+  - ZZ-IVb
+  - ZZ-Va
+  - ZZ-S
+screen_keywords:
+  - 钢架组合安装图
+  - 衬砌钢架
+  - 工字钢
+  - 工程数量表
+  - 衬砌断面
+  - 施工说明
+arch_anchors:
+  - 钢架组合安装图
+render_dpi: 400
+screen_dpi: 100

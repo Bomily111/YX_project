@@ -8,6 +8,7 @@ import { DTScopeEngine } from './Viewer';
 import { unloadTemVoxelCloud } from './TemVoxelCloud';
 import { FACE_SKETCH_RECORDS, FACE_SKETCH_REFERENCE } from '@/modules/face-sketch/data';
 import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry';
+import { createDepthAwareTspVolume, type DepthAwareTspVolume } from '@/modules/rock/depth-aware-tsp-volume';
 // @ts-ignore
 import { initVolume, clearVolume } from '@/utils/AllPrevious/All/ShareVolume01.js';
 // @ts-ignore
@@ -324,6 +325,7 @@ let fusedGradeReloadTimer: number | null = null;
 let tspAttributeOpacity = 0.68;
 let tspAttributeContrast = 1.2;
 let activeGeoModelKey: string | null = null;
+let activeDepthTspVolume: DepthAwareTspVolume | undefined;
 let activeDemoVolumeTransform: Cesium.Matrix4 | undefined;
 let pendingGeoModelReady: { key: string; promise: Promise<void> } | undefined;
 function placedVolumeConfig(config?: ModelConfig['cesiumConfig']): ModelConfig['cesiumConfig'] {
@@ -340,6 +342,10 @@ export function getActiveGeoModelKey(): string | null { return activeGeoModelKey
 
 /** Redraw the WebGL overlay after a hidden host becomes visible in the main scene. */
 export function refreshActiveGeoVolume(): void {
+  if (activeDepthTspVolume) {
+    DTScopeEngine.viewer?.scene.requestRender();
+    return;
+  }
   const renderer = Previous.SVData?.[1];
   if (!Previous.SVData?.showVolume || !renderer?.properties || typeof renderer.draw !== 'function') return;
   renderer.properties.firstLoop = true;
@@ -561,6 +567,10 @@ export function setFusedGradeContrast(contrast: number) {
 
 function applyTspAttributeControls(): boolean {
   if (!['tsp_hardness', 'tsp_integrity'].includes(activeGeoModelKey || '')) return false;
+  if (activeDepthTspVolume) {
+    activeDepthTspVolume.setAppearance(tspAttributeOpacity, tspAttributeContrast);
+    return true;
+  }
   const volume = Previous.SVData?.[1] as any;
   if (!volume?.properties || typeof volume.draw !== 'function') return false;
   volume.properties.density = Math.max(0.1, tspAttributeOpacity * 7);
@@ -632,12 +642,36 @@ export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?:
     activeGeoModelKey = key;
     activeDemoVolumeTransform = demoVolumeTransform;
 
-    // ── 启动体数据渲染循环（Previous 构造器会重置 SVData 并 start drawVolume）──
-    new (Previous as any)(viewer);
-    Previous.SVData.showVolume = true;
+    const depthAwareTsp = key === 'tsp_hardness' || key === 'tsp_integrity';
+    if (depthAwareTsp) {
+      // The overlay cannot share Cesium's depth buffer. Render interpreted TSP
+      // data in a scene post-process pass after opaque support GLBs instead.
+      if (Previous.SVData) Previous.SVData.showVolume = false;
+      (Previous as any).stopVolumeLoop?.();
+      clearVolume();
+      const matrix = placedVolumeConfig(cfg.cesiumConfig)?.matrix;
+      if (!matrix || !volumeUrl) throw new Error(`TSP ${key} 缺少体数据矩阵或图集`);
+      const promise = createDepthAwareTspVolume(viewer, volumeUrl,
+        Cesium.Matrix4.fromArray(matrix), key === 'tsp_hardness' ? 'hardness' : 'integrity')
+        .then(async volume => {
+          if (activeGeoModelKey !== key || viewer.isDestroyed()) { volume.destroy(); return; }
+          activeDepthTspVolume = volume;
+          volume.setAppearance(tspAttributeOpacity, tspAttributeContrast);
+          const started = Date.now();
+          while (!volume.stage.ready && Date.now() - started < 10000) {
+            await new Promise(resolve => window.setTimeout(resolve, 50));
+            viewer.scene.requestRender();
+          }
+          if (!volume.stage.ready) throw new Error(`TSP ${key} 后处理着色器未就绪`);
+        });
+      pendingGeoModelReady = { key, promise };
+    } else {
+      // ── 其他体数据仍使用 ShareVolume 覆盖层 ──
+      new (Previous as any)(viewer);
+      Previous.SVData.showVolume = true;
+    }
 
-    // ── 体数据渲染（shareVolume WebGL canvas 覆盖层）────────
-    if (volumeUrl) {
+    if (volumeUrl && !depthAwareTsp) {
       let resolveReady!: () => void;
       const readyPromise = new Promise<void>(resolve => { resolveReady = resolve; });
       pendingGeoModelReady = { key, promise: readyPromise };
@@ -1008,6 +1042,8 @@ export function setGeoModelDifferenceHighlight(enabled: boolean) {
 }
 
 function _cleanup(viewer: any) {
+  activeDepthTspVolume?.destroy();
+  activeDepthTspVolume = undefined;
   activeGeoModelKey = null;
   pendingGeoModelReady = undefined;
   activeDemoVolumeTransform = undefined;

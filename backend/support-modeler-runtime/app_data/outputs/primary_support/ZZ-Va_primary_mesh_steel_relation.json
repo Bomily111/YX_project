@@ -1,0 +1,73 @@
+{
+  "connection_required": true,
+  "connection_type": "TIED_OR_WELDED",
+  "connection_side": "ROCK_SIDE",
+  "connection_side_status": "PROVISIONAL",
+  "engineering_confirmation": "PENDING",
+  "reference_source": "FIELD_REFERENCE_IMAGE",
+  "switchable": true,
+  "status": "PRIMARY_MESH_STEEL_RELATION_PROVISIONAL",
+  "formula_inputs": {
+    "steel_radial_height_mm": 200,
+    "mesh_diameter_mm": 8
+  },
+  "mesh_centerline": {
+    "top_radius_mm": 6324.0,
+    "side_radius_mm": 10824.0,
+    "formula": "steel_center_radius + side_sign * (steel_radial_height/2 + mesh_diameter/2)"
+  },
+  "connection_reports": {
+    "steelArch_001": {
+      "connection_side": "ROCK_SIDE",
+      "mesh_centerline_radii": {
+        "top_radius_mm": 6324.0,
+        "side_radius_mm": 10824.0,
+        "formula": "steel_center_radius + side_sign * (steel_radial_height/2 + mesh_diameter/2)"
+      },
+      "steel_centerline_radii_mm": {
+        "top": 6220.0,
+        "side": 10720.0
+      },
+      "steel_radial_inner_edges_mm": {
+        "top": 6120.0,
+        "side": 10620.0
+      },
+      "steel_radial_outer_edges_mm": {
+        "top": 6320.0,
+        "side": 10820.0
+      },
+      "mesh_radius_mm": 4.0,
+      "minimum_entity_distance_mm": 0.0,
+      "contact_status": "DESIGN_CONNECTION_ZONE",
+      "maximum_penetration_mm": 0.0,
+      "large_area_penetration": false,
+      "calculation": "radial centerline separation - I20a radial half-height - mesh bar radius"
+    },
+    "steelArch_002": {
+      "connection_side": "ROCK_SIDE",
+      "mesh_centerline_radii": {
+        "top_radius_mm": 6324.0,
+        "side_radius_mm": 10824.0,
+        "formula": "steel_center_radius + side_sign * (steel_radial_height/2 + mesh_diameter/2)"
+      },
+      "steel_centerline_radii_mm": {
+        "top": 6220.0,
+        "side": 10720.0
+      },
+      "steel_radial_inner_edges_mm": {
+        "top": 6120.0,
+        "side": 10620.0
+      },
+      "steel_radial_outer_edges_mm": {
+        "top": 6320.0,
+        "side": 10820.0
+      },
+      "mesh_radius_mm": 4.0,
+      "minimum_entity_distance_mm": 0.0,
+      "contact_status": "DESIGN_CONNECTION_ZONE",
+      "maximum_penetration_mm": 0.0,
+      "large_area_penetration": false,
+      "calculation": "radial centerline separation - I20a radial half-height - mesh bar radius"
+    }
+  }
+}

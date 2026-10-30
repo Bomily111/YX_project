@@ -1,0 +1,327 @@
+{
+  "support_type": "ZZ-IVb",
+  "final_status": "THIRD_SUPPORT_TYPE_PARTIALLY_IMPLEMENTED",
+  "components": {
+    "steel_arch": {
+      "status": "READY",
+      "parameters": {
+        "R1_mm": {
+          "value": 6080,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            103
+          ]
+        },
+        "R2_mm": {
+          "value": 10580,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            103
+          ]
+        },
+        "beta_deg": {
+          "value": 15.8797,
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "15°52′47″；左右对称标注",
+          "pages": [
+            103
+          ]
+        },
+        "steel_profile": {
+          "value": "I16",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            100,
+            103,
+            104
+          ]
+        },
+        "longitudinal_spacing_mm": {
+          "value": 1000,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            100,
+            104
+          ]
+        }
+      }
+    },
+    "primary_concrete": {
+      "status": "READY",
+      "parameters": {
+        "material": {
+          "value": "C25高性能喷射混凝土",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "thickness_mm": {
+          "value": 220,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "reserved_deformation_mm": {
+          "value": 80,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "scope": {
+          "value": "ARCH_AND_WALL_ONLY",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        }
+      }
+    },
+    "primary_mesh": {
+      "status": "PARTIAL",
+      "parameters": {
+        "diameter_mm": {
+          "value": 8,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "circumferential_spacing_mm": {
+          "value": 250,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "longitudinal_spacing_mm": {
+          "value": 250,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "layers": {
+          "value": 1,
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "第100页：单层、拱墙设置",
+          "pages": [
+            100
+          ]
+        },
+        "reference_side": {
+          "value": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+          "unit": null,
+          "status": "PROVISIONAL",
+          "source": "参数识别.docx定义；I16局部连接侧别未明确",
+          "pages": [
+            100
+          ]
+        }
+      }
+    },
+    "system_anchor": {
+      "status": "READY",
+      "parameters": {
+        "type": {
+          "value": "Φ25低预应力树脂药卷锚杆",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "diameter_mm": {
+          "value": 25,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "length_mm": {
+          "value": 4000,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "circumferential_spacing_mm": {
+          "value": 1200,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        },
+        "longitudinal_spacing_mm": {
+          "value": 1000,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+          "pages": [
+            100
+          ]
+        }
+      }
+    },
+    "lock_foot_anchor": {
+      "status": "NOT_APPLICABLE",
+      "evidence": "第100–104页未设计φ42锁脚锚管；C22砂浆锚杆是钢架定位锚杆。"
+    },
+    "secondary_lining": {
+      "status": "READY",
+      "parameters": {
+        "material": {
+          "value": "C35钢筋混凝土",
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            100
+          ]
+        },
+        "thickness_mm": {
+          "value": 400,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "support_drawings.pdf",
+          "pages": [
+            100
+          ]
+        },
+        "has_invert": {
+          "value": true,
+          "unit": null,
+          "status": "CONFIRMED",
+          "source": "第100页工程数量表分别列拱墙和仰拱",
+          "pages": [
+            100
+          ]
+        }
+      }
+    },
+    "inner_profile": {
+      "status": "READY",
+      "reference_chain": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+      "parameters": {
+        "top_radius_mm": {
+          "value": 5500,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+          "pages": [
+            74,
+            76,
+            100
+          ]
+        },
+        "side_radius_mm": {
+          "value": 10000,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+          "pages": [
+            74,
+            76,
+            100
+          ]
+        },
+        "side_angle_deg": {
+          "value": 11.699444444444445,
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "第76页有仰拱轮廓 11°41′58″",
+          "pages": [
+            76
+          ]
+        },
+        "invert_transition_radius_mm": {
+          "value": 1200,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+          "pages": [
+            76
+          ]
+        },
+        "invert_transition_angle_deg": {
+          "value": 55.89138888888889,
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+          "pages": [
+            76
+          ]
+        },
+        "invert_bottom_radius_mm": {
+          "value": 12000,
+          "unit": "mm",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+          "pages": [
+            76
+          ]
+        },
+        "invert_bottom_angle_deg": {
+          "value": 44.818333333333335,
+          "unit": "deg",
+          "status": "CONFIRMED",
+          "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+          "pages": [
+            76
+          ]
+        }
+      }
+    },
+    "secondary_rebar": {
+      "status": "NOT_IMPLEMENTED",
+      "evidence": "第101–102页确认N1/N2钢筋网及三肢格栅N3–N8；其语义和几何不同于现有ZZ-Va N1–N4闭合主筋模块，本轮不新建几何。"
+    }
+  },
+  "confirmed_parameters": [
+    "inner_profile",
+    "primary_concrete",
+    "primary_mesh.specification",
+    "steel_arch",
+    "system_anchor",
+    "secondary_lining"
+  ],
+  "provisional_parameters": [
+    "primary_mesh.reference_side"
+  ],
+  "missing_parameters": [
+    "secondary_rebar.geometry_adapter"
+  ]
+}

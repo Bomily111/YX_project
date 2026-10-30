@@ -1,0 +1,116 @@
+{
+  "support_type": "ZZ-IVsx",
+  "definition": {
+    "pages": [
+      124,
+      125,
+      126,
+      127
+    ],
+    "invert": true,
+    "primary": 240,
+    "reserve": 80,
+    "secondary": 450,
+    "mesh": {
+      "diameter": 8,
+      "spacing": 250,
+      "scope": "ARCH_AND_WALL"
+    },
+    "steel": {
+      "R1": 6140,
+      "R2": 10640,
+      "beta": 15.7861,
+      "profile": "I18",
+      "spacing": 800
+    },
+    "anchor": {
+      "diameter": 25,
+      "length": 4500,
+      "circ": 1200,
+      "long": 800,
+      "scope": "MIXED_BILATERAL_MIDDLE_PILLAR"
+    },
+    "lock": false,
+    "rebar": {
+      "N1": [
+        5889,
+        10389,
+        1589,
+        12389
+      ],
+      "N2": [
+        5561,
+        10061,
+        1261,
+        12061
+      ],
+      "diameter": 22
+    }
+  },
+  "glb": {
+    "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\multi_support\\ZZ-IVsx_support_1m.glb",
+    "byte_length": 631064,
+    "mesh_count": 6,
+    "mesh_names": [
+      "primarySupportConcrete",
+      "secondaryLining",
+      "primaryMeshCircumferentialBars",
+      "primaryMeshLongitudinalBars",
+      "N1",
+      "N2"
+    ],
+    "node_names": [
+      "ZZIVsxSectionAssemblyGroup",
+      "primarySupportGroup",
+      "secondarySystemGroup",
+      "primarySupportConcreteGroup",
+      "primarySupportConcrete",
+      "primarySupportMeshGroup",
+      "primaryMeshCircumferentialBars",
+      "primaryMeshLongitudinalBars",
+      "secondaryLiningGroup",
+      "secondaryLining",
+      "N1Group",
+      "N1",
+      "N2Group",
+      "N2"
+    ],
+    "metadata": {
+      "support_type": "ZZ-IVsx",
+      "length_m": 1.0,
+      "source_pages": [
+        124,
+        125,
+        126,
+        127
+      ],
+      "assembly": "EXISTING_GEOMETRY_MODULES_ONLY",
+      "component_meshes": [
+        "primarySupportConcrete",
+        "secondaryLining",
+        "primaryMeshCircumferentialBars",
+        "primaryMeshLongitudinalBars",
+        "N1",
+        "N2"
+      ],
+      "steel_arch_dynamic_rebuild": false
+    },
+    "bbox_m": {
+      "min": [
+        -6.27,
+        -4.250006051818081,
+        0.0
+      ],
+      "max": [
+        6.27,
+        6.27,
+        1.0
+      ],
+      "size": [
+        12.54,
+        10.520006051818081,
+        1.0
+      ]
+    }
+  }
+}

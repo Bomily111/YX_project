@@ -21,12 +21,6 @@ export const IBEAM_PROFILES: Record<string, IBeamProfile> = {
   I20: { label: 'I20', h: 0.200, b: 0.100, d: 0.0070, t: 0.0114 },
 }
 
-export function getProfileSummary(key: string): string {
-  const p = IBEAM_PROFILES[key]
-  if (!p) return ''
-  return `${p.label}：高${(p.h * 1000).toFixed(0)}mm　翼缘宽${(p.b * 1000).toFixed(0)}mm　腹板厚${(p.d * 1000).toFixed(1)}mm　翼缘厚${(p.t * 1000).toFixed(1)}mm`
-}
-
 function createIBeamShape(profile: IBeamProfile): THREE.Shape {
   const { h, b, d, t } = profile
   const shape = new THREE.Shape()

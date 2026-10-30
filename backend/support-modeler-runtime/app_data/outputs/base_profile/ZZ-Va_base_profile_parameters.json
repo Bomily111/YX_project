@@ -1,0 +1,236 @@
+{
+  "support_type": "ZZ-Va",
+  "has_invert": {
+    "schema_id": "secondary_lining.concrete.has_invert",
+    "value": true,
+    "unit": "boolean",
+    "parameter_type": "DIRECT",
+    "source_page": 109,
+    "source_method": "DRAWING_REVIEW",
+    "source_text": "ZZ-Va型衬砌断面图显示闭合仰拱，仰拱处标注C35钢筋混凝土50cm",
+    "confidence": 1.0,
+    "drawing_reference": "第109页 ZZ-Va型衬砌断面图",
+    "formula": null,
+    "depends_on": [],
+    "status": "CONFIRMED"
+  },
+  "inner_profile": {
+    "top": {
+      "radius_mm": {
+        "schema_id": "inner_profile.with_invert.top.radius",
+        "value": 5500,
+        "unit": "mm",
+        "parameter_type": "DIRECT",
+        "source_page": 76,
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "source_text": "主隧道（钻爆法施工）内轮廓（有仰拱）：R1=550；图中尺寸均以cm计",
+        "confidence": 1.0,
+        "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）",
+        "formula": null,
+        "depends_on": [],
+        "status": "CONFIRMED"
+      },
+      "angle_deg": {
+        "schema_id": "inner_profile.with_invert.top.angle",
+        "value": 180,
+        "unit": "deg",
+        "parameter_type": "DEFAULT",
+        "source_page": 76,
+        "source_method": "PARAMETER_DEFINITION_AND_DRAWING_REVIEW",
+        "source_text": "有仰拱内轮廓顶拱角按参数定义默认180°；第76页共用内轮廓图显示对称半圆顶拱",
+        "confidence": 1.0,
+        "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）",
+        "formula": null,
+        "depends_on": [],
+        "status": "CONFIRMED"
+      }
+    },
+    "side": {
+      "radius_mm": {
+        "schema_id": "inner_profile.with_invert.side.radius",
+        "value": 10000,
+        "unit": "mm",
+        "parameter_type": "DIRECT",
+        "source_page": 76,
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "source_text": "主隧道（钻爆法施工）内轮廓（有仰拱）：R2=1000；图中尺寸均以cm计",
+        "confidence": 1.0,
+        "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）",
+        "formula": null,
+        "depends_on": [],
+        "status": "CONFIRMED"
+      },
+      "angle_deg": {
+        "schema_id": "inner_profile.with_invert.side.angle",
+        "value": 11.6994444444,
+        "unit": "deg",
+        "parameter_type": "DIRECT",
+        "source_page": 76,
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "source_text": "左右侧拱均标注11°41′58″",
+        "confidence": 1.0,
+        "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）",
+        "formula": null,
+        "depends_on": [],
+        "status": "CONFIRMED"
+      }
+    },
+    "invert_transition": {
+      "radius_mm": {
+        "schema_id": "inner_profile.with_invert.invert_transition.radius",
+        "value": 1200,
+        "unit": "mm",
+        "parameter_type": "DIRECT",
+        "source_page": 76,
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "source_text": "左右仰拱过渡均标注R3=120；图中尺寸均以cm计",
+        "confidence": 1.0,
+        "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）",
+        "formula": null,
+        "depends_on": [],
+        "status": "CONFIRMED"
+      },
+      "angle_deg": {
+        "schema_id": "inner_profile.with_invert.invert_transition.angle",
+        "value": 55.8913888889,
+        "unit": "deg",
+        "parameter_type": "DIRECT",
+        "source_page": 76,
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "source_text": "左右仰拱过渡均标注55°53′29″",
+        "confidence": 1.0,
+        "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）",
+        "formula": null,
+        "depends_on": [],
+        "status": "CONFIRMED"
+      }
+    },
+    "invert_bottom": {
+      "radius_mm": {
+        "schema_id": "inner_profile.with_invert.invert_bottom.radius",
+        "value": 12000,
+        "unit": "mm",
+        "parameter_type": "DIRECT",
+        "source_page": 76,
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "source_text": "仰拱底圆弧左右均标注R4=1200；图中尺寸均以cm计",
+        "confidence": 1.0,
+        "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）",
+        "formula": null,
+        "depends_on": [],
+        "status": "CONFIRMED"
+      },
+      "angle_deg": {
+        "schema_id": "inner_profile.with_invert.invert_bottom.angle",
+        "value": 44.8183333333,
+        "unit": "deg",
+        "parameter_type": "DIRECT",
+        "source_page": 76,
+        "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+        "source_text": "仰拱底以中心线分为左右两半，每半22°24′33″；总角为44°49′06″",
+        "confidence": 1.0,
+        "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）",
+        "formula": null,
+        "depends_on": [],
+        "status": "CONFIRMED"
+      }
+    }
+  },
+  "thickness": {
+    "primary_support_thickness": {
+      "schema_id": "excavation.primary_concrete_thickness",
+      "value": 260,
+      "unit": "mm",
+      "parameter_type": "DIRECT",
+      "source_page": 109,
+      "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+      "source_text": "C25高性能喷射混凝土厚：26cm",
+      "confidence": 1.0,
+      "drawing_reference": "第109页 ZZ-Va型衬砌断面图",
+      "formula": null,
+      "depends_on": [],
+      "status": "CONFIRMED"
+    },
+    "secondary_lining_thickness": {
+      "schema_id": "excavation.secondary_lining_thickness",
+      "value": 500,
+      "unit": "mm",
+      "parameter_type": "DIRECT",
+      "source_page": 109,
+      "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+      "source_text": "C35钢筋混凝土 50cm",
+      "confidence": 1.0,
+      "drawing_reference": "第109页 ZZ-Va型衬砌断面图",
+      "formula": null,
+      "depends_on": [],
+      "status": "CONFIRMED"
+    },
+    "reserved_deformation": {
+      "schema_id": "excavation.deformation_allowance",
+      "value": 100,
+      "unit": "mm",
+      "parameter_type": "DIRECT",
+      "source_page": 109,
+      "source_method": "PDF_TEXT_AND_DRAWING_REVIEW",
+      "source_text": "预留变形量 10cm",
+      "confidence": 1.0,
+      "drawing_reference": "第109页 ZZ-Va型衬砌断面图",
+      "formula": null,
+      "depends_on": [],
+      "status": "CONFIRMED"
+    }
+  },
+  "geometry_relation_status": "COMMON_INNER_PROFILE_CONFIRMED_INVERT_TRANSITION_EXCAVATION_RELATION_UNRESOLVED",
+  "geometry_tolerance": {
+    "numerical_epsilon": 1e-09,
+    "drawing_closure_tolerance_mm": 0.1,
+    "status": "EXPERIMENTAL_PENDING_ENGINEERING_CONFIRMATION"
+  },
+  "source_pages": [
+    74,
+    76,
+    109,
+    264
+  ],
+  "context_dimensions": [
+    {
+      "name": "overall_width",
+      "value": 12720,
+      "unit": "mm",
+      "source_page": 109,
+      "source_text": "横向总尺寸1272cm",
+      "model_role": "EVIDENCE_ONLY"
+    },
+    {
+      "name": "overall_height",
+      "value": 10660,
+      "unit": "mm",
+      "source_page": 109,
+      "source_text": "竖向总尺寸1066cm",
+      "model_role": "EVIDENCE_ONLY"
+    },
+    {
+      "name": "inner_profile_width",
+      "value": 11000,
+      "unit": "mm",
+      "source_page": 76,
+      "source_text": "共用有仰拱内轮廓总宽1100cm",
+      "model_role": "VALIDATION_TARGET",
+      "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）"
+    },
+    {
+      "name": "inner_profile_height",
+      "value": 9300,
+      "unit": "mm",
+      "source_page": 76,
+      "source_text": "共用有仰拱内轮廓总高930cm",
+      "model_role": "VALIDATION_TARGET",
+      "drawing_reference": "第76页 主隧道（钻爆法施工）内轮廓（有仰拱）"
+    }
+  ],
+  "prohibited_substitutions": [
+    "不得使用第110页N1/N2钢筋半径替代基础内轮廓",
+    "不得使用第111页钢架R1/R2/beta替代基础内轮廓",
+    "不得从截图像素反推圆弧半径"
+  ]
+}

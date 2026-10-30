@@ -1,0 +1,1440 @@
+{
+  "status": "SYSTEM_ANCHOR_GEOMETRY_READY",
+  "coordinate_system": "x_right_y_up_z_forward_m",
+  "engineering_unit": "mm",
+  "three_js_unit": "m",
+  "depth_mm": 1000.0,
+  "reference_profile": {
+    "role": "SYSTEM_ANCHOR_BASELINE",
+    "coordinate_system": "x_right_y_up_mm",
+    "construction": "STEEL_ARCH_REFERENCED_THREE_ARC_OPEN_PROFILE",
+    "top_radius_mm": 6360.0,
+    "side_radius_mm": 10860.0,
+    "side_angle_deg": 15.6664,
+    "center_offset_mm": 4500.0,
+    "segments": [
+      {
+        "name": "left_side",
+        "center_mm": [
+          4500.0,
+          0.0
+        ],
+        "radius_mm": 10860.0,
+        "start_angle_deg": 195.6664,
+        "end_angle_deg": 180.0,
+        "start_mm": [
+          -5956.5539242914165,
+          -2932.5893044178133
+        ],
+        "end_mm": [
+          -6360.0,
+          1.3299664238740256e-12
+        ],
+        "status": "CONFIRMED"
+      },
+      {
+        "name": "top",
+        "center_mm": [
+          0.0,
+          0.0
+        ],
+        "radius_mm": 6360.0,
+        "start_angle_deg": 180.0,
+        "end_angle_deg": 0.0,
+        "start_mm": [
+          -6360.0,
+          7.788753642577167e-13
+        ],
+        "end_mm": [
+          6360.0,
+          0.0
+        ],
+        "status": "CONFIRMED"
+      },
+      {
+        "name": "right_side",
+        "center_mm": [
+          -4500.0,
+          0.0
+        ],
+        "radius_mm": 10860.0,
+        "start_angle_deg": 0.0,
+        "end_angle_deg": -15.6664,
+        "start_mm": [
+          6360.0,
+          0.0
+        ],
+        "end_mm": [
+          5956.5539242914165,
+          -2932.5893044178133
+        ],
+        "status": "CONFIRMED"
+      }
+    ],
+    "open_at_invert": true,
+    "omitted_segments": [
+      "invert_transition",
+      "invert_bottom"
+    ],
+    "reference_surface": "EXCAVATION_BOUNDARY",
+    "scope": "ARCH_AND_WALL_ONLY"
+  },
+  "profile_length_mm": 25919.434566047115,
+  "layers": [
+    {
+      "index": 0,
+      "z_mm": 100.0,
+      "staggered": false,
+      "count": 21,
+      "arc_distances_mm": [
+        959.7172830235577,
+        2159.7172830235577,
+        3359.7172830235577,
+        4559.717283023558,
+        5759.717283023558,
+        6959.717283023558,
+        8159.717283023558,
+        9359.717283023558,
+        10559.717283023558,
+        11759.717283023558,
+        12959.717283023558,
+        14159.717283023558,
+        15359.717283023558,
+        16559.717283023558,
+        17759.717283023558,
+        18959.717283023558,
+        20159.717283023558,
+        21359.717283023558,
+        22559.717283023558,
+        23759.717283023558,
+        24959.717283023558
+      ]
+    },
+    {
+      "index": 1,
+      "z_mm": 900.0,
+      "staggered": true,
+      "count": 22,
+      "arc_distances_mm": [
+        359.7172830235577,
+        1559.7172830235577,
+        2759.7172830235577,
+        3959.7172830235577,
+        5159.717283023558,
+        6359.717283023558,
+        7559.717283023558,
+        8759.717283023558,
+        9959.717283023558,
+        11159.717283023558,
+        12359.717283023558,
+        13559.717283023558,
+        14759.717283023558,
+        15959.717283023558,
+        17159.717283023558,
+        18359.717283023558,
+        19559.717283023558,
+        20759.717283023558,
+        21959.717283023558,
+        23159.717283023558,
+        24359.717283023558,
+        25559.717283023558
+      ]
+    }
+  ],
+  "anchors": [
+    {
+      "name": "SystemAnchorMesh_01_001",
+      "layer_index": 0,
+      "ring_index": 0,
+      "z_mm": 100.0,
+      "arc_distance_mm": 959.7172830235577,
+      "segment": "left_side",
+      "start_mm": [
+        -6174.57079101469,
+        -1998.2838706289956,
+        100.0
+      ],
+      "end_mm": [
+        -10106.272739823047,
+        -2734.300029240044,
+        100.0
+      ],
+      "direction_unit": [
+        -0.9829254872020894,
+        -0.18400403965276202,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_002",
+      "layer_index": 0,
+      "ring_index": 1,
+      "z_mm": 100.0,
+      "arc_distance_mm": 2159.7172830235577,
+      "segment": "left_side",
+      "start_mm": [
+        -6329.826535385504,
+        -808.9852986674309,
+        100.0
+      ],
+      "end_mm": [
+        -10318.712920426206,
+        -1106.9541011232066,
+        100.0
+      ],
+      "direction_unit": [
+        -0.9972215962601753,
+        -0.07449220061394392,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_003",
+      "layer_index": 0,
+      "ring_index": 2,
+      "z_mm": 100.0,
+      "arc_distance_mm": 3359.7172830235577,
+      "segment": "top",
+      "start_mm": [
+        -6348.029976138186,
+        390.0197713591248,
+        100.0
+      ],
+      "end_mm": [
+        -10340.501659243962,
+        635.315225044109,
+        100.0
+      ],
+      "direction_unit": [
+        -0.9981179207764443,
+        0.06132386342124604,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_004",
+      "layer_index": 0,
+      "ring_index": 3,
+      "z_mm": 100.0,
+      "arc_distance_mm": 4559.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -6162.217524153327,
+        1573.745590944624,
+        100.0
+      ],
+      "end_mm": [
+        -10037.826029910137,
+        2563.5226921676576,
+        100.0
+      ],
+      "direction_unit": [
+        -0.9689021264392024,
+        0.24744427530575847,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_005",
+      "layer_index": 0,
+      "ring_index": 4,
+      "z_mm": 100.0,
+      "arc_distance_mm": 5759.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -5757.681041134582,
+        2701.6123016745746,
+        100.0
+      ],
+      "end_mm": [
+        -9378.864085873312,
+        4400.739535432169,
+        100.0
+      ],
+      "direction_unit": [
+        -0.9052957611846828,
+        0.4247818084393985,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_006",
+      "layer_index": 0,
+      "ring_index": 5,
+      "z_mm": 100.0,
+      "arc_distance_mm": 6959.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -5148.779294833872,
+        3733.586984802954,
+        100.0
+      ],
+      "end_mm": [
+        -8387.005266427503,
+        6081.754899773365,
+        100.0
+      ],
+      "direction_unit": [
+        -0.8095564928984076,
+        0.5870419787426028,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_007",
+      "layer_index": 0,
+      "ring_index": 6,
+      "z_mm": 100.0,
+      "arc_distance_mm": 8159.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -4357.124869346524,
+        4633.040348725881,
+        100.0
+      ],
+      "end_mm": [
+        -7097.454975853772,
+        7546.90220327046,
+        100.0
+      ],
+      "direction_unit": [
+        -0.6850825266268119,
+        0.7284654636361448,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_008",
+      "layer_index": 0,
+      "ring_index": 7,
+      "z_mm": 100.0,
+      "arc_distance_mm": 9359.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -3410.8170400469817,
+        5368.0468626237935,
+        100.0
+      ],
+      "end_mm": [
+        -5555.984989762064,
+        8744.176964902908,
+        100.0
+      ],
+      "direction_unit": [
+        -0.5362919874287707,
+        0.8440325255697788,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_009",
+      "layer_index": 0,
+      "ring_index": 8,
+      "z_mm": 100.0,
+      "arc_distance_mm": 10559.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -2343.4444075018496,
+        5912.517933076254,
+        100.0
+      ],
+      "end_mm": [
+        -3817.3088147357175,
+        9631.082670860062,
+        100.0
+      ],
+      "direction_unit": [
+        -0.36846610180846695,
+        0.9296411844459519,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_010",
+      "layer_index": 0,
+      "ring_index": 9,
+      "z_mm": 100.0,
+      "arc_distance_mm": 11759.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -1192.8926912415511,
+        6247.127902258964,
+        100.0
+      ],
+      "end_mm": [
+        -1943.1396668651682,
+        10176.139161541332,
+        100.0
+      ],
+      "direction_unit": [
+        -0.18756174390590427,
+        0.9822528148205919,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_011",
+      "layer_index": 0,
+      "ring_index": 10,
+      "z_mm": 100.0,
+      "arc_distance_mm": 12959.717283023558,
+      "segment": "top",
+      "start_mm": [
+        3.8943768212885833e-13,
+        6360.0,
+        100.0
+      ],
+      "end_mm": [
+        6.34367041958329e-13,
+        10360.0,
+        100.0
+      ],
+      "direction_unit": [
+        6.123233995736766e-17,
+        1.0,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_012",
+      "layer_index": 0,
+      "ring_index": 11,
+      "z_mm": 100.0,
+      "arc_distance_mm": 14159.717283023558,
+      "segment": "top",
+      "start_mm": [
+        1192.8926912415534,
+        6247.127902258964,
+        100.0
+      ],
+      "end_mm": [
+        1943.1396668651719,
+        10176.13916154133,
+        100.0
+      ],
+      "direction_unit": [
+        0.1875617439059046,
+        0.9822528148205918,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_013",
+      "layer_index": 0,
+      "ring_index": 12,
+      "z_mm": 100.0,
+      "arc_distance_mm": 15359.717283023558,
+      "segment": "top",
+      "start_mm": [
+        2343.4444075018505,
+        5912.517933076254,
+        100.0
+      ],
+      "end_mm": [
+        3817.3088147357184,
+        9631.082670860062,
+        100.0
+      ],
+      "direction_unit": [
+        0.36846610180846706,
+        0.9296411844459519,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_014",
+      "layer_index": 0,
+      "ring_index": 13,
+      "z_mm": 100.0,
+      "arc_distance_mm": 16559.717283023558,
+      "segment": "top",
+      "start_mm": [
+        3410.817040046983,
+        5368.046862623792,
+        100.0
+      ],
+      "end_mm": [
+        5555.984989762066,
+        8744.176964902907,
+        100.0
+      ],
+      "direction_unit": [
+        0.5362919874287709,
+        0.8440325255697786,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_015",
+      "layer_index": 0,
+      "ring_index": 14,
+      "z_mm": 100.0,
+      "arc_distance_mm": 17759.717283023558,
+      "segment": "top",
+      "start_mm": [
+        4357.124869346525,
+        4633.040348725881,
+        100.0
+      ],
+      "end_mm": [
+        7097.454975853774,
+        7546.90220327046,
+        100.0
+      ],
+      "direction_unit": [
+        0.6850825266268121,
+        0.7284654636361447,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_016",
+      "layer_index": 0,
+      "ring_index": 15,
+      "z_mm": 100.0,
+      "arc_distance_mm": 18959.717283023558,
+      "segment": "top",
+      "start_mm": [
+        5148.779294833875,
+        3733.58698480295,
+        100.0
+      ],
+      "end_mm": [
+        8387.005266427506,
+        6081.754899773359,
+        100.0
+      ],
+      "direction_unit": [
+        0.809556492898408,
+        0.5870419787426022,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_017",
+      "layer_index": 0,
+      "ring_index": 16,
+      "z_mm": 100.0,
+      "arc_distance_mm": 20159.717283023558,
+      "segment": "top",
+      "start_mm": [
+        5757.681041134582,
+        2701.6123016745732,
+        100.0
+      ],
+      "end_mm": [
+        9378.864085873312,
+        4400.739535432166,
+        100.0
+      ],
+      "direction_unit": [
+        0.9052957611846828,
+        0.4247818084393983,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_018",
+      "layer_index": 0,
+      "ring_index": 17,
+      "z_mm": 100.0,
+      "arc_distance_mm": 21359.717283023558,
+      "segment": "top",
+      "start_mm": [
+        6162.217524153328,
+        1573.745590944619,
+        100.0
+      ],
+      "end_mm": [
+        10037.826029910138,
+        2563.5226921676494,
+        100.0
+      ],
+      "direction_unit": [
+        0.9689021264392025,
+        0.2474442753057577,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_019",
+      "layer_index": 0,
+      "ring_index": 18,
+      "z_mm": 100.0,
+      "arc_distance_mm": 22559.717283023558,
+      "segment": "top",
+      "start_mm": [
+        6348.029976138186,
+        390.0197713591285,
+        100.0
+      ],
+      "end_mm": [
+        10340.501659243962,
+        635.315225044115,
+        100.0
+      ],
+      "direction_unit": [
+        0.9981179207764442,
+        0.06132386342124662,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_020",
+      "layer_index": 0,
+      "ring_index": 19,
+      "z_mm": 100.0,
+      "arc_distance_mm": 23759.717283023558,
+      "segment": "right_side",
+      "start_mm": [
+        6329.826535385504,
+        -808.9852986674309,
+        100.0
+      ],
+      "end_mm": [
+        10318.712920426206,
+        -1106.9541011232066,
+        100.0
+      ],
+      "direction_unit": [
+        0.9972215962601753,
+        -0.07449220061394392,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        -4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_01_021",
+      "layer_index": 0,
+      "ring_index": 20,
+      "z_mm": 100.0,
+      "arc_distance_mm": 24959.717283023558,
+      "segment": "right_side",
+      "start_mm": [
+        6174.57079101469,
+        -1998.2838706289938,
+        100.0
+      ],
+      "end_mm": [
+        10106.272739823047,
+        -2734.300029240041,
+        100.0
+      ],
+      "direction_unit": [
+        0.9829254872020894,
+        -0.18400403965276185,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        -4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_001",
+      "layer_index": 1,
+      "ring_index": 0,
+      "z_mm": 900.0,
+      "arc_distance_mm": 359.7172830235577,
+      "segment": "left_side",
+      "start_mm": [
+        -6047.937085193011,
+        -2584.690164567114,
+        900.0
+      ],
+      "end_mm": [
+        -9932.996785079938,
+        -3536.693908422405,
+        900.0
+      ],
+      "direction_unit": [
+        -0.9712649249717321,
+        -0.23800093596382269,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_002",
+      "layer_index": 1,
+      "ring_index": 1,
+      "z_mm": 900.0,
+      "arc_distance_mm": 1559.7172830235577,
+      "segment": "left_side",
+      "start_mm": [
+        -6268.629618769484,
+        -1405.7795466432788,
+        900.0
+      ],
+      "end_mm": [
+        -10234.975703030805,
+        -1923.5620684271753,
+        900.0
+      ],
+      "direction_unit": [
+        -0.9915865210653301,
+        -0.1294456304459741,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_003",
+      "layer_index": 1,
+      "ring_index": 2,
+      "z_mm": 900.0,
+      "arc_distance_mm": 2759.7172830235577,
+      "segment": "left_side",
+      "start_mm": [
+        -6357.974790300512,
+        -209.72232403474857,
+        900.0
+      ],
+      "end_mm": [
+        -10357.22885670954,
+        -286.96811557609243,
+        900.0
+      ],
+      "direction_unit": [
+        -0.9998135166022571,
+        -0.019311447885335963,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_004",
+      "layer_index": 1,
+      "ring_index": 3,
+      "z_mm": 900.0,
+      "arc_distance_mm": 3959.7172830235577,
+      "segment": "top",
+      "start_mm": [
+        -6283.062536186143,
+        986.2683034418915,
+        900.0
+      ],
+      "end_mm": [
+        -10234.674194164849,
+        1606.56283390849,
+        900.0
+      ],
+      "direction_unit": [
+        -0.9879029144946766,
+        0.1550736326166496,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_005",
+      "layer_index": 1,
+      "ring_index": 4,
+      "z_mm": 900.0,
+      "arc_distance_mm": 5159.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -5986.569658909967,
+        2147.226983581055,
+        900.0
+      ],
+      "end_mm": [
+        -9751.707809167809,
+        3497.6842059590763,
+        900.0
+      ],
+      "direction_unit": [
+        -0.9412845375644603,
+        0.33761430559450545,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_006",
+      "layer_index": 1,
+      "ring_index": 5,
+      "z_mm": 900.0,
+      "arc_distance_mm": 6359.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -5477.587260981588,
+        3231.971193920551,
+        900.0
+      ],
+      "end_mm": [
+        -8922.610695561203,
+        5264.657479405174,
+        900.0
+      ],
+      "direction_unit": [
+        -0.8612558586449037,
+        0.5081715713711558,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_007",
+      "layer_index": 1,
+      "ring_index": 6,
+      "z_mm": 900.0,
+      "arc_distance_mm": 7559.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -4774.181352139194,
+        4201.998621714002,
+        900.0
+      ],
+      "end_mm": [
+        -7776.811133358813,
+        6844.765050464947,
+        900.0
+      ],
+      "direction_unit": [
+        -0.7506574453049047,
+        0.6606916071877362,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_008",
+      "layer_index": 1,
+      "ring_index": 7,
+      "z_mm": 900.0,
+      "arc_distance_mm": 8759.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -3901.3188822238185,
+        5022.878754181102,
+        900.0
+      ],
+      "end_mm": [
+        -6354.978556578421,
+        8181.921995804436,
+        900.0
+      ],
+      "direction_unit": [
+        -0.6134149185886507,
+        0.7897608104058336,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_009",
+      "layer_index": 1,
+      "ring_index": 8,
+      "z_mm": 900.0,
+      "arc_distance_mm": 9959.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -2889.9815550149474,
+        5665.474967879868,
+        900.0
+      ],
+      "end_mm": [
+        -4707.580017288499,
+        9228.666771577899,
+        900.0
+      ],
+      "direction_unit": [
+        -0.4543996155683879,
+        0.8907979509245075,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_010",
+      "layer_index": 1,
+      "ring_index": 9,
+      "z_mm": 900.0,
+      "arc_distance_mm": 11159.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -1776.0661521622278,
+        6106.978714810103,
+        900.0
+      ],
+      "end_mm": [
+        -2893.0888893711763,
+        9947.845831042872,
+        900.0
+      ],
+      "direction_unit": [
+        -0.2792556843022371,
+        0.9602167790581922,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_011",
+      "layer_index": 1,
+      "ring_index": 10,
+      "z_mm": 900.0,
+      "arc_distance_mm": 12359.717283023558,
+      "segment": "top",
+      "start_mm": [
+        -599.1103995229034,
+        6331.719097463461,
+        900.0
+      ],
+      "end_mm": [
+        -975.9093929335345,
+        10313.932366308405,
+        900.0
+      ],
+      "direction_unit": [
+        -0.09419974835265776,
+        0.9955533172112361,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_012",
+      "layer_index": 1,
+      "ring_index": 11,
+      "z_mm": 900.0,
+      "arc_distance_mm": 13559.717283023558,
+      "segment": "top",
+      "start_mm": [
+        599.1103995229041,
+        6331.7190974634605,
+        900.0
+      ],
+      "end_mm": [
+        975.9093929335356,
+        10313.932366308403,
+        900.0
+      ],
+      "direction_unit": [
+        0.09419974835265789,
+        0.995553317211236,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_013",
+      "layer_index": 1,
+      "ring_index": 12,
+      "z_mm": 900.0,
+      "arc_distance_mm": 14759.717283023558,
+      "segment": "top",
+      "start_mm": [
+        1776.0661521622274,
+        6106.978714810103,
+        900.0
+      ],
+      "end_mm": [
+        2893.0888893711754,
+        9947.845831042872,
+        900.0
+      ],
+      "direction_unit": [
+        0.279255684302237,
+        0.9602167790581924,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_014",
+      "layer_index": 1,
+      "ring_index": 13,
+      "z_mm": 900.0,
+      "arc_distance_mm": 15959.717283023558,
+      "segment": "top",
+      "start_mm": [
+        2889.981555014948,
+        5665.474967879867,
+        900.0
+      ],
+      "end_mm": [
+        4707.5800172885,
+        9228.666771577897,
+        900.0
+      ],
+      "direction_unit": [
+        0.45439961556838804,
+        0.8907979509245074,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_015",
+      "layer_index": 1,
+      "ring_index": 14,
+      "z_mm": 900.0,
+      "arc_distance_mm": 17159.717283023558,
+      "segment": "top",
+      "start_mm": [
+        3901.3188822238185,
+        5022.878754181102,
+        900.0
+      ],
+      "end_mm": [
+        6354.978556578421,
+        8181.921995804436,
+        900.0
+      ],
+      "direction_unit": [
+        0.6134149185886507,
+        0.7897608104058336,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_016",
+      "layer_index": 1,
+      "ring_index": 15,
+      "z_mm": 900.0,
+      "arc_distance_mm": 18359.717283023558,
+      "segment": "top",
+      "start_mm": [
+        4774.181352139195,
+        4201.998621714002,
+        900.0
+      ],
+      "end_mm": [
+        7776.811133358815,
+        6844.765050464947,
+        900.0
+      ],
+      "direction_unit": [
+        0.7506574453049049,
+        0.6606916071877362,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_017",
+      "layer_index": 1,
+      "ring_index": 16,
+      "z_mm": 900.0,
+      "arc_distance_mm": 19559.717283023558,
+      "segment": "top",
+      "start_mm": [
+        5477.587260981588,
+        3231.971193920551,
+        900.0
+      ],
+      "end_mm": [
+        8922.610695561203,
+        5264.657479405174,
+        900.0
+      ],
+      "direction_unit": [
+        0.8612558586449037,
+        0.5081715713711558,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_018",
+      "layer_index": 1,
+      "ring_index": 17,
+      "z_mm": 900.0,
+      "arc_distance_mm": 20759.717283023558,
+      "segment": "top",
+      "start_mm": [
+        5986.569658909967,
+        2147.2269835810544,
+        900.0
+      ],
+      "end_mm": [
+        9751.707809167809,
+        3497.684205959076,
+        900.0
+      ],
+      "direction_unit": [
+        0.9412845375644603,
+        0.3376143055945054,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_019",
+      "layer_index": 1,
+      "ring_index": 18,
+      "z_mm": 900.0,
+      "arc_distance_mm": 21959.717283023558,
+      "segment": "top",
+      "start_mm": [
+        6283.062536186143,
+        986.2683034418939,
+        900.0
+      ],
+      "end_mm": [
+        10234.674194164849,
+        1606.5628339084938,
+        900.0
+      ],
+      "direction_unit": [
+        0.9879029144946766,
+        0.15507363261664997,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        0.0,
+        0.0
+      ],
+      "reference_radius_mm": 6360.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_020",
+      "layer_index": 1,
+      "ring_index": 19,
+      "z_mm": 900.0,
+      "arc_distance_mm": 23159.717283023558,
+      "segment": "right_side",
+      "start_mm": [
+        6357.974790300512,
+        -209.72232403474928,
+        900.0
+      ],
+      "end_mm": [
+        10357.22885670954,
+        -286.9681155760934,
+        900.0
+      ],
+      "direction_unit": [
+        0.9998135166022571,
+        -0.01931144788533603,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        -4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_021",
+      "layer_index": 1,
+      "ring_index": 20,
+      "z_mm": 900.0,
+      "arc_distance_mm": 24359.717283023558,
+      "segment": "right_side",
+      "start_mm": [
+        6268.629618769484,
+        -1405.7795466432824,
+        900.0
+      ],
+      "end_mm": [
+        10234.975703030805,
+        -1923.56206842718,
+        900.0
+      ],
+      "direction_unit": [
+        0.9915865210653301,
+        -0.12944563044597443,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        -4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    },
+    {
+      "name": "SystemAnchorMesh_02_022",
+      "layer_index": 1,
+      "ring_index": 21,
+      "z_mm": 900.0,
+      "arc_distance_mm": 25559.717283023558,
+      "segment": "right_side",
+      "start_mm": [
+        6047.937085193011,
+        -2584.6901645671114,
+        900.0
+      ],
+      "end_mm": [
+        9932.996785079938,
+        -3536.6939084224014,
+        900.0
+      ],
+      "direction_unit": [
+        0.9712649249717321,
+        -0.23800093596382244,
+        0.0
+      ],
+      "local_circle_center_mm": [
+        -4500.0,
+        0.0
+      ],
+      "reference_radius_mm": 10860.0,
+      "diameter_mm": 25.0,
+      "length_mm": 4000.0
+    }
+  ],
+  "count": 43,
+  "scope": "ARCH_AND_WALL_ONLY",
+  "invert": "NOT_APPLICABLE",
+  "layout": "CROWN_CENTERED_SYMMETRIC_STAGGERED"
+}

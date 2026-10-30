@@ -1,0 +1,14 @@
+{
+  "I16": {
+    "height": 160,
+    "width": 88,
+    "web_thickness": 6,
+    "flange_thickness": 9.9
+  },
+  "I20a": {
+    "height": 200,
+    "width": 100,
+    "web_thickness": 7,
+    "flange_thickness": 11.4
+  }
+}

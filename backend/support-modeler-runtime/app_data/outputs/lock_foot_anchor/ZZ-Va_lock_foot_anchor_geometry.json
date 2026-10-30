@@ -1,0 +1,593 @@
+{
+  "status": "LOCK_FOOT_ANCHOR_PROVISIONAL_IMPLEMENTED",
+  "coordinate_system": "x_right_y_up_z_forward_mm",
+  "geometry_representation": "SOLID_VISUAL_APPROXIMATION",
+  "parameters": {
+    "component": "lock_foot_anchor",
+    "support_type": "ZZ-Va",
+    "confirmed": {
+      "outer_diameter_mm": {
+        "value": 42.0,
+        "status": "CONFIRMED"
+      },
+      "wall_thickness_mm": {
+        "value": 4.0,
+        "status": "CONFIRMED"
+      },
+      "length_mm": {
+        "value": 3500.0,
+        "status": "CONFIRMED"
+      },
+      "count_per_arch": {
+        "value": 8,
+        "status": "CONFIRMED"
+      },
+      "count_left": {
+        "value": 4,
+        "status": "CONFIRMED"
+      },
+      "count_right": {
+        "value": 4,
+        "status": "CONFIRMED"
+      },
+      "levels_per_side": {
+        "value": 2,
+        "status": "CONFIRMED"
+      },
+      "pipes_per_level": {
+        "value": 2,
+        "status": "CONFIRMED"
+      },
+      "grouted": {
+        "value": true,
+        "status": "CONFIRMED"
+      },
+      "installed_per_steel_arch": {
+        "value": true,
+        "status": "CONFIRMED"
+      },
+      "steel_arch_spacing_mm": {
+        "value": 800.0,
+        "status": "CONFIRMED"
+      },
+      "connection_type": {
+        "value": "SINGLE_SIDE_WELDED",
+        "status": "CONFIRMED"
+      },
+      "weld_length_min_mm": {
+        "value": 180.0,
+        "status": "CONFIRMED"
+      },
+      "straight_hook_mm": {
+        "value": 200.0,
+        "status": "CONFIRMED"
+      }
+    },
+    "provisional": {
+      "upper_install_height_mm": {
+        "value": 250.0,
+        "status": "PROVISIONAL"
+      },
+      "lower_install_height_mm": {
+        "value": 100.0,
+        "status": "PROVISIONAL"
+      },
+      "upper_angle_deg": {
+        "value": 7.5,
+        "status": "PROVISIONAL"
+      },
+      "lower_angle_deg": {
+        "value": 45.0,
+        "status": "PROVISIONAL"
+      },
+      "pair_spread_angle_deg": {
+        "value": 10.0,
+        "status": "PROVISIONAL"
+      },
+      "connection_location_on_section": {
+        "value": "WEB_SIDE_APPROX",
+        "status": "PROVISIONAL"
+      }
+    },
+    "geometry_status": "PROVISIONAL",
+    "warning": "当前为建模参考默认值，待项目节点图/现场参数校核。"
+  },
+  "anchors": [
+    {
+      "name": "lockFootAnchor_arch001_left_upper_01",
+      "steel_arch": "steelArch_001",
+      "arch_z_mm": 100.0,
+      "side": "left",
+      "level": "upper",
+      "pair_index": 1,
+      "start_mm": [
+        -5888.655289461558,
+        -2644.6627907433426,
+        100.0
+      ],
+      "end_mm": [
+        -9345.507689689692,
+        -3099.7660430243604,
+        -205.04509961680355
+      ],
+      "direction_unit": [
+        -0.9876721143508955,
+        -0.13002950065171942,
+        -0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 7.5,
+      "pair_spread_signed_deg": -5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch001_left_upper_02",
+      "steel_arch": "steelArch_001",
+      "arch_z_mm": 100.0,
+      "side": "left",
+      "level": "upper",
+      "pair_index": 2,
+      "start_mm": [
+        -5888.655289461558,
+        -2644.6627907433426,
+        100.0
+      ],
+      "end_mm": [
+        -9345.507689689692,
+        -3099.7660430243604,
+        405.04509961680355
+      ],
+      "direction_unit": [
+        -0.9876721143508955,
+        -0.13002950065171942,
+        0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 7.5,
+      "pair_spread_signed_deg": 5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch001_left_lower_01",
+      "steel_arch": "steelArch_001",
+      "arch_z_mm": 100.0,
+      "side": "left",
+      "level": "lower",
+      "pair_index": 1,
+      "start_mm": [
+        -5848.985059934212,
+        -2795.8734286906656,
+        100.0
+      ],
+      "end_mm": [
+        -8314.441152343867,
+        -5261.329521100321,
+        -205.04509961680355
+      ],
+      "direction_unit": [
+        -0.7044160264027587,
+        -0.7044160264027587,
+        -0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 45.0,
+      "pair_spread_signed_deg": -5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch001_left_lower_02",
+      "steel_arch": "steelArch_001",
+      "arch_z_mm": 100.0,
+      "side": "left",
+      "level": "lower",
+      "pair_index": 2,
+      "start_mm": [
+        -5848.985059934212,
+        -2795.8734286906656,
+        100.0
+      ],
+      "end_mm": [
+        -8314.441152343867,
+        -5261.329521100321,
+        405.04509961680355
+      ],
+      "direction_unit": [
+        -0.7044160264027587,
+        -0.7044160264027587,
+        0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 45.0,
+      "pair_spread_signed_deg": 5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch001_right_upper_01",
+      "steel_arch": "steelArch_001",
+      "arch_z_mm": 100.0,
+      "side": "right",
+      "level": "upper",
+      "pair_index": 1,
+      "start_mm": [
+        5888.655289461558,
+        -2644.6627907433426,
+        100.0
+      ],
+      "end_mm": [
+        9345.507689689692,
+        -3099.7660430243604,
+        -205.04509961680355
+      ],
+      "direction_unit": [
+        0.9876721143508955,
+        -0.13002950065171942,
+        -0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 7.5,
+      "pair_spread_signed_deg": -5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch001_right_upper_02",
+      "steel_arch": "steelArch_001",
+      "arch_z_mm": 100.0,
+      "side": "right",
+      "level": "upper",
+      "pair_index": 2,
+      "start_mm": [
+        5888.655289461558,
+        -2644.6627907433426,
+        100.0
+      ],
+      "end_mm": [
+        9345.507689689692,
+        -3099.7660430243604,
+        405.04509961680355
+      ],
+      "direction_unit": [
+        0.9876721143508955,
+        -0.13002950065171942,
+        0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 7.5,
+      "pair_spread_signed_deg": 5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch001_right_lower_01",
+      "steel_arch": "steelArch_001",
+      "arch_z_mm": 100.0,
+      "side": "right",
+      "level": "lower",
+      "pair_index": 1,
+      "start_mm": [
+        5848.98505993421,
+        -2795.8734286906674,
+        100.0
+      ],
+      "end_mm": [
+        8314.441152343865,
+        -5261.329521100322,
+        -205.04509961680355
+      ],
+      "direction_unit": [
+        0.7044160264027587,
+        -0.7044160264027587,
+        -0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 45.0,
+      "pair_spread_signed_deg": -5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch001_right_lower_02",
+      "steel_arch": "steelArch_001",
+      "arch_z_mm": 100.0,
+      "side": "right",
+      "level": "lower",
+      "pair_index": 2,
+      "start_mm": [
+        5848.98505993421,
+        -2795.8734286906674,
+        100.0
+      ],
+      "end_mm": [
+        8314.441152343865,
+        -5261.329521100322,
+        405.04509961680355
+      ],
+      "direction_unit": [
+        0.7044160264027587,
+        -0.7044160264027587,
+        0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 45.0,
+      "pair_spread_signed_deg": 5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch002_left_upper_01",
+      "steel_arch": "steelArch_002",
+      "arch_z_mm": 900.0,
+      "side": "left",
+      "level": "upper",
+      "pair_index": 1,
+      "start_mm": [
+        -5888.655289461558,
+        -2644.6627907433426,
+        900.0
+      ],
+      "end_mm": [
+        -9345.507689689692,
+        -3099.7660430243604,
+        594.9549003831964
+      ],
+      "direction_unit": [
+        -0.9876721143508955,
+        -0.13002950065171942,
+        -0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 7.5,
+      "pair_spread_signed_deg": -5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch002_left_upper_02",
+      "steel_arch": "steelArch_002",
+      "arch_z_mm": 900.0,
+      "side": "left",
+      "level": "upper",
+      "pair_index": 2,
+      "start_mm": [
+        -5888.655289461558,
+        -2644.6627907433426,
+        900.0
+      ],
+      "end_mm": [
+        -9345.507689689692,
+        -3099.7660430243604,
+        1205.0450996168036
+      ],
+      "direction_unit": [
+        -0.9876721143508955,
+        -0.13002950065171942,
+        0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 7.5,
+      "pair_spread_signed_deg": 5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch002_left_lower_01",
+      "steel_arch": "steelArch_002",
+      "arch_z_mm": 900.0,
+      "side": "left",
+      "level": "lower",
+      "pair_index": 1,
+      "start_mm": [
+        -5848.985059934212,
+        -2795.8734286906656,
+        900.0
+      ],
+      "end_mm": [
+        -8314.441152343867,
+        -5261.329521100321,
+        594.9549003831964
+      ],
+      "direction_unit": [
+        -0.7044160264027587,
+        -0.7044160264027587,
+        -0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 45.0,
+      "pair_spread_signed_deg": -5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch002_left_lower_02",
+      "steel_arch": "steelArch_002",
+      "arch_z_mm": 900.0,
+      "side": "left",
+      "level": "lower",
+      "pair_index": 2,
+      "start_mm": [
+        -5848.985059934212,
+        -2795.8734286906656,
+        900.0
+      ],
+      "end_mm": [
+        -8314.441152343867,
+        -5261.329521100321,
+        1205.0450996168036
+      ],
+      "direction_unit": [
+        -0.7044160264027587,
+        -0.7044160264027587,
+        0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 45.0,
+      "pair_spread_signed_deg": 5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch002_right_upper_01",
+      "steel_arch": "steelArch_002",
+      "arch_z_mm": 900.0,
+      "side": "right",
+      "level": "upper",
+      "pair_index": 1,
+      "start_mm": [
+        5888.655289461558,
+        -2644.6627907433426,
+        900.0
+      ],
+      "end_mm": [
+        9345.507689689692,
+        -3099.7660430243604,
+        594.9549003831964
+      ],
+      "direction_unit": [
+        0.9876721143508955,
+        -0.13002950065171942,
+        -0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 7.5,
+      "pair_spread_signed_deg": -5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch002_right_upper_02",
+      "steel_arch": "steelArch_002",
+      "arch_z_mm": 900.0,
+      "side": "right",
+      "level": "upper",
+      "pair_index": 2,
+      "start_mm": [
+        5888.655289461558,
+        -2644.6627907433426,
+        900.0
+      ],
+      "end_mm": [
+        9345.507689689692,
+        -3099.7660430243604,
+        1205.0450996168036
+      ],
+      "direction_unit": [
+        0.9876721143508955,
+        -0.13002950065171942,
+        0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 7.5,
+      "pair_spread_signed_deg": 5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch002_right_lower_01",
+      "steel_arch": "steelArch_002",
+      "arch_z_mm": 900.0,
+      "side": "right",
+      "level": "lower",
+      "pair_index": 1,
+      "start_mm": [
+        5848.98505993421,
+        -2795.8734286906674,
+        900.0
+      ],
+      "end_mm": [
+        8314.441152343865,
+        -5261.329521100322,
+        594.9549003831964
+      ],
+      "direction_unit": [
+        0.7044160264027587,
+        -0.7044160264027587,
+        -0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 45.0,
+      "pair_spread_signed_deg": -5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    },
+    {
+      "name": "lockFootAnchor_arch002_right_lower_02",
+      "steel_arch": "steelArch_002",
+      "arch_z_mm": 900.0,
+      "side": "right",
+      "level": "lower",
+      "pair_index": 2,
+      "start_mm": [
+        5848.98505993421,
+        -2795.8734286906674,
+        900.0
+      ],
+      "end_mm": [
+        8314.441152343865,
+        -5261.329521100322,
+        1205.0450996168036
+      ],
+      "direction_unit": [
+        0.7044160264027587,
+        -0.7044160264027587,
+        0.08715574274765817
+      ],
+      "length_mm": 3500.0,
+      "outer_diameter_mm": 42.0,
+      "wall_thickness_mm": 4.0,
+      "angle_deg": 45.0,
+      "pair_spread_signed_deg": 5.0,
+      "connection_location_on_section": "WEB_SIDE_APPROX",
+      "start_source": "STEEL_ARCH_LOCAL_PROFILE_DERIVED"
+    }
+  ],
+  "count": 16,
+  "steel_arch_reference": {
+    "top_radius_mm": 6220.0,
+    "side_radius_mm": 10720.0,
+    "beta_deg": 15.6664,
+    "arch_positions_mm": [
+      100.0,
+      900.0
+    ]
+  },
+  "object_tree": {
+    "lockFootAnchorGroup": [
+      "arch001_lockFootGroup",
+      "arch002_lockFootGroup"
+    ]
+  }
+}

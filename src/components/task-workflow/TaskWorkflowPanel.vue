@@ -45,10 +45,10 @@
             <button v-if="executor" type="button" :disabled="busy" @click="resetWorkflow()">复位</button>
           </div>
           <button type="button" :disabled="busy" @click="prepareWorkflow('panel', {
-            description: '围岩与结构树既有支护构件示意装配',
-            resourceIds: ['rock.design-grade', 'support.legacy-assembly'],
-          })">生成围岩与既有支护预览</button>
-          <p class="history-hint">既有支护组合以 YK1+116～YK1+183 原布置为模板沿目标中线示意重定位，暂不支持参数修改；后续由外部完整参数化支护模块替换。</p>
+            description: '围岩与新模块 ZZ-Va 支护断面装配',
+            resourceIds: ['rock.design-grade', 'support.modeler-zz-va'],
+          })">生成围岩与支护预览</button>
+          <p class="history-hint">支护使用新模块已导出的 1 m 断面模板，在目标 YK 中线装配；当前不按任务参数重新生成。</p>
           <button type="button" :disabled="busy" @click="prepareWorkflow('panel', {
             description: '通风瞬态工况预览（原始 K3+805～K4+005 数据）',
             resourceIds: ['ventilation.transient-network'],
@@ -201,7 +201,7 @@
             <div v-if="selectedHistorySnapshot" class="history-result">
               <div class="history-preview-actions">
                 <button v-if="historyPreviewId" type="button" :disabled="historyPreviewBusy" @click="exitHistoryPreview()">退出历史预览</button>
-                <button v-else type="button" :disabled="historyPreviewBusy || busy" @click="previewHistorySupport()">预览既有支护构件</button>
+                <span v-else class="history-hint">历史旧支护记录仅供查阅；旧模型已退出场景装配。</span>
               </div>
               <p v-if="historyPreviewId" class="history-hint">正在预览节点 {{ historyPreviewId }}{{ historyPreviewPartial ? ' 中的支护部分' : '' }}；增强效果不重放。</p>
               <p v-if="historyPreviewError" class="history-preview-error" role="alert">{{ historyPreviewError }}</p>
@@ -692,8 +692,8 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
     activeProvenance = provenance
     stopExecutor = nextExecutor.subscribe((next) => { snapshot.value = next })
     notice.value = sceneInput
-      ? { type: 'success', title: '动态场景计划已生成', message: sceneInput.resourceIds.some(id => id.startsWith('support.legacy-'))
-        ? '可逐步执行。同屏装配以各阶段校验结果为准；既有支护组合以原布置为模板沿目标中线示意重定位，不可参数化，不代表目标里程实测或质量结论。'
+      ? { type: 'success', title: '动态场景计划已生成', message: sceneInput.resourceIds.some(id => id.startsWith('support.modeler-'))
+        ? '可逐步执行。支护为新模块已导出的 1 m 断面，在目标 YK 中线装配；不代表目标里程实测或质量结论。'
         : '可逐步执行。同屏装配以各阶段校验结果为准；通风局部 K3+805～K4+005 数据示意配准到 YK1+346，非该工点实测风场，不作联合工程结论。' }
       : { type: 'success', title: '计划已通过校验', message: '可逐步确认，也可一次执行全部步骤。' }
     try {

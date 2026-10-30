@@ -1,0 +1,992 @@
+{
+  "support_type": "ZZ-IVb",
+  "status": "THIRD_SUPPORT_TYPE_PARTIALLY_IMPLEMENTED",
+  "inventory": {
+    "support_type": "ZZ-IVb",
+    "final_status": "THIRD_SUPPORT_TYPE_PARTIALLY_IMPLEMENTED",
+    "components": {
+      "steel_arch": {
+        "status": "READY",
+        "parameters": {
+          "R1_mm": {
+            "value": 6080,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "support_drawings.pdf",
+            "pages": [
+              103
+            ]
+          },
+          "R2_mm": {
+            "value": 10580,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "support_drawings.pdf",
+            "pages": [
+              103
+            ]
+          },
+          "beta_deg": {
+            "value": 15.8797,
+            "unit": "deg",
+            "status": "CONFIRMED",
+            "source": "15°52′47″；左右对称标注",
+            "pages": [
+              103
+            ]
+          },
+          "steel_profile": {
+            "value": "I16",
+            "unit": null,
+            "status": "CONFIRMED",
+            "source": "support_drawings.pdf",
+            "pages": [
+              100,
+              103,
+              104
+            ]
+          },
+          "longitudinal_spacing_mm": {
+            "value": 1000,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "support_drawings.pdf",
+            "pages": [
+              100,
+              104
+            ]
+          }
+        }
+      },
+      "primary_concrete": {
+        "status": "READY",
+        "parameters": {
+          "material": {
+            "value": "C25高性能喷射混凝土",
+            "unit": null,
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "thickness_mm": {
+            "value": 220,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "reserved_deformation_mm": {
+            "value": 80,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "scope": {
+            "value": "ARCH_AND_WALL_ONLY",
+            "unit": null,
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          }
+        }
+      },
+      "primary_mesh": {
+        "status": "PARTIAL",
+        "parameters": {
+          "diameter_mm": {
+            "value": 8,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "circumferential_spacing_mm": {
+            "value": 250,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "longitudinal_spacing_mm": {
+            "value": 250,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "layers": {
+            "value": 1,
+            "unit": null,
+            "status": "CONFIRMED",
+            "source": "第100页：单层、拱墙设置",
+            "pages": [
+              100
+            ]
+          },
+          "reference_side": {
+            "value": "PRIMARY_SUPPORT_INNER_PLUS_40MM",
+            "unit": null,
+            "status": "PROVISIONAL",
+            "source": "参数识别.docx定义；I16局部连接侧别未明确",
+            "pages": [
+              100
+            ]
+          }
+        }
+      },
+      "system_anchor": {
+        "status": "READY",
+        "parameters": {
+          "type": {
+            "value": "Φ25低预应力树脂药卷锚杆",
+            "unit": null,
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "diameter_mm": {
+            "value": 25,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "length_mm": {
+            "value": 4000,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "circumferential_spacing_mm": {
+            "value": 1200,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          },
+          "longitudinal_spacing_mm": {
+            "value": 1000,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "YL交通隧道主洞钻爆开挖支护施工方案 表4.7-1",
+            "pages": [
+              100
+            ]
+          }
+        }
+      },
+      "lock_foot_anchor": {
+        "status": "NOT_APPLICABLE",
+        "evidence": "第100–104页未设计φ42锁脚锚管；C22砂浆锚杆是钢架定位锚杆。"
+      },
+      "secondary_lining": {
+        "status": "READY",
+        "parameters": {
+          "material": {
+            "value": "C35钢筋混凝土",
+            "unit": null,
+            "status": "CONFIRMED",
+            "source": "support_drawings.pdf",
+            "pages": [
+              100
+            ]
+          },
+          "thickness_mm": {
+            "value": 400,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "support_drawings.pdf",
+            "pages": [
+              100
+            ]
+          },
+          "has_invert": {
+            "value": true,
+            "unit": null,
+            "status": "CONFIRMED",
+            "source": "第100页工程数量表分别列拱墙和仰拱",
+            "pages": [
+              100
+            ]
+          }
+        }
+      },
+      "inner_profile": {
+        "status": "READY",
+        "reference_chain": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+        "parameters": {
+          "top_radius_mm": {
+            "value": 5500,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+            "pages": [
+              74,
+              76,
+              100
+            ]
+          },
+          "side_radius_mm": {
+            "value": 10000,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+            "pages": [
+              74,
+              76,
+              100
+            ]
+          },
+          "side_angle_deg": {
+            "value": 11.699444444444445,
+            "unit": "deg",
+            "status": "CONFIRMED",
+            "source": "第76页有仰拱轮廓 11°41′58″",
+            "pages": [
+              76
+            ]
+          },
+          "invert_transition_radius_mm": {
+            "value": 1200,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+            "pages": [
+              76
+            ]
+          },
+          "invert_transition_angle_deg": {
+            "value": 55.89138888888889,
+            "unit": "deg",
+            "status": "CONFIRMED",
+            "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+            "pages": [
+              76
+            ]
+          },
+          "invert_bottom_radius_mm": {
+            "value": 12000,
+            "unit": "mm",
+            "status": "CONFIRMED",
+            "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+            "pages": [
+              76
+            ]
+          },
+          "invert_bottom_angle_deg": {
+            "value": 44.818333333333335,
+            "unit": "deg",
+            "status": "CONFIRMED",
+            "source": "第74页目录 → 第76页 S5-2-1-1 主隧道钻爆法共用有仰拱内轮廓 → 第100页 ZZ-IVb",
+            "pages": [
+              76
+            ]
+          }
+        }
+      },
+      "secondary_rebar": {
+        "status": "NOT_IMPLEMENTED",
+        "evidence": "第101–102页确认N1/N2钢筋网及三肢格栅N3–N8；其语义和几何不同于现有ZZ-Va N1–N4闭合主筋模块，本轮不新建几何。"
+      }
+    },
+    "confirmed_parameters": [
+      "inner_profile",
+      "primary_concrete",
+      "primary_mesh.specification",
+      "steel_arch",
+      "system_anchor",
+      "secondary_lining"
+    ],
+    "provisional_parameters": [
+      "primary_mesh.reference_side"
+    ],
+    "missing_parameters": [
+      "secondary_rebar.geometry_adapter"
+    ]
+  },
+  "geometry": {
+    "common_inner_profile": "page 76 with invert",
+    "primary_concrete": {
+      "inner": {
+        "role": "PRIMARY_SUPPORT_INNER_REFERENCE",
+        "coordinate_system": "x_right_y_up_mm",
+        "construction": "STEEL_ARCH_REFERENCED_THREE_ARC_OPEN_PROFILE",
+        "top_radius_mm": 5980.0,
+        "side_radius_mm": 10480.0,
+        "side_angle_deg": 11.699444444444445,
+        "center_offset_mm": 4500.0,
+        "segments": [
+          {
+            "name": "left_side",
+            "center_mm": [
+              4500,
+              0.0
+            ],
+            "radius_mm": 10480.0,
+            "start_angle_deg": 191.69944444444445,
+            "end_angle_deg": 180.0,
+            "start_mm": [
+              -5762.275661459647,
+              -2125.1113496033518
+            ],
+            "end_mm": [
+              -5980.0,
+              1.2834298455064262e-12
+            ],
+            "status": "CONFIRMED"
+          },
+          {
+            "name": "top",
+            "center_mm": [
+              0.0,
+              0.0
+            ],
+            "radius_mm": 5980.0,
+            "start_angle_deg": 180.0,
+            "end_angle_deg": 0.0,
+            "start_mm": [
+              -5980.0,
+              7.323387858901172e-13
+            ],
+            "end_mm": [
+              5980.0,
+              0.0
+            ],
+            "status": "CONFIRMED"
+          },
+          {
+            "name": "right_side",
+            "center_mm": [
+              -4500,
+              0.0
+            ],
+            "radius_mm": 10480.0,
+            "start_angle_deg": 0.0,
+            "end_angle_deg": -11.699444444444445,
+            "start_mm": [
+              5980.0,
+              0.0
+            ],
+            "end_mm": [
+              5762.275661459647,
+              -2125.1113496033518
+            ],
+            "status": "CONFIRMED"
+          }
+        ],
+        "open_at_invert": true,
+        "omitted_segments": [
+          "invert_transition",
+          "invert_bottom"
+        ]
+      },
+      "outer": {
+        "role": "EXCAVATION_OUTER_BOUNDARY",
+        "coordinate_system": "x_right_y_up_mm",
+        "construction": "STEEL_ARCH_REFERENCED_THREE_ARC_OPEN_PROFILE",
+        "top_radius_mm": 6200.0,
+        "side_radius_mm": 10700.0,
+        "side_angle_deg": 11.699444444444445,
+        "center_offset_mm": 4500.0,
+        "segments": [
+          {
+            "name": "left_side",
+            "center_mm": [
+              4500,
+              0.0
+            ],
+            "radius_mm": 10700.0,
+            "start_angle_deg": 191.69944444444445,
+            "end_angle_deg": 180.0,
+            "start_mm": [
+              -5977.70511236815,
+              -2169.722465720979
+            ],
+            "end_mm": [
+              -6200.0,
+              1.310372075087668e-12
+            ],
+            "status": "CONFIRMED"
+          },
+          {
+            "name": "top",
+            "center_mm": [
+              0.0,
+              0.0
+            ],
+            "radius_mm": 6200.0,
+            "start_angle_deg": 180.0,
+            "end_angle_deg": 0.0,
+            "start_mm": [
+              -6200.0,
+              7.59281015471359e-13
+            ],
+            "end_mm": [
+              6200.0,
+              0.0
+            ],
+            "status": "CONFIRMED"
+          },
+          {
+            "name": "right_side",
+            "center_mm": [
+              -4500,
+              0.0
+            ],
+            "radius_mm": 10700.0,
+            "start_angle_deg": 0.0,
+            "end_angle_deg": -11.699444444444445,
+            "start_mm": [
+              6200.0,
+              0.0
+            ],
+            "end_mm": [
+              5977.70511236815,
+              -2169.722465720979
+            ],
+            "status": "CONFIRMED"
+          }
+        ],
+        "open_at_invert": true,
+        "omitted_segments": [
+          "invert_transition",
+          "invert_bottom"
+        ]
+      },
+      "thickness_mm": 220.0,
+      "scope": "ARCH_AND_WALL_ONLY",
+      "invert": "NOT_APPLICABLE",
+      "unresolved": null
+    },
+    "secondary_lining": {
+      "inner": {
+        "coordinate_system": "x_right_y_up_mm",
+        "construction": "TANGENT_CHAIN_MIRRORED",
+        "radius_offset_mm": 0.0,
+        "right_segments": [
+          {
+            "center_mm": [
+              -3.367778697655221e-13,
+              0.0
+            ],
+            "radius_mm": 5500.0,
+            "start_angle_deg": 90.0,
+            "end_angle_deg": 0.0,
+            "start_mm": [
+              0.0,
+              5500.0
+            ],
+            "end_mm": [
+              5500.0,
+              0.0
+            ],
+            "connection": "TANGENT",
+            "name": "top"
+          },
+          {
+            "center_mm": [
+              -4500.0,
+              0.0
+            ],
+            "radius_mm": 10000.0,
+            "start_angle_deg": 0.0,
+            "end_angle_deg": -11.6994444444,
+            "start_mm": [
+              5500.0,
+              0.0
+            ],
+            "end_mm": [
+              5292.247768569938,
+              -2027.7780053391134
+            ],
+            "connection": "TANGENT",
+            "name": "side"
+          },
+          {
+            "center_mm": [
+              4117.1780363415455,
+              -1784.4446446984198
+            ],
+            "radius_mm": 1200.0,
+            "start_angle_deg": -11.699444444400001,
+            "end_angle_deg": -67.5908333333,
+            "start_mm": [
+              5292.247768569938,
+              -2027.7780053391134
+            ],
+            "end_mm": [
+              4574.639982205463,
+              -2893.826710574013
+            ],
+            "connection": "TANGENT",
+            "name": "invert_transition"
+          },
+          {
+            "center_mm": [
+              0.020523566290648887,
+              8199.993948181918
+            ],
+            "radius_mm": 12000.0,
+            "start_angle_deg": -67.5908333333,
+            "end_angle_deg": -89.99999999995,
+            "start_mm": [
+              4574.639982205463,
+              -2893.826710574013
+            ],
+            "end_mm": [
+              0.020523576763007242,
+              -3800.0060518180817
+            ],
+            "connection": "TANGENT",
+            "name": "invert_bottom"
+          }
+        ],
+        "left_segments": [
+          {
+            "center_mm": [
+              -0.020523566290648887,
+              8199.993948181918
+            ],
+            "radius_mm": 12000.0,
+            "start_angle_deg": 269.99999999995,
+            "end_angle_deg": 247.5908333333,
+            "start_mm": [
+              -0.020523576763007242,
+              -3800.0060518180817
+            ],
+            "end_mm": [
+              -4574.639982205463,
+              -2893.826710574013
+            ],
+            "connection": "TANGENT",
+            "name": "invert_bottom_mirrored"
+          },
+          {
+            "center_mm": [
+              -4117.1780363415455,
+              -1784.4446446984198
+            ],
+            "radius_mm": 1200.0,
+            "start_angle_deg": 247.5908333333,
+            "end_angle_deg": 191.6994444444,
+            "start_mm": [
+              -4574.639982205463,
+              -2893.826710574013
+            ],
+            "end_mm": [
+              -5292.247768569938,
+              -2027.7780053391134
+            ],
+            "connection": "TANGENT",
+            "name": "invert_transition_mirrored"
+          },
+          {
+            "center_mm": [
+              4500.0,
+              0.0
+            ],
+            "radius_mm": 10000.0,
+            "start_angle_deg": 191.6994444444,
+            "end_angle_deg": 180.0,
+            "start_mm": [
+              -5292.247768569938,
+              -2027.7780053391134
+            ],
+            "end_mm": [
+              -5500.0,
+              0.0
+            ],
+            "connection": "TANGENT",
+            "name": "side_mirrored"
+          },
+          {
+            "center_mm": [
+              3.367778697655221e-13,
+              0.0
+            ],
+            "radius_mm": 5500.0,
+            "start_angle_deg": 180.0,
+            "end_angle_deg": 90.0,
+            "start_mm": [
+              -5500.0,
+              0.0
+            ],
+            "end_mm": [
+              -0.0,
+              5500.0
+            ],
+            "connection": "TANGENT",
+            "name": "top_mirrored"
+          }
+        ],
+        "bottom_right_mm": [
+          0.020523576763007242,
+          -3800.0060518180817
+        ],
+        "bottom_left_mm": [
+          -0.020523576763007242,
+          -3800.0060518180817
+        ],
+        "closed": true,
+        "closed_numeric": false,
+        "closure_status": "DRAWING_ROUNDING_RESIDUAL",
+        "axis_closure_residual_mm": 0.020523576763007242,
+        "full_bottom_gap_mm": 0.041047153526014485,
+        "calculated_width_mm": 11000.0,
+        "calculated_height_mm": 9300.006051818082,
+        "bounds_mm": {
+          "min_x": -5500.0,
+          "max_x": 5500.0,
+          "min_y": -3800.0060518180817,
+          "max_y": 5500.0
+        },
+        "geometry_relation": "RELATION_CANDIDATE",
+        "tolerance": {
+          "numerical_epsilon": 1e-09,
+          "drawing_closure_tolerance_mm": 0.1,
+          "status": "EXPERIMENTAL_PENDING_ENGINEERING_CONFIRMATION"
+        }
+      },
+      "outer": {
+        "coordinate_system": "x_right_y_up_mm",
+        "construction": "NORMAL_OFFSET_FROM_SECTION_GEOMETRY_INNER_PROFILE",
+        "radius_offset_mm": 0.0,
+        "right_segments": [
+          {
+            "center_mm": [
+              -3.367778697655221e-13,
+              0.0
+            ],
+            "radius_mm": 5900.0,
+            "start_angle_deg": 90.0,
+            "end_angle_deg": 0.0,
+            "start_mm": [
+              2.449293598294708e-14,
+              5900.0
+            ],
+            "end_mm": [
+              5900.0,
+              0.0
+            ],
+            "connection": "TANGENT",
+            "name": "top",
+            "offset_from_inner_mm": 400.0
+          },
+          {
+            "center_mm": [
+              -4500.0,
+              0.0
+            ],
+            "radius_mm": 10400.0,
+            "start_angle_deg": 0.0,
+            "end_angle_deg": -11.6994444444,
+            "start_mm": [
+              5900.0,
+              0.0
+            ],
+            "end_mm": [
+              5683.937679312736,
+              -2108.889125552678
+            ],
+            "connection": "TANGENT",
+            "name": "side",
+            "offset_from_inner_mm": 400.0
+          },
+          {
+            "center_mm": [
+              4117.1780363415455,
+              -1784.4446446984198
+            ],
+            "radius_mm": 1600.0,
+            "start_angle_deg": -11.699444444400001,
+            "end_angle_deg": -67.5908333333,
+            "start_mm": [
+              5683.937679312736,
+              -2108.889125552678
+            ],
+            "end_mm": [
+              4727.127297493435,
+              -3263.620732532544
+            ],
+            "connection": "TANGENT",
+            "name": "invert_transition",
+            "offset_from_inner_mm": 400.0
+          },
+          {
+            "center_mm": [
+              0.020523566290648887,
+              8199.993948181918
+            ],
+            "radius_mm": 12400.0,
+            "start_angle_deg": -67.5908333333,
+            "end_angle_deg": -89.99999999995,
+            "start_mm": [
+              4727.1272974934345,
+              -3263.620732532543
+            ],
+            "end_mm": [
+              0.020523577109332503,
+              -4200.006051818082
+            ],
+            "connection": "TANGENT",
+            "name": "invert_bottom",
+            "offset_from_inner_mm": 400.0
+          }
+        ],
+        "left_segments": [
+          {
+            "center_mm": [
+              -0.020523566290648887,
+              8199.993948181918
+            ],
+            "radius_mm": 12400.0,
+            "start_angle_deg": 269.99999999995,
+            "end_angle_deg": 247.5908333333,
+            "start_mm": [
+              -0.020523577119111125,
+              -4200.006051818082
+            ],
+            "end_mm": [
+              -4727.127297493431,
+              -3263.620732532543
+            ],
+            "connection": "TANGENT",
+            "name": "invert_bottom_mirrored",
+            "offset_from_inner_mm": 400.0
+          },
+          {
+            "center_mm": [
+              -4117.1780363415455,
+              -1784.4446446984198
+            ],
+            "radius_mm": 1600.0,
+            "start_angle_deg": 247.5908333333,
+            "end_angle_deg": 191.6994444444,
+            "start_mm": [
+              -4727.1272974934345,
+              -3263.620732532544
+            ],
+            "end_mm": [
+              -5683.937679312736,
+              -2108.889125552678
+            ],
+            "connection": "TANGENT",
+            "name": "invert_transition_mirrored",
+            "offset_from_inner_mm": 400.0
+          },
+          {
+            "center_mm": [
+              4500.0,
+              0.0
+            ],
+            "radius_mm": 10400.0,
+            "start_angle_deg": 191.6994444444,
+            "end_angle_deg": 180.0,
+            "start_mm": [
+              -5683.937679312736,
+              -2108.889125552677
+            ],
+            "end_mm": [
+              -5900.0,
+              1.2736326711132474e-12
+            ],
+            "connection": "TANGENT",
+            "name": "side_mirrored",
+            "offset_from_inner_mm": 400.0
+          },
+          {
+            "center_mm": [
+              3.367778697655221e-13,
+              0.0
+            ],
+            "radius_mm": 5900.0,
+            "start_angle_deg": 180.0,
+            "end_angle_deg": 90.0,
+            "start_mm": [
+              -5900.0,
+              7.225416114969384e-13
+            ],
+            "end_mm": [
+              6.980486755139913e-13,
+              5900.0
+            ],
+            "connection": "TANGENT",
+            "name": "top_mirrored",
+            "offset_from_inner_mm": 400.0
+          }
+        ],
+        "bottom_right_mm": [
+          0.020523577109332503,
+          -4200.006051818082
+        ],
+        "bottom_left_mm": [
+          -0.020523577119111125,
+          -4200.006051818082
+        ],
+        "closed": true,
+        "closed_numeric": false,
+        "closure_status": "DRAWING_ROUNDING_RESIDUAL",
+        "axis_closure_residual_mm": 0.020523577109332503,
+        "full_bottom_gap_mm": 0.041047154218665005,
+        "calculated_width_mm": 11800.0,
+        "calculated_height_mm": 10100.006051818082,
+        "bounds_mm": {
+          "min_x": -5900.0,
+          "max_x": 5900.0,
+          "min_y": -4200.006051818082,
+          "max_y": 5900.0
+        },
+        "geometry_relation": "RELATION_CANDIDATE",
+        "tolerance": {
+          "numerical_epsilon": 1e-09,
+          "drawing_closure_tolerance_mm": 0.1,
+          "status": "EXPERIMENTAL_PENDING_ENGINEERING_CONFIRMATION"
+        },
+        "profile_source": "sectionGeometryState.inner_profile",
+        "normal_offset_mm": 400.0
+      }
+    },
+    "primary_mesh_layers": 1,
+    "system_anchor_count": 19
+  },
+  "validation": {
+    "primary_thickness_exact": true,
+    "secondary_thickness_exact": true,
+    "secondary_closed": true,
+    "steel_parameters_exact": true,
+    "one_meter_depth": true,
+    "required_groups_present": true,
+    "excluded_groups_absent": true,
+    "all_passed": true
+  },
+  "glb": {
+    "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\multi_support\\ZZ-IVb_support_1m.glb",
+    "byte_length": 728628,
+    "mesh_count": 24,
+    "mesh_names": [
+      "primarySupportConcrete",
+      "primaryMeshCircumferentialBars",
+      "primaryMeshLongitudinalBars",
+      "steelArch_001",
+      "SystemAnchorMesh_01_001",
+      "SystemAnchorMesh_01_002",
+      "SystemAnchorMesh_01_003",
+      "SystemAnchorMesh_01_004",
+      "SystemAnchorMesh_01_005",
+      "SystemAnchorMesh_01_006",
+      "SystemAnchorMesh_01_007",
+      "SystemAnchorMesh_01_008",
+      "SystemAnchorMesh_01_009",
+      "SystemAnchorMesh_01_010",
+      "SystemAnchorMesh_01_011",
+      "SystemAnchorMesh_01_012",
+      "SystemAnchorMesh_01_013",
+      "SystemAnchorMesh_01_014",
+      "SystemAnchorMesh_01_015",
+      "SystemAnchorMesh_01_016",
+      "SystemAnchorMesh_01_017",
+      "SystemAnchorMesh_01_018",
+      "SystemAnchorMesh_01_019",
+      "secondaryLining"
+    ],
+    "node_names": [
+      "ZZIVbSectionAssemblyGroup",
+      "primarySupportGroup",
+      "secondarySystemGroup",
+      "primarySupportConcreteGroup",
+      "primarySupportConcrete",
+      "primarySupportMeshGroup",
+      "primaryMeshCircumferentialBars",
+      "primaryMeshLongitudinalBars",
+      "steelArchArrayGroup",
+      "steelArch_001",
+      "systemAnchorGroup",
+      "SystemAnchorMesh_01_001",
+      "SystemAnchorMesh_01_002",
+      "SystemAnchorMesh_01_003",
+      "SystemAnchorMesh_01_004",
+      "SystemAnchorMesh_01_005",
+      "SystemAnchorMesh_01_006",
+      "SystemAnchorMesh_01_007",
+      "SystemAnchorMesh_01_008",
+      "SystemAnchorMesh_01_009",
+      "SystemAnchorMesh_01_010",
+      "SystemAnchorMesh_01_011",
+      "SystemAnchorMesh_01_012",
+      "SystemAnchorMesh_01_013",
+      "SystemAnchorMesh_01_014",
+      "SystemAnchorMesh_01_015",
+      "SystemAnchorMesh_01_016",
+      "SystemAnchorMesh_01_017",
+      "SystemAnchorMesh_01_018",
+      "SystemAnchorMesh_01_019",
+      "secondaryLiningGroup",
+      "secondaryLining"
+    ],
+    "metadata": {
+      "support_type": "ZZ-IVb",
+      "length_m": 1.0,
+      "component_list": [
+        "primary_concrete",
+        "primary_mesh",
+        "steel_arch",
+        "system_anchor",
+        "secondary_lining"
+      ],
+      "partial_components": [
+        "primary_mesh"
+      ],
+      "not_applicable": [
+        "lock_foot_anchor"
+      ],
+      "not_implemented": [
+        "N1",
+        "N2",
+        "N3",
+        "N4"
+      ],
+      "status": "THIRD_SUPPORT_TYPE_PARTIALLY_IMPLEMENTED"
+    },
+    "bbox_m": {
+      "min": [
+        -10.197705405120916,
+        -4.2000060518180815,
+        0.0
+      ],
+      "max": [
+        10.197705405120916,
+        10.2,
+        1.0
+      ],
+      "size": [
+        20.39541081024183,
+        14.400006051818082,
+        1.0
+      ]
+    }
+  }
+}

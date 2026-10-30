@@ -1,0 +1,90 @@
+{
+  "component": "lock_foot_anchor",
+  "support_type": "ZZ-Va",
+  "confirmed": {
+    "outer_diameter_mm": {
+      "value": 42.0,
+      "status": "CONFIRMED"
+    },
+    "wall_thickness_mm": {
+      "value": 4.0,
+      "status": "CONFIRMED"
+    },
+    "length_mm": {
+      "value": 3500.0,
+      "status": "CONFIRMED"
+    },
+    "count_per_arch": {
+      "value": 8,
+      "status": "CONFIRMED"
+    },
+    "count_left": {
+      "value": 4,
+      "status": "CONFIRMED"
+    },
+    "count_right": {
+      "value": 4,
+      "status": "CONFIRMED"
+    },
+    "levels_per_side": {
+      "value": 2,
+      "status": "CONFIRMED"
+    },
+    "pipes_per_level": {
+      "value": 2,
+      "status": "CONFIRMED"
+    },
+    "grouted": {
+      "value": true,
+      "status": "CONFIRMED"
+    },
+    "installed_per_steel_arch": {
+      "value": true,
+      "status": "CONFIRMED"
+    },
+    "steel_arch_spacing_mm": {
+      "value": 800.0,
+      "status": "CONFIRMED"
+    },
+    "connection_type": {
+      "value": "SINGLE_SIDE_WELDED",
+      "status": "CONFIRMED"
+    },
+    "weld_length_min_mm": {
+      "value": 180.0,
+      "status": "CONFIRMED"
+    },
+    "straight_hook_mm": {
+      "value": 200.0,
+      "status": "CONFIRMED"
+    }
+  },
+  "provisional": {
+    "upper_install_height_mm": {
+      "value": 250.0,
+      "status": "PROVISIONAL"
+    },
+    "lower_install_height_mm": {
+      "value": 100.0,
+      "status": "PROVISIONAL"
+    },
+    "upper_angle_deg": {
+      "value": 7.5,
+      "status": "PROVISIONAL"
+    },
+    "lower_angle_deg": {
+      "value": 45.0,
+      "status": "PROVISIONAL"
+    },
+    "pair_spread_angle_deg": {
+      "value": 10.0,
+      "status": "PROVISIONAL"
+    },
+    "connection_location_on_section": {
+      "value": "WEB_SIDE_APPROX",
+      "status": "PROVISIONAL"
+    }
+  },
+  "geometry_status": "PROVISIONAL",
+  "warning": "当前为建模参考默认值，待项目节点图/现场参数校核。"
+}

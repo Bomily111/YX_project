@@ -42,49 +42,69 @@
       "digest": "540c4255a2f91274de5ecec37ae8927b5bb7c0909c48a4ee8399b2ac7eebf94e"
     },
     {
-      "path": "/data/zhihu/Z-PM-23m/Z-PM-钢筋第一层.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-II_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "cc67ceb9f1e63f9078e07d2e8330c324c97a050afb2328976a84b99f93496944"
+      "digest": "3617259eea417af1356db6b72e3eaad44c5620589b4009343640aefa068b1922"
     },
     {
-      "path": "/data/zhihu/Z-PM-23m/Z-PM-钢筋第二层.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-III_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "2da1c1ef5810fd7ae79813c96939f22491aaff23c21020a63e8ea3a126e14f31"
+      "digest": "1c98f3d454f5fe88f8ae4620f75804e42be98f929e434a3544e22a5da92e56eb"
     },
     {
-      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第一层.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-IIIx_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "897f78bd0d250d7cd874b6811a0076c549055b85a1bb22b69fa1783637f6a322"
+      "digest": "97e5cd6e5acaa81ee69c817ad9e1510eeac33938b88e8cd81c0a6533b991fa89"
     },
     {
-      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第二层.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-IVa_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "6bbaf274b4b496179f645b4d86d5b936a76062e2ab510e3e3c24fb5c7e0700d5"
+      "digest": "d514a0a2a4a86e6782d816ffc86dcb409c91ddbe03327cc126260904185149d9"
     },
     {
-      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-钢架.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "e69709cdf503767bac51ae471a3ce841a82ffc08e33fbb208a013657f545a979"
+      "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
     },
     {
-      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ76中管棚.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-IVc_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "ed54cc45172fc2761aac5f35cc20343d1854245d35b2f2648d2656b1ae373f28"
+      "digest": "018cd6ed0cf3cbd3b9c1ce57897d7bd1c988e19f504bd3fd705ab6823a9f79bf"
     },
     {
-      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ25自进式中空注浆锚杆.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-IVsx_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "9b2b5bce6883cd232ab11d97c21eeef079fae9ab07aede2988b6bb120d2d8a3d"
+      "digest": "bf39787694ab119fdd885d05178dd645897f5e0570118992a614565ca8336031"
     },
     {
-      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42注浆小导管.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-IVx_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "ffa90b1e7d16fb93d3db4fe3df415200c14c4dd8f20c9460edc46f5fa7b1d47a"
+      "digest": "38007dd581ef6854b5f48ed9c020596c22e624df1c53ebc03c999f53eec6b45f"
     },
     {
-      "path": "/data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42锁脚锚杆.glb",
+      "path": "/support-modeler/outputs/multi_support/ZZ-QJsx_support_1m.glb",
       "algorithm": "sha256-bytes-v1",
-      "digest": "6ddb4265eb2d063856cfdb8a6e9fb38ebad11bc2852be27b85d927307f821670"
+      "digest": "44cd1fdf58f7cec5740eabc803a234e6e4ffe8e6f518d26481addf8a85043600"
+    },
+    {
+      "path": "/support-modeler/outputs/multi_support/ZZ-S_support_1m.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "39070e0320e90c755611cf0035a9f637d1dea4cf07b225ad20f6a9e911786e60"
+    },
+    {
+      "path": "/support-modeler/outputs/multi_support/ZZ-Vsx_support_1m.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "af628675cd262027e48afa4f1fa41a319499a92274fd9fee5dde6409d1653b23"
+    },
+    {
+      "path": "/support-modeler/outputs/multi_support/ZZ-Y1_support_1m.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "1dce6dcae8a5e1c71fc8c85fd8eb6f6e6d72c30a6244642961fa050a2bbd0ff9"
+    },
+    {
+      "path": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04"
     },
     {
       "path": "/data/tunnel/tunnel000.glb",

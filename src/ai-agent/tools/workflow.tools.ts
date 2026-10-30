@@ -3,6 +3,7 @@ import { advancePlatformTask, dispatchValidatedWorkflow, orchestratePlatformTask
 import { AGENT_SCENE_RESOURCES, SCENE_ENHANCEMENT_MODES, SCENE_ASSEMBLY_MODES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import { viewerService } from '@/platform/viewer/ViewerService'
+import { getActiveModelerSupportModel } from '@/modules/support/modeler-resources'
 import * as Cesium from 'cesium'
 import {
   getTaskWorkflowController,
@@ -102,7 +103,7 @@ export const workflowTools: ToolRegistration[] = [
           targetMileage: { type: 'string', description: '明确的目标里程，优先使用工地真实中线 YK，例如 YK1+346 或 YK2+244；旧 DK 可作为兼容输入，平台统一转换为 YK' },
           resourceIds: { type: 'array', minItems: 1, maxItems: 4,
             items: { type: 'string', enum: [...AGENT_SCENE_RESOURCES] },
-            description: '最终要在主场景同时呈现的资源。围岩解释四层源锚点为 YK2+244，可沿目标中线示意重定位；四层互斥，不能同屏。支护组合用 support.legacy-assembly，单独钢架用 support.legacy-steel-frame；结构树构件均可沿目标中线示意重定位。' },
+            description: '最终同屏资源。围岩解释四层源锚点为 YK2+244，四层互斥。支护组合默认 support.modeler-zz-va（已导出 1 m 断面），指定其他 ZZ 类型选对应 support.modeler-zz-*。' },
           tunnelId: { type: 'string', description: '当前隧洞 ID，可省略' },
         },
         required: ['description', 'targetMileage', 'resourceIds'],
@@ -129,7 +130,15 @@ export const workflowTools: ToolRegistration[] = [
           reason: prepared.notice?.message ?? '场景装配未通过校验', ...prepared })
       }
       const viewer = viewerService.require()
-      const focusTarget = () => {
+      const focusTarget = (assembled = false) => {
+        const support = assembled && resourceIds
+          .map(getActiveModelerSupportModel).find((model): model is Cesium.Model => !!model?.ready)
+        if (support) {
+          viewer.camera.viewBoundingSphere(support.boundingSphere, new Cesium.HeadingPitchRange(0, -0.25, 42))
+          viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
+          viewer.scene.requestRender()
+          return
+        }
         const target = Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude, position.height)
         viewer.camera.lookAt(target, new Cesium.HeadingPitchRange(position.heading, -0.7, 270))
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
@@ -139,7 +148,7 @@ export const workflowTools: ToolRegistration[] = [
       }
       focusTarget()
       const outcome = await dispatchValidatedWorkflow(controller, prepared)
-      if (outcome.ok) focusTarget()
+      if (outcome.ok) focusTarget(true)
       return JSON.stringify({ action: 'assemble_scene_at_mileage', targetMileage, requestedMileage,
         assembledResourceIds: outcome.status.lastCompletedStage?.assembledResourceIds ?? [],
         ...outcome, ...outcome.status })
@@ -158,7 +167,7 @@ export const workflowTools: ToolRegistration[] = [
           start: { type: 'number' }, end: { type: 'number' },
           resourceIds: { type: 'array', minItems: 1, maxItems: 8,
             items: { type: 'string', enum: [...AGENT_SCENE_RESOURCES] },
-            description: '按目标顺序选择阶段资源。支护组合用结构树 support.legacy-assembly，单独钢架用 support.legacy-steel-frame；均可沿目标中线示意重定位，不可参数化。' },
+            description: '按目标顺序选择阶段资源。支护组合默认 support.modeler-zz-va；指定其他 ZZ 类型选对应 support.modeler-zz-*。' },
           enhancementModes: enhancementModesSchema,
           assemblyModes: assemblyModesSchema,
           tunnelId: { type: 'string' }, maxLoadMb: { type: 'number' },
@@ -236,7 +245,7 @@ export const workflowTools: ToolRegistration[] = [
           end: { type: 'number', description: '质量检查终点 YK 绝对米数；YK1+356 应填 1356' },
           resourceIds: { type: 'array', minItems: 1, maxItems: 8,
             items: { type: 'string', enum: [...AGENT_SCENE_RESOURCES] },
-            description: '场景任务按目标选择资源顺序。支护组合用结构树 support.legacy-assembly，单独钢架用 support.legacy-steel-frame；均可沿目标中线示意重定位，不可参数化。' },
+            description: '场景任务按目标选择资源顺序。支护组合默认 support.modeler-zz-va；指定其他 ZZ 类型选对应 support.modeler-zz-*。' },
           enhancementModes: enhancementModesSchema,
           assemblyModes: assemblyModesSchema,
           tunnelId: { type: 'string', description: '当前隧洞 ID，可省略' },
@@ -267,7 +276,7 @@ export const workflowTools: ToolRegistration[] = [
     module: 'common',
     tool: {
       name: 'compose_scene_workflow',
-      description: '利用现有资产按 YK 里程编排场景。围岩可选设计分级、物探融合等级、TSP 坚硬度/完整度、TEM 视电阻率；物探层源锚点 YK2+244，可沿目标中线示意重定位，不代表目标工点实测。结构树既有支护组合用 support.legacy-assembly，原布置可沿目标中线示意重定位，不可参数化。仅生成计划，不执行，不作工程结论。',
+      description: '利用现有资产按 YK 里程编排场景。围岩可选设计分级、物探融合等级、TSP 坚硬度/完整度、TEM 视电阻率；物探层源锚点 YK2+244，可沿目标中线示意重定位。支护组合默认用新模块已导出的 support.modeler-zz-va。仅生成计划，不执行，不作工程结论。',
       input_schema: {
         type: 'object',
         properties: {

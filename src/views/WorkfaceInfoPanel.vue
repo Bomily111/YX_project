@@ -2,7 +2,7 @@
   <div class="workface-panel" :class="{ collapsed: isCollapsed }">
     <!-- 折叠/展开按钮 -->
     <button class="panel-collapse-btn" @click="isCollapsed = !isCollapsed" :title="isCollapsed ? '展开信息面板' : '收起信息面板'">
-      <span>{{ isCollapsed ? '◀' : '▶' }}</span>
+      <span>{{ isCollapsed ? '▶' : '◀' }}</span>
     </button>
 
     <transition name="panel-slide">
@@ -122,13 +122,13 @@ const alerts = [
 <style scoped lang="scss">
 .workface-panel {
   position: absolute;
-  right: 20px;
+  left: 20px;
   top: 80px;
   width: 260px;
   max-height: calc(100vh - 160px);
   z-index: 15;
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   gap: 0;
   transition: all 0.3s ease;
 
@@ -144,7 +144,7 @@ const alerts = [
   margin-top: 8px;
   background: rgba(0, 30, 60, 0.85);
   border: 1px solid rgba(0, 170, 255, 0.4);
-  border-radius: 3px 0 0 3px;
+  border-radius: 0 3px 3px 0;
   color: #00aaff;
   font-size: 11px;
   cursor: pointer;
@@ -476,5 +476,5 @@ const alerts = [
 .panel-slide-enter-active,
 .panel-slide-leave-active { transition: opacity 0.25s ease, transform 0.25s ease; }
 .panel-slide-enter-from,
-.panel-slide-leave-to { opacity: 0; transform: translateX(20px); }
+.panel-slide-leave-to { opacity: 0; transform: translateX(-20px); }
 </style>

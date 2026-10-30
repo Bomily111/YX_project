@@ -15,11 +15,12 @@ describe('scene agent prompt contract', () => {
 
   it('preserves all essential rock interpretations and demonstration provenance', () => {
     for (const id of ['rock.design-grade', 'rock.geophysical-grade', 'rock.tsp-hardness',
-      'rock.tsp-integrity', 'rock.tem-resistivity', 'support.legacy-assembly']) {
+      'rock.tsp-integrity', 'rock.tem-resistivity', 'support.modeler-zz-va']) {
       expect(prompt).toContain(id)
     }
     expect(prompt).toContain('示意重定位')
     expect(prompt).toContain('不能称为目标工点实测')
+    expect(prompt).not.toContain('support.legacy-assembly')
     expect(prompt).not.toContain('场景同屏装配只允许平台已验证同址')
     expect(prompt).not.toContain('应一次提交 YK1+116～YK1+183 范围内')
   })

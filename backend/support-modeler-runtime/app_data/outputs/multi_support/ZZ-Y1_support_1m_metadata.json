@@ -1,0 +1,78 @@
+{
+  "support_type": "ZZ-Y1",
+  "definition": {
+    "pages": [
+      136,
+      137,
+      138
+    ],
+    "invert": false,
+    "primary": 120,
+    "reserve": 50,
+    "secondary": 350,
+    "mesh": {
+      "type": "ENERGY_ABSORPTION_NET",
+      "scope": "CROWN_180"
+    },
+    "steel": null,
+    "anchor": {
+      "diameter": 25,
+      "length": 3500,
+      "circ": 1200,
+      "long": 1200,
+      "scope": "CROWN_180"
+    },
+    "lock": false,
+    "rebar": null
+  },
+  "glb": {
+    "path": "E:\\Workplace\\SupportParameterExtractor_V1\\outputs\\multi_support\\ZZ-Y1_support_1m.glb",
+    "byte_length": 57572,
+    "mesh_count": 2,
+    "mesh_names": [
+      "primarySupportConcrete",
+      "secondaryLining"
+    ],
+    "node_names": [
+      "ZZY1SectionAssemblyGroup",
+      "primarySupportGroup",
+      "secondarySystemGroup",
+      "primarySupportConcreteGroup",
+      "primarySupportConcrete",
+      "secondaryLiningGroup",
+      "secondaryLining"
+    ],
+    "metadata": {
+      "support_type": "ZZ-Y1",
+      "length_m": 1.0,
+      "source_pages": [
+        136,
+        137,
+        138
+      ],
+      "assembly": "EXISTING_GEOMETRY_MODULES_ONLY",
+      "component_meshes": [
+        "primarySupportConcrete",
+        "secondaryLining"
+      ],
+      "steel_arch_dynamic_rebuild": false
+    },
+    "bbox_m": {
+      "min": [
+        -6.02,
+        -3.0455455238504774,
+        0.0
+      ],
+      "max": [
+        6.02,
+        6.02,
+        1.0
+      ],
+      "size": [
+        12.04,
+        9.065545523850478,
+        1.0
+      ]
+    }
+  }
+}
