@@ -4,6 +4,8 @@ import { AGENT_SCENE_RESOURCES, SCENE_ENHANCEMENT_MODES, SCENE_ASSEMBLY_MODES } 
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import { viewerService } from '@/platform/viewer/ViewerService'
 import { getActiveModelerSupportModel } from '@/modules/support/modeler-resources'
+import { ALTERNATING_SUPPORT_ID, getActiveAlternatingSupportModel, getActiveAlternatingSupportSpan } from '@/modules/support/alternating-resource'
+import { clearFocusedTunnelSegment, focusTunnelSegmentAt } from '@/utils/Common/DrawLine'
 import * as Cesium from 'cesium'
 import {
   getTaskWorkflowController,
@@ -103,7 +105,7 @@ export const workflowTools: ToolRegistration[] = [
           targetMileage: { type: 'string', description: '明确的目标里程，优先使用工地真实中线 YK，例如 YK1+346 或 YK2+244；旧 DK 可作为兼容输入，平台统一转换为 YK' },
           resourceIds: { type: 'array', minItems: 1, maxItems: 4,
             items: { type: 'string', enum: [...AGENT_SCENE_RESOURCES] },
-            description: '最终同屏资源。围岩解释四层源锚点为 YK2+244，四层互斥。支护组合默认 support.modeler-zz-va（已导出 1 m 断面），指定其他 ZZ 类型选对应 support.modeler-zz-*。' },
+            description: '最终同屏资源。围岩解释四层源锚点为 YK2+244，四层互斥。单断面选 support.modeler-zz-va 等；在目标附近 50 m 每米交替装配 ZZ-Va 与 Z-PM 选 support.alternating-zz-va-z-pm。' },
           tunnelId: { type: 'string', description: '当前隧洞 ID，可省略' },
         },
         required: ['description', 'targetMileage', 'resourceIds'],
@@ -130,12 +132,17 @@ export const workflowTools: ToolRegistration[] = [
           reason: prepared.notice?.message ?? '场景装配未通过校验', ...prepared })
       }
       const viewer = viewerService.require()
+      focusTunnelSegmentAt(targetChainage, viewer)
       const focusTarget = (assembled = false) => {
         const support = assembled && resourceIds
-          .map(getActiveModelerSupportModel).find((model): model is Cesium.Model => !!model?.ready)
+          .map(id => id === ALTERNATING_SUPPORT_ID ? getActiveAlternatingSupportModel() : getActiveModelerSupportModel(id))
+          .find((model): model is Cesium.Model => !!model?.ready)
         if (support) {
-          viewer.camera.viewBoundingSphere(support.boundingSphere, new Cesium.HeadingPitchRange(0, -0.25, 42))
+          viewer.camera.viewBoundingSphere(support.boundingSphere,
+            new Cesium.HeadingPitchRange(position.heading + 0.4, -0.28,
+              resourceIds.includes(ALTERNATING_SUPPORT_ID) ? 85 : 42))
           viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
+          viewer.camera.moveRight(10)
           viewer.scene.requestRender()
           return
         }
@@ -148,10 +155,16 @@ export const workflowTools: ToolRegistration[] = [
       }
       focusTarget()
       const outcome = await dispatchValidatedWorkflow(controller, prepared)
-      if (outcome.ok) focusTarget(true)
+      if (outcome.ok) {
+        focusTunnelSegmentAt(targetChainage, viewer)
+        focusTarget(true)
+      }
+      else clearFocusedTunnelSegment(viewer)
       return JSON.stringify({ action: 'assemble_scene_at_mileage', targetMileage, requestedMileage,
         assembledResourceIds: outcome.status.lastCompletedStage?.assembledResourceIds ?? [],
-        ...outcome, ...outcome.status })
+        ...outcome, ...outcome.status,
+        ...(outcome.ok && resourceIds.includes(ALTERNATING_SUPPORT_ID)
+          ? { supportSpan: getActiveAlternatingSupportSpan() } : {}) })
     },
   },
   {

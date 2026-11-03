@@ -1,5 +1,8 @@
 import * as Cesium from 'cesium'
 
+// Experimental renderer only. Its transfer function does not reproduce the
+// source ShareVolume appearance; production TSP resources must not use it.
+
 interface TspAtlasDefinition {
   objects: Array<{ volume: { url: string; res: [number, number, number] } }>
 }

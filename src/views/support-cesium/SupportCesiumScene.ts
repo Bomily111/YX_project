@@ -5,6 +5,7 @@ import { enableUndergroundTerrainBackground } from '@/utils/Common/UndergroundTe
 import centerLineData from '@/assets/data/centerLine.json'
 import mileageData from '@/assets/data/centerline_mileage.json'
 import { SEGMENT_CONFIGS as TUNNEL_SEGMENT_CONFIGS } from '@/views/tunnel-module/tunnel'
+import { removeTunnelGlb } from '@/utils/Common/DrawLine'
 import { installModelControls, type ModelControlFrame } from '@/views/ventilation-module/scene'
 
 export type SupportSceneKind = 'editor' | 'alignment'
@@ -36,7 +37,10 @@ export class SupportCesiumScene {
   private helperEntities: Cesium.Entity[] = []
   private centerlineEntity?: Cesium.Entity
   private rangeEntities: { entity: Cesium.Entity; type: string }[] = []
-  private editorCenterlineEntity?: Cesium.Entity
+  private tunnelVisible = true
+  private tunnelPerspective = true
+  private centerlineVisible = true
+  private alignmentVisibility?: { components: Record<string, boolean>; types: string[] }
   private tunnelModels = new Map<number, Cesium.Model>()
   private tunnelLoads = new Map<number, Promise<void>>()
   private tunnelTargets = new Set<number>()
@@ -60,6 +64,7 @@ export class SupportCesiumScene {
 
   constructor(host: HTMLElement) {
     this.createdViewer = !viewerService.current
+    if (!this.createdViewer) removeTunnelGlb(viewerService.current)
     this.viewer = this.createdViewer
       ? viewerService.create(host, {
           owner: 'support-modeler',
@@ -177,7 +182,6 @@ export class SupportCesiumScene {
 
   setAlignmentRanges(ranges: SupportRange[]): void {
     if (this.centerlineEntity) this.viewer.entities.remove(this.centerlineEntity)
-    if (this.editorCenterlineEntity) this.viewer.entities.remove(this.editorCenterlineEntity)
     for (const row of this.rangeEntities) this.viewer.entities.remove(row.entity)
     this.rangeEntities = []
     const mainLine = (start: number, end: number) => {
@@ -187,17 +191,12 @@ export class SupportCesiumScene {
         ...entries.map(row => Cesium.Cartesian3.fromDegrees(...MAIN_CENTERLINE[row.index] as [number, number, number])),
         chainageService.worldPositionAt(end)!]
     }
-    this.centerlineEntity = this.viewer.entities.add({ id: 'support-centerline', name: '项目中线 · 支护段', polyline: {
-      positions: mainLine(PLATFORM_START, SUPPORT_END), width: 5,
+    this.centerlineEntity = this.viewer.entities.add({ id: 'support-centerline', name: '项目中线', polyline: {
+      positions: MAIN_CENTERLINE.map(point => Cesium.Cartesian3.fromDegrees(...point as [number, number, number])), width: 5,
       material: new Cesium.PolylineGlowMaterialProperty({ glowPower: 0.2, color: Cesium.Color.YELLOW.withAlpha(0.8) }),
       depthFailMaterial: Cesium.Color.YELLOW.withAlpha(0.8),
     } })
-    this.editorCenterlineEntity = this.viewer.entities.add({ id: 'support-editor-centerline', name: '项目中线 · 工点A附近', polyline: {
-      positions: mainLine(EDITOR_STATION - 50, EDITOR_STATION + 50), width: 5,
-      material: new Cesium.PolylineGlowMaterialProperty({ glowPower: 0.2, color: Cesium.Color.YELLOW.withAlpha(0.8) }),
-      depthFailMaterial: Cesium.Color.YELLOW.withAlpha(0.8),
-    } })
-    this.editorCenterlineEntity.show = true
+    this.centerlineEntity.show = this.centerlineVisible
     const palette = ['#6de2e7', '#8bcf8a', '#f5c06e', '#d499f0', '#ed888a', '#79abed']
     const uniqueTypes = [...new Set(ranges.map(row => row.support_type))]
     for (const range of ranges) {
@@ -209,24 +208,23 @@ export class SupportCesiumScene {
       } })
       this.rangeEntities.push({ entity, type: range.support_type })
     }
-    this.setAlignmentLines(false, false, [])
+    this.setAlignmentLines(false, [])
   }
 
-  private tunnelClippingPlanes(start: number, end: number, modelMatrix: Cesium.Matrix4): Cesium.ClippingPlaneCollection {
+  private tunnelClippingPlanes(end: number, modelMatrix: Cesium.Matrix4): Cesium.ClippingPlaneCollection {
     const inverse = Cesium.Matrix4.inverse(modelMatrix, new Cesium.Matrix4())
-    const planeAt = (chainage: number, keepForward: boolean) => {
-      const before = chainageService.worldPositionAt(Math.max(PLATFORM_START, chainage - 1))!
+    const planeAt = (chainage: number) => {
+      const before = chainageService.worldPositionAt(chainage - 1)!
       const after = chainageService.worldPositionAt(chainage + 1)!
       const tangent = Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(after, before, new Cesium.Cartesian3()), new Cesium.Cartesian3())
-      const normal = Cesium.Cartesian3.normalize(Cesium.Matrix4.multiplyByPointAsVector(inverse, tangent, new Cesium.Cartesian3()), new Cesium.Cartesian3())
-      if (!keepForward) Cesium.Cartesian3.negate(normal, normal)
+      const normal = Cesium.Cartesian3.negate(Cesium.Cartesian3.normalize(Cesium.Matrix4.multiplyByPointAsVector(inverse, tangent, new Cesium.Cartesian3()), new Cesium.Cartesian3()), new Cesium.Cartesian3())
       const center = chainageService.worldPositionAt(chainage)!
       const up = Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(center, new Cesium.Cartesian3())
       const boundary = Cesium.Cartesian3.add(center, Cesium.Cartesian3.multiplyByScalar(up, 2.95, new Cesium.Cartesian3()), new Cesium.Cartesian3())
       const local = Cesium.Matrix4.multiplyByPoint(inverse, boundary, new Cesium.Cartesian3())
       return new Cesium.ClippingPlane(normal, -Cesium.Cartesian3.dot(normal, local))
     }
-    return new Cesium.ClippingPlaneCollection({ planes: [planeAt(start, true), planeAt(end, false)], unionClippingRegions: true, edgeWidth: 0 })
+    return new Cesium.ClippingPlaneCollection({ planes: [planeAt(end)], unionClippingRegions: true, edgeWidth: 0 })
   }
 
   async setTunnelForPage(kind: SupportSceneKind): Promise<void> {
@@ -236,10 +234,15 @@ export class SupportCesiumScene {
       this.viewer.scene.primitives.remove(model)
       this.tunnelModels.delete(index)
     }
+    for (const model of this.tunnelModels.values()) model.show = this.tunnelVisible
     this.notifyTunnelProgress()
-    await Promise.all([...this.tunnelTargets].map(index => this.loadTunnelSegment(index)))
+    const indices = [...this.tunnelTargets]
+    const results = await Promise.allSettled(indices.map(index => this.loadTunnelSegment(index)))
+    const failures = results.flatMap((result, offset) => result.status === 'rejected'
+      ? [`${String(indices[offset]).padStart(3, '0')}: ${String(result.reason)}`] : [])
     this.notifyTunnelProgress()
     this.viewer.scene.requestRender()
+    if (failures.length) throw new Error(failures.join('；'))
   }
 
   private loadTunnelSegment(index: number): Promise<void> {
@@ -251,15 +254,17 @@ export class SupportCesiumScene {
       const pos = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height - 0.05)
       const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(pos, new Cesium.HeadingPitchRoll(Cesium.Math.PI_OVER_TWO, 0, 0))
       const range = TUNNEL_SEGMENT_RANGES[index]
-      const clippingPlanes = this.tunnelClippingPlanes(range.start, range.end, modelMatrix)
+      // The first two platform GLBs already cover the support chainage. Only
+      // the last GLB needs trimming where the 1064 m support range ends.
+      const clippingPlanes = index === 2 ? this.tunnelClippingPlanes(range.end, modelMatrix) : undefined
       const name = String(index).padStart(3, '0')
       const model = await Cesium.Model.fromGltfAsync({
         url: `${import.meta.env.BASE_URL}data/tunnel/tunnel${name}.glb`, modelMatrix, clippingPlanes,
         allowPicking: false, id: { kind: 'support-tunnel', segment: index },
       })
       if (this.viewer.isDestroyed() || !this.tunnelTargets.has(index)) { model.destroy(); return }
-      model.color = Cesium.Color.fromCssColorString('#00eaff').withAlpha(0.3)
-      model.colorBlendMode = Cesium.ColorBlendMode.REPLACE
+      this.applyTunnelAppearance(model)
+      model.show = this.tunnelVisible
       this.viewer.scene.primitives.add(model)
       this.tunnelModels.set(index, model)
       model.readyEvent.addEventListener(() => this.notifyTunnelProgress())
@@ -280,19 +285,34 @@ export class SupportCesiumScene {
         else model.readyEvent.addEventListener(applyMainCalibration)
       }
       this.viewer.scene.requestRender()
-      if (!model.ready) {
-        await new Promise<void>(resolve => {
-          const remove = model.readyEvent.addEventListener(() => { window.clearTimeout(timer); remove(); resolve() })
-          const timer = window.setTimeout(() => { remove(); resolve() }, 20000)
-        })
-      }
     })().finally(() => this.tunnelLoads.delete(index))
     this.tunnelLoads.set(index, load)
     return load
   }
 
-  setAlignmentLines(centerline: boolean, ranges: boolean, types: string[]): void {
+  setLayerVisibility(tunnel: boolean, centerline: boolean): void {
+    this.tunnelVisible = tunnel
+    this.centerlineVisible = centerline
+    for (const model of this.tunnelModels.values()) model.show = tunnel
     if (this.centerlineEntity) this.centerlineEntity.show = centerline
+    this.viewer.scene.requestRender()
+  }
+
+  setTunnelPerspective(enabled: boolean): void {
+    this.tunnelPerspective = enabled
+    for (const model of this.tunnelModels.values()) this.applyTunnelAppearance(model)
+    this.viewer.scene.requestRender()
+  }
+
+  private applyTunnelAppearance(model: Cesium.Model): void {
+    model.color = this.tunnelPerspective
+      ? Cesium.Color.fromCssColorString('#00eaff').withAlpha(0.55)
+      : Cesium.Color.WHITE
+    model.colorBlendMode = this.tunnelPerspective
+      ? Cesium.ColorBlendMode.REPLACE : Cesium.ColorBlendMode.HIGHLIGHT
+  }
+
+  setAlignmentLines(ranges: boolean, types: string[]): void {
     const enabled = new Set(types)
     for (const row of this.rangeEntities) row.entity.show = ranges && enabled.has(row.type)
     this.viewer.scene.requestRender()
@@ -332,7 +352,8 @@ export class SupportCesiumScene {
   }
 
   setAlignmentVisibility(components: Record<string, boolean>, types: string[]): void {
-    if (!this.model) return
+    this.alignmentVisibility = { components: { ...components }, types: [...types] }
+    if (!this.model?.ready) return
     const enabledTypes = new Set(types)
     for (const item of this.visibilityNodes) {
       const category = item.component === 'primary_concrete' || item.component === 'secondary_lining' ? 'support_body'
@@ -354,18 +375,27 @@ export class SupportCesiumScene {
     this.viewer.scene.primitives.add(model)
     if (this.model) this.viewer.scene.primitives.remove(this.model)
     this.model = model
+    if (kind === 'alignment' && this.alignmentVisibility) {
+      const apply = () => {
+        if (this.model === model && this.alignmentVisibility) {
+          this.setAlignmentVisibility(this.alignmentVisibility.components, this.alignmentVisibility.types)
+        }
+      }
+      if (model.ready) apply()
+      else model.readyEvent.addEventListener(apply)
+    }
     this.viewer.scene.requestRender()
   }
 
   focus(kind: SupportSceneKind, mode = 'overall', station = kind === 'editor' ? EDITOR_STATION : PLATFORM_START): void {
     if (kind === 'alignment' && mode === 'overall') station = PLATFORM_START + 532
-    if (this.centerlineEntity) this.centerlineEntity.show = kind === 'alignment' && this.centerlineEntity.show
-    if (this.editorCenterlineEntity) this.editorCenterlineEntity.show = kind === 'editor'
+    if (this.centerlineEntity) this.centerlineEntity.show = this.centerlineVisible
     for (const row of this.rangeEntities) row.entity.show = kind === 'alignment' && row.entity.show
     const anchor = chainageService.worldPositionAt(station) ?? chainageService.worldPositionAt(PLATFORM_START)
     if (!anchor) return
     this.cameraControls.setFocus(anchor, false)
-    this.viewer.scene.globe.translucency.frontFaceAlphaByDistance = new Cesium.NearFarScalar(0, 0.9, 50000, 0.9)
+    const terrainAlpha = kind === 'alignment' ? 0.75 : 0.9
+    this.viewer.scene.globe.translucency.frontFaceAlphaByDistance = new Cesium.NearFarScalar(0, terrainAlpha, 50000, terrainAlpha)
     const range = kind === 'alignment' && mode === 'overall' ? 1250 : kind === 'alignment' ? 110 : 35
     const tangentHeading = chainageService.positionWithHeadingAt(station)?.heading ?? 0
     const heading = mode === 'front' ? tangentHeading + Math.PI
@@ -394,7 +424,6 @@ export class SupportCesiumScene {
     for (const entity of this.helperEntities) this.viewer.entities.remove(entity)
     this.helperEntities = []
     if (this.centerlineEntity) this.viewer.entities.remove(this.centerlineEntity)
-    if (this.editorCenterlineEntity) this.viewer.entities.remove(this.editorCenterlineEntity)
     for (const row of this.rangeEntities) this.viewer.entities.remove(row.entity)
     this.rangeEntities = []
     this.tunnelTargets.clear()

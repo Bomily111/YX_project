@@ -30,6 +30,13 @@
       <main class="support-content">
         <div v-show="page !== 'intro'" ref="cesiumHost" class="support-cesium"></div>
         <div v-if="page !== 'intro'" class="support-scene-label">{{ sceneStatus }}<small>{{ tunnelStatus }}</small></div>
+        <div v-if="page !== 'intro'" class="support-layer-panel">
+          <button type="button" class="support-layer-heading" :aria-expanded="!layerCollapsed" @click="layerCollapsed = !layerCollapsed">图层控制 <span>{{ layerCollapsed ? '▸' : '▾' }}</span></button>
+          <div v-show="!layerCollapsed" class="support-layer-options">
+            <div class="support-tunnel-layer"><label><input v-model="tunnelLayer" type="checkbox" @change="syncSceneLayers">隧道模型</label><button type="button" :class="{ active: tunnelPerspective }" :aria-pressed="tunnelPerspective" @click="tunnelPerspective = !tunnelPerspective; scene?.setTunnelPerspective(tunnelPerspective)">透视</button></div>
+            <label><input v-model="centerlineLayer" type="checkbox" @change="syncSceneLayers">项目中线</label>
+          </div>
+        </div>
         <iframe ref="modelFrame" class="support-frame" :class="{ 'support-frame-panel': page !== 'intro' }" :src="frameSrc" :title="frameTitle" @load="onFrameLoad" />
       </main>
     </div>
@@ -58,7 +65,12 @@ const modelFrame = ref<HTMLIFrameElement>()
 const cesiumHost = ref<HTMLElement>()
 const sceneStatus = ref('Cesium 场景加载中…')
 const tunnelStatus = ref('隧道模型加载中…')
+const layerCollapsed = ref(false)
+const tunnelLayer = ref(true)
+const tunnelPerspective = ref(true)
+const centerlineLayer = ref(true)
 let scene: SupportCesiumScene | undefined
+function syncSceneLayers() { scene?.setLayerVisibility(tunnelLayer.value, centerlineLayer.value) }
 let framePoll: number | undefined
 let snapshotTimer: number | undefined
 let snapshotSequence = 0
@@ -104,6 +116,7 @@ function onFrameLoad() {
     const pathname = frameWindow?.location.pathname ?? ''
     const current = pages.find(item => pathname.endsWith(item.path))
     if (!current || !frameWindow) return
+    if (frameWindow.location.href !== new URL(frameSrc.value, location.href).href) return
     if (current.key !== 'intro' && !new URLSearchParams(frameWindow.location.search).has('cesium_panel')) {
       const next = new URL(frameWindow.location.href)
       next.searchParams.set('cesium_panel', '1')
@@ -140,9 +153,11 @@ function attachFrameBridge(win: Window, key: SupportPage) {
     const view = button?.dataset.view
     if (view || button?.id === 'resetCamera' || button?.id === 'fitModel' || button?.id === 'focusSelected') {
       const mode = view ?? (button?.id === 'focusSelected' ? 'selected' : 'overall')
-      const index = bridgeFor(win, key)?.getSummary?.().selectedSegmentIndex
-      const station = segmentStation(index)
-      scene?.focus(key as SupportSceneKind, mode, station)
+      if (key === 'editor') scene?.focus('editor', mode)
+      else {
+        const index = bridgeFor(win, key)?.getSummary?.().selectedSegmentIndex
+        scene?.focus('alignment', mode, segmentStation(index))
+      }
       if (key === 'alignment') return
     }
     if (target.id === 'segmentSelect') {
@@ -159,7 +174,8 @@ function attachFrameBridge(win: Window, key: SupportPage) {
     }
     if (key === 'editor') {
       window.setTimeout(() => syncEditorHelpers(win), 80)
-      if (target.matches?.('[id^="helper"]') || target.closest?.('.tree-row')) return
+      if (target.matches?.('[id^="helper"]')) return
+      if (target.closest?.('.tree-row') && !target.matches?.('[data-visible]')) return
     }
     if (['exportGlb', 'exportGLB', 'exportTunnelGlb', 'saveVariant', 'saveSegmentVariant'].includes(button?.id ?? '')) return
     if (key === 'alignment' && ['availableSegmentVariant', 'editableComponent', 'segmentVariantName'].includes(target.id)) return
@@ -184,7 +200,7 @@ function syncAlignmentVisibility(win: Window) {
   const summary = bridgeFor(win, 'alignment')?.getSummary?.()
   if (summary) {
     scene?.setAlignmentVisibility(summary.componentVisibility, summary.visibleTypes)
-    scene?.setAlignmentLines(summary.centerlineVisible, summary.rangeLinesVisible, summary.visibleTypes)
+    scene?.setAlignmentLines(summary.rangeLinesVisible, summary.visibleTypes)
   }
 }
 
@@ -222,7 +238,7 @@ function segmentStation(index: number | undefined): number {
 }
 
 async function loadInitialModel(key: Exclude<SupportPage, 'intro'>) {
-  if (!scene) return
+  if (!scene || page.value !== key) return
   tunnelStatus.value = '隧道模型加载中（仅支护范围）'
   void scene.setTunnelForPage(key)
     .catch(error => { if (page.value === key) tunnelStatus.value = `隧道模型加载失败：${String(error)}` })
@@ -245,6 +261,8 @@ onMounted(async () => {
   if (!cesiumHost.value) return
   try {
     scene = new SupportCesiumScene(cesiumHost.value)
+    syncSceneLayers()
+    scene.setTunnelPerspective(tunnelPerspective.value)
     scene.onTunnelProgress = (ready, total) => {
       tunnelStatus.value = ready === total ? `隧道模型已加载（${ready}/${total}段）` : `隧道模型加载中（${ready}/${total}段）`
     }
@@ -265,7 +283,7 @@ onMounted(async () => {
       bridge?.selectSegment?.(index)
       scene?.focus('alignment', 'selected', segmentStation(index))
     }
-    void loadInitialModel('editor')
+    if (page.value !== 'intro') void loadInitialModel(page.value)
     const [response, visibilityResponse, lineResponse] = await Promise.all([
       fetch(`${base}support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json`),
       fetch(`${base}support-modeler/outputs/centerline/visibility_nodes.json`),
@@ -335,8 +353,16 @@ function openPlatformModule(key: PlatformModule) {
 .support-cesium :deep(.cesium-viewer) { width: 100%; height: 100%; }
 .support-scene-label { position: absolute; z-index: 2; top: 14px; left: 16px; max-width: calc(100% - 390px); padding: 7px 11px; color: #d9f5ff; font-size: 12px; background: rgba(2,20,35,.76); border: 1px solid rgba(65,207,255,.42); border-radius: 4px; pointer-events: none; }
 .support-scene-label small { display: block; margin-top: 3px; color: #9cc5d8; font-size: 11px; }
+.support-layer-panel { position: absolute; z-index: 3; top: 14px; right: 366px; width: 172px; overflow: hidden; color: #d9effa; border: 1px solid #00bfe6; border-radius: 4px; background: rgba(0,15,30,.9); box-shadow: 0 0 18px rgba(0,200,255,.18); }
+.support-layer-heading { display: flex; justify-content: space-between; width: 100%; padding: 9px 12px; color: #fff; font-size: 13px; font-weight: 600; font-family: inherit; text-align: left; border: 0; background: rgba(0,100,200,.6); cursor: pointer; }
+.support-layer-options { display: grid; gap: 11px; padding: 12px 14px; font-size: 12px; }
+.support-layer-options label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.support-layer-options input { accent-color: #00d8f5; }
+.support-tunnel-layer { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
+.support-tunnel-layer button { padding: 3px 6px; color: #a9c7d8; font-size: 11px; border: 1px solid #39728d; border-radius: 3px; background: #123146; cursor: pointer; }
+.support-tunnel-layer button.active { color: #fff; border-color: #23d5ee; background: #0a7797; }
 .support-frame { display: block; width: 100%; height: 100%; border: 0; }
 .support-frame-panel { flex: 0 0 352px; width: 352px; min-width: 0; border-left: 1px solid rgba(0,170,255,.32); }
 @media (max-width: 1100px) { .support-brand { font-size: 19px; letter-spacing: 1px; } .support-header-sub { display: none; } }
-@media (max-width: 760px) { .support-title-container { padding: 0 24px 0 12px; } .support-brand { max-width: 48vw; overflow: hidden; text-overflow: ellipsis; font-size: 14px; } .support-header-center { padding-left: 28px; } .support-header-right { padding: 0 10px; gap: 8px; } .support-menu-toggle { display: block; } .support-layout { grid-template-columns: minmax(0,1fr); } .support-directory { position: absolute; top: 60px; bottom: 0; left: 0; z-index: 19; width: 216px; transform: translateX(-105%); transition: transform .2s ease; } .support-directory.open { transform: translateX(0); } .support-frame-panel { flex-basis: min(340px, 55vw); width: min(340px, 55vw); } .support-scene-label { max-width: calc(45vw - 32px); } }
+@media (max-width: 760px) { .support-title-container { padding: 0 24px 0 12px; } .support-brand { max-width: 48vw; overflow: hidden; text-overflow: ellipsis; font-size: 14px; } .support-header-center { padding-left: 28px; } .support-header-right { padding: 0 10px; gap: 8px; } .support-menu-toggle { display: block; } .support-layout { grid-template-columns: minmax(0,1fr); } .support-directory { position: absolute; top: 60px; bottom: 0; left: 0; z-index: 19; width: 216px; transform: translateX(-105%); transition: transform .2s ease; } .support-directory.open { transform: translateX(0); } .support-frame-panel { flex-basis: min(340px, 55vw); width: min(340px, 55vw); } .support-scene-label { max-width: calc(45vw - 32px); } .support-layer-panel { right: calc(min(340px, 55vw) + 8px); width: 130px; } }
 </style>

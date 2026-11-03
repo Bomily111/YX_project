@@ -14,9 +14,16 @@ const scenarios = {
   'hardness-support': '在 YK1+346 同屏展示 TSP 围岩坚硬度和新模块 ZZ-Va 支护组合',
   'construction-task': 'YK1+346 即将进行初期支护施工交底，请把岩体坚硬程度和新模块支护布置放到同一场景查看',
   'modeler-support': '在 YK1+346 主场景展示新支护模块的 ZZ-Va 支护组合',
+  'alternating-support': '在 YK1+346 附近 50 米交替装配 ZZ-Va 和 Z-PM 支护，查看施工段的支护布置',
+  'support-handover': 'YK1+346 初期支护施工交底，需要核对前后 50 米连续作业段内两种已接入断面的衔接布置',
   'design-grade': '在 YK1+346 展示设计围岩等级模型',
   'steel-frame': '在 YK1+346 只展示新模块 ZZ-IVa 支护断面',
   tem: '在 YK2+244 展示瞬变电磁视电阻率模型',
+  co: 'YK1+346 爆破后通风复核，需要查看 CO 扩散分析结果',
+  'vent-flow': 'YK1+346 通风施工复核，请展示风向矢量和风场流线',
+  'blast-cloud': 'YK1+346 爆破后复核，请展示爆后点云和炮孔布置',
+  'tsp-vp': 'YK2+244 超前地质预报交底，请查看前方岩体纵波速度 Vp 分布',
+  'tem-water': 'YK2+244 掌子面富水风险研判，请查看瞬变电磁富水解释结果',
   integrity: '在 YK2+244 展示 TSP 围岩完整度模型',
   'fusion-grade': '在 YK2+244 展示物探融合围岩等级模型',
   'missing-mileage': '展示围岩完整度模型',
@@ -105,7 +112,9 @@ try {
 
   await page.goto(appUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 })
   try {
-    await page.locator('.agent-fab').click({ timeout: 15_000 })
+    if (!(await page.locator('.agent-input').isVisible())) {
+      await page.locator('.agent-fab').click({ timeout: 15_000 })
+    }
   } catch (error) {
     console.error('Agent entry unavailable', JSON.stringify({ errors, body: (await page.locator('body').innerText()).slice(0, 800) }))
     throw error
@@ -125,11 +134,17 @@ try {
       const mileage = document.querySelector('.agent-assembly-info h2')?.textContent?.trim()
       const resources = [...document.querySelectorAll('.agent-assembly-info li')].map(el => el.textContent ?? '')
       if (currentScenario === 'tem') return mileage === 'YK2+244' && resources.some(text => text.includes('TEM'))
+      if (currentScenario === 'co') return mileage === 'YK1+346' && resources.some(text => text.includes('CO'))
+      if (currentScenario === 'vent-flow') return mileage === 'YK1+346' && resources.some(text => text.includes('流线'))
+      if (currentScenario === 'blast-cloud') return mileage === 'YK1+346' && resources.some(text => text.includes('点云'))
+      if (currentScenario === 'tsp-vp') return mileage === 'YK2+244' && resources.some(text => text.includes('Vp'))
+      if (currentScenario === 'tem-water') return mileage === 'YK2+244' && resources.some(text => text.includes('富水'))
       if (currentScenario === 'integrity') return mileage === 'YK2+244' && resources.some(text => text.includes('完整度'))
       if (currentScenario === 'fusion-grade') return mileage === 'YK2+244' && resources.some(text => text.includes('融合'))
       if (currentScenario === 'design-grade') return mileage === 'YK1+346' && resources.some(text => text.includes('设计'))
       if (currentScenario === 'steel-frame') return mileage === 'YK1+346' && resources.some(text => text.includes('ZZ-IVa'))
       if (currentScenario === 'modeler-support') return mileage === 'YK1+346' && resources.some(text => text.includes('ZZ-Va'))
+      if (currentScenario === 'alternating-support' || currentScenario === 'support-handover') return mileage === 'YK1+346' && resources.some(text => text.includes('ZZ-Va / Z-PM'))
       return mileage === 'YK1+346' && resources.length >= 2
     }, { currentScenario: scenario, repliesBefore }, { timeout: 180_000 })
   } catch {
@@ -138,10 +153,27 @@ try {
   if (scenario === 'missing-mileage' || scenario === 'plan-only') {
     await page.locator('.msg-bubble.streaming').waitFor({ state: 'hidden', timeout: 15_000 })
   }
+  if ((scenario === 'modeler-support' && process.env.WAIT_TUNNEL_READY === '1') || ['alternating-support', 'support-handover'].includes(scenario)) {
+    await page.waitForFunction(async () => {
+      const { getLoadedTunnelSegmentIndices } = await import('/src/utils/Common/DrawLine.ts')
+      const indices = getLoadedTunnelSegmentIndices()
+      return indices.length === 1 && indices[0] === 0
+    }, null, { timeout: 90_000 }).catch(() => {})
+  }
+  if (['alternating-support', 'support-handover'].includes(scenario)) {
+    await page.waitForFunction(async () => {
+      const { resourceRegistry } = await import('/src/platform/resources/ResourceRegistry.ts')
+      const { getTunnelGlbSegment } = await import('/src/utils/Common/DrawLine.ts')
+      const support = resourceRegistry.get('support.alternating-zz-va-z-pm')?.getEnhanceTargets?.()[0]?.object
+      return !!support?.ready && !!getTunnelGlbSegment(0)?.ready
+    }, null, { timeout: 90_000 })
+  }
   const snapshot = await page.evaluate(() => {
     return {
       assemblyMileage: document.querySelector('.agent-assembly-info h2')?.textContent?.trim() ?? null,
       assemblyResources: [...document.querySelectorAll('.agent-assembly-info li')].map(el => el.textContent?.trim()),
+      assemblyInfoText: document.querySelector('.agent-assembly-info')?.textContent?.trim() ?? null,
+      assemblyBottomText: document.querySelector('.agent-assembly-bottom')?.textContent?.trim() ?? null,
       assistantMessages: [...document.querySelectorAll('.agent-messages .msg-row.assistant .msg-bubble')].map(el => el.textContent?.trim()),
       chatText: document.querySelector('.agent-messages')?.textContent?.slice(-1500) ?? null,
       toolStatus: document.querySelector('.tool-status')?.textContent?.trim() ?? null,
@@ -157,6 +189,36 @@ try {
       })(),
     }
   })
+  if (scenario === 'vent-flow') {
+    snapshot.flowLayers = await page.evaluate(async () => {
+      const { layers } = await import('/src/views/ventilation-module/cesiumVentilation.ts')
+      return { cfdPoints: layers.points?.length ?? 0, vectors: layers.arrows?.length ?? 0,
+        streamlines: layers.streamlines?.length ?? 0, particles: layers.particles?.length ?? 0,
+        pointsVisible: layers.points?.show ?? false, vectorsVisible: layers.arrows?.show ?? false,
+        streamlinesVisible: layers.streamlines?.show ?? false, particlesVisible: layers.particles?.show ?? false }
+    })
+  }
+  if (['modeler-support', 'alternating-support', 'support-handover', 'hardness-support'].includes(scenario)) {
+    snapshot.tunnelSegments = await page.evaluate(() => {
+      const viewer = document.querySelector('[data-viewer-instance-id]')
+      const focus = viewer?.getAttribute('data-focused-tunnel-segment') ?? null
+      return { loaded: (viewer?.getAttribute('data-loaded-tunnel-segments') ?? '').split(',')
+        .filter(Boolean).map(Number), focused: focus === null ? null : Number(focus) }
+    })
+  }
+  if (['alternating-support', 'support-handover'].includes(scenario)) {
+    snapshot.spatialInfo = await page.evaluate(async () => {
+      const { resourceRegistry } = await import('/src/platform/resources/ResourceRegistry.ts')
+      const { getTunnelGlbSegment } = await import('/src/utils/Common/DrawLine.ts')
+      const support = resourceRegistry.get('support.alternating-zz-va-z-pm')?.getEnhanceTargets?.()[0]?.object
+      const tunnel = getTunnelGlbSegment(0)
+      const a = support?.boundingSphere, b = tunnel?.boundingSphere
+      return { supportReady: support?.ready ?? false, tunnelReady: tunnel?.ready ?? false,
+        supportRadiusM: a?.radius ?? null, tunnelRadiusM: b?.radius ?? null,
+        centerDistanceM: a && b ? Math.hypot(a.center.x - b.center.x,
+          a.center.y - b.center.y, a.center.z - b.center.z) : null }
+    })
+  }
   if (process.env.CHECK_VOLUME_PIXELS === '1' && ['tem', 'integrity', 'fusion-grade', 'hardness-support', 'construction-task'].includes(scenario)) {
     snapshot.volumePixels = await page.evaluate(async () => {
       const { default: Previous } = await import('/src/utils/AllPrevious/index.js')
@@ -177,7 +239,7 @@ try {
     })
   }
   const assemblyExpected = !['missing-mileage', 'plan-only'].includes(scenario)
-  const expectedMileage = ['hardness-support', 'construction-task', 'design-grade', 'steel-frame', 'modeler-support'].includes(scenario) ? 'YK1+346' : 'YK2+244'
+  const expectedMileage = ['hardness-support', 'construction-task', 'design-grade', 'steel-frame', 'modeler-support', 'alternating-support', 'support-handover', 'co', 'vent-flow', 'blast-cloud'].includes(scenario) ? 'YK1+346' : 'YK2+244'
   let persisted = null
   if (createdTaskId) {
     const endpoint = new URL(`/api/ai-agent/task-runs/${encodeURIComponent(createdTaskId)}/snapshots`, apiUrl)
@@ -204,7 +266,7 @@ try {
     persisted, errors: errors.slice(0, 15) }
   if (process.env.SCREENSHOT_PATH) {
     try {
-      await page.locator('.tunnel-loading-overlay').waitFor({ state: 'hidden', timeout: 60_000 })
+      await page.locator('.tunnel-loading-overlay').waitFor({ state: 'hidden', timeout: 5_000 }).catch(() => {})
       await page.screenshot({ path: process.env.SCREENSHOT_PATH, timeout: 60_000 })
     } catch (error) {
       console.error('Optional screenshot unavailable:', error.message)
@@ -223,13 +285,31 @@ try {
         (!snapshot.assemblyResources.some(text => /TSP|坚硬度/.test(text)) ||
          !snapshot.assemblyResources.some(text => /支护/.test(text)))) failures.push('TSP 坚硬度或支护资源未显示')
     if (scenario === 'tem' && !snapshot.assemblyResources.some(text => /TEM|电阻率/.test(text))) failures.push('TEM 资源未显示')
+    if (scenario === 'co' && !snapshot.assemblyResources.some(text => /CO/.test(text))) failures.push('CO 资源未显示')
+    if (scenario === 'vent-flow' && (!snapshot.flowLayers?.cfdPoints || !snapshot.flowLayers?.vectors ||
+      !snapshot.flowLayers?.streamlines || !snapshot.flowLayers?.particles ||
+      !snapshot.flowLayers?.pointsVisible || !snapshot.flowLayers?.vectorsVisible ||
+      !snapshot.flowLayers?.streamlinesVisible || !snapshot.flowLayers?.particlesVisible)) {
+      failures.push('CFD 点云、风向矢量、流线或动态粒子未生成或不可见')
+    }
+    if (scenario === 'tsp-vp' && !snapshot.assemblyResources.some(text => /Vp/.test(text))) failures.push('TSP Vp 资源未显示')
+    if (scenario === 'tem-water' && !snapshot.assemblyResources.some(text => /富水/.test(text))) failures.push('TEM 富水资源未显示')
     if (scenario === 'integrity' && !snapshot.assemblyResources.some(text => /完整度/.test(text))) failures.push('TSP 完整度资源未显示')
     if (scenario === 'fusion-grade' && !snapshot.assemblyResources.some(text => /融合/.test(text))) failures.push('融合等级资源未显示')
     if (scenario === 'design-grade' && !snapshot.assemblyResources.some(text => /设计/.test(text))) failures.push('设计分级资源未显示')
     if (scenario === 'steel-frame' && !snapshot.assemblyResources.some(text => /ZZ-IVa/.test(text))) failures.push('新模块 ZZ-IVa 资源未显示')
     if (scenario === 'modeler-support' && !persisted?.loadedIds.includes('support.modeler-zz-va')) failures.push('新支护模块资源未进入任务快照')
+    if (['alternating-support', 'support-handover'].includes(scenario) && !persisted?.loadedIds.includes('support.alternating-zz-va-z-pm')) failures.push('交替支护资源未进入任务快照')
+    if (['alternating-support', 'support-handover'].includes(scenario) && (!snapshot.spatialInfo?.supportReady || !snapshot.spatialInfo?.tunnelReady)) failures.push('交替支护或目标隧道模型未达到可渲染状态')
+    if (['alternating-support', 'support-handover'].includes(scenario) &&
+        (!snapshot.assemblyInfoText?.includes('YK1+321') || !snapshot.assemblyInfoText?.includes('YK1+371') ||
+         !snapshot.assemblyBottomText?.includes('50 个断面'))) failures.push('二维场景信息缺少实际支护范围或断面数量')
+    if (scenario === 'modeler-support' &&
+        (snapshot.tunnelSegments?.focused !== 0 || snapshot.tunnelSegments.loaded.some(index => index !== 0))) {
+      failures.push(`目标里程应聚焦 tunnel000，实际 ${JSON.stringify(snapshot.tunnelSegments)}`)
+    }
     if (!snapshot.cesiumCanvasCount) failures.push('Cesium 画布不存在')
-    if (['hardness-support', 'construction-task', 'tem', 'integrity', 'fusion-grade'].includes(scenario) &&
+    if (['hardness-support', 'construction-task', 'tem', 'integrity', 'fusion-grade', 'tsp-vp', 'tem-water'].includes(scenario) &&
         (snapshot.volumeOverlay.display === 'none' || snapshot.volumeOverlay.width <= 0 ||
          snapshot.volumeOverlay.height <= 0 || snapshot.volumeOverlay.canvasWidth <= 0)) {
       failures.push('体数据覆盖层或 WebGL 画布在主界面不可见')
@@ -240,25 +320,41 @@ try {
       failures.push('体数据 WebGL 画布没有绘出有效像素')
     }
     const required = scenario === 'tem' ? ['rock.tem-resistivity']
+      : scenario === 'vent-flow' ? ['ventilation.steady-cfd']
+      : scenario === 'blast-cloud' ? ['blast.effect']
+      : scenario === 'tsp-vp' ? ['rock.tsp-vp']
+      : scenario === 'tem-water' ? ['rock.tem-water']
+      : scenario === 'co' ? ['ventilation.co-analysis']
       : scenario === 'integrity' ? ['rock.tsp-integrity']
       : scenario === 'fusion-grade' ? ['rock.geophysical-grade']
       : scenario === 'design-grade' ? ['rock.design-grade']
       : scenario === 'steel-frame' ? ['support.modeler-zz-iva']
       : scenario === 'modeler-support' ? ['support.modeler-zz-va']
+      : ['alternating-support', 'support-handover'].includes(scenario) ? ['support.alternating-zz-va-z-pm']
       : ['rock.tsp-hardness', 'support.modeler-zz-va']
     if (persisted?.status !== 'completed' || persisted?.completed !== persisted?.total || persisted?.chainageFrame !== 'YK') {
       failures.push('数据库未回读到完成的 YK 任务快照')
     }
     if (required.some(id => !persisted?.loadedIds.includes(id))) failures.push('数据库快照缺少实际加载的根资源')
     const sourceFile = scenario === 'tem' ? '/data/geophysical_tem/resistivity_contrast.json'
+      : scenario === 'vent-flow' ? '/data/ventilation/cfd_arrows.json'
+      : scenario === 'blast-cloud' ? '/data/blast/blast_effect.glb'
+      : scenario === 'tsp-vp' ? '/data/tsp_actual/vp.json'
+      : scenario === 'tem-water' ? '/data/geophysical_tem/water.json'
+      : scenario === 'co' ? '/data/ventilation/co_transport_results.json'
       : scenario === 'integrity' ? '/data/tsp_actual/integrity.json'
       : scenario === 'fusion-grade' ? '/data/geophysical_grade/fused_rock_grade_2345.json'
       : scenario === 'design-grade' ? null
       : scenario === 'steel-frame' ? '/support-modeler/outputs/multi_support/ZZ-IVa_support_1m.glb'
       : ['hardness-support', 'construction-task'].includes(scenario) ? '/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb'
       : scenario === 'modeler-support' ? '/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb'
+      : ['alternating-support', 'support-handover'].includes(scenario) ? '/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb'
       : '/data/tsp_actual/hardness.json'
     if (sourceFile && !persisted?.assetPaths.includes(sourceFile)) failures.push('数据库快照缺少源数据指纹')
+    if (['alternating-support', 'support-handover'].includes(scenario) &&
+        !persisted?.assetPaths.includes('/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb')) {
+      failures.push('数据库快照缺少 ZZ-Va 源数据指纹')
+    }
   } else {
     const expectedRuns = scenario === 'plan-only' ? 1 : 0
     if (taskRunsCreated !== expectedRuns) failures.push(`期望创建 ${expectedRuns} 条任务运行记录，实际 ${taskRunsCreated}`)
@@ -272,5 +368,10 @@ try {
   }
   if (failures.length) throw new Error(`${scenario}: ${failures.join('；')}`)
 } finally {
-  await browser.close()
+  let closeTimedOut = false
+  await Promise.race([browser.close(), new Promise(resolve => setTimeout(() => {
+    closeTimedOut = true
+    resolve()
+  }, 5000))])
+  if (closeTimedOut) console.warn('Browser close exceeded 5 seconds')
 }

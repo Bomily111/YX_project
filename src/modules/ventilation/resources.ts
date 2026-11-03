@@ -12,11 +12,14 @@ import {
   type CfdData,
 } from '@/views/ventilation-module/cesiumVentilation'
 import { isTunnelGlbVisible, setTunnelGlbVisible } from '@/utils/Common/DrawLine'
-import { VENTILATION_DISPLAY_CHAINAGE_YK } from '@/views/ventilation-module/spatialFrame'
+import { VENTILATION_DISPLAY_ENTRANCE_CHAINAGE_YK } from '@/views/ventilation-module/spatialFrame'
+import { STEADY_DATASET_FILES, validateSteadyDataset, type SteadyDatasetSummary } from './dataset-contract'
 
 let ventilationViewer: Cesium.Viewer | undefined
 let previousPublicTunnelVisibility = true
 let steadyData: { cells: CfdData; arrows: CfdData } | undefined
+let steadySummary: SteadyDatasetSummary | undefined
+export const getSteadyDatasetSummary = (): SteadyDatasetSummary | undefined => steadySummary
 let coData: unknown
 let transientData: unknown
 let thermalData: { index: any; monitors: any } | undefined
@@ -25,7 +28,7 @@ let thermalSnapshotPath: string | undefined
 
 const ASSET = '/data/ventilation/'
 // Local K3+805–K4+005 is projected onto the YK centerline only for display.
-const DISPLAY_RANGE_YK = { start: VENTILATION_DISPLAY_CHAINAGE_YK - 100, end: VENTILATION_DISPLAY_CHAINAGE_YK + 100 }
+const DISPLAY_RANGE_YK = { start: VENTILATION_DISPLAY_ENTRANCE_CHAINAGE_YK + 3805, end: VENTILATION_DISPLAY_ENTRANCE_CHAINAGE_YK + 4005 }
 const transientScenarioFiles = {
   fan_ramp_up: 'transient_fan_ramp_up.json',
   fan_oscillation: 'transient_fan_oscillation.json',
@@ -295,11 +298,13 @@ export const ventilationSteadyResource: SceneResource = {
   async load(context) {
     context.reportProgress?.(0.1, '加载稳态 CFD 数据')
     const [cells, arrows] = await Promise.all([
-      fetchJson<CfdData>('cfd_cell_data_lite.json'),
-      fetchJson<CfdData>('cfd_arrows.json'),
+      fetchJson<CfdData>(STEADY_DATASET_FILES.cells),
+      fetchJson<CfdData>(STEADY_DATASET_FILES.vectors),
     ])
+    steadySummary = validateSteadyDataset(cells, arrows)
     steadyData = { cells, arrows }
-    context.reportProgress?.(1, '稳态 CFD 数据已就绪')
+    const warnings = steadySummary.warnings.length ? `；${steadySummary.warnings.join('；')}` : ''
+    context.reportProgress?.(1, `稳态 CFD 数据已就绪：${steadySummary.cellCount} 个点、${steadySummary.vectorCount} 条矢量${warnings}`)
   },
   async activate() {
     if (!ventilationViewer || ventilationViewer.isDestroyed() || !steadyData) {
@@ -314,6 +319,7 @@ export const ventilationSteadyResource: SceneResource = {
     disposeEnhancements('ventilation.steady-cfd')
     if (ventilationViewer && !ventilationViewer.isDestroyed()) removeFlowLayers(ventilationViewer)
     steadyData = undefined
+    steadySummary = undefined
   },
   getEnhanceTargets() {
     const model = getTunnelModel()
@@ -328,7 +334,7 @@ export const ventilationSteadyResource: SceneResource = {
   },
   getActiveAssetPaths() {
     return steadyData
-      ? ['/data/ventilation/cfd_cell_data_lite.json', '/data/ventilation/cfd_arrows.json']
+      ? [STEADY_DATASET_FILES.cells, STEADY_DATASET_FILES.vectors].map(file => `${ASSET}${file}`)
       : []
   },
 }
@@ -337,6 +343,7 @@ export const ventilationCoResource: SceneResource = {
   id: 'ventilation.co-analysis',
   module: 'ventilation',
   type: 'co-transport-analysis',
+  chainageRange: DISPLAY_RANGE_YK,
   processes: ['gas-monitoring', 'blast-clearance'],
   states: ['transient', 'risk'],
   dependencies: ['ventilation.scene'],

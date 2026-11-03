@@ -12,13 +12,18 @@ import { getBlastModel } from '@/views/tunnel-module/blast'
 import { getTunnelModel as getVentilationModel } from '@/views/ventilation-module/cesiumVentilation'
 import { ventilationPositionToWorld, ventilationVectorToWorld } from '@/views/ventilation-module/spatialFrame'
 import { modelerSupportCatalog } from '@/modules/support/modeler-resources'
+import { ALTERNATING_SUPPORT_ID } from '@/modules/support/alternating-resource'
 
 /** 只允许现有四类可展示资产进入智能体的场景编排，不能把任意路径当作资源加载。 */
 export const SCENE_EXPLORATION_RESOURCES = [
   'rock.design-grade', 'rock.geophysical-grade', 'rock.tsp-hardness',
-  'rock.tsp-integrity', 'rock.tem-resistivity', 'support.scene', 'blast.effect',
+  'rock.tsp-integrity', 'rock.tsp-vp', 'rock.tsp-vs', 'rock.tsp-ratio',
+  'rock.tsp-anomaly', 'rock.tem-resistivity', 'rock.tem-water',
+  'support.scene', 'blast.effect',
   'ventilation.steady-cfd', 'ventilation.transient-network', 'ventilation.thermal-field',
+  'ventilation.co-analysis',
   ...modelerSupportCatalog.map(asset => asset.id),
+  ALTERNATING_SUPPORT_ID,
 ] as const
 
 export type SceneExplorationResourceId = typeof SCENE_EXPLORATION_RESOURCES[number]
@@ -99,7 +104,7 @@ export function sceneStageTask(task: TaskContext, resource: SceneResource, reque
 function compatibleAssembly(ids: readonly string[]): boolean {
   const unique = new Set(ids)
   if (unique.size !== ids.length) return false
-  const support = ids.filter(id => id.startsWith('support.modeler-'))
+  const support = ids.filter(id => id.startsWith('support.modeler-') || id === ALTERNATING_SUPPORT_ID)
   if (support.length > 0) {
     return support.length === 1
       && ids.filter(id => id.startsWith('rock.')).length <= 1
@@ -116,7 +121,7 @@ export function resolveAssemblyStages(
   for (const [index, current] of resources.entries()) {
     const previous = stages[index - 1] ?? []
     const autoRetain = modes[index] === 'auto' && (
-      current.id.startsWith('support.modeler-') && resources[index - 1]?.id.startsWith('rock.')
+      (current.id.startsWith('support.modeler-') || current.id === ALTERNATING_SUPPORT_ID) && resources[index - 1]?.id.startsWith('rock.')
       || current.id === 'support.scene' && resources[index - 1]?.id === 'rock.design-grade'
     )
     const retain = modes[index] === 'retain' || autoRetain
@@ -197,11 +202,12 @@ async function focusScene(resource: SceneResource, viewer: Cesium.Viewer, retain
     direction: Cesium.Cartesian3.clone(camera.directionWC),
     up: Cesium.Cartesian3.clone(camera.upWC),
   }
-  const supportModel = (resource.id.startsWith('support.modeler-') ? resource : retainedSupport)
+  const supportModel = (resource.id.startsWith('support.modeler-') || resource.id === ALTERNATING_SUPPORT_ID ? resource : retainedSupport)
     ?.getEnhanceTargets?.()[0]?.object as Cesium.Model | undefined
   if (supportModel) {
     await waitForModelReady(supportModel, () => viewer.scene.requestRender())
-    camera.viewBoundingSphere(supportModel.boundingSphere, new Cesium.HeadingPitchRange(0, -0.25, 42))
+    camera.viewBoundingSphere(supportModel.boundingSphere, new Cesium.HeadingPitchRange(0, -0.25,
+      resource.id === ALTERNATING_SUPPORT_ID ? 85 : 42))
     camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
   } else if (resource.module === 'ventilation' && getVentilationModel()) {
     const { destination, direction, up } = ventilationWorkpointView()
@@ -295,7 +301,7 @@ export function createSceneExplorationExecutor(
         const loadContext = typeof options.loadContext === 'function'
           ? options.loadContext(context) : options.loadContext
         const retainedSupport = stageResources(assemblyStages, index)
-          .find(item => item.id.startsWith('support.modeler-'))
+          .find(item => item.id.startsWith('support.modeler-') || item.id === ALTERNATING_SUPPORT_ID)
         const rollback = await focusScene(resource, loadContext.viewer, retainedSupport)
         return { outputs: { [outputKey]: {
         resourceId: resource.id,
@@ -308,6 +314,8 @@ export function createSceneExplorationExecutor(
             ? '围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论'
           : resource.module === 'rock' && resource.id !== 'rock.design-grade'
             ? '围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；不能视作目标工点实测结论'
+          : resource.id === ALTERNATING_SUPPORT_ID
+            ? '目标里程附近 50 m 内，每米交替装配 ZZ-Va 和 Z-PM；Z-PM 仅含支护版块现有二衬和 N1–N7 钢筋，属示意装配，非目标里程实测支护'
           : resource.id.startsWith('support.modeler-')
             ? '新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论'
           : stageResources(assemblyStages, index).length > 1

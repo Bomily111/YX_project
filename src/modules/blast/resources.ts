@@ -34,7 +34,10 @@ export const blastEffectResource: SceneResource = {
     blastViewer = undefined
   },
   getEnhanceTargets() {
-    return [{ id: 'blast.effect.model', type: 'blast-model' }]
+    const model = getBlastModel()
+    return model ? [{ id: 'blast.effect.model', type: 'blast-model',
+      metadata: { includes: ['blast-holes', 'post-blast-point-cloud'], pointCount: 450000,
+        source: 'blast_effect.glb / pointcloud node' } }] : []
   },
   getActiveAssetPaths() {
     return getBlastModel() ? ['/data/blast/blast_effect.glb'] : []

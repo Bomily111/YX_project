@@ -32,6 +32,46 @@
       "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
     },
     {
+      "path": "/data/tsp_actual/vp.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "67244d21c899cd57fc3d75388468b0f4d2de105ef6bd80c6bbc06eb6ad29adc0"
+    },
+    {
+      "path": "/data/tsp_actual/vp_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "751ca58660b669a3ccdce41dc64952a40e303d0c5a69f2c9c6f714bd27b2cb4d"
+    },
+    {
+      "path": "/data/tsp_actual/vs.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "907d8149f4aa6e8b1f9a64814f9a0f65313f94afd9c268237f029c608f19dbfe"
+    },
+    {
+      "path": "/data/tsp_actual/vs_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "391a454eea98ff3c6b0944873b27d989cb5bac126812d1692dedf1a6f7b1543c"
+    },
+    {
+      "path": "/data/tsp_actual/vp_vs_ratio.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "288e654ae4e106da28cd899ec4c60ea0b4f3bda3057567d694b428ec9df29a6d"
+    },
+    {
+      "path": "/data/tsp_actual/vp_vs_ratio_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "1eb70c7b1ba366fbc74c933f53ecde6ffd29a98ab88f8a765355762a02193b7f"
+    },
+    {
+      "path": "/data/tsp_actual/tsp_anomaly.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "1dd48aa4adf7dac6fbe4ce1ed562d51e9782a5214c68244f6d5abe89f15339aa"
+    },
+    {
+      "path": "/data/tsp_actual/tsp_anomaly_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "5ca7cbfb0e30d2159eb0985279ee3169f69ec0ad577c7a19842ff1ca62470762"
+    },
+    {
       "path": "/data/geophysical_tem/resistivity_contrast.json",
       "algorithm": "sha256-bytes-v1",
       "digest": "7c952264ca080ba36660c128ea027ee1368017736a02f4b7e934aff336b0fe4c"
@@ -40,6 +80,16 @@
       "path": "/data/geophysical_tem/resistivity_contrast_volume.png",
       "algorithm": "sha256-bytes-v1",
       "digest": "540c4255a2f91274de5ecec37ae8927b5bb7c0909c48a4ee8399b2ac7eebf94e"
+    },
+    {
+      "path": "/data/geophysical_tem/water.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "59aa0732b8bf661ca4cf9cfa10c5768535ae05e156895be9b94f1d4c9b869f0d"
+    },
+    {
+      "path": "/data/geophysical_tem/water_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "832e5a19c0177a094b38fd4df28a2196d872aad49d25c5352733a5272ca3c808"
     },
     {
       "path": "/support-modeler/outputs/multi_support/ZZ-II_support_1m.glb",
@@ -105,6 +155,11 @@
       "path": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
       "algorithm": "sha256-bytes-v1",
       "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04"
+    },
+    {
+      "path": "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "62c1901ca982e1a8dbbb187dfce0d5c8b7f3a5d27a513682f2de0aa871868ffc"
     },
     {
       "path": "/data/tunnel/tunnel000.glb",

@@ -10,6 +10,7 @@ import { queueLegacySupportModel, invalidateLegacySupportModels } from '@/module
 let allLineEntity: Cesium.Entity | null | undefined = null;
 let tunnelGlbPrimitives: any[] = [];
 let tunnelGlbViewer: any = null;
+let tunnelGlbGeneration = 0;
 let windTunnelGlbPrimitives: any[] = [];
 
 // ── 隧道按需加载状态 ──────────────────────────────────────
@@ -18,8 +19,15 @@ const TUNNEL_LAZY_UNLOAD_MARGIN = 500;                 // 卸载滞回余量（�
 let tunnelLazyCameraHandler: (() => void) | null = null; // 相机 moveEnd 监听句柄
 const tunnelLoadingSet = new Set<number>();             // 正在加载中的段，防止重复加载
 let tunnelGlbVisibleFlag = true;                        // 隧道整体显隐状态，懒加载段需遵循
+let focusedTunnelSegment: number | null = null;         // 智能体任务只保留目标里程所在段
 let tunnelLoadingCount = 0;                             // 正在加载中的段数
 let tunnelLoadingListener: ((loading: boolean) => void) | null = null; // 加载状态回调（供 UI 显示加载动画）
+
+function publishTunnelSegments(viewer: any) {
+  if (!viewer?.container) return;
+  viewer.container.dataset.loadedTunnelSegments = tunnelGlbPrimitives
+    .flatMap((model, index) => model?.ready ? [index] : []).join(',');
+}
 
 function notifyTunnelLoading() {
   if (tunnelLoadingListener) tunnelLoadingListener(tunnelLoadingCount > 0);
@@ -1203,7 +1211,8 @@ export async function setDesignRockGradeModelEnabled(enabled: boolean, customVie
   if (enabled) {
     addDesignRockGradeLabels(viewer);
     // 设计版直接加载并上色全部17段精细 GLB，不再使用轻量替代模型。
-    for (let i = 0; i < SEGMENT_COUNT; i++) {
+    if (focusedTunnelSegment !== null) updateTunnelLazyLoad(viewer);
+    else for (let i = 0; i < SEGMENT_COUNT; i++) {
       if (!tunnelGlbPrimitives[i]) loadTunnelSegment(i, viewer);
     }
   } else {
@@ -1448,12 +1457,19 @@ function loadTunnelSegment(i: number, viewer: any) {
 
   tunnelLoadingSet.add(i);
   tunnelLoadingCount++;
+  const generation = tunnelGlbGeneration;
   notifyTunnelLoading();
   Cesium.Model.fromGltfAsync({ url, modelMatrix, clippingPlanes })
     .then((model: any) => {
+      if (viewer.isDestroyed() || generation !== tunnelGlbGeneration || tunnelGlbViewer !== viewer ||
+          (focusedTunnelSegment !== null && i !== focusedTunnelSegment)) {
+        model.destroy();
+        return;
+      }
       const primitive = viewer.scene.primitives.add(model);
       primitive.show = tunnelGlbVisibleFlag;
       tunnelGlbPrimitives[i] = primitive;
+      publishTunnelSegments(viewer);
       tunnelSegmentBaseMatrices[i] = Cesium.Matrix4.clone(modelMatrix, new Cesium.Matrix4());
       const initializeRotationPivot = () => {
         tunnelSegmentPivotCenters[i] = Cesium.Cartesian3.clone(
@@ -1461,6 +1477,7 @@ function loadTunnelSegment(i: number, viewer: any) {
           new Cesium.Cartesian3(),
         );
         applyTunnelSegmentRotation(i);
+        publishTunnelSegments(viewer);
         viewer.scene.requestRender();
       };
       if (primitive.ready) initializeRotationPivot();
@@ -1470,6 +1487,7 @@ function loadTunnelSegment(i: number, viewer: any) {
     })
     .catch((e: any) => console.error(`[DrawLine] tunnel${idx}.glb 加载失败:`, e?.message || e))
     .finally(() => {
+      if (generation !== tunnelGlbGeneration) return;
       tunnelLoadingSet.delete(i);
       tunnelLoadingCount--;
       notifyTunnelLoading();
@@ -1484,6 +1502,7 @@ function unloadTunnelSegment(i: number, viewer: any) {
   if (!p) return;
   try { viewer.scene.primitives.remove(p); } catch (_) {}
   tunnelGlbPrimitives[i] = undefined;
+  publishTunnelSegments(viewer);
   tunnelSegmentBaseMatrices[i] = undefined;
   tunnelSegmentPivotCenters[i] = undefined;
 }
@@ -1491,6 +1510,14 @@ function unloadTunnelSegment(i: number, viewer: any) {
 /** 根据相机位置按需加载/卸载隧道段 */
 function updateTunnelLazyLoad(viewer: any) {
   if (!viewer || !viewer.camera) return;
+  if (focusedTunnelSegment !== null) {
+    for (let i = 0; i < SEGMENT_COUNT; i++) {
+      if (i === focusedTunnelSegment) {
+        if (!tunnelGlbPrimitives[i]) loadTunnelSegment(i, viewer);
+      } else if (tunnelGlbPrimitives[i]) unloadTunnelSegment(i, viewer);
+    }
+    return;
+  }
   if (designRockGradeEnabled) {
     for (let i = 0; i < SEGMENT_COUNT; i++) {
       if (!tunnelGlbPrimitives[i]) loadTunnelSegment(i, viewer);
@@ -1519,6 +1546,7 @@ export function prepareTunnelSegmentsAt(lon: number, lat: number, height: number
   if (!viewer) return;
   const target = Cesium.Cartesian3.fromDegrees(lon, lat, height);
   for (let i = 0; i < SEGMENT_COUNT; i++) {
+    if (focusedTunnelSegment !== null && i !== focusedTunnelSegment) continue;
     const cfg = SEGMENT_CONFIGS[i];
     const segCart = Cesium.Cartesian3.fromDegrees(cfg.lon, cfg.lat, cfg.height);
     if (Cesium.Cartesian3.distance(target, segCart) <= TUNNEL_LAZY_RADIUS && !tunnelGlbPrimitives[i]) {
@@ -1526,6 +1554,31 @@ export function prepareTunnelSegmentsAt(lon: number, lat: number, height: number
     }
   }
 }
+
+/** Agent scene focus: one 500 m GLB segment containing the target YK chainage. */
+export function focusTunnelSegmentAt(chainage: number, customViewer?: any): number {
+  if (!Number.isFinite(chainage) || chainage < 1116 || chainage > 9400) {
+    throw new Error(`目标里程不在公共隧道模型范围内：${chainage}`);
+  }
+  focusedTunnelSegment = Math.min(SEGMENT_COUNT - 1, Math.floor((chainage - 1116) / 500));
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (viewer?.container) viewer.container.dataset.focusedTunnelSegment = String(focusedTunnelSegment);
+  if (viewer && tunnelGlbViewer === viewer) updateTunnelLazyLoad(viewer);
+  return focusedTunnelSegment;
+}
+
+export function clearFocusedTunnelSegment(customViewer?: any): void {
+  focusedTunnelSegment = null;
+  const viewer = customViewer || DTScopeEngine.viewer;
+  if (viewer?.container?.dataset) delete viewer.container.dataset.focusedTunnelSegment;
+  if (viewer && tunnelGlbViewer === viewer) updateTunnelLazyLoad(viewer);
+}
+
+export function getLoadedTunnelSegmentIndices(): number[] {
+  return tunnelGlbPrimitives.flatMap((model, index) => model?.ready ? [index] : []);
+}
+
+export function getFocusedTunnelSegment(): number | null { return focusedTunnelSegment; }
 
 /**
  * 确保公共隧道的指定分段已经完成首帧初始化。
@@ -1618,6 +1671,7 @@ export function loadTunnelGlb(customViewer?: any) {
 export function removeTunnelGlb(customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
+  tunnelGlbGeneration++;
   if (tunnelLazyCameraHandler) {
     viewer.camera.moveEnd.removeEventListener(tunnelLazyCameraHandler);
     tunnelLazyCameraHandler = null;
@@ -1627,6 +1681,9 @@ export function removeTunnelGlb(customViewer?: any) {
     try { viewer.scene.primitives.remove(p); } catch (_) {}
   }
   tunnelGlbPrimitives = [];
+  tunnelLoadingSet.clear();
+  tunnelLoadingCount = 0;
+  notifyTunnelLoading();
   tunnelGlbViewer = null;
   tunnelSegmentBaseMatrices.length = 0;
   tunnelSegmentPivotCenters.length = 0;

@@ -10,6 +10,7 @@ import {
   ventilationThermalResource,
   ventilationTransientResource,
 } from '@/modules/ventilation/resources'
+import { AGENT_SCENE_RESOURCES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 
 afterEach(() => vi.unstubAllGlobals())
 
@@ -27,6 +28,8 @@ describe('ventilation resource split', () => {
       expect(resource.lifetime).toBe('task')
     }
     expect(ventilationModuleManifest.resources).toBe(ventilationResources)
+    expect(AGENT_SCENE_RESOURCES).toContain('ventilation.co-analysis')
+    expect(ventilationCoResource.chainageRange).toEqual({ start: 1246, end: 1446 })
   })
 
   it('loads and releases the CO dataset through its resource boundary', async () => {

@@ -18,7 +18,7 @@ export const commonTunnelResource: SceneResource = {
   processes: [],
   states: ['reference'],
   estimatedMemoryMb: 1100,
-  lifetime: 'application',
+  lifetime: 'task',
   async load(context) {
     tunnelViewer = context.viewer
     if (!hasTunnelGlb(context.viewer)) loadTunnelGlb(context.viewer)

@@ -158,8 +158,18 @@ const interpretedRockLayers = [
     range: { start: 2244, end: 2344 }, asset: '/data/tsp_actual/hardness.json', texture: '/data/tsp_actual/hardness_volume.png' },
   { id: 'rock.tsp-integrity', key: 'tsp_integrity', type: 'tsp-interpreted-integrity',
     range: { start: 2244, end: 2344 }, asset: '/data/tsp_actual/integrity.json', texture: '/data/tsp_actual/integrity_volume.png' },
+  { id: 'rock.tsp-vp', key: 'tsp_vp', type: 'tsp-p-wave-velocity',
+    range: { start: 2244, end: 2344 }, asset: '/data/tsp_actual/vp.json', texture: '/data/tsp_actual/vp_volume.png' },
+  { id: 'rock.tsp-vs', key: 'tsp_vs', type: 'tsp-s-wave-velocity',
+    range: { start: 2244, end: 2344 }, asset: '/data/tsp_actual/vs.json', texture: '/data/tsp_actual/vs_volume.png' },
+  { id: 'rock.tsp-ratio', key: 'tsp_ratio', type: 'tsp-vp-vs-ratio',
+    range: { start: 2244, end: 2344 }, asset: '/data/tsp_actual/vp_vs_ratio.json', texture: '/data/tsp_actual/vp_vs_ratio_volume.png' },
+  { id: 'rock.tsp-anomaly', key: 'tsp_anomaly', type: 'tsp-anomaly',
+    range: { start: 2244, end: 2344 }, asset: '/data/tsp_actual/tsp_anomaly.json', texture: '/data/tsp_actual/tsp_anomaly_volume.png' },
   { id: 'rock.tem-resistivity', key: 'tem', type: 'tem-apparent-resistivity',
     range: { start: 2244, end: 2303 }, asset: '/data/geophysical_tem/resistivity_contrast.json', texture: '/data/geophysical_tem/resistivity_contrast_volume.png' },
+  { id: 'rock.tem-water', key: 'tem_water', type: 'tem-water-interpretation',
+    range: { start: 2244, end: 2303 }, asset: '/data/geophysical_tem/water.json', texture: '/data/geophysical_tem/water_volume.png' },
 ] as const
 
 /** These legacy ShareVolume layers are mutually exclusive and anchored to the YK2+244 demo scene. */

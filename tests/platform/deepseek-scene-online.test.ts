@@ -33,6 +33,7 @@ it.skipIf(process.env.RUN_DEEPSEEK_EVAL !== '1')('DeepSeek selects the intended 
     { query: 'YK1+346 即将进行初期支护施工交底，请把岩体坚硬程度和新模块支护布置放到同一场景查看', mileage: 'YK1+346', resources: ['rock.tsp-hardness', 'support.modeler-zz-va'] },
     { query: 'YK2+244 掌子面超前地质预报交底，需要查看前方岩体完整性变化', mileage: 'YK2+244', resources: ['rock.tsp-integrity'] },
     { query: 'YK2+244 掌子面疑似富水，调出前方电阻率异常分布供施工研判', mileage: 'YK2+244', resources: ['rock.tem-resistivity'] },
+    { query: 'YK1+346 初期支护施工交底，需要核对前后 50 m 连续作业段内两种已接入断面的衔接布置', mileage: 'YK1+346', resources: ['support.alternating-zz-va-z-pm'] },
   ]
   for (const task of assemblyCases) {
     const response = await decide(task.query)

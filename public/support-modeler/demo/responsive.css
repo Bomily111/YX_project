@@ -74,3 +74,4 @@ html.support-cesium-panel .app { display: block !important; width: 100%; height:
 html.support-cesium-panel .view { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; opacity: 0; pointer-events: none; }
 html.support-cesium-panel .side { position: relative !important; inset: auto !important; display: block !important; width: 100% !important; height: 100dvh; transform: none !important; box-shadow: none; }
 html.support-cesium-panel .support-panel-toggle { display: none !important; }
+html.support-cesium-panel label:has(> #showCenterline) { display: none !important; }

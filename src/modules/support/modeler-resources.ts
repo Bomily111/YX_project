@@ -61,7 +61,8 @@ export const modelerSupportResources: SceneResource[] = modelerSupportCatalog.ma
       viewer = context.viewer
       try {
         model = await Cesium.Model.fromGltfAsync({ url: asset.path,
-          modelMatrix: modelerSectionFrame(context.task?.chainageRange.start ?? 1116) })
+          modelMatrix: modelerSectionFrame(context.task?.chainageRange.start ?? 1116),
+          upAxis: Cesium.Axis.Z, forwardAxis: Cesium.Axis.X })
         if (context.signal?.aborted) throw new DOMException('支护模型加载已取消', 'AbortError')
         viewer.scene.primitives.add(model)
         activeModels.set(asset.id, model)

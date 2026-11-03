@@ -219,6 +219,7 @@ export function flyToLocal(
 export interface ModelControlFrame {
   up: Cesium.Cartesian3
   right: Cesium.Cartesian3
+  orbitSign?: 1 | -1
   toLocal: (position: Cesium.Cartesian3) => Cesium.Cartesian3
   toWorld: (position: Cesium.Cartesian3) => Cesium.Cartesian3
 }
@@ -230,6 +231,7 @@ export function installModelControls(
   frame: ModelControlFrame = {
     up: MODEL_UP,
     right: MODEL_RIGHT,
+    orbitSign: -1,
     toLocal: ventilationPositionToLocal,
     toWorld: ventilationPositionToWorld,
   },
@@ -354,7 +356,7 @@ export function installModelControls(
     const offset = Cesium.Cartesian3.subtract(localCamera, localPivot, new Cesium.Cartesian3())
     const distance = Math.max(Cesium.Cartesian3.magnitude(offset), MIN_DISTANCE)
     const horizontal = Math.hypot(offset.x, offset.z)
-    const yaw = Math.atan2(offset.x, offset.z) + dx * ORBIT_SPEED
+    const yaw = Math.atan2(offset.x, offset.z) + dx * ORBIT_SPEED * (frame.orbitSign ?? 1)
     const currentPitch = Math.atan2(offset.y, horizontal)
     const pitch = Cesium.Math.clamp(currentPitch + dy * ORBIT_SPEED, -1.47, 1.47)
     const projected = Math.cos(pitch) * distance

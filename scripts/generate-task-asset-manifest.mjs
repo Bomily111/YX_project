@@ -12,10 +12,14 @@ const paths = [
   '/data/geophysical_grade/fused_rock_grade_2345_volume.png',
   '/data/tsp_actual/hardness.json', '/data/tsp_actual/hardness_volume.png',
   '/data/tsp_actual/integrity.json', '/data/tsp_actual/integrity_volume.png',
+  ...['vp', 'vs', 'vp_vs_ratio', 'tsp_anomaly'].flatMap(name =>
+    [`/data/tsp_actual/${name}.json`, `/data/tsp_actual/${name}_volume.png`]),
   '/data/geophysical_tem/resistivity_contrast.json',
   '/data/geophysical_tem/resistivity_contrast_volume.png',
+  '/data/geophysical_tem/water.json', '/data/geophysical_tem/water_volume.png',
   ...modelerTypes.map(type => `/support-modeler/outputs/multi_support/${type}_support_1m.glb`),
   '/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb',
+  '/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb',
   ...Array.from({ length: 17 }, (_, index) =>
     `/data/tunnel/tunnel${String(index).padStart(3, '0')}.glb`),
   '/data/blast/blast_effect.glb',

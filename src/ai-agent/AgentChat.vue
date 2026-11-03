@@ -174,7 +174,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   sceneOpen: [scene: string]
   taskWorkflowOpen: []
-  assemblyChange: [result: { targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }> } | null]
+  assemblyChange: [result: { targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }>;
+    supportRange?: { start: string; end: string; sections: number; zzVa: number; zPm: number } } | null]
 }>()
 
 // ── 引擎 ──────────────────────────────────────────────────
@@ -203,17 +204,24 @@ const sceneResourceLabels: Record<string, string> = {
   'rock.geophysical-grade': '物探融合围岩等级 · 示意重定位',
   'rock.tsp-hardness': 'TSP 岩体坚硬度 · 示意锚定',
   'rock.tsp-integrity': 'TSP 岩体完整度 · 示意锚定',
+  'rock.tsp-vp': 'TSP 纵波速度 Vp · 示意锚定',
+  'rock.tsp-vs': 'TSP 横波速度 Vs · 示意锚定',
+  'rock.tsp-ratio': 'TSP 波速比 Vp/Vs · 示意锚定',
+  'rock.tsp-anomaly': 'TSP 异常解释 · 示意锚定',
   'rock.tem-resistivity': 'TEM 视电阻率 · 示意重定位',
-  'blast.effect': '爆破效果',
+  'rock.tem-water': 'TEM 富水解释 · 示意重定位',
+  'blast.effect': '爆破炮孔与爆后点云（45 万点）',
   'support.modeler-zz-va': '新支护模块 ZZ-Va · 1 m 断面',
+  'support.alternating-zz-va-z-pm': 'ZZ-Va / Z-PM · 50 m 交替装配',
   ...Object.fromEntries(modelerSupportCatalog.map(asset => [asset.id, `新支护模块 ${asset.type} · 1 m 断面`])),
-  'ventilation.steady-cfd': '稳态 CFD', 'ventilation.transient-network': '瞬态风网',
-  'ventilation.thermal-field': '热场时间片',
+  'ventilation.steady-cfd': '稳态 CFD · 点云、矢量、流线、动态粒子', 'ventilation.transient-network': '瞬态风网',
+  'ventilation.thermal-field': '热场时间片', 'ventilation.co-analysis': 'CO 扩散分析',
 }
 const sceneSourceNotes = (plans: Array<{ resources: string[] }> = []): string => {
   const ids = plans.flatMap(plan => plan.resources)
   return [
     ids.some(id => id.startsWith('support.modeler-')) ? '新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。' : '',
+    ids.includes('support.alternating-zz-va-z-pm') ? '目标里程附近 50 m 内按 50 个 1 m 位置交替装配 ZZ-Va 和 Z-PM；Z-PM 当前仅有二衬及 N1–N7 钢筋，为示意模型。' : '',
     ids.some(id => id.startsWith('rock.') && id !== 'rock.design-grade')
       ? '物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。' : '',
     ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity')
@@ -396,12 +404,18 @@ const send = async () => {
             streamBuffer.value = ''
             const ids: string[] = Array.isArray(parsed.assembledResourceIds) ? parsed.assembledResourceIds : []
             const resources = ids.map(id => sceneResourceLabels[id] ?? id).join('、')
+            const span = parsed.supportSpan
+            const supportRange = span && [span.start, span.end, span.sections, span.zzVa, span.zPm].every(Number.isFinite)
+              ? { start: chainageService.format(span.start), end: chainageService.format(span.end),
+                sections: span.sections, zzVa: span.zzVa, zPm: span.zPm } : undefined
             if (parsed.ok) emit('assemblyChange', {
               targetMileage: String(parsed.targetMileage), taskId: String(parsed.taskId),
               resources: ids.map(id => ({ id, label: sceneResourceLabels[id] ?? id })),
+              ...(supportRange ? { supportRange } : {}),
             })
             messages.value.push({ role: 'assistant', content: parsed.ok
-              ? `已定位 ${parsed.targetMileage}，主场景装配完成：${resources || '无'}。${sceneSourceNotes(parsed.scenePlans)}`
+              ? `已定位 ${parsed.targetMileage}，主场景装配完成：${resources || '无'}。${supportRange
+                ? `实际范围 ${supportRange.start}—${supportRange.end}，共 ${supportRange.sections} 个断面（ZZ-Va ${supportRange.zzVa}、Z-PM ${supportRange.zPm}）。` : ''}${sceneSourceNotes(parsed.scenePlans)}`
               : `场景装配未完成：${parsed.reason || parsed.notice?.message || (result.startsWith('❌') ? result : '请核对里程与资源。')}` })
             await scrollToBottom()
           }

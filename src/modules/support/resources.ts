@@ -10,6 +10,7 @@ import { generateSteelArchGLB, generateWorkfaceGLB } from '@/views/support-modul
 import { fingerprintGeneratedAsset } from '@/platform/telemetry/GeneratedAssetVersions'
 import type { DataVersion } from '@/platform/telemetry/TaskDataProvenance'
 import { modelerSupportResources } from './modeler-resources'
+import { alternatingSupportResource } from './alternating-resource'
 
 let supportViewer: Cesium.Viewer | undefined
 let referenceTunnel: Cesium.Model | undefined
@@ -121,7 +122,7 @@ export const supportSceneResource: SceneResource = {
   },
 }
 
-export const supportResources = [supportSceneResource, ...modelerSupportResources] as const
+export const supportResources = [supportSceneResource, ...modelerSupportResources, alternatingSupportResource] as const
 
 export const supportModuleManifest: SceneModuleManifest = {
   id: 'support',

@@ -68,6 +68,10 @@
                   <input type="checkbox" :checked="visibility.particles" @change="toggleLayer('particles')">
                   <span class="vent-custom-check"></span><span>动态粒子</span>
                 </label>
+                <label class="vent-checkbox-item">
+                  <input type="checkbox" :checked="centerlineVisible" @change="toggleCenterline">
+                  <span class="vent-custom-check"></span><span>项目中线</span>
+                </label>
               </div>
             </div>
             <div v-if="view === 'flow'" class="tool-dock">
@@ -188,8 +192,8 @@
             <p><span>左主洞</span><b>TBM · 6,800m · 68段</b></p><p><span>右主洞</span><b>钻爆 · 7,800m · 78段</b></p>
             <p><span>横通道</span><b>4处 · 4m×4m</b></p><p><span>附属通道</span><b>DDK + A线 + D线</b></p>
           </article>
-          <article class="info-card"><h3>稳态 CFD 风场</h3><p><span>计算点</span><b>{{ cfdCells?.meta.n || 0 }}</b></p><p><span>矢量样本</span><b>{{ cfdArrows?.meta.n || 0 }}</b></p><p><span>原始数据区间</span><b>K3+805～K4+005</b></p><p><span>展示位置</span><b>右主洞中心示意配准至 YK1+346</b></p><p><span>当前着色</span><b>{{ colorMode === 'velocity' ? '风速' : '温度' }}</b></p></article>
-          <article class="info-card note">仅调整三维展示坐标；此 CFD 数据并非 YK1+346 工点实测结果，不能据此作联合工程判断。</article>
+          <article class="info-card"><h3>稳态 CFD 风场</h3><p><span>计算点</span><b>{{ cfdCells?.x.length || 0 }}</b></p><p><span>矢量样本</span><b>{{ cfdArrows?.x.length || 0 }}</b></p><p><span>原始数据区间</span><b>K3+805～K4+005</b></p><p><span>展示位置</span><b>约 YK7+251～YK7+451</b></p><p><span>当前着色</span><b>{{ colorMode === 'velocity' ? '风速' : '温度' }}</b></p></article>
+          <article class="info-card note">通风隧道 K0 洞口示意对齐 YK3+446；此 CFD 数据并非该线路实测结果。</article>
           <article v-if="pickedInfo" class="info-card highlight"><h3>选中 CFD 采样点</h3><p><span>里程</span><b>{{ formatMileage(pickedInfo.chainage) }}</b></p><p><span>风速</span><b>{{ pickedInfo.velocity.toFixed(3) }} m/s</b></p><p><span>温度</span><b>{{ pickedInfo.temperature.toFixed(2) }} K / {{ (pickedInfo.temperature - 273.15).toFixed(1) }}°C</b></p></article>
           <article class="info-card gallery"><h3>CFD 分析图</h3><div v-for="img in analysisImages" :key="img.src"><img :src="img.src" :alt="img.label" @click="modalImage = img.src"><small>{{ img.label }}</small></div></article>
         </template>
@@ -234,6 +238,7 @@ import {
   type VentilationTransientScenario,
 } from '@/modules/ventilation/resources'
 import { VENTILATION_LOCAL_REFERENCE, ventilationPositionToLocal, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
+import centerLineData from '@/assets/data/centerLine.json'
 
 type ViewKey = 'geometry' | 'flow' | 'co' | 'transient' | 'thermal'
 const router = useRouter()
@@ -248,6 +253,10 @@ const loadingText = ref('加载 Cesium 场景…')
 const colorMode = ref<ColorMode>('velocity')
 const modelOpacity = ref(0.82)
 const visibility = ref({ points: true, arrows: true, streamlines: true, particles: true })
+const centerlineVisible = ref(false)
+let centerlineEntity: Cesium.Entity | undefined
+let ownsCenterline = false
+let previousCenterlineShow = true
 const layerPanelCollapsed = ref(false)
 const layerPanelPosition = ref({ left: 14, top: 45 })
 const renderedField = ref<'steady' | 'thermal' | null>(null)
@@ -301,6 +310,19 @@ async function ensureScene() {
   if (viewer || !cesiumHost.value) return
   loading3d.value = true
   viewer = createVentilationViewer(cesiumHost.value)
+  centerlineEntity = viewer.entities.getById('centerline-main')
+  ownsCenterline = !centerlineEntity
+  if (!centerlineEntity) {
+    const coordinates = (centerLineData as { features: { geometry: { coordinates: number[][] } }[] }).features[0].geometry.coordinates
+    centerlineEntity = viewer.entities.add({ id: 'ventilation-centerline', name: '项目中线', polyline: {
+      positions: coordinates.map(point => Cesium.Cartesian3.fromDegrees(...point as [number, number, number])),
+      width: 5,
+      material: new Cesium.PolylineGlowMaterialProperty({ glowPower: 0.2, color: Cesium.Color.YELLOW.withAlpha(0.8) }),
+      depthFailMaterial: Cesium.Color.YELLOW.withAlpha(0.8),
+    } })
+  }
+  previousCenterlineShow = centerlineEntity.show
+  centerlineEntity.show = centerlineVisible.value
   cameraControls = installModelControls(viewer, () => orbitFocus, updateActiveFocus)
   loadingText.value = '加载隧道 GLB 模型…'
   registerVentilationModule()
@@ -400,6 +422,11 @@ function toggleLayer(key: keyof typeof visibility.value) {
   setLayerVisible(key, visibility.value[key])
   viewer?.scene.requestRender()
 }
+function toggleCenterline() {
+  centerlineVisible.value = !centerlineVisible.value
+  if (centerlineEntity) centerlineEntity.show = centerlineVisible.value
+  viewer?.scene.requestRender()
+}
 function toggleColorMode() {
   colorMode.value = colorMode.value === 'velocity' ? 'temperature' : 'velocity'
   if (cfdCells.value) recolorSteady(cfdCells.value, colorMode.value)
@@ -461,9 +488,9 @@ function focusCfd() {
   Cesium.Cartesian3.clone(CFD_FOCUS, orbitFocus)
   cameraControls?.reset()
   updateActiveFocus(orbitFocus)
-  // 以 CFD 包围盒中心为观察中心，完整容纳双洞和 200m 计算区间。
+  // 从低里程侧斜俯视 CFD 区间，让双洞和 200 m 风场同时进入画面。
   cameraControls?.setFocus(orbitFocus)
-  flyToLocal(viewer, orbitFocus, ventilationVectorToWorld(new Cesium.Cartesian3(-155, 105, 255)), 0.95)
+  flyToLocal(viewer, orbitFocus, ventilationVectorToWorld(new Cesium.Cartesian3(-235, 175, -85)), 0.95)
 }
 function updateActiveFocus(focus: Cesium.Cartesian3) {
   Cesium.Cartesian3.clone(focus, orbitFocus)
@@ -655,7 +682,7 @@ function darkLineOption(x:number[],series:Array<{name:string;data:number[];color
 
 function resizeAll(){viewer?.resize();[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.resize())}
 onMounted(()=>{if(window.innerWidth<=900)layerPanelCollapsed.value=true;window.addEventListener('resize',resizeAll);selectView('flow')})
-onBeforeUnmount(()=>{analysisRequest++;window.removeEventListener('resize',resizeAll);stopLayerPanelDrag?.();if(mileageMarkerTimer)clearTimeout(mileageMarkerTimer);if(viewer&&mileageMarker)viewer.entities.remove(mileageMarker);pickHandler?.destroy();cameraControls?.destroy();const activeViewer=viewer;if(activeViewer){const ids=activeAnalysisResource?[activeAnalysisResource,'ventilation.scene']:['ventilation.scene'];void resourceManager.release(ids).finally(()=>releaseVentilationViewer(activeViewer))}activeAnalysisResource=undefined;viewer=undefined;[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
+onBeforeUnmount(()=>{analysisRequest++;window.removeEventListener('resize',resizeAll);stopLayerPanelDrag?.();if(mileageMarkerTimer)clearTimeout(mileageMarkerTimer);if(viewer&&mileageMarker)viewer.entities.remove(mileageMarker);if(viewer&&centerlineEntity){if(ownsCenterline)viewer.entities.remove(centerlineEntity);else centerlineEntity.show=previousCenterlineShow}centerlineEntity=undefined;pickHandler?.destroy();cameraControls?.destroy();const activeViewer=viewer;if(activeViewer){const ids=activeAnalysisResource?[activeAnalysisResource,'ventilation.scene']:['ventilation.scene'];void resourceManager.release(ids).finally(()=>releaseVentilationViewer(activeViewer))}activeAnalysisResource=undefined;viewer=undefined;[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
 </script>
 
 <style scoped lang="scss">

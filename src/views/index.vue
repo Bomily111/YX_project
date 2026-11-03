@@ -162,6 +162,8 @@
       <h2>{{ agentAssembly.targetMileage }}</h2>
       <p>已沿中线定位，并装配以下模型：</p>
       <ul><li v-for="resource in agentAssembly.resources" :key="resource.id">{{ resource.label }}</li></ul>
+      <p v-if="agentAssembly.supportRange">支护范围 {{ agentAssembly.supportRange.start }}—{{ agentAssembly.supportRange.end }}<br>
+        共 {{ agentAssembly.supportRange.sections }} 个断面：ZZ-Va {{ agentAssembly.supportRange.zzVa }}，Z-PM {{ agentAssembly.supportRange.zPm }}</p>
       <small>以实际加载结果为准；示例场景不代表工程质量结论。</small>
     </aside>
 
@@ -241,6 +243,7 @@
       <strong>{{ agentAssembly.targetMileage }}</strong>
       <span>中线定位完成</span>
       <span>已装配 {{ agentAssembly.resources.length }} 类模型</span>
+      <span v-if="agentAssembly.supportRange">支护 {{ agentAssembly.supportRange.start }}—{{ agentAssembly.supportRange.end }} · {{ agentAssembly.supportRange.sections }} 个断面</span>
       <span class="agent-assembly-run">任务 {{ agentAssembly.taskId }}</span>
     </div>
     <div class="bottom-metrics-bar" v-show="!activeScene && !agentAssembly">
@@ -335,7 +338,7 @@ import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import TaskWorkflowPanel from '@/components/task-workflow/TaskWorkflowPanel.vue';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
-import { loadCenterLine, enableBlackModelMode, restoreEarthMode, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
+import { loadCenterLine, enableBlackModelMode, restoreEarthMode, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, clearFocusedTunnelSegment, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
 import { createMileageRuler, getMileageRuler, destroyMileageRuler } from '@/utils/Common/MileageRuler';
 import { resourceManager } from '@/platform/resources/ResourceManager';
 import { chainageService } from '@/platform/coordinates/ChainageService';
@@ -363,7 +366,9 @@ const modelStore = useModelStore();
 const isModelViewMode = ref(false);
 const showGeophysicalVoxelWorkbench = ref(false);
 const showTaskWorkflow = ref(false);
-const agentAssembly = ref<{ targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }> } | null>(null);
+const agentAssembly = ref<{ targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }>;
+  supportRange?: { start: string; end: string; sections: number; zzVa: number; zPm: number } } | null>(null);
+watch(agentAssembly, scene => { if (!scene) clearFocusedTunnelSegment(); });
 const activeScene = ref<string | null>(null);
 const agentVolumeKey = computed(() => {
   if (activeScene.value) return null;
@@ -371,7 +376,12 @@ const agentVolumeKey = computed(() => {
   if (ids.includes('rock.geophysical-grade')) return 'geophysical_grade';
   if (ids.includes('rock.tsp-hardness')) return 'tsp_hardness';
   if (ids.includes('rock.tsp-integrity')) return 'tsp_integrity';
+  if (ids.includes('rock.tsp-vp')) return 'tsp_vp';
+  if (ids.includes('rock.tsp-vs')) return 'tsp_vs';
+  if (ids.includes('rock.tsp-ratio')) return 'tsp_ratio';
+  if (ids.includes('rock.tsp-anomaly')) return 'tsp_anomaly';
   if (ids.includes('rock.tem-resistivity')) return 'tem';
+  if (ids.includes('rock.tem-water')) return 'tem_water';
   return null;
 });
 const showVolumeOverlay = computed(() => isModelViewMode.value || !!agentVolumeKey.value);
@@ -1295,6 +1305,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  clearFocusedTunnelSegment();
   clearInterval(timer);
   void resourceManager.release(['common.tunnel']);
   // 独立模块会销毁主页 Viewer，刻度尺必须同步释放，避免返回时复用旧场景实例。
