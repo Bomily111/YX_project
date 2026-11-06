@@ -1,0 +1,14 @@
+{
+  "startedAt": "2026-11-06T07:03:25.437Z",
+  "rounds": [
+    {
+      "round": 1,
+      "code": 1,
+      "elapsedMs": 216683,
+      "report": "docs/verification/soak-2026-11-06-final/round-1/report.json"
+    }
+  ],
+  "passed": false,
+  "failure": "Round 1 failed",
+  "finishedAt": "2026-11-06T07:07:02.126Z"
+}

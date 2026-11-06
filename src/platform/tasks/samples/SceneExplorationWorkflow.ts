@@ -8,20 +8,29 @@ import { withScenePlan, type ScenePlanWorkflowOptions } from '@/platform/selecti
 import type { EnhancementPlannerOptions } from '@/platform/enhancement/EnhancementPlanner'
 import { WorkflowExecutor } from '../WorkflowExecutor'
 import type { TaskStep, WorkflowPlan } from '../TaskStep'
-import { getBlastModel } from '@/views/tunnel-module/blast'
-import { getTunnelModel as getVentilationModel } from '@/views/ventilation-module/cesiumVentilation'
+import { blastViewOffset, getBlastModel } from '@/views/tunnel-module/blast'
+import { setTunnelTranslucent, focusTunnelSegmentAt, waitForTunnelGlbSegment } from '@/utils/Common/DrawLine'
 import { ventilationPositionToWorld, ventilationVectorToWorld } from '@/views/ventilation-module/spatialFrame'
 import { modelerSupportCatalog } from '@/modules/support/modeler-resources'
 import { ALTERNATING_SUPPORT_ID } from '@/modules/support/alternating-resource'
+import { transientScenarioCatalog } from '@/modules/ventilation/transient-catalog'
+import { thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
+import { presentTaskScene, taskPresentationProfile } from '../TaskScenePresentation'
+import { faceSourceDescription } from '@/modules/face-sketch/resources'
 
 /** 只允许现有四类可展示资产进入智能体的场景编排，不能把任意路径当作资源加载。 */
 export const SCENE_EXPLORATION_RESOURCES = [
   'rock.design-grade', 'rock.geophysical-grade', 'rock.tsp-hardness',
   'rock.tsp-integrity', 'rock.tsp-vp', 'rock.tsp-vs', 'rock.tsp-ratio',
   'rock.tsp-anomaly', 'rock.tem-resistivity', 'rock.tem-water',
-  'support.scene', 'blast.effect',
+  'support.scene', 'blast.effect', 'blast.design-data',
+  'rock.face-photos',
+  'rock.gpr-line1', 'rock.gpr-line2',
+  'rock.advance-drill',
   'ventilation.steady-cfd', 'ventilation.transient-network', 'ventilation.thermal-field',
   'ventilation.co-analysis',
+  ...transientScenarioCatalog.map(scenario => scenario.id),
+  ...thermalSnapshotCatalog.map(snapshot => snapshot.id),
   ...modelerSupportCatalog.map(asset => asset.id),
   ALTERNATING_SUPPORT_ID,
 ] as const
@@ -102,10 +111,27 @@ export function sceneStageTask(task: TaskContext, resource: SceneResource, reque
 
 /** Demo assembly permits one interpreted rock layer with the reanchored structure-tree support layout. */
 function compatibleAssembly(ids: readonly string[]): boolean {
+  if (ids.includes('rock.face-photos')) {
+    const others = ids.filter(id => id !== 'rock.face-photos')
+    return new Set(ids).size === ids.length && (others.length <= 1 || compatibleAssembly(others))
+  }
+  if (ids.includes('blast.design-data')) {
+    const remaining = ids.filter(id => id !== 'blast.design-data')
+    return new Set(ids).size === ids.length && (remaining.length === 0 ||
+      remaining.every(id => id === 'blast.effect' || id === 'ventilation.steady-cfd'))
+  }
   const unique = new Set(ids)
   if (unique.size !== ids.length) return false
   const support = ids.filter(id => id.startsWith('support.modeler-') || id === ALTERNATING_SUPPORT_ID)
+  if (ids.includes('blast.effect') && ids.includes('ventilation.steady-cfd')) {
+    return ids.length === 2
+  }
   if (support.length > 0) {
+    const ventilation = ids.filter(id => id === 'ventilation.steady-cfd')
+    if (ventilation.length > 0) {
+      return support.length === 1 && support[0].startsWith('support.modeler-')
+        && ventilation.length === 1 && ids.length === 2
+    }
     return support.length === 1
       && ids.filter(id => id.startsWith('rock.')).length <= 1
       && ids.every(id => id.startsWith('rock.') || id === support[0])
@@ -151,21 +177,43 @@ function stageTask(task: TaskContext, resources: readonly SceneResource[], stage
 export async function waitForModelReady(
   model: Pick<Cesium.Model, 'ready' | 'readyEvent'>,
   requestRender: () => void,
-  timeoutMs = 15000,
+  timeoutMs = 30000,
 ): Promise<void> {
   if (model.ready) return
   await new Promise<void>((resolve, reject) => {
     let removeReady: (() => void) | undefined
+    // Demand-rendered scenes need another frame after asynchronous GPU uploads.
+    const frames = setInterval(requestRender, 100)
     const timer = setTimeout(() => {
+      clearInterval(frames)
       removeReady?.()
-      reject(new Error('爆破模型首帧就绪超时'))
+      reject(new Error('模型首帧就绪超时'))
     }, timeoutMs)
     removeReady = model.readyEvent.addEventListener(() => {
       clearTimeout(timer)
+      clearInterval(frames)
       removeReady?.()
       resolve()
     })
     requestRender()
+  })
+}
+
+/** Entity geometry/material updates can finish after GLB readiness in demand-render mode. */
+export async function waitForSceneEntitiesReady(viewer: Cesium.Viewer, timeoutMs = 30000): Promise<void> {
+  if (!viewer.dataSourceDisplay || !viewer.scene?.postRender) return
+  await new Promise<void>((resolve, reject) => {
+    let readyFrames = 0
+    const frames = setInterval(() => viewer.scene.requestRender(), 100)
+    const cleanup = () => { clearInterval(frames); clearTimeout(timer); remove() }
+    const timer = setTimeout(() => { cleanup(); reject(new Error('任务实体首帧就绪超时')) }, timeoutMs)
+    const remove = viewer.scene.postRender.addEventListener(() => {
+      // The first ready frame can still use Cesium's white placeholder texture.
+      // Keep rendering through the material upload and its following draw.
+      readyFrames = viewer.dataSourceDisplay.ready ? readyFrames + 1 : 0
+      if (readyFrames >= 3) { cleanup(); resolve() }
+    })
+    viewer.scene.requestRender()
   })
 }
 
@@ -209,12 +257,15 @@ async function focusScene(resource: SceneResource, viewer: Cesium.Viewer, retain
     camera.viewBoundingSphere(supportModel.boundingSphere, new Cesium.HeadingPitchRange(0, -0.25,
       resource.id === ALTERNATING_SUPPORT_ID ? 85 : 42))
     camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
-  } else if (resource.module === 'ventilation' && getVentilationModel()) {
+  } else if (resource.module === 'ventilation') {
     const { destination, direction, up } = ventilationWorkpointView()
     camera.setView({ destination, orientation: { direction, up } })
   } else if (resource.id === 'blast.effect') {
     const model = await waitForBlastModel(viewer)
-    camera.viewBoundingSphere(model.boundingSphere, new Cesium.HeadingPitchRange(0, -0.3, 110))
+    const offset = blastViewOffset('persp')
+    if (!offset) throw new Error('爆破点云视角不可用')
+    setTunnelTranslucent(true, viewer)
+    camera.viewBoundingSphere(model.boundingSphere, offset)
     camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
   } else if (resource.id === 'support.scene') {
     const model = resource.getEnhanceTargets?.().find((target) => target.id === 'support.reference-tunnel')?.object
@@ -226,6 +277,7 @@ async function focusScene(resource: SceneResource, viewer: Cesium.Viewer, retain
   viewer.scene.requestRender()
   return () => {
     if (viewer.isDestroyed()) return
+    if (resource.id === 'blast.effect') setTunnelTranslucent(false, viewer)
     camera.setView({ destination: before.destination, orientation: { direction: before.direction, up: before.up } })
     viewer.scene.requestRender()
   }
@@ -239,6 +291,7 @@ export function createSceneExplorationExecutor(
     enhancementModes?: readonly string[]
     assemblyModes?: readonly string[]
     targetChainage?: number
+    enhanceAfterAssembly?: boolean
   },
 ): {
   executor: WorkflowExecutor
@@ -271,9 +324,15 @@ export function createSceneExplorationExecutor(
     status: 'pending',
   }))
   const plan: WorkflowPlan = { taskId: task.taskId, steps, sharedContext: {} }
+  const finalize = options.enhanceAfterAssembly && !!options.enhancement
+  if (finalize) steps.push({ stepId: `scene-${resources.length + 1}`, name: '构建完成后统一增强',
+    module: resources[resources.length - 1].module as TaskStep['module'],
+    dependsOn: [`scene-${resources.length}`], inputKeys: [`scene.stage.${resources.length}`],
+    outputKeys: [`scene.stage.${resources.length + 1}`], action: 'scene.finalize',
+    completionRule: { requiredOutputs: [`scene.stage.${resources.length + 1}`] }, status: 'pending' })
   const buildScenePlans = (stages: readonly SceneResource[][]): ScenePlan[] => {
     const planned: ScenePlan[] = []
-    for (const [index, step] of steps.entries()) {
+    for (const [index, step] of steps.slice(0, resources.length).entries()) {
       const selected = stageResources(stages, index)
       const scenePlan = selector.createScenePlan(stageTask(task, resources, stages, index, options.targetChainage), step, {
         candidateResourceIds: selected.map((item) => item.id),
@@ -288,12 +347,38 @@ export function createSceneExplorationExecutor(
       }
       planned.push(scenePlan)
     }
+    if (finalize) planned.push({ ...planned[planned.length - 1], stepId: steps[steps.length - 1].stepId })
     return planned
   }
   const scenePlans = buildScenePlans(assemblyStages)
   const resolve = (_action: string, step: TaskStep) => {
     const index = steps.findIndex((item) => item.stepId === step.stepId)
     if (index < 0) return undefined
+    if (finalize && index === resources.length) return async (context) => {
+      const active = options.executor.getActiveState().plan
+      if (!active || active.rootResourceIds.some(id => !options.executor.getLoadedResourceIds().has(id))) throw new Error('整体增强前场景资源未全部装配')
+      const enhancement = options.enhancement!
+      const load = typeof options.loadContext === 'function' ? options.loadContext(context) : options.loadContext
+      if (load.viewer.scene && load.viewer.container) {
+        await waitForTunnelGlbSegment(focusTunnelSegmentAt(options.targetChainage ?? task.chainageRange.start, load.viewer), load.viewer)
+        for (const id of active.loadOrder) for (const target of registry.require(id).getEnhanceTargets?.() ?? []) {
+          const model = target.object as Cesium.Model | undefined
+          if (model && typeof model.ready === 'boolean') await waitForModelReady(model, () => load.viewer.scene.requestRender())
+        }
+        if (active.rootResourceIds.includes('blast.effect')) await waitForBlastModel(load.viewer)
+      }
+      let undoPresentation: (() => void) | undefined
+      context.onRollback(async () => { undoPresentation?.(); const errors = await enhancement.engine.reset(); if (errors.length) throw new AggregateError(errors, '整体增强撤销失败') })
+      const enhanced = await enhancement.engine.apply(enhancement.planner.create({ ...active, stepId: step.stepId }, { highlightFocus: false }))
+      if (enhanced.status === 'failed') throw enhanced.error ?? new Error('整体增强失败')
+      undoPresentation = presentTaskScene(load.viewer, active.rootResourceIds, options.targetChainage ?? task.chainageRange.start)
+      if (active.rootResourceIds.includes('rock.face-photos')) await waitForSceneEntitiesReady(load.viewer)
+      const previous = context.plan.sharedContext[`scene.stage.${resources.length}`]?.value as Record<string, unknown>
+      return { outputs: { [step.outputKeys[0]]: { ...previous, phase: 'constructed-then-enhanced', presentation: taskPresentationProfile(active.rootResourceIds),
+        provenance: active.rootResourceIds.map(id => ({ resourceId: id, assets: registry.require(id).getActiveAssetPaths?.() ?? [],
+          metadata: (registry.require(id).getEnhanceTargets?.() ?? []).flatMap(target => target.metadata ? [target.metadata] : []) })),
+        assembledResourceIds: [...active.rootResourceIds] } } }
+    }
     const resource = resources[index]
     const outputKey = step.outputKeys[0]
     return withScenePlan(
@@ -302,30 +387,45 @@ export function createSceneExplorationExecutor(
           ? options.loadContext(context) : options.loadContext
         const retainedSupport = stageResources(assemblyStages, index)
           .find(item => item.id.startsWith('support.modeler-') || item.id === ALTERNATING_SUPPORT_ID)
-        const rollback = await focusScene(resource, loadContext.viewer, retainedSupport)
+        const rollback = finalize ? undefined : await focusScene(resource, loadContext.viewer, retainedSupport)
         return { outputs: { [outputKey]: {
         resourceId: resource.id,
         module: resource.module,
         chainageRange: stageTask(task, resources, assemblyStages, index, options.targetChainage).chainageRange,
         assembledResourceIds: options.executor.getActiveState().plan?.rootResourceIds ?? [],
-        note: resource.module === 'ventilation'
-          ? '局部 K3+805～K4+005 通风数据示意配准到 YK1+346；非该工点实测风场，不代表工程结论'
+        note: [...new Set(stageResources(assemblyStages, index).map(resource => resource.id === 'blast.design-data'
+          ? '炮孔设计来自现有方案示例，逐孔姿态含经验值；非目标工点实测或审批设计，不据此给出药量或安全结论'
+          : resource.id === 'rock.advance-drill'
+          ? '既有水平钻GLB示例按目标中线示意装配，孔位和轨迹非目标工点实测，不含钻进日志或涌水记录'
+          : resource.id.startsWith('rock.gpr-line')
+          ? '现有GPR处理剖面参考，测线横距/深度为局部轴；未建立目标YK测量对应，不将反射异常直接判为富水或破碎带'
+          : resource.id === 'rock.face-photos'
+          ? faceSourceDescription()
+          : resource.id.startsWith('ventilation.thermal-t')
+          ? '现有稳态解与指数松弛近似热场时间片，示意配准仅显示右洞；完整瞬态CFD待重跑，非目标工点实测温度'
+          : resource.id.startsWith('ventilation.transient-')
+          ? '现有一维瞬态风网工况分析，非该工况三维CFD，非目标工点实时监测'
+          : resource.module === 'ventilation'
+          ? '局部 K3+805～K4+005 通风数据示意配准到 YK3+900～YK4+100；非该工点实测风场，不代表工程结论'
           : resource.id === 'rock.tsp-hardness' || resource.id === 'rock.tsp-integrity'
             ? '围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论'
           : resource.module === 'rock' && resource.id !== 'rock.design-grade'
             ? '围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；不能视作目标工点实测结论'
           : resource.id === ALTERNATING_SUPPORT_ID
             ? '目标里程附近 50 m 内，每米交替装配 ZZ-Va 和 Z-PM；Z-PM 仅含支护版块现有二衬和 N1–N7 钢筋，属示意装配，非目标里程实测支护'
+          : resource.id === 'blast.effect' && ((options.targetChainage ?? 1346) < 1346 || (options.targetChainage ?? 1346) > 1351)
+            ? '爆破炮孔与爆后点云源于 YK1+346 示例工点，现按目标中线示意重定位；非目标里程实测爆破结果'
           : resource.id.startsWith('support.modeler-')
             ? '新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论'
           : stageResources(assemblyStages, index).length > 1
             ? `同屏装配 ${stageResources(assemblyStages, index).map(item => item.id).join('、')}；示例设计不代表质量或风险结论`
-          : '场景展示已完成；不代表工程质量或风险结论',
+          : '场景展示已完成；不代表工程质量或风险结论'))].join('；'),
       } }, rollback }
       },
       {
         ...options,
-        enhancement: options.enhancement ? {
+        loadContext: context => ({ ...(typeof options.loadContext === 'function' ? options.loadContext(context) : options.loadContext), deferPresentation: finalize }),
+        enhancement: options.enhancement && !finalize ? {
           ...options.enhancement,
           plannerOptions: (context, scenePlan) => ({
             ...(typeof options.enhancement!.plannerOptions === 'function'
@@ -342,7 +442,7 @@ export function createSceneExplorationExecutor(
   const executor = new WorkflowExecutor(task, plan, resolve)
   const reviseNextAssembly = (stepId: string, mode: SceneAssemblyMode): ScenePlan[] => {
     const index = steps.findIndex(step => step.stepId === stepId)
-    if (index < 1) throw new Error('只能调整后续场景阶段')
+    if (index < 1 || index >= resources.length) throw new Error('只能调整后续场景资源阶段')
     if (steps[index - 1].status !== 'completed') throw new Error('前一阶段尚未完成')
     if (executor.plan.currentStepId !== stepId || steps[index].status !== 'pending') {
       throw new Error('只能调整当前待执行场景阶段')
@@ -355,7 +455,7 @@ export function createSceneExplorationExecutor(
     assemblyModes.splice(0, assemblyModes.length, ...candidateModes)
     assemblyStages = nextStages
     scenePlans.splice(0, scenePlans.length, ...nextPlans)
-    for (let pending = index; pending < steps.length; pending++) steps[pending].name = stepName(nextStages, pending)
+    for (let pending = index; pending < resources.length; pending++) steps[pending].name = stepName(nextStages, pending)
     return [...scenePlans]
   }
   return { executor, scenePlans, reviseNextAssembly }

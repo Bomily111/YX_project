@@ -158,6 +158,9 @@ import { dispatchValidatedWorkflow } from './TaskOrchestrator'
 import { routeWorkflowToolCall } from './AgentDispatchIntent'
 import { AGENT_SCENE_RESOURCES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import { modelerSupportCatalog } from '@/modules/support/modeler-resources'
+import { transientScenarioCatalog } from '@/modules/ventilation/transient-catalog'
+import { thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
+import { faceSourceDescription } from '@/modules/face-sketch/resources'
 import { useTunnelStore } from '@/stores/tunnelStore'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import type { Message, ToolUseBlock, AgentContext } from './types'
@@ -211,18 +214,31 @@ const sceneResourceLabels: Record<string, string> = {
   'rock.tem-resistivity': 'TEM 视电阻率 · 示意重定位',
   'rock.tem-water': 'TEM 富水解释 · 示意重定位',
   'blast.effect': '爆破炮孔与爆后点云（45 万点）',
+  'blast.design-data': '炮孔设计 · 二维图与参数参考',
+  'rock.face-photos': '单掌子面模型 · 示意装配',
+  'rock.gpr-line1': 'GPR测线1 · 剖面参考', 'rock.gpr-line2': 'GPR测线2 · 剖面参考',
+  'rock.advance-drill': '超前水平钻 · 示例模型',
+  ...Object.fromEntries(transientScenarioCatalog.map(scenario => [scenario.id, `瞬态风网 · ${scenario.label}`])),
+  ...Object.fromEntries(thermalSnapshotCatalog.map(snapshot => [snapshot.id, snapshot.label])),
   'support.modeler-zz-va': '新支护模块 ZZ-Va · 1 m 断面',
   'support.alternating-zz-va-z-pm': 'ZZ-Va / Z-PM · 50 m 交替装配',
   ...Object.fromEntries(modelerSupportCatalog.map(asset => [asset.id, `新支护模块 ${asset.type} · 1 m 断面`])),
   'ventilation.steady-cfd': '稳态 CFD · 点云、矢量、流线、动态粒子', 'ventilation.transient-network': '瞬态风网',
   'ventilation.thermal-field': '热场时间片', 'ventilation.co-analysis': 'CO 扩散分析',
 }
-const sceneSourceNotes = (plans: Array<{ resources: string[] }> = []): string => {
+const sceneSourceNotes = (plans: Array<{ resources: string[] }> = [], volumeCutApplied = false): string => {
   const ids = plans.flatMap(plan => plan.resources)
   return [
+    volumeCutApplied && ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.'))
+      ? '当前为解释体剖切展示：隐藏部分横向区域及近端区域以显露支护；原始体数据未修改，不能把裁剪边界当作地质边界。' : '',
+    ids.includes('rock.advance-drill') ? '水平钻模型沿目标中线示意装配，孔位和轨迹非目标实测，不含钻进日志或涌水记录。' : '',
+    ids.some(id => id.startsWith('rock.gpr-line')) ? 'GPR为现有处理剖面参考，未建立与目标YK的测量对应，不将反射异常直接作为富水或破碎带结论。' : '',
+    ids.includes('rock.face-photos') ? faceSourceDescription() : '',
+    ids.some(id => id.startsWith('ventilation.thermal-t')) ? '热场时间片基于稳态解与指数松弛近似，仅示意显示右洞；完整瞬态CFD待重跑，不是目标工点实测温度。' : '',
+    ids.some(id => id.startsWith('ventilation.transient-')) ? '瞬态风网为现有一维网络分析工况的流量—时间曲线，不是该工况的三维CFD，也不代表目标工点实时监测。' : '',
     ids.some(id => id.startsWith('support.modeler-')) ? '新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。' : '',
     ids.includes('support.alternating-zz-va-z-pm') ? '目标里程附近 50 m 内按 50 个 1 m 位置交替装配 ZZ-Va 和 Z-PM；Z-PM 当前仅有二衬及 N1–N7 钢筋，为示意模型。' : '',
-    ids.some(id => id.startsWith('rock.') && id !== 'rock.design-grade')
+    ids.some(id => id.startsWith('rock.') && id !== 'rock.design-grade' && id !== 'rock.face-photos' && id !== 'rock.advance-drill' && !id.startsWith('rock.gpr-line'))
       ? '物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。' : '',
     ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity')
       ? 'TSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。' : '',
@@ -238,6 +254,7 @@ const publishAssembledScene = (status: AgentTaskWorkflowStatus): void => {
   })
 }
 const workflowToolNames = new Set([
+  'retry_scene_load',
   'assemble_scene_at_mileage', 'orchestrate_platform_task', 'prepare_platform_task', 'advance_platform_task', 'revise_next_scene_assembly',
   'create_task', 'create_workflow', 'execute_task_step', 'continue_workflow',
   'get_task_status', 'retry_task_step', 'reset_task_scene',
@@ -260,13 +277,11 @@ const currentScene = computed(() => props.context?.scene || '')
 const placement = computed(() => props.placement ?? 'floating')
 
 const defaultQuickCmds = [
-  '在 YK1+346 主场景展示设计围岩与新模块 ZZ-Va 支护组合',
-  '自主检查 YK1+346 至 YK1+356 初期支护质量并完成任务',
-  '查看当前掌子面状态',
-  '飞往围岩模型区域',
-  '打开爆破指挥台',
-  '查询今日施工进度',
-  '通风状态怎么样',
+  'YK2+244 掌子面支护交底：装配一张掌子面模型与 ZZ-Va 支护。',
+  'YK4+000 爆后通风复核：同屏展示右洞稳态风场与爆后点云。',
+  'YK2+244 雷达复核：装配单掌子面并展示 GPR 测线1剖面参考。',
+  'YK4+000 查看热场模拟200秒的右洞温度场。',
+  'YK1+346 炮孔交底：只看二维设计、分类数量和进尺。',
 ]
 
 const blastQuickCmds = [
@@ -378,7 +393,6 @@ const send = async () => {
         },
         onToolUse: async (tool: ToolUseBlock) => {
           const routed = routeWorkflowToolCall(tool.name, tool.input, text)
-          if (routed.name === 'assemble_scene_at_mileage') emit('assemblyChange', null)
           toolStatus.value = `执行操作：${routed.name}...`
           const startedAt = performance.now()
           const result = await executeTool(routed.name, routed.name === 'assemble_scene_at_mileage'
@@ -386,6 +400,7 @@ const send = async () => {
           toolStatus.value = ''
           let parsed: Record<string, any> = {}
           try { parsed = JSON.parse(result) } catch { /* 文本型模块工具 */ }
+          if (routed.name === 'assemble_scene_at_mileage' && parsed.ok === false && parsed.status === 'failed') emit('assemblyChange', null)
           if (workflowToolNames.has(routed.name) && typeof parsed.prepared === 'boolean') {
             chatTaskStatus.value = parsed as AgentTaskWorkflowStatus
           }
@@ -398,13 +413,34 @@ const send = async () => {
               : `任务校验未通过：${parsed.notice?.message || '请检查目标与资源参数。'}` })
             await scrollToBottom()
           }
-          if (routed.name === 'assemble_scene_at_mileage') {
+          if (routed.name === 'toggle_layer') {
+            canonicalDispatchShown = true
+            streaming.value = false
+            streamBuffer.value = ''
+            const labels: Record<string, string> = { tunnel: '隧道模型', imagery: '影像', rock: '背景围岩', centerline: '中线' }
+            messages.value.push({ role: 'assistant', content: parsed.ok
+              ? `已${parsed.visible ? '显示' : '隐藏'}${labels[parsed.layer] || parsed.layer}。`
+              : `图层未修改：${parsed.reason || '操作失败'}。` })
+            await scrollToBottom()
+          }
+          if (routed.name === 'set_blast_layers') {
+            canonicalDispatchShown = true
+            streaming.value = false
+            streamBuffer.value = ''
+            messages.value.push({ role: 'assistant', content: parsed.ok
+              ? `已调整当前爆破图层：炮孔${parsed.layers.holes ? '显示' : '隐藏'}，爆后点云${parsed.layers.pointcloud ? '显示' : '隐藏'}。`
+              : `图层未修改：${parsed.reason || (result.startsWith('❌') ? result : '操作未完成')}。` })
+            await scrollToBottom()
+          }
+          if (routed.name === 'assemble_scene_at_mileage' || routed.name === 'retry_scene_load') {
             canonicalDispatchShown = true
             streaming.value = false
             streamBuffer.value = ''
             const ids: string[] = Array.isArray(parsed.assembledResourceIds) ? parsed.assembledResourceIds : []
             const resources = ids.map(id => sceneResourceLabels[id] ?? id).join('、')
             const span = parsed.supportSpan
+            const design = parsed.blastDesign
+            const designText = design ? `\n炮孔设计参考：${design.holeCount} 个孔，循环进尺 ${design.advanceM} m；${Object.values(design.categories as Record<string, { label: string; count: number }>).map(category => `${category.label} ${category.count}`).join('、')}。\n来源：${design.source}。${design.limitation}。` : ''
             const supportRange = span && [span.start, span.end, span.sections, span.zzVa, span.zPm].every(Number.isFinite)
               ? { start: chainageService.format(span.start), end: chainageService.format(span.end),
                 sections: span.sections, zzVa: span.zzVa, zPm: span.zPm } : undefined
@@ -415,7 +451,7 @@ const send = async () => {
             })
             messages.value.push({ role: 'assistant', content: parsed.ok
               ? `已定位 ${parsed.targetMileage}，主场景装配完成：${resources || '无'}。${supportRange
-                ? `实际范围 ${supportRange.start}—${supportRange.end}，共 ${supportRange.sections} 个断面（ZZ-Va ${supportRange.zzVa}、Z-PM ${supportRange.zPm}）。` : ''}${sceneSourceNotes(parsed.scenePlans)}`
+                ? `实际范围 ${supportRange.start}—${supportRange.end}，共 ${supportRange.sections} 个断面（ZZ-Va ${supportRange.zzVa}、Z-PM ${supportRange.zPm}）。` : ''}${parsed.lastCompletedStage?.phase === 'constructed-then-enhanced' ? '整体构建后的增强已完成。' : ''}${designText}${sceneSourceNotes(parsed.scenePlans, parsed.lastCompletedStage?.phase === 'constructed-then-enhanced')}`
               : `场景装配未完成：${parsed.reason || parsed.notice?.message || (result.startsWith('❌') ? result : '请核对里程与资源。')}` })
             await scrollToBottom()
           }
@@ -439,6 +475,7 @@ const send = async () => {
               durationMs: performance.now() - startedAt,
               inputSummary: summarizeAuditValue({ ...routed.input, modelTool: tool.name, intentRouted: routed.routed }) as Record<string, unknown>,
               resultSummary: {
+                layers: parsed.action === 'set_blast_layers' ? parsed.layers : undefined,
                 taskStatus: parsed.status,
                 completed: parsed.completed,
                 total: parsed.total,

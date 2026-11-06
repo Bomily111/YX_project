@@ -4,6 +4,7 @@
  * 坐标来源：Layue-master DataController.js
  */
 import * as Cesium from 'cesium';
+import { registerTaskVolumeAccess } from '@/platform/tasks/TaskVolumeCut';
 import { DTScopeEngine } from './Viewer';
 import { unloadTemVoxelCloud } from './TemVoxelCloud';
 import { FACE_SKETCH_RECORDS, FACE_SKETCH_REFERENCE } from '@/modules/face-sketch/data';
@@ -332,6 +333,7 @@ let tspAttributeContrast = 1.2;
 let activeGeoModelKey: string | null = null;
 let activeDemoVolumeTransform: Cesium.Matrix4 | undefined;
 let pendingGeoModelReady: { key: string; promise: Promise<void> } | undefined;
+registerTaskVolumeAccess(() => activeGeoModelKey ? Previous.SVData?.[1] : undefined);
 function placedVolumeConfig(config?: ModelConfig['cesiumConfig']): ModelConfig['cesiumConfig'] {
   if (!activeDemoVolumeTransform || !config?.matrix) return config;
   const placed = Cesium.Matrix4.multiply(
@@ -598,7 +600,7 @@ function applyDifferenceHighlight(model: any) {
 }
 
 /** 激活指定 key 的地质模型：加载体数据/GLB + 摆放随道参考 + 飞相机 */
-export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface', demoVolumeTransform?: Cesium.Matrix4) {
+export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface', demoVolumeTransform?: Cesium.Matrix4, focus = true) {
   const cfg = MODEL_CONFIGS[key];
   if (!cfg) return;
 
@@ -740,6 +742,7 @@ export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?:
     // 隧道背景统一使用主场景已加载的分段模型，避免叠加一套不同原点的参考 GLB。
 
     // ── 相机飞行 ──────────────────────────────────────────────
+    if (!focus) { viewer.scene.requestRender(); return; }
     viewer.scene.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     if (key === 'face_sketch') {
       selectFaceSketchMileage(selectedFaceSketchMileage, true, viewer);
@@ -819,6 +822,7 @@ export function setTunnelModelVisible(show: boolean) {
 
 // ── 主界面围岩模型（直接叠加在地形上，不切黑底）────────────
 let rockPrimitive: any = null;
+let rockModelVisible = true;
 let rockLoadPromise: Promise<void> | null = null;
 const unavailableRockModelUrls = new Set<string>();
 
@@ -860,6 +864,7 @@ export function loadRockModel(customViewer?: any) {
     }
     if (!rockPrimitive) {
       rockPrimitive = viewer.scene.primitives.add(model);
+      rockPrimitive.show = rockModelVisible;
       console.log('[GeoModel] 围岩模型已加载到主界面，并应用了最终位置偏移。');
     } else {
       model.destroy();
@@ -873,6 +878,7 @@ export function loadRockModel(customViewer?: any) {
  * 显示 / 隐藏主界面围岩模型
  */
 export function setRockModelVisible(show: boolean) {
+  rockModelVisible = show;
   if (rockPrimitive) rockPrimitive.show = show;
 }
 
@@ -920,6 +926,7 @@ export function updateRockMatrix(lon: number, lat: number, height: number, headi
 
 // ── 主界面凿岩台车模型（直接叠加在主页面施工面处，不切场景、不飞相机）────
 let jumboPrimitive: any = null;
+let jumboModelVisible = true;
 let jumboViewer: any = null;
 let jumboLoadRequest = 0;
 
@@ -937,7 +944,7 @@ export function loadJumboModel(customViewer?: any) {
       && !viewer.isDestroyed?.()
       && viewer.scene.primitives.contains(jumboPrimitive);
     if (isCurrentScene) {
-      jumboPrimitive.show = true;
+      jumboPrimitive.show = jumboModelVisible;
       return;
     }
 
@@ -968,6 +975,7 @@ export function loadJumboModel(customViewer?: any) {
         return;
       }
       jumboPrimitive = viewer.scene.primitives.add(model);
+      jumboPrimitive.show = jumboModelVisible;
       jumboViewer = viewer;
       console.log('[GeoModel] 凿岩台车已加载到主页面施工面:', cfg.tunnelPos);
     })
@@ -976,6 +984,7 @@ export function loadJumboModel(customViewer?: any) {
 
 /** 显示 / 隐藏主界面凿岩台车模型 */
 export function setJumboModelVisible(show: boolean) {
+  jumboModelVisible = show;
   if (jumboPrimitive) jumboPrimitive.show = show;
 }
 

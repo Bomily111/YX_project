@@ -3,6 +3,11 @@ import { buildSystemPrompt } from '@/ai-agent/knowledge/prompts/system'
 
 describe('scene agent prompt contract', () => {
   const prompt = buildSystemPrompt()
+  it('distinguishes design, post-blast scan, airflow and CO goals', () => {
+    for (const id of ['blast.design-data', 'blast.effect', 'ventilation.steady-cfd', 'ventilation.co-analysis']) expect(prompt).toContain(id)
+    expect(prompt).toContain('明确排除的资源不得添加')
+    expect(prompt).not.toContain('关注“既有支护布置”可选结构树支护')
+  })
 
   it('routes ordinary assembly through one validated platform entry', () => {
     expect(prompt).toContain('只调用一次 assemble_scene_at_mileage')
@@ -10,7 +15,7 @@ describe('scene agent prompt contract', () => {
     expect(prompt).toContain('先问一个澄清问题')
     expect(prompt).toContain('用户可能只描述施工任务')
     expect(prompt).toContain('超前地质预报交底')
-    expect(prompt).toContain('不要宣称已完成“整体场景构建后再增强”')
+    expect(prompt).toContain('构建完成后统一增强')
   })
 
   it('preserves all essential rock interpretations and demonstration provenance', () => {

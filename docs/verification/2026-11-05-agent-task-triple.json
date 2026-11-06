@@ -1,0 +1,24 @@
+{
+  "taskId": "scene-1793877448982-qdgcp",
+  "sliceState": {
+    "count": 1,
+    "visible": 1,
+    "walls": 1
+  },
+  "status": "completed",
+  "loaded": [
+    "common.tunnel",
+    "rock.face-photos",
+    "rock.advance-drill",
+    "support.modeler-zz-va"
+  ],
+  "assets": [
+    "/data/tunnel/tunnel002.glb",
+    "/data/ahd/ahd1/2320835.glb",
+    "/data/ahd/ahd2/2336197.glb",
+    "/data/face_sketch/X1DK2_880_6_clean.png",
+    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+  ],
+  "chat": "👷\nYK2+244 超前探测与支护施工交底，请同屏装配一张掌子面模型、ZZ-Va支护断面和现有超前水平钻模型，查看它们的空间关系，不需要二维照片、TSP或TEM。\n🤖\n已定位 YK2+244，主场景装配完成：超前水平钻 · 示例模型、单掌子面模型 · 示意装配、新支护模块 ZZ-Va · 1 m 断面。整体构建后的增强已完成。水平钻模型沿目标中线示意装配，孔位和轨迹非目标实测，不含钻进日志或涌水记录。\n掌子面照片保留原始X1DK桩号和日期，仅作为资料参考，尚未建立与目标YK的测量对应；已按目标YK中线示意装配照片切片。\n新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。\n👍\n👎",
+  "errors": []
+}

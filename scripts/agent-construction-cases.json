@@ -1,0 +1,13 @@
+[
+  { "id": "thermal-200", "request": "YK4+000 展示模拟200秒时的右洞温度场。", "resources": ["ventilation.thermal-t200s"] },
+  { "id": "thermal-minutes", "request": "YK4+000 查看热场模拟10分钟时的温度分布。", "resources": ["ventilation.thermal-t600s"] },
+  { "id": "thermal-unavailable", "request": "YK4+000 查看模拟250秒时的温度场。", "clarify": true },
+  { "id": "design-only", "request": "YK1+346 炮孔施工交底，调出二维设计图，核对分类数量和进尺，不需要爆后点云。", "resources": ["blast.design-data"] },
+  { "id": "post-blast", "request": "YK1+346 爆后复核，请展示扫描点云和炮孔，不用二维设计图。", "resources": ["blast.effect"] },
+  { "id": "design-compare", "request": "YK1+346 施工交底，把炮孔设计图和爆后点云同屏对照。", "resources": ["blast.design-data", "blast.effect"] },
+  { "id": "airflow-review", "request": "YK4+000 爆后通风复核，请同屏看右洞流线与爆后点云，不用设计图和CO分析。", "resources": ["blast.effect", "ventilation.steady-cfd"] },
+  { "id": "co-review", "request": "YK4+000 爆后通风复核，调出CO浓度随时间变化的分析曲线，不需要三维风流或爆后点云。", "resources": ["ventilation.co-analysis"] },
+  { "id": "plan-only", "request": "先给我YK1+346炮孔二维设计与爆后点云对照的场景计划，暂不执行。", "resources": ["blast.design-data", "blast.effect"], "planOnly": true },
+  { "id": "missing-mileage", "request": "调出炮孔二维设计图和循环进尺。", "clarify": true },
+  { "id": "ambiguous-target", "request": "YK1+346或YK4+000做爆后复核，帮我调出点云。", "clarify": true }
+]

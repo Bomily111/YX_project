@@ -1,6 +1,7 @@
 import * as Cesium from 'cesium'
 import * as echarts from 'echarts'
 import type { SceneResource } from '@/platform/resources/types'
+import type { TaskContext } from '@/platform/context/TaskContext'
 import type { SceneModuleManifest } from '@/platform/modules/types'
 import { moduleRegistry } from '@/platform/modules/ModuleRegistry'
 import {
@@ -9,11 +10,15 @@ import {
   getTunnelModel,
   loadTunnelModel,
   removeFlowLayers,
+  updateThermalPoints,
+  layers,
   type CfdData,
 } from '@/views/ventilation-module/cesiumVentilation'
 import { isTunnelGlbVisible, setTunnelGlbVisible } from '@/utils/Common/DrawLine'
-import { VENTILATION_DISPLAY_ENTRANCE_CHAINAGE_YK } from '@/views/ventilation-module/spatialFrame'
+import { VENTILATION_COMBINATION_RANGE_YK, setVentilationCombinedPlacement } from '@/views/ventilation-module/spatialFrame'
 import { STEADY_DATASET_FILES, validateSteadyDataset, type SteadyDatasetSummary } from './dataset-contract'
+import { transientScenarioCatalog } from './transient-catalog'
+import { thermalSnapshotCatalog } from './thermal-catalog'
 
 let ventilationViewer: Cesium.Viewer | undefined
 let previousPublicTunnelVisibility = true
@@ -28,7 +33,15 @@ let thermalSnapshotPath: string | undefined
 
 const ASSET = '/data/ventilation/'
 // Local K3+805–K4+005 is projected onto the YK centerline only for display.
-const DISPLAY_RANGE_YK = { start: VENTILATION_DISPLAY_ENTRANCE_CHAINAGE_YK + 3805, end: VENTILATION_DISPLAY_ENTRANCE_CHAINAGE_YK + 4005 }
+const DISPLAY_RANGE_YK = VENTILATION_COMBINATION_RANGE_YK
+function validateCombinedTask(task: TaskContext): void {
+  const { start, end } = task.chainageRange
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start > end ||
+      start < DISPLAY_RANGE_YK.start || end > DISPLAY_RANGE_YK.end) {
+    throw new Error('通风与主隧道组合仅支持 YK3+900～YK4+100 的示意工段')
+  }
+}
+let combinedScene = false
 const transientScenarioFiles = {
   fan_ramp_up: 'transient_fan_ramp_up.json',
   fan_oscillation: 'transient_fan_oscillation.json',
@@ -112,12 +125,14 @@ function createChartOverlay(
 
   const host = document.createElement('section')
   host.dataset.ventilationEnhancement = 'chart'
+  const mainScene = !!viewer.container.closest?.('.dashboard-container')
   Object.assign(host.style, {
     position: 'absolute', right: '18px', bottom: '18px', zIndex: '30',
     width: 'min(480px, calc(100% - 36px))', height: '300px',
     padding: '12px', boxSizing: 'border-box', pointerEvents: 'none',
     border: '1px solid rgba(0,234,255,.42)', borderRadius: '6px',
     background: 'rgba(2,18,31,.94)', boxShadow: '0 8px 28px rgba(0,0,0,.38)',
+    ...(mainScene ? { left: '20px', right: 'auto', bottom: '64px', width: 'min(480px, calc(100% - 420px))' } : {}),
   })
   const heading = document.createElement('div')
   heading.textContent = title
@@ -207,8 +222,7 @@ function coChartAdapter() {
   return createChartOverlay('ventilation.co-analysis', 'CO 爆破扩散 · 浓度—时间', x, series, '时间 / min', 'CO / ppm')
 }
 
-function transientChartAdapter() {
-  const document = transientData as Record<string, any> | undefined
+function transientChartAdapterFor(owner: string, document: Record<string, any> | undefined, title: string) {
   const x = finiteNumbers(document?.times)
   const history = document?.history as Record<string, { Q?: unknown }> | undefined
   const series = Object.entries(history ?? {}).slice(0, 5).map(([name, values], index) => ({
@@ -216,11 +230,13 @@ function transientChartAdapter() {
     values: finiteNumbers(values?.Q),
     color: chartColors[index % chartColors.length],
   }))
-  return createChartOverlay('ventilation.transient-network', '瞬态通风 · 网络流量', x, series, '时间 / s', 'Q / m³·s⁻¹')
+  return createChartOverlay(owner, title, x, series, '时间 / s', 'Q / m³·s⁻¹')
+}
+function transientChartAdapter() {
+  return transientChartAdapterFor('ventilation.transient-network', transientData as Record<string, any> | undefined, '瞬态通风 · 网络流量')
 }
 
-function thermalChartAdapter() {
-  const monitors = thermalData?.monitors as Record<string, unknown> | undefined
+function thermalChartAdapterFor(owner: string, monitors: Record<string, unknown> | undefined, title: string) {
   const x = finiteNumbers(monitors?.times_s)
   const fields = [
     ['右管出口', 'T_outlet_right_K'],
@@ -231,7 +247,10 @@ function thermalChartAdapter() {
     values: finiteNumbers(monitors?.[key]),
     color: chartColors[index % chartColors.length],
   }))
-  return createChartOverlay('ventilation.thermal-field', '热瞬态 · 出口温度', x, series, '时间 / s', '温度 / K')
+  return createChartOverlay(owner, title, x, series, '时间 / s', '温度 / K')
+}
+function thermalChartAdapter() {
+  return thermalChartAdapterFor('ventilation.thermal-field', thermalData?.monitors, '热瞬态 · 出口温度')
 }
 
 async function fetchJson<T>(file: string): Promise<T> {
@@ -255,6 +274,20 @@ export const ventilationSceneResource: SceneResource = {
   lifetime: 'task',
   async load(context) {
     ventilationViewer = context.viewer
+    combinedScene = context.task?.taskType === 'scene-exploration'
+    if (combinedScene) {
+      try {
+        validateCombinedTask(context.task!)
+      } catch (error) {
+        combinedScene = false
+        ventilationViewer = undefined
+        throw error
+      }
+      setVentilationCombinedPlacement(true)
+      context.reportProgress?.(1, '使用主隧道承载通风风场')
+      return
+    }
+    setVentilationCombinedPlacement(false)
     previousPublicTunnelVisibility = isTunnelGlbVisible()
     setTunnelGlbVisible(false)
     context.reportProgress?.(0.1, '切换通风专用场景')
@@ -268,8 +301,20 @@ export const ventilationSceneResource: SceneResource = {
       throw error
     }
   },
+  async activate(task) {
+    if (combinedScene) validateCombinedTask(task)
+  },
+  async update(task) {
+    if (combinedScene) validateCombinedTask(task)
+  },
   async unload() {
     disposeEnhancements()
+    if (combinedScene) {
+      ventilationViewer = undefined
+      combinedScene = false
+      setVentilationCombinedPlacement(false)
+      return
+    }
     if (ventilationViewer && !ventilationViewer.isDestroyed()) {
       destroyVentilation(ventilationViewer)
       ventilationViewer.scene.requestRender()
@@ -281,7 +326,7 @@ export const ventilationSceneResource: SceneResource = {
     return [{ id: 'ventilation.tunnel-model', type: 'ventilation-model' }]
   },
   getActiveAssetPaths() {
-    return getTunnelModel() ? ['/data/ventilation/tunnel-assembled.glb'] : []
+    return combinedScene ? [] : getTunnelModel() ? ['/data/ventilation/tunnel-assembled.glb'] : []
   },
 }
 
@@ -310,7 +355,7 @@ export const ventilationSteadyResource: SceneResource = {
     if (!ventilationViewer || ventilationViewer.isDestroyed() || !steadyData) {
       throw new Error('[VentilationResource] 稳态 CFD 场景尚未就绪')
     }
-    buildSteadyLayers(ventilationViewer, steadyData.cells, steadyData.arrows, 'velocity')
+    buildSteadyLayers(ventilationViewer, steadyData.cells, steadyData.arrows, 'velocity', combinedScene ? 'right' : 'both')
   },
   async deactivate() {
     if (ventilationViewer && !ventilationViewer.isDestroyed()) removeFlowLayers(ventilationViewer)
@@ -453,12 +498,69 @@ export const ventilationThermalResource: SceneResource = {
   },
 }
 
+export const ventilationScenarioResources: SceneResource[] = transientScenarioCatalog.map(scenario => {
+  let data: Record<string, any> | undefined
+  return {
+    id: scenario.id, module: 'ventilation', type: 'transient-ventilation-network',
+    chainageRange: DISPLAY_RANGE_YK, processes: ['ventilation', 'risk-response'], states: ['transient'],
+    dependencies: ['ventilation.scene'], lifetime: 'task',
+    async load() {
+      const value = await fetchJson<Record<string, any>>(scenario.file)
+      if (!Array.isArray(value.times) || !value.times.length || !value.times.every(Number.isFinite) ||
+          !value.history || !Object.values(value.history).some((edge: any) => Array.isArray(edge.Q) && edge.Q.length === value.times.length && edge.Q.every(Number.isFinite))) {
+        throw new Error(`瞬态工况数据无有效流量序列：${scenario.label}`)
+      }
+      data = value
+    },
+    async unload() { disposeEnhancements(scenario.id); data = undefined },
+    getActiveAssetPaths: () => data ? [`${ASSET}${scenario.file}`] : [],
+    getEnhanceTargets: () => data ? [{ id: `${scenario.id}.chart`, type: 'transient-network-chart',
+      recommendedEnhancements: ['chart'],
+      adapters: { chart: () => transientChartAdapterFor(scenario.id, data, `瞬态通风 · ${scenario.label}`) },
+    }] : [],
+  }
+})
+
+export const ventilationSnapshotResources: SceneResource[] = thermalSnapshotCatalog.map(snapshot => {
+  let data: CfdData | undefined
+  let monitors: Record<string, unknown> | undefined
+  let viewer: Cesium.Viewer | undefined
+  let ownedPoints: Cesium.PointPrimitiveCollection | undefined
+  return {
+    id: snapshot.id, module: 'ventilation', type: 'thermal-snapshot', chainageRange: DISPLAY_RANGE_YK,
+    processes: ['ventilation', 'thermal-risk'], states: ['thermal'], dependencies: ['ventilation.scene'], lifetime: 'task',
+    async load(context) {
+      const index = await fetchJson<any>('cfd_transient_index.json')
+      if (!index.snapshots?.some((entry: any) => entry.t === snapshot.time && entry.file === snapshot.file)) throw new Error('热场时间片不属于当前索引')
+      const [field, history] = await Promise.all([fetchJson<CfdData>(snapshot.file), fetchJson<Record<string, unknown>>('transient_thermal_monitors.json')])
+      if (!field.x?.length || ![field.x, field.y, field.z, field.temp, field.vel].every(values => Array.isArray(values) && values.length === field.x.length && values.every(Number.isFinite))) throw new Error('热场时间片数组无效')
+      data = field; monitors = history; viewer = context.viewer
+    },
+    async activate() {
+      if (!viewer || !data) throw new Error('热场时间片尚未就绪')
+      ownedPoints = updateThermalPoints(viewer, data, combinedScene ? 'right' : 'both')
+    },
+    async unload() {
+      disposeEnhancements(snapshot.id)
+      if (ownedPoints && viewer && !viewer.isDestroyed() && layers.points === ownedPoints) {
+        viewer.scene.primitives.remove(ownedPoints); layers.points = undefined
+      }
+      ownedPoints = undefined; data = undefined; monitors = undefined; viewer = undefined
+    },
+    getActiveAssetPaths: () => data ? [`${ASSET}cfd_transient_index.json`, `${ASSET}transient_thermal_monitors.json`, `${ASSET}${snapshot.file}`] : [],
+    getEnhanceTargets: () => data ? [{ id: `${snapshot.id}.chart`, type: 'thermal-snapshot', recommendedEnhancements: ['chart'],
+      adapters: { chart: () => thermalChartAdapterFor(snapshot.id, monitors, `近似热场 t=${snapshot.time}s · 出口温度历程`) } }] : [],
+  }
+})
+
 export const ventilationResources = [
   ventilationSceneResource,
   ventilationSteadyResource,
   ventilationCoResource,
   ventilationTransientResource,
   ventilationThermalResource,
+  ...ventilationScenarioResources,
+  ...ventilationSnapshotResources,
 ] as const
 
 export const ventilationModuleManifest: SceneModuleManifest = {

@@ -1,5 +1,6 @@
 <template>
   <div class="vent-root">
+    <div v-if="loadError" class="vent-load-error" role="alert">{{ loadError }} <button type="button" @click="selectView(view)">重试</button></div>
     <header class="vent-header">
       <div class="vent-header-left"><div class="vent-title-container"><h1>钻爆法隧洞群施工数字孪生系统</h1></div></div>
       <div class="vent-header-center"><strong class="vent-scene-title">通风除尘</strong></div>
@@ -221,7 +222,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as Cesium from 'cesium'
 import * as echarts from 'echarts'
-import { useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
 import TunnelGeometryView from './TunnelGeometryView.vue'
 import VentilationMileageSearch from './VentilationMileageSearch.vue'
 import { createVentilationViewer, flyToLocal, installModelControls, lookAtLocal, releaseVentilationViewer } from './scene'
@@ -237,7 +238,7 @@ import {
   useVentilationTransientScenario,
   type VentilationTransientScenario,
 } from '@/modules/ventilation/resources'
-import { VENTILATION_LOCAL_REFERENCE, ventilationPositionToLocal, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
+import { VENTILATION_LOCAL_REFERENCE, captureVentilationFrame } from './spatialFrame'
 import centerLineData from '@/assets/data/centerLine.json'
 
 type ViewKey = 'geometry' | 'flow' | 'co' | 'transient' | 'thermal'
@@ -250,6 +251,10 @@ const view = ref<ViewKey>('flow')
 const cesiumHost = ref<HTMLElement>()
 const loading3d = ref(false)
 const loadingText = ref('加载 Cesium 场景…')
+const loadError = ref('')
+let selectionQueue: Promise<void> = Promise.resolve()
+let selectionSequence = 0
+let leaving = false
 const colorMode = ref<ColorMode>('velocity')
 const modelOpacity = ref(0.82)
 const visibility = ref({ points: true, arrows: true, streamlines: true, particles: true })
@@ -289,6 +294,12 @@ let activeAnalysisResource: AnalysisResourceId | undefined
 let analysisRequest = 0
 // CFD 数据包围盒中心：X[-5.4846,45.4880]、Y[0,7.5292]、Z[3805.1509,4005.1511]。
 // 视角复位以该点（K3+905.151）为默认中心；交互时旋转中心随鼠标落点更新。
+// Topic geometry and camera always use the delivered tunnel's frame, even
+// while the previous route is still releasing its combined CFD resources.
+const topicFrame = captureVentilationFrame(false)
+const ventilationPositionToWorld = topicFrame.toWorld
+const ventilationPositionToLocal = topicFrame.toLocal
+const ventilationVectorToWorld = topicFrame.vectorToWorld
 const CFD_FOCUS = ventilationPositionToWorld(VENTILATION_LOCAL_REFERENCE)
 const orbitFocus = Cesium.Cartesian3.clone(CFD_FOCUS)
 let overviewRadius = 3650
@@ -307,8 +318,10 @@ const infoTitle = computed(() => ({
 }[view.value]))
 
 async function ensureScene() {
-  if (viewer || !cesiumHost.value) return
+  if (!cesiumHost.value) return
+  if (viewer && getTunnelModel()) return
   loading3d.value = true
+  if (!viewer) {
   viewer = createVentilationViewer(cesiumHost.value)
   centerlineEntity = viewer.entities.getById('centerline-main')
   ownsCenterline = !centerlineEntity
@@ -324,6 +337,7 @@ async function ensureScene() {
   previousCenterlineShow = centerlineEntity.show
   centerlineEntity.show = centerlineVisible.value
   cameraControls = installModelControls(viewer, () => orbitFocus, updateActiveFocus)
+  }
   loadingText.value = '加载隧道 GLB 模型…'
   registerVentilationModule()
   await resourceManager.load(['ventilation.scene'], {
@@ -404,15 +418,29 @@ async function switchAnalysisResource(key: ViewKey) {
   }
 }
 
-async function selectView(key: ViewKey) {
+function selectView(key: ViewKey): Promise<void> {
+  if (leaving) return Promise.resolve()
+  const selection = ++selectionSequence
   analysisRequest++
   view.value = key
-  await nextTick()
-  await switchAnalysisResource(key)
-  if (key === 'flow') { await ensureSteadyData(); showSteadyLayers(true); viewer?.resize() }
-  else if (key === 'co') await loadCo()
-  else if (key === 'transient') await loadTransient()
-  else if (key === 'thermal') { showSteadyLayers(false); await initThermal(); viewer?.resize() }
+  loadError.value = ''
+  selectionQueue = selectionQueue.then(async () => {
+    if (leaving || selection !== selectionSequence) return
+    try {
+      await nextTick()
+      await switchAnalysisResource(key)
+      if (leaving || selection !== selectionSequence) return
+      if (key === 'flow') { await ensureSteadyData(); showSteadyLayers(true); viewer?.resize() }
+      else if (key === 'co') await loadCo()
+      else if (key === 'transient') await loadTransient()
+      else if (key === 'thermal') { showSteadyLayers(false); await initThermal(); viewer?.resize() }
+    } catch (error) {
+      if (!leaving && selection === selectionSequence) loadError.value = `通风分析加载失败：${error instanceof Error ? error.message : String(error)}`
+    } finally {
+      if (selection === selectionSequence) loading3d.value = false
+    }
+  })
+  return selectionQueue
 }
 function showSteadyLayers(show: boolean) {
   for (const key of ['points','arrows','streamlines','particles'] as const) setLayerVisible(key, show && visibility.value[key])
@@ -681,11 +709,19 @@ function darkLineOption(x:number[],series:Array<{name:string;data:number[];color
 }
 
 function resizeAll(){viewer?.resize();[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.resize())}
-onMounted(()=>{if(window.innerWidth<=900)layerPanelCollapsed.value=true;window.addEventListener('resize',resizeAll);selectView('flow')})
+onBeforeRouteLeave(async () => {
+  leaving = true
+  selectionSequence++
+  analysisRequest++
+  await selectionQueue
+})
+onMounted(()=>{if(window.innerWidth<=900)layerPanelCollapsed.value=true;window.addEventListener('resize',resizeAll);void selectView('flow')})
 onBeforeUnmount(()=>{analysisRequest++;window.removeEventListener('resize',resizeAll);stopLayerPanelDrag?.();if(mileageMarkerTimer)clearTimeout(mileageMarkerTimer);if(viewer&&mileageMarker)viewer.entities.remove(mileageMarker);if(viewer&&centerlineEntity){if(ownsCenterline)viewer.entities.remove(centerlineEntity);else centerlineEntity.show=previousCenterlineShow}centerlineEntity=undefined;pickHandler?.destroy();cameraControls?.destroy();const activeViewer=viewer;if(activeViewer){const ids=activeAnalysisResource?[activeAnalysisResource,'ventilation.scene']:['ventilation.scene'];void resourceManager.release(ids).finally(()=>releaseVentilationViewer(activeViewer))}activeAnalysisResource=undefined;viewer=undefined;[coTimeChart,coProfileChart,transientDuctChart,transientPassageChart,thermalMonitorChart,thermalProfileChart].forEach(c=>c?.dispose())})
 </script>
 
 <style scoped lang="scss">
+.vent-load-error { position: absolute; z-index: 100; top: 68px; left: 240px; right: 340px; padding: 12px; color: #ffd1c8; background: #321e25; border: 1px solid #b56860; border-radius: 6px; font-size: 13px; }
+.vent-load-error button { margin-left: 12px; cursor: pointer; }
 .vent-root{position:fixed;inset:0;background:#07131f;color:#c8d8e8;font-family:system-ui,"Microsoft YaHei",sans-serif;overflow:hidden}.vent-header{height:64px;padding:9px 28px 9px 160px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#13283a,#07131f);border-bottom:1px solid #1e4058}.vent-header h1{font-size:20px;color:#e2f4ff;margin:0 0 4px;letter-spacing:1px}.badges{display:flex;gap:7px}.badges span{font-size:10px;padding:2px 8px;border-radius:10px;background:#173247;color:#65c8ff}.badges span:nth-child(2){color:#6ee7a7}.badges span:nth-child(3){color:#ffad66}.meta{text-align:right;font-size:11px;line-height:1.5;color:#66859d}.vent-layout{height:calc(100% - 64px);display:grid;grid-template-columns:minmax(0,1fr) 360px}.workspace{min-width:0;display:flex;flex-direction:column}.tabs{height:45px;display:flex;background:#0b1a27;border-bottom:1px solid #18364a}.tabs button{flex:1;border:0;border-bottom:2px solid transparent;background:transparent;color:#6f8ca3;cursor:pointer}.tabs button:hover{background:#102536;color:#b7d8ec}.tabs button.active{background:#102536;color:#7dd3fc;border-color:#38bdf8}.stage{position:relative;flex:1;min-height:0}.geometry-view,.charts-page,.cesium-section{position:absolute;inset:0}.legend-row{height:42px;display:flex;align-items:center;gap:18px;padding:0 22px;border-bottom:1px solid #193347;font-size:11px;color:#7895ab}.legend-row i{display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:2px}.legend-row .duct{background:#4da6ff}.legend-row .built{background:#31536a}.legend-row .drill{background:#8b4c3e}.legend-row .tbm{background:#317245}.legend-row .face{background:#e53935}.legend-row .passage{background:#c58af9}.geometry-canvas{position:relative;height:calc(100% - 42px);padding:74px 20px 30px 120px;background:radial-gradient(circle at 50% 30%,#10283a,#07131f 75%)}.scale{position:absolute;left:120px;right:20px;top:34px;height:24px;border-top:1px solid #28495f}.scale span{position:absolute;top:-20px;font:10px Consolas;color:#55748b;transform:translateX(-50%)}.tunnel-row{height:130px;position:relative}.tunnel-name{position:absolute;right:calc(100% + 15px);top:18px;width:90px;text-align:right}.tunnel-name b{display:block;color:#aad5ed;font-size:13px}.tunnel-name small{color:#55748b}.tunnel-track{position:relative;height:66px;background:#0b1b27;border:1px solid #25485c;border-radius:5px;overflow:visible}.built-segment,.design-segment{position:absolute;inset:0 auto 0 0;background:#1b3b4e}.design-segment{display:flex;align-items:center;justify-content:center;font-size:10px;color:#d5dfdf}.design-segment.tbm{background:#1e4a2e}.design-segment.钻爆{background:#57362f}.duct-line{position:absolute;left:0;top:12px;height:5px;background:#4da6ff;box-shadow:0 0 7px #4da6ff}.fan-mark{position:absolute;left:5px;top:4px;background:#ffa726;color:#1a1a1a;font:bold 9px Consolas;padding:2px 3px;border-radius:2px}.face-mark{position:absolute;top:-5px;width:5px;height:76px;background:#ef4444;box-shadow:0 0 9px #ef4444;z-index:2}.jet{position:absolute;bottom:5px;color:#65c8ff;font-size:10px;transform:translateX(-50%)}.cross-passage{position:absolute;top:145px;height:130px;width:5px;background:#c58af9;box-shadow:0 0 7px #c58af9}.cross-passage span{position:absolute;top:132px;left:50%;font-size:9px;color:#b88bdb;transform:translateX(-50%)}.shaft{position:absolute;top:75px;border-left:4px solid #ffad42;height:65px;color:#ffad42;font-size:10px;padding-left:6px;white-space:nowrap}.cesium-section{background:#06101a}.cesium-host{position:absolute;inset:0}.cesium-section.thermal .cesium-host{bottom:44%;}.flow-toolbar,.display-controls{position:absolute;z-index:5;display:flex;gap:6px;background:rgba(4,13,22,.84);border:1px solid #244257;border-radius:8px;padding:6px;backdrop-filter:blur(6px)}.flow-toolbar{top:12px;left:14px}.display-controls{top:12px;right:14px;align-items:center}.flow-toolbar button,.display-controls button{border:1px solid #294b61;background:#102638;color:#6f8da3;border-radius:5px;padding:6px 9px;cursor:pointer}.flow-toolbar button.on,.flow-toolbar button:hover,.display-controls button:hover{color:#8edaff;border-color:#3d83a8;background:#143950}.display-controls label{font-size:11px;color:#829db0;display:flex;align-items:center;gap:5px}.display-controls input{width:75px}.colorbar{position:absolute;right:15px;bottom:15px;z-index:5;width:170px;padding:8px 10px;border:1px solid #28495f;border-radius:7px;background:rgba(3,10,17,.82);font-size:10px}.thermal .colorbar{bottom:calc(44% + 14px)}.colorbar b{display:block;margin-bottom:5px}.colorbar .gradient{height:9px;background:linear-gradient(90deg,#18377f,#00ffff,#00ff33,#ffff00,#ff0000)}.colorbar.temperature .gradient{background:linear-gradient(90deg,#193b99,#00ffff,#ffff00,#ff6500,#8c0000)}.colorbar>div:last-child{display:flex;justify-content:space-between;color:#7591a5}.scene-loading{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);padding:12px 18px;border:1px solid #28536c;border-radius:8px;background:rgba(4,14,23,.9);color:#7dd3fc}.charts-page{display:grid;grid-template-rows:46px 1fr 1fr;gap:9px;padding:10px;background:#091722}.control-line{display:flex;align-items:center;gap:15px;color:#7895ab;font-size:12px}.control-line b{color:#7dd3fc}.control-line label{display:flex;align-items:center;gap:6px}.control-line select{background:#102638;border:1px solid #294b61;color:#c8d8e8;padding:4px 7px;border-radius:4px}.control-line input{vertical-align:middle}.control-line strong{color:#ff9e52}.control-line .danger{color:#ef5350}.chart-card{position:relative;min-height:0;border:1px solid #1e3a4d;background:#0c1c29;border-radius:7px;padding:8px}.chart-card h3{height:20px;font-size:12px;color:#6ab4e6;font-weight:500}.chart{width:100%;height:calc(100% - 20px);min-height:100px}.inline-slider{position:absolute;right:12px;top:7px;z-index:2;display:flex;align-items:center;gap:7px;font-size:10px;color:#ff9e52}.thermal-overlay{position:absolute;left:0;right:0;bottom:0;height:44%;z-index:6;background:rgba(7,19,31,.96);border-top:1px solid #28536c;padding:7px 12px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:34px 1fr;gap:6px}.thermal-overlay .control-line{grid-column:1/-1}.thermal-overlay .chart{height:100%;border:1px solid #1c374a;border-radius:5px;background:#0a1925}.info-panel{overflow-y:auto;padding:18px;background:#0b1925;border-left:1px solid #1e4058}.info-panel h2{font-size:14px;color:#7dd3fc;font-weight:500;padding-bottom:10px;margin:0 0 12px;border-bottom:1px solid #29485c}.info-card{padding:11px 13px;margin-bottom:10px;border:1px solid #223f53;border-radius:7px;background:#102332;font-size:11px}.info-card h3{font-size:12px;color:#65c8ff;margin:0 0 7px}.info-card h3 small{float:right;color:#607f94;font-weight:400}.info-card p{display:flex;justify-content:space-between;gap:10px;margin:4px 0;border-bottom:1px solid rgba(42,70,88,.35);color:#7895aa}.info-card p b{color:#b8cedd;text-align:right;font-family:Consolas,monospace}.info-card.highlight{border-color:#3c7698}.info-card.note{color:#a89068;line-height:1.5}.info-card .safe{color:#4caf50}.info-card .warning{color:#ffa726}.info-card .unsafe{color:#ef5350}.gallery img{width:100%;border:1px solid #29485c;border-radius:4px;margin-top:7px;cursor:zoom-in}.gallery small{display:block;color:#66859b;margin-bottom:5px}.image-modal{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center}.image-modal img{max-width:94vw;max-height:92vh}.image-modal button{position:absolute;right:25px;top:15px;border:0;background:none;color:#fff;font-size:36px;cursor:pointer}@media(max-width:1100px){.vent-layout{grid-template-columns:minmax(0,1fr) 300px}.meta{display:none}}
 
 /* 与原迁移包一致：两级页签、1fr/400px 主布局、3D 页内图例。 */

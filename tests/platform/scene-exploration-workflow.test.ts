@@ -162,6 +162,44 @@ describe('智能体动态场景编排', () => {
     expect(replaced.scenePlans[1].rootResourceIds).toEqual(['support.scene'])
   })
 
+  it('允许 YK4+000 的稳态风场与已导出支护断面同屏装配', () => {
+    const { registry, executor } = setup()
+    registry.register({ id: 'support.modeler-zz-va', module: 'support', type: 'modeler-section',
+      chainageRange: { start: 1116, end: 9400 }, processes: [], states: [], estimatedMemoryMb: 8,
+      async load() {}, async unload() {} })
+    const options = { selector: new ResourceSelector(registry), executor,
+      loadContext: { viewer: {} as never }, targetChainage: 4000,
+      assemblyModes: ['replace', 'retain'] as const }
+    // Use the same registered coverage as the delivered combined CFD resource.
+    registry.require('ventilation.scene').chainageRange = { start: 3900, end: 4100 }
+    registry.require('ventilation.steady-cfd').chainageRange = { start: 3900, end: 4100 }
+    const workflow = createSceneExplorationExecutor(task(),
+      ['ventilation.steady-cfd', 'support.modeler-zz-va'], registry, options)
+    expect(workflow.scenePlans[1].rootResourceIds).toEqual(expect.arrayContaining(['ventilation.steady-cfd', 'support.modeler-zz-va']))
+  })
+
+  it.each([
+    ['blast.effect', 'ventilation.steady-cfd'],
+    ['ventilation.steady-cfd', 'blast.effect'],
+  ])('同屏来源说明保留两种资源：%s → %s', async (first, second) => {
+    const { registry, executor } = setup()
+    registry.require('blast.effect').chainageRange = { start: 1116, end: 9400 }
+    registry.require('ventilation.scene').chainageRange = { start: 3900, end: 4100 }
+    registry.require('ventilation.steady-cfd').chainageRange = { start: 3900, end: 4100 }
+    const workflow = createSceneExplorationExecutor(task(),
+      [first, second], registry, {
+        selector: new ResourceSelector(registry), executor, loadContext: { viewer: {} as never },
+        targetChainage: 4000, assemblyModes: ['replace', 'retain'],
+      })
+    expect(workflow.scenePlans[1].rootResourceIds).toEqual(expect.arrayContaining(['blast.effect', 'ventilation.steady-cfd']))
+    await workflow.executor.executeCurrent()
+    await workflow.executor.executeCurrent()
+    const note = (workflow.executor.plan.sharedContext['scene.stage.2']?.value as { note: string }).note
+    expect(note).toContain('YK1+346')
+    expect(note).toContain('非目标里程实测爆破结果')
+    expect(note).toContain('非该工点实测风场')
+  })
+
   it('由模型逐阶段选择保留资源，装配围岩、支护和爆破并记录实际根资源', async () => {
     const { registry, manager, executor } = setup()
     const workflow = createSceneExplorationExecutor(

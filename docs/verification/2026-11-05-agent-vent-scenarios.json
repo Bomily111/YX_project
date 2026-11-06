@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ventilation.transient-fan-shutdown",
+    "taskId": "scene-1793864085105-tu66y",
+    "status": "completed",
+    "assets": [
+      "/data/ventilation/transient_fan_shutdown.json"
+    ],
+    "chartTitle": "瞬态通风 · 右线风机故障停机",
+    "errors": []
+  },
+  {
+    "id": "ventilation.transient-fan-oscillation",
+    "taskId": "scene-1793864098247-3t9s1",
+    "status": "completed",
+    "assets": [
+      "/data/ventilation/transient_fan_oscillation.json"
+    ],
+    "chartTitle": "瞬态通风 · 右线风机波动",
+    "errors": []
+  }
+]

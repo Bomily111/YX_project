@@ -39,20 +39,56 @@ export const VENTILATION_MODEL_MATRIX = Cesium.Matrix4.multiply(
   localPlacement,
   new Cesium.Matrix4(),
 )
+// Agent composition uses the existing YK tunnel as its carrier. The CFD
+// interval is short and straight here; the full 7.8 km ventilation GLB is not
+// placed over the project tunnel.
+export const VENTILATION_COMBINATION_RANGE_YK = { start: 3900, end: 4100 } as const
+const combinedStart = chainageService.positionAt(VENTILATION_COMBINATION_RANGE_YK.start)!
+const combinedEnd = chainageService.positionAt(VENTILATION_COMBINATION_RANGE_YK.end)!
+const combinedCenter = chainageService.positionAt(4000)!
+const combinedHeading = Math.atan2(
+  (combinedEnd.longitude - combinedStart.longitude) * 111320 * Math.cos(Cesium.Math.toRadians(combinedCenter.latitude)),
+  (combinedEnd.latitude - combinedStart.latitude) * 110940,
+)
+const combinedRotation = new Cesium.Matrix3()
+Cesium.Matrix3.setColumn(combinedRotation, 0, new Cesium.Cartesian3(-Math.cos(combinedHeading), Math.sin(combinedHeading), 0), combinedRotation)
+Cesium.Matrix3.setColumn(combinedRotation, 1, Cesium.Cartesian3.UNIT_Z, combinedRotation)
+Cesium.Matrix3.setColumn(combinedRotation, 2, new Cesium.Cartesian3(Math.sin(combinedHeading), Math.cos(combinedHeading), 0), combinedRotation)
+const combinedReference = new Cesium.Cartesian3(0, 3.764577, 3905.151001)
+const combinedTranslation = Cesium.Cartesian3.negate(
+  Cesium.Matrix3.multiplyByVector(combinedRotation, combinedReference, new Cesium.Cartesian3()), new Cesium.Cartesian3())
+const combinedLocal = Cesium.Matrix4.fromRotationTranslation(combinedRotation, combinedTranslation)
+const combinedEnu = Cesium.Transforms.eastNorthUpToFixedFrame(Cesium.Cartesian3.fromDegrees(
+  combinedCenter.longitude, combinedCenter.latitude, combinedCenter.height + 3))
+const COMBINED_CFD_MATRIX = Cesium.Matrix4.multiply(combinedEnu, combinedLocal, new Cesium.Matrix4())
+let useCombinedCfdPlacement = false
+export function setVentilationCombinedPlacement(enabled: boolean): void { useCombinedCfdPlacement = enabled }
 const VENTILATION_INVERSE_MATRIX = Cesium.Matrix4.inverseTransformation(
   VENTILATION_MODEL_MATRIX,
   new Cesium.Matrix4(),
 )
+const COMBINED_INVERSE_MATRIX = Cesium.Matrix4.inverseTransformation(COMBINED_CFD_MATRIX, new Cesium.Matrix4())
+
+/** Capture a placement for one layer build, including its animation callbacks. */
+export function captureVentilationFrame(combined = useCombinedCfdPlacement) {
+  const matrix = combined ? COMBINED_CFD_MATRIX : VENTILATION_MODEL_MATRIX
+  const inverse = combined ? COMBINED_INVERSE_MATRIX : VENTILATION_INVERSE_MATRIX
+  return {
+    toWorld: (position: Cesium.Cartesian3) => Cesium.Matrix4.multiplyByPoint(matrix, position, new Cesium.Cartesian3()),
+    vectorToWorld: (vector: Cesium.Cartesian3) => Cesium.Matrix4.multiplyByPointAsVector(matrix, vector, new Cesium.Cartesian3()),
+    toLocal: (position: Cesium.Cartesian3) => Cesium.Matrix4.multiplyByPoint(inverse, position, new Cesium.Cartesian3()),
+  }
+}
 
 export function ventilationPositionToWorld(position: Cesium.Cartesian3) {
-  return Cesium.Matrix4.multiplyByPoint(VENTILATION_MODEL_MATRIX, position, new Cesium.Cartesian3())
+  return Cesium.Matrix4.multiplyByPoint(useCombinedCfdPlacement ? COMBINED_CFD_MATRIX : VENTILATION_MODEL_MATRIX, position, new Cesium.Cartesian3())
 }
 
 export function ventilationVectorToWorld(vector: Cesium.Cartesian3) {
-  return Cesium.Matrix4.multiplyByPointAsVector(VENTILATION_MODEL_MATRIX, vector, new Cesium.Cartesian3())
+  return Cesium.Matrix4.multiplyByPointAsVector(useCombinedCfdPlacement ? COMBINED_CFD_MATRIX : VENTILATION_MODEL_MATRIX, vector, new Cesium.Cartesian3())
 }
 
 export function ventilationPositionToLocal(position: Cesium.Cartesian3) {
-  return Cesium.Matrix4.multiplyByPoint(VENTILATION_INVERSE_MATRIX, position, new Cesium.Cartesian3())
+  return Cesium.Matrix4.multiplyByPoint(useCombinedCfdPlacement ? COMBINED_INVERSE_MATRIX : VENTILATION_INVERSE_MATRIX, position, new Cesium.Cartesian3())
 }
 

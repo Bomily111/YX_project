@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ventilation.thermal-t200s",
+    "taskId": "scene-1793864898580-72t2i",
+    "status": "completed",
+    "assets": [
+      "/data/ventilation/cfd_transient_index.json",
+      "/data/ventilation/transient_thermal_monitors.json",
+      "/data/ventilation/cfd_transient_t200s.json"
+    ],
+    "field": {
+      "count": 3340,
+      "first": {
+        "kind": "thermal",
+        "index": 3370,
+        "velocity": 0.5772427320480347,
+        "temperature": 295.7694980010847,
+        "chainage": 3907.528076171875,
+        "tunnel": "right"
+      },
+      "left": 0
+    },
+    "chartTitle": "近似热场 t=200s · 出口温度历程",
+    "errors": []
+  },
+  {
+    "id": "ventilation.thermal-t600s",
+    "taskId": "scene-1793864913598-6q1gj",
+    "status": "completed",
+    "assets": [
+      "/data/ventilation/cfd_transient_index.json",
+      "/data/ventilation/transient_thermal_monitors.json",
+      "/data/ventilation/cfd_transient_t600s.json"
+    ],
+    "field": {
+      "count": 3340,
+      "first": {
+        "kind": "thermal",
+        "index": 3370,
+        "velocity": 0.5772427320480347,
+        "temperature": 297.2500669095123,
+        "chainage": 3907.528076171875,
+        "tunnel": "right"
+      },
+      "left": 0
+    },
+    "chartTitle": "近似热场 t=600s · 出口温度历程",
+    "errors": []
+  },
+  {
+    "id": "unsupported-250s",
+    "clarified": true,
+    "tasks": 0,
+    "slices": 0
+  }
+]

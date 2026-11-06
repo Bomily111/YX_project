@@ -54,7 +54,7 @@ export const modelerSupportResources: SceneResource[] = modelerSupportCatalog.ma
   }
   return {
     id: asset.id, module: 'support', type: 'modeler-section',
-    chainageRange: { start: 1116, end: 2180 },
+    chainageRange: { start: 1116, end: 9400 },
     processes: ['support-design'], states: ['exported-section'],
     lifetime: 'task', estimatedMemoryMb: 8,
     async load(context) {

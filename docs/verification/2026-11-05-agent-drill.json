@@ -1,0 +1,26 @@
+{
+  "taskId": "scene-1793877245021-lz3q8",
+  "models": [
+    {
+      "ready": true,
+      "show": true,
+      "radius": 15.064458998373263
+    },
+    {
+      "ready": true,
+      "show": true,
+      "radius": 15.064458998373263
+    }
+  ],
+  "assets": [
+    "/data/tunnel/tunnel002.glb",
+    "/data/ahd/ahd1/2320835.glb",
+    "/data/ahd/ahd2/2336197.glb"
+  ],
+  "loaded": [
+    "common.tunnel",
+    "rock.advance-drill"
+  ],
+  "status": "completed",
+  "errors": []
+}

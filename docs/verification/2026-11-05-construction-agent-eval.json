@@ -1,0 +1,174 @@
+{
+  "scope": "AgentEngine input guards plus real online model selection; tool execution intercepted; not assembly acceptance",
+  "passed": 11,
+  "total": 11,
+  "results": [
+    {
+      "id": "thermal-200",
+      "request": "YK4+000 展示模拟200秒时的右洞温度场。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "查看模拟200秒时的右洞温度场",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.thermal-t200s"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "thermal-minutes",
+      "request": "YK4+000 查看热场模拟10分钟时的温度分布。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "查看热场模拟10分钟（600秒）时的温度分布",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.thermal-t600s"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "thermal-unavailable",
+      "request": "YK4+000 查看模拟250秒时的温度场。",
+      "passed": true,
+      "calls": [],
+      "text": "当前没有模拟 250 秒的热场时间片。现有时间为 0、100、200、300、400、600、800、1000 秒，请指定一个现有时间；平台不会自动取最近值。"
+    },
+    {
+      "id": "design-only",
+      "request": "YK1+346 炮孔施工交底，调出二维设计图，核对分类数量和进尺，不需要爆后点云。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "炮孔施工交底：二维设计图，核对炮孔分类数量与循环进尺（不含爆后点云）",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "blast.design-data"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "post-blast",
+      "request": "YK1+346 爆后复核，请展示扫描点云和炮孔，不用二维设计图。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "爆后复核：扫描点云与炮孔对照（不含二维设计图）",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "blast.effect"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "design-compare",
+      "request": "YK1+346 施工交底，把炮孔设计图和爆后点云同屏对照。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "施工交底：炮孔设计图与爆后点云同屏对照",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "blast.design-data",
+              "blast.effect"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "airflow-review",
+      "request": "YK4+000 爆后通风复核，请同屏看右洞流线与爆后点云，不用设计图和CO分析。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "YK4+000 爆后通风复核：右洞流线与爆后点云同屏",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.steady-cfd",
+              "blast.effect"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "co-review",
+      "request": "YK4+000 爆后通风复核，调出CO浓度随时间变化的分析曲线，不需要三维风流或爆后点云。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "YK4+000 爆后通风复核：CO 浓度—时间分析曲线",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.co-analysis"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "plan-only",
+      "request": "先给我YK1+346炮孔二维设计与爆后点云对照的场景计划，暂不执行。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "compose_scene_workflow",
+          "input": {
+            "description": "YK1+346 炮孔二维设计与爆后点云对照",
+            "resourceIds": [
+              "blast.design-data",
+              "blast.effect"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "missing-mileage",
+      "request": "调出炮孔二维设计图和循环进尺。",
+      "passed": true,
+      "calls": [],
+      "text": "请提供目标里程（真实中线 YK，例如 YK1+346），我再调出炮孔二维设计图与循环进尺信息。"
+    },
+    {
+      "id": "ambiguous-target",
+      "request": "YK1+346或YK4+000做爆后复核，帮我调出点云。",
+      "passed": true,
+      "calls": [],
+      "text": "您给了两个候选里程（YK1+346 或 YK4+000），请确认一个目标里程，我再调出爆后扫描点云。"
+    }
+  ]
+}

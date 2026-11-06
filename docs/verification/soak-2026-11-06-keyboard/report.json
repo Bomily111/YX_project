@@ -1,0 +1,20 @@
+{
+  "startedAt": "2026-11-06T07:18:08.274Z",
+  "rounds": [
+    {
+      "round": 1,
+      "code": 0,
+      "elapsedMs": 166544,
+      "report": "docs/verification/soak-2026-11-06-keyboard/round-1/report.json"
+    },
+    {
+      "round": 2,
+      "code": 1,
+      "elapsedMs": 143994,
+      "report": "docs/verification/soak-2026-11-06-keyboard/round-2/report.json"
+    }
+  ],
+  "passed": false,
+  "failure": "Round 2 failed",
+  "finishedAt": "2026-11-06T07:23:18.820Z"
+}

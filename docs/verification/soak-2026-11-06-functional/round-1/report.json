@@ -1,0 +1,94 @@
+{
+  "cases": [
+    {
+      "id": "workface-support-drill",
+      "taskId": "scene-1793949036666-oxuo4",
+      "total": 4,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/ahd/ahd1/2320835.glb",
+        "/data/ahd/ahd2/2336197.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 10131
+    },
+    {
+      "id": "post-blast-airflow",
+      "taskId": "scene-1793949046215-mddeb",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/blast/blast_effect.glb",
+        "/data/ventilation/cfd_cell_data_lite.json",
+        "/data/ventilation/cfd_arrows.json"
+      ],
+      "elapsedMs": 6305
+    },
+    {
+      "id": "workface-radar",
+      "taskId": "scene-1793949053607-d0fcu",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/data/GPR_new/output/radargram_line1.json"
+      ],
+      "elapsedMs": 8719
+    },
+    {
+      "id": "thermal-200",
+      "taskId": "scene-1793949063058-e5dsl",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/cfd_transient_index.json",
+        "/data/ventilation/transient_thermal_monitors.json",
+        "/data/ventilation/cfd_transient_t200s.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 24940
+    },
+    {
+      "id": "fan-shutdown",
+      "taskId": "scene-1793949092581-n8cvz",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/transient_fan_shutdown.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 8250
+    },
+    {
+      "id": "design-only",
+      "taskId": "scene-1793949108569-4s4dj",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel000.glb",
+        "/data/blast/blast-design.json"
+      ],
+      "elapsedMs": 23832
+    },
+    {
+      "id": "rock-support",
+      "taskId": "scene-1793949131321-oqmy1",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "/data/tsp_actual/hardness.json",
+        "/data/tsp_actual/hardness_volume.png",
+        "/data/tunnel/tunnel000.glb"
+      ],
+      "elapsedMs": 39232
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.send-btn')\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"send-btn\" data-v-be1a5888=\"\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n"
+}

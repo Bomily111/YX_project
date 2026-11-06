@@ -1,7 +1,23 @@
 import { describe, expect, it } from 'vitest'
-import { routeWorkflowToolCall, wantsTaskExecution, wantsDirectSceneAssembly, mustReviseAssemblyBeforeAdvance, blocksUnrevisedSceneAdvance } from '@/ai-agent/AgentDispatchIntent'
+import { routeWorkflowToolCall, wantsTaskExecution, wantsDirectSceneAssembly, wantsBlastLayerControl, mustReviseAssemblyBeforeAdvance, blocksUnrevisedSceneAdvance } from '@/ai-agent/AgentDispatchIntent'
 
 describe('agent dispatch intent gate', () => {
+  it.each(['只保留炮孔，隐藏爆后点云', '显示爆后点云', '关闭炮孔', '恢复炮孔和爆后点云显示'])('routes existing blast layer changes without reassembly: %s', message => {
+    expect(wantsBlastLayerControl(message)).toBe(true)
+    expect(wantsDirectSceneAssembly(message)).toBe(false)
+  })
+  it.each(['YK4+000只显示炮孔和点云', '查看炮孔二维设计图', '如何隐藏爆后点云', '只给隐藏炮孔的计划，不执行', '装配爆后点云', '隐藏CFD计算点云', '显示爆后点云和支护', '显示炮孔并查看GPR测线1'])('keeps non-display requests out of blast layer control: %s', message => {
+    expect(wantsBlastLayerControl(message)).toBe(false)
+  })
+  it.each([
+    'YK1+346 炮孔施工交底，调出二维设计图和循环进尺',
+    'YK1+346 请展示扫描点云，不用设计图',
+    'YK4+000 请调出右洞流线',
+    'YK4+000 请查看模拟200秒的温度场',
+  ])('recognizes construction objects without requiring the module name: %s', message => {
+    expect(wantsDirectSceneAssembly(message)).toBe(true)
+    expect(wantsDirectSceneAssembly(`先给计划，不执行。${message}`)).toBe(false)
+  })
   it('uses the single assembly entry for ordinary scene requests, while preserving explicit debugging', () => {
     expect(wantsDirectSceneAssembly('在 DK278+330 主场景同屏装配设计围岩与支护钢架')).toBe(true)
     expect(wantsDirectSceneAssembly('请展示 YK2+244 的 TSP 模型')).toBe(true)

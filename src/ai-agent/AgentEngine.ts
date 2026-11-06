@@ -5,7 +5,8 @@ import type { Message, ToolUseBlock, AgentContext, AgentTool } from './types'
 import { getAgentConfig, getApiBase } from './config'
 import { getAllTools, getToolsForModule, executeTool } from './ToolRegistry'
 import { buildSystemPrompt } from './knowledge/prompts/system'
-import { blocksUnrevisedSceneAdvance, mustReviseAssemblyBeforeAdvance, wantsDirectSceneAssembly } from './AgentDispatchIntent'
+import { blocksUnrevisedSceneAdvance, mustReviseAssemblyBeforeAdvance, wantsDirectSceneAssembly, wantsBlastLayerControl } from './AgentDispatchIntent'
+import { thermalRequestIssue } from '@/modules/ventilation/thermal-catalog'
 
 interface StreamCallbacks {
   onText: (delta: string) => void
@@ -154,11 +155,20 @@ export class AgentEngine {
       this.addMessage('user', userMessage)
 
       // 2. 根据上下文选择工具
-      const availableTools = context.scene
+      const selectedTools = context.scene
         ? [...getToolsForModule('common'), ...getToolsForModule(context.scene)]
         : getAllTools()
+      const availableTools = [...new Map(selectedTools.map(tool => [tool.name, tool])).values()]
       const directSceneAssembly = wantsDirectSceneAssembly(userMessage)
-      const tools = directSceneAssembly
+      const blastLayerControl = wantsBlastLayerControl(userMessage)
+      const timeIssue = directSceneAssembly ? thermalRequestIssue(userMessage) : undefined
+      if (timeIssue) {
+        this.addMessage('assistant', timeIssue)
+        callbacks.onText(timeIssue)
+        callbacks.onComplete(timeIssue)
+        return
+      }
+      const tools = blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
         ? availableTools.filter(tool => tool.name === 'assemble_scene_at_mileage')
         : availableTools
 
@@ -174,16 +184,19 @@ export class AgentEngine {
       let revisionCompleted = false
       let blockedUnrevisedAdvances = 0
       let stopAfterTool = false
+      let recoveryTaskId: string | undefined
+      let recoveryUsed = false
       while (round < maxToolRounds) {
         round++
         let hadToolUse = false
         let roundText = ''
+        let assemblyReturnedThisRound = false
         const roundToolCalls: NonNullable<Message['tool_calls']> = []
         const roundToolResults: Message[] = []
 
         await sendChatRequest(
           this.messages,
-          pendingTask
+          recoveryTaskId ? availableTools.filter(tool => tool.name === 'retry_scene_load') : pendingTask
             ? tools.filter(tool => ['advance_platform_task', 'revise_next_scene_assembly', 'get_task_status'].includes(tool.name))
             : tools,
           system,
@@ -192,10 +205,16 @@ export class AgentEngine {
             onToolUse: async (tool: ToolUseBlock) => {
               hadToolUse = true
               let result: string
-              if (directSceneAssembly && stopAfterTool) {
+              if ((directSceneAssembly || blastLayerControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
                 result = JSON.stringify({ ok: false, action: tool.name,
                   reason: '本轮场景工具调用已结束，后续调用已拒绝' })
-              } else if (directSceneAssembly && tool.name !== 'assemble_scene_at_mileage') {
+              } else if (blastLayerControl && tool.name !== 'set_blast_layers') {
+                result = JSON.stringify({ ok: false, action: tool.name, reason: '当前图层显示指令只允许调整已有爆破模型，不得创建任务或更改里程' })
+                stopAfterTool = true
+              } else if (recoveryTaskId && (tool.name !== 'retry_scene_load' || tool.input.taskId !== recoveryTaskId)) {
+                result = JSON.stringify({ ok: false, reason: '只能重试刚返回的失败任务，不能改换任务或资源' })
+                stopAfterTool = true
+              } else if (directSceneAssembly && tool.name !== (recoveryTaskId ? 'retry_scene_load' : 'assemble_scene_at_mileage')) {
                 result = JSON.stringify({ ok: false, action: tool.name,
                   reason: '普通场景请求只允许调用 assemble_scene_at_mileage' })
                 stopAfterTool = true
@@ -215,9 +234,20 @@ export class AgentEngine {
                 result = await executeTool(tool.name, tool.input)
               }
               // Single-entry assembly already runs the validated workflow internally.
-              if (tool.name === 'assemble_scene_at_mileage') stopAfterTool = true
+              if (tool.name === 'assemble_scene_at_mileage' || tool.name === 'retry_scene_load' || tool.name === 'set_blast_layers') {
+                stopAfterTool = true
+                assemblyReturnedThisRound = true
+              }
               try {
                 const observation = JSON.parse(result)
+                if (tool.name === 'assemble_scene_at_mileage' && !recoveryUsed && observation.ok === false &&
+                    typeof observation.taskId === 'string' && observation.taskId.length > 0 &&
+                    observation.recovery?.kind === 'retry-scene-load' && observation.recovery.taskId === observation.taskId) {
+                  recoveryTaskId = observation.taskId
+                  recoveryUsed = true
+                  stopAfterTool = false
+                  system += `\n平台反馈：任务${recoveryTaskId}首阶段因临时网络加载失败且资源已释放。可调用retry_scene_load，taskId=${recoveryTaskId}，仅重试原任务一次；不得重新装配、改里程、删资源或宣称成功。若不重试，请说明停止原因。`
+                }
                 if (observation.action === 'revise_next_scene_assembly' && observation.ok === true) {
                   revisionCompleted = true
                 }

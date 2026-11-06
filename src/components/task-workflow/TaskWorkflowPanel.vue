@@ -253,6 +253,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { useTunnelStore } from '@/stores/tunnelStore'
 import { viewerService } from '@/platform/viewer/ViewerService'
 import { chainageService } from '@/platform/coordinates/ChainageService'
@@ -386,7 +387,10 @@ const saveResultSnapshot = async (
   const active = executor.value
   const scenePlan = activeSceneExecutor?.getActiveState().plan ?? null
   const resourceIds = new Set(scenePlan?.loadOrder ?? [])
-  const assetPaths = collectActiveAssetPaths(scenePlan?.loadOrder ?? [], resourceRegistry, resourceManager)
+  // The main scene's resident tunnel is also the physical carrier of chart /
+  // information resources that do not own it through a module dependency.
+  if (active.task.taskType === 'scene-exploration' && resourceManager.getState('common.tunnel').status === 'loaded') resourceIds.add('common.tunnel')
+  const assetPaths = collectActiveAssetPaths([...resourceIds], resourceRegistry, resourceManager)
   let assetVersions: TaskResultSnapshotInput['dataVersions'] = []
   try {
     assetVersions = await readAssetVersions(assetPaths)
@@ -421,7 +425,7 @@ const saveResultSnapshot = async (
       .map(({ id, status, references }) => ({ id, status, references })),
     dataVersions: [
       ...(activeProvenance?.list() ?? []), ...assetVersions,
-      ...collectActiveDataVersions(scenePlan?.loadOrder ?? [], resourceRegistry, resourceManager),
+      ...collectActiveDataVersions([...resourceIds], resourceRegistry, resourceManager),
     ],
   }
   try {
@@ -627,6 +631,19 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
   selectedTransientScenario.value = 'fan_ramp_up'
   selectedThermalFile.value = ''
   try {
+    // Reject invalid replacement requests before rolling back the valid scene.
+    if (sceneInput) {
+      registerRockModule(); registerSupportModule(); registerBlastModule(); registerVentilationModule()
+      const target = sceneInput.targetMileage === undefined ? undefined : chainageService.toCanonicalChainage(sceneInput.targetMileage)
+      const validationTask: TaskContext = { ...createTask(), taskId: 'scene-preflight', taskType: 'scene-exploration',
+        description: sceneInput.description, targetTypes: ['scene'],
+        ...(target === undefined ? {} : { chainageRange: { start: target, end: target } }) }
+      createSceneExplorationExecutor(validationTask, sceneInput.resourceIds, resourceRegistry, {
+        selector: new ResourceSelector(resourceRegistry), executor: new ScenePlanExecutor(resourceRegistry, resourceManager),
+        loadContext: { viewer: viewerService.require() }, targetChainage: target,
+        assemblyModes: sceneInput.assemblyModes, enhancementModes: sceneInput.enhancementModes,
+      })
+    }
     await exitHistoryPreview()
     if (sceneInput) form.description = sceneInput.description
     if (executor.value) await executor.value.reset()
@@ -672,7 +689,7 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
         enhancement: { planner: enhancementPlanner, engine: enhancementEngine },
         enhancementModes: sceneInput.enhancementModes,
         assemblyModes: sceneInput.assemblyModes,
-        targetChainage },
+        targetChainage, enhanceAfterAssembly: sceneInput.enhanceAfterAssembly },
     ) : undefined
     const nextExecutor = sceneWorkflow?.executor ?? qualityExecutor()
     scenePlans.value = sceneWorkflow?.scenePlans ?? nextExecutor.plan.steps.flatMap((step) => {
@@ -694,7 +711,7 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
     notice.value = sceneInput
       ? { type: 'success', title: '动态场景计划已生成', message: sceneInput.resourceIds.some(id => id.startsWith('support.modeler-'))
         ? '可逐步执行。支护为新模块已导出的 1 m 断面，在目标 YK 中线装配；不代表目标里程实测或质量结论。'
-        : '可逐步执行。同屏装配以各阶段校验结果为准；通风局部 K3+805～K4+005 数据示意配准到 YK1+346，非该工点实测风场，不作联合工程结论。' }
+        : '可逐步执行。同屏装配以各阶段校验结果为准；稳态通风局部 K3+805～K4+005 数据示意配准到 YK3+900～YK4+100，非该工点实测风场，不作联合工程结论。' }
       : { type: 'success', title: '计划已通过校验', message: '可逐步确认，也可一次执行全部步骤。' }
     try {
       await recordTaskRun(task, nextExecutor.plan, scenePlans.value)
@@ -845,7 +862,7 @@ const lastCompletedStage = (): AgentTaskWorkflowStatus['lastCompletedStage'] => 
   if (!executor.value || executor.value.task.taskType !== 'scene-exploration' || count < 1) return undefined
   const value = executor.value.plan.sharedContext[`scene.stage.${count}`]?.value
   if (!value || typeof value !== 'object' || !('assembledResourceIds' in value)) return undefined
-  const stage = value as { assembledResourceIds: unknown; chainageRange?: { start?: unknown; end?: unknown }; note?: unknown }
+  const stage = value as { assembledResourceIds: unknown; chainageRange?: { start?: unknown; end?: unknown }; note?: unknown; phase?: unknown }
   if (!Array.isArray(stage.assembledResourceIds)
     || typeof stage.chainageRange?.start !== 'number'
     || typeof stage.chainageRange.end !== 'number') return undefined
@@ -854,6 +871,7 @@ const lastCompletedStage = (): AgentTaskWorkflowStatus['lastCompletedStage'] => 
     assembledResourceIds: stage.assembledResourceIds.filter((id): id is string => typeof id === 'string'),
     chainageRange: { start: stage.chainageRange.start, end: stage.chainageRange.end },
     ...(typeof stage.note === 'string' ? { note: stage.note } : {}),
+    ...(typeof stage.phase === 'string' ? { phase: stage.phase } : {}),
   }
 }
 
@@ -965,11 +983,26 @@ const formatValue = (value: unknown): string => {
   return serialized && serialized.length > 180 ? `${serialized.slice(0, 177)}…` : serialized ?? String(value)
 }
 
+let routeCleanupCompleted = false
+onBeforeRouteLeave(async () => {
+  // Finish task rollback before the next page acquires the same resources.
+  if (snapshot.value?.status === 'running') {
+    await new Promise<void>(resolve => {
+      const stop = watch(() => snapshot.value?.status, status => {
+        if (status !== 'running') { stop(); resolve() }
+      })
+    })
+  }
+  await exitHistoryPreview()
+  if (executor.value) await executor.value.reset()
+  routeCleanupCompleted = true
+})
+
 onBeforeUnmount(() => {
   unregisterTaskController?.()
   stopExecutor?.()
   void exitHistoryPreview()
-  if (executor.value && snapshot.value?.status !== 'running') void executor.value.reset()
+  if (!routeCleanupCompleted && executor.value && snapshot.value?.status !== 'running') void executor.value.reset()
 })
 </script>
 

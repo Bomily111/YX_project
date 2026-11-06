@@ -36,8 +36,11 @@
       <div v-show="!layerPanelCollapsed" class="tm-layer-content">
         <label class="tm-check"><input type="checkbox" v-model="showTunnel" @change="onToggleTunnel"><i></i>隧道模型</label>
         <label class="tm-check"><input type="checkbox" v-model="showBlast" @change="onToggleBlast"><i></i>爆破效果</label>
+        <label class="tm-check"><input type="checkbox" v-model="showBlastCloud" data-testid="blast-cloud-toggle"><i></i>爆后点云</label>
+        <label class="tm-check"><input type="checkbox" v-model="showBlastHoles" data-testid="blast-holes-toggle"><i></i>炮孔</label>
         <label class="tm-check"><input type="checkbox" v-model="showDesign2D"><i></i>二维设计图</label>
         <div class="tm-hint" v-if="loading">加载中… {{ loadMsg }}</div>
+        <div v-if="loadError" class="tm-hint" role="alert">{{ loadError }} <button type="button" @click="initializeBlast">重试</button></div>
       </div>
     </section>
 
@@ -74,11 +77,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Cesium from 'cesium'
 import { createViewer, enableOnDemandRender, installOrbitControls, releaseViewer } from './scene'
-import { setBlastVisible, flyToBlast, flyToTunnelOverview, getBlastModel, BLAST_INFO } from './blast'
+import { setBlastVisible, setBlastLayerVisible, blastLayerVisibility, flyToBlast, flyToTunnelOverview, getBlastModel, BLAST_INFO } from './blast'
 import { resourceManager } from '@/platform/resources/ResourceManager'
 import { registerBlastModule } from '@/modules/blast/resources'
 import { setTunnelGlbVisible, setTunnelTranslucent } from '@/utils/Common/DrawLine'
@@ -90,23 +93,39 @@ const router = useRouter()
 const info = BLAST_INFO
 const showTunnel = ref(true)
 const showBlast = ref(true)
+const showBlastCloud = computed({ get: () => blastLayerVisibility.pointcloud, set: visible => setBlastLayerVisible('pointcloud', visible) })
+const showBlastHoles = computed({ get: () => blastLayerVisibility.holes, set: visible => setBlastLayerVisible('holes', visible) })
 const loading = ref(true)
 const loadMsg = ref('')
+const loadError = ref('')
 const showDesign2D = ref(false)  // 二维设计图小窗(图层控制里的勾选项)
 const layerPanelCollapsed = ref(false)
 const layerPanelPosition = ref({ left: 236, top: 78 })
 let stopLayerPanelDrag: (() => void) | null = null
 let viewer: Cesium.Viewer
 let orbit: { handler: any; resetFocus: () => void }
+let disposed = false
+let demandRenderTimer: ReturnType<typeof setTimeout> | undefined
+let removeReadyListener: (() => void) | undefined
 
 registerBlastModule()
 
-onMounted(async () => {
+onMounted(() => {
   viewer = createViewer(host.value!)
+  void initializeBlast()
+})
+
+async function initializeBlast() {
+  if (disposed) return
+  loading.value = true
+  loadError.value = ''
+  try {
   await resourceManager.load(['blast.effect'], {
     viewer,
     reportProgress: (_progress, message) => { loadMsg.value = message ?? '加载场景资源' },
   })
+  if (disposed) return
+  onToggleBlast()
   setTunnelTranslucent(false, viewer)          // 默认: 保留隧道原始纹理(不透视)
   const model = getBlastModel()
   if (!model) throw new Error('爆破资源加载完成但模型不存在')
@@ -114,21 +133,31 @@ onMounted(async () => {
   orbit = installOrbitControls(viewer, () => getBlastModel()?.boundingSphere?.center)
   const initView = new URLSearchParams(location.search).get('view')
   const finishLoading = () => {
+    if (disposed) return
     // 默认进入"带纹理整体隧道"总览; 带 ?view= 时直接进对应透视视角(便于调试)
     if (initView && ['persp', 'front', 'side', 'top'].includes(initView)) fly(initView as any)
     else exit()
     loading.value = false
-    setTimeout(() => enableOnDemandRender(viewer), 2500)
+    demandRenderTimer = setTimeout(() => { if (!disposed) enableOnDemandRender(viewer) }, 2500)
   }
   if (model.ready) finishLoading()
-  else model.readyEvent.addEventListener(finishLoading)
+  else removeReadyListener = model.readyEvent.addEventListener(finishLoading)
 
   // 监听 AI Agent 指令
   aiEvents.on('blast:adjust-view', onAdjustView)
   aiEvents.on('blast:toggle-diagram', onToggleDiagram)
-})
+  } catch (error) {
+    if (!disposed) {
+      loading.value = false
+      loadError.value = `爆破场景加载失败：${error instanceof Error ? error.message : String(error)}`
+    }
+  }
+}
 
 onBeforeUnmount(() => {
+  disposed = true
+  if (demandRenderTimer) clearTimeout(demandRenderTimer)
+  removeReadyListener?.()
   aiEvents.off('blast:adjust-view', onAdjustView)
   aiEvents.off('blast:toggle-diagram', onToggleDiagram)
   stopLayerPanelDrag?.()

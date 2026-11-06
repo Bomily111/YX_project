@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { getBlastDesignData } from '@/modules/blast/design-resource'
 defineProps<{ visible: boolean }>()
 
 const loaded = ref(false)
@@ -35,7 +36,10 @@ const params = ref<[string, string][]>([])
 
 onMounted(async () => {
   try {
-    const d = await fetch('data/blast/blast-design.json').then(r => r.json())
+    const d = getBlastDesignData() ?? await fetch('/data/blast/blast-design.json').then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`)
+      return r.json()
+    })
     // 二维正视: svgX = x(横向), svgY = -z(上, SVG向下为正故取负)
     contourPts.value = d.contour.map((p: number[]) => `${p[0].toFixed(3)},${(-p[2]).toFixed(3)}`).join(' ')
     holes.value = d.holes.map((h: any) => ({ x: h.collar[0], y: -h.collar[2], color: h.color }))

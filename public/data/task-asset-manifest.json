@@ -252,6 +252,81 @@
       "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
     },
     {
+      "path": "/data/blast/blast-design.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+    },
+    {
+      "path": "/data/ahd/ahd1/2320835.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "4b365de7fc1820c6a39ae6b0da43819c36fcc6b8b589721959bd340fe0c87de8"
+    },
+    {
+      "path": "/data/ahd/ahd2/2336197.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "21c8fadf4c539763e104238881e065f8dd8bd9b4738a21a55b22f20e78f183cd"
+    },
+    {
+      "path": "/data/GPR_new/output/radargram_line1.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "701676f4409276bd3d3ff16716be51bb69e6570953220397ba52ac85e2d1d218"
+    },
+    {
+      "path": "/data/GPR_new/output/radargram_line2.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "f5e8bb7885bece74c903cbc50913129e07d1dd8723ac8e396fdfe2d0d46018b5"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_880_6.jpg",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "20a10a4b1b0607c154f1a66b8c0f0736f73ec8952ed2af7e90198ba68298ccd8"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_885_4.jpg",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "ef650545c6de1cc040d21c83a6d9ae64d720245b0c80f0acb5132fc876abca28"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_892_6.jpg",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "7796416a58777c1536fd362fd58d7a5e369ab20b891cb6f0657c692ffcb324fc"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_900_0.jpg",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "aa4163e0af89070999cdb46403ceb5d4fa255e9ec6949ff483dacf9f534db6d3"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_905_0.jpg",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "3d08acfd771c986039bb2b01402748eaafd5532a07e4aad14ec2a063316785b8"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_880_6_clean.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "fcf091f17b2bbbd8cfcea2f65b95bffa230c53a9a481a1b12ba710072c94ef04"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_885_4_clean.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "d85639ed94b15959d9ce53449b0f80cf518bb28b3c30a3672f7ddc542dfdf7f7"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_892_6_clean.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "483010061f2f1b1643478a1148b9c7aa6646a0eff869a35a2df62630e132993f"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_900_0_clean.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "694fb09d038e5613391836074821c3ec815512bf2050110b51cb4889e918e5a4"
+    },
+    {
+      "path": "/data/face_sketch/X1DK2_905_0_clean.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "00c98ed07159b97b2da664026b5d924c00b57acf65e92950b2e4c6406ea41518"
+    },
+    {
       "path": "/data/ventilation/tunnel-assembled.glb",
       "algorithm": "sha256-bytes-v1",
       "digest": "ab251005eadc5327de71b9ac69f56b0cc5580043ad5ad6eda57489bef6a8556e"

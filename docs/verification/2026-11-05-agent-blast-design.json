@@ -1,0 +1,57 @@
+{
+  "taskId": "scene-1793856045406-rpxs1",
+  "designOnly": false,
+  "summary": {
+    "name": "YL交通隧道 正洞(Ⅳ级全断面) 光面爆破 三维孪生",
+    "source": "方案 图4.4-5 正洞Ⅳ级全断面光面爆破炮眼布置图",
+    "sectionSpec": {
+      "excavationWidthM": 12.4,
+      "perimeterSpanM": 12.1,
+      "crownHeightM": 8.877
+    },
+    "coordinateFrame": "local: x=lateral(right+), y=advance(into rock+), z=up; origin at centerline/face/floor",
+    "advanceM": 2.2,
+    "centerlineX": 0,
+    "holeCounts": {
+      "perimeter": 49,
+      "cut": 11,
+      "auxiliary": 95,
+      "floor": 30
+    },
+    "totalCharged": 185,
+    "empiricalNote": "孔深/插角为按类别经验值(方案未给逐孔三维姿态): 周边1.5°外插, 辅助1.0°, 底板3.0°下插, 掏槽9.0°楔形汇聚, 中空孔平行",
+    "categories": {
+      "perimeter": {
+        "label": "周边孔",
+        "color": "#1560e6",
+        "count": 49
+      },
+      "cut": {
+        "label": "掏槽孔",
+        "color": "#e11d2e",
+        "count": 11
+      },
+      "auxiliary": {
+        "label": "辅助孔",
+        "color": "#f4600a",
+        "count": 95
+      },
+      "floor": {
+        "label": "底板孔",
+        "color": "#9b1fe6",
+        "count": 30
+      }
+    },
+    "holeCount": 185,
+    "limitation": "现有方案示例参考，非目标工点实测或审批设计；逐孔姿态含经验值，不据此给出药量或安全结论"
+  },
+  "chat": "👷\nYK1+346 爆破施工交底，请调出炮孔二维设计图，核对炮孔分类和循环进尺，并与爆后点云同屏对照。\n🤖\n已定位 YK1+346，主场景装配完成：炮孔设计 · 二维图与参数参考、爆破炮孔与爆后点云（45 万点）。\n炮孔设计参考：185 个孔，循环进尺 2.2 m；周边孔 49、掏槽孔 11、辅助孔 95、底板孔 30。\n来源：方案 图4.4-5 正洞Ⅳ级全断面光面爆破炮眼布置图。现有方案示例参考，非目标工点实测或审批设计；逐孔姿态含经验值，不据此给出药量或安全结论。\n👍\n👎",
+  "svgHoles": 185,
+  "status": "completed",
+  "assets": [
+    "/data/tunnel/tunnel000.glb",
+    "/data/blast/blast-design.json",
+    "/data/blast/blast_effect.glb"
+  ],
+  "errors": []
+}

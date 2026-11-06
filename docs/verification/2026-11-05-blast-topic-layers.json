@@ -1,0 +1,19 @@
+{
+  "initial": {
+    "show": true,
+    "holes": true,
+    "cloud": true
+  },
+  "cloudOnly": {
+    "show": true,
+    "holes": false,
+    "cloud": true
+  },
+  "holesOnly": {
+    "show": true,
+    "holes": true,
+    "cloud": false
+  },
+  "masterPreservesSelection": true,
+  "errors": []
+}

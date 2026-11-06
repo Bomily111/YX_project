@@ -1,0 +1,116 @@
+{
+  "cases": [
+    {
+      "id": "no-model-protection",
+      "text": "🤖\n图层未修改：当前没有可操作的爆破模型，请先装配爆破场景或打开爆破专题页。\n👍\n👎"
+    },
+    {
+      "id": "actual-tunnel-visible-false",
+      "outcome": {
+        "ok": true,
+        "action": "toggle_layer",
+        "layer": "tunnel",
+        "visible": false
+      },
+      "models": [
+        false
+      ]
+    },
+    {
+      "id": "actual-tunnel-visible-true",
+      "outcome": {
+        "ok": true,
+        "action": "toggle_layer",
+        "layer": "tunnel",
+        "visible": true
+      },
+      "models": [
+        true
+      ]
+    },
+    {
+      "id": "只保留炮孔，隐藏爆后点云",
+      "state": {
+        "show": true,
+        "holes": true,
+        "pointcloud": false,
+        "sameModel": true,
+        "sameMatrix": true,
+        "checkedHoles": true,
+        "checkedPointcloud": false,
+        "points": 3340,
+        "streamlines": 6
+      }
+    },
+    {
+      "id": "只显示爆后点云，关闭炮孔",
+      "state": {
+        "show": true,
+        "holes": false,
+        "pointcloud": true,
+        "sameModel": true,
+        "sameMatrix": true,
+        "checkedHoles": false,
+        "checkedPointcloud": true,
+        "points": 3340,
+        "streamlines": 6
+      }
+    },
+    {
+      "id": "manual-then-agent-preserves-holes",
+      "state": {
+        "show": true,
+        "holes": true,
+        "pointcloud": false,
+        "sameModel": true,
+        "sameMatrix": true,
+        "checkedHoles": true,
+        "checkedPointcloud": false,
+        "points": 3340,
+        "streamlines": 6
+      }
+    },
+    {
+      "id": "blast-topic-agent",
+      "state": {
+        "show": true,
+        "holes": false,
+        "pointcloud": true,
+        "sameModel": false,
+        "sameMatrix": false,
+        "checkedHoles": false,
+        "checkedPointcloud": true
+      }
+    },
+    {
+      "id": "hidden-master-protection",
+      "state": {
+        "show": false,
+        "holes": false,
+        "pointcloud": true,
+        "sameModel": false,
+        "sameMatrix": false,
+        "checkedHoles": false,
+        "checkedPointcloud": true
+      },
+      "text": "🤖\n图层未修改：当前没有可操作的爆破模型，请先装配爆破场景或打开爆破专题页。\n👍\n👎"
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "taskId": "scene-1793950119854-f4bww",
+  "auditedControls": [
+    {
+      "holes": true,
+      "pointcloud": false
+    },
+    {
+      "holes": false,
+      "pointcloud": true
+    },
+    {
+      "holes": true,
+      "pointcloud": false
+    }
+  ]
+}

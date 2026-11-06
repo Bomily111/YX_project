@@ -4,11 +4,19 @@ export interface RoutedToolCall {
   routed: boolean
 }
 
+/** A follow-up display change uses the existing blast model, without guessing a new task location. */
+export function wantsBlastLayerControl(message: string): boolean {
+  if (/(?:[DY]K\s*\d|设计|二维|构建|装配|加载|计划|不执行|如何|怎么|能否|是否|CFD点云|计算点云|支护|围岩|掌子面|水平钻|温度场|热场|雷达|GPR)/i.test(message)) return false
+  return /(?:爆后点云|炮孔)/.test(message)
+    && /(?:显示|隐藏|关闭|打开|保留|取消|关掉|去掉|只看|恢复)/.test(message)
+}
+
 /** Ordinary scene requests use one platform assembly call; explicit step-debug tasks retain the older tools. */
 export function wantsDirectSceneAssembly(message: string): boolean {
+  if (wantsBlastLayerControl(message)) return false
   if (/(?:质量检查|质量评估|只.{0,8}(?:计划|方案)|不执行|暂不执行|assemblyModes|revise_next_scene_assembly|修订.{0,8}装配计划|分阶段|逐层|依次|轮流|先.{0,24}再)/i.test(message)) return false
   return /(?:构建|装配|展示|加载|查看|调出|呈现|可视化|放到.{0,8}场景)/.test(message)
-    && /(?:场景|围岩|岩体|支护|爆破|通风|模型|电阻率|物探)/.test(message)
+    && /(?:场景|围岩|岩体|支护|爆破|炮孔|点云|通风|风流|流线|热场|温度场|温度分布|掌子面|照片|雷达|GPR|水平钻|钻孔|模型|电阻率|物探)/i.test(message)
 }
 
 /** Explicit user-requested plan revision must be observed before advancing the next scene step. */

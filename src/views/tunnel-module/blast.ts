@@ -5,7 +5,9 @@
  * 断面统计(供信息面板):
  */
 import * as Cesium from 'cesium'
+import { reactive, readonly } from 'vue'
 import { segmentModelMatrix, BLAST_SEGMENT_INDEX, SEGMENT_CONFIGS } from './tunnel'
+import { chainageService } from '@/platform/coordinates/ChainageService'
 
 export const BLAST_INFO = {
   section: '正洞 Ⅳ级 全断面光面爆破',
@@ -18,8 +20,30 @@ export const BLAST_INFO = {
 }
 
 let blastModel: any = null
+let sourceCenter: Cesium.Cartesian3 | undefined
+let sourceMatrix: Cesium.Matrix4 | undefined
+let relocatedHeading: number | undefined
+let layerViewer: Cesium.Viewer | undefined
+const layerVisibility = reactive({ holes: true, pointcloud: true })
+export const blastLayerVisibility = readonly(layerVisibility)
+
+function applyBlastLayers(): void {
+  if (!blastModel?.ready) return
+  for (const name of ['holes', 'pointcloud'] as const) {
+    const node = blastModel.getNode(name)
+    if (node) node.show = layerVisibility[name]
+  }
+}
+
+/** Independently show the existing GLB nodes without altering source geometry. */
+export function setBlastLayerVisible(layer: 'holes' | 'pointcloud', visible: boolean): void {
+  layerVisibility[layer] = visible
+  applyBlastLayers()
+  layerViewer?.scene.requestRender()
+}
 
 export async function loadBlast(viewer: Cesium.Viewer): Promise<any> {
+  layerViewer = viewer
   if (blastModel) { blastModel.show = true; viewer.scene.requestRender(); return blastModel }
   const model = await Cesium.Model.fromGltfAsync({
     url: 'data/blast/blast_effect.glb',
@@ -29,7 +53,9 @@ export async function loadBlast(viewer: Cesium.Viewer): Promise<any> {
   })
   viewer.scene.primitives.add(model)
   blastModel = model
-  model.readyEvent.addEventListener(() => viewer.scene.requestRender())
+  sourceMatrix = Cesium.Matrix4.clone(model.modelMatrix)
+  model.readyEvent.addEventListener(() => { applyBlastLayers(); viewer.scene.requestRender() })
+  applyBlastLayers()
   viewer.scene.requestRender()
   return model
 }
@@ -43,10 +69,69 @@ export function removeBlast(viewer: Cesium.Viewer) {
   if (!blastModel) return
   try { viewer.scene.primitives.remove(blastModel) } catch {}
   blastModel = null
+  sourceCenter = undefined
+  sourceMatrix = undefined
+  relocatedHeading = undefined
+  Object.assign(layerVisibility, { holes: true, pointcloud: true })
+  layerViewer = undefined
   viewer.scene.requestRender()
 }
 
 export function getBlastModel() { return blastModel }
+
+/** Restore the delivered asset placement, including the original camera axis. */
+export function resetBlastTaskPlacement(viewer: Cesium.Viewer): void {
+  if (blastModel && sourceMatrix) blastModel.modelMatrix = Cesium.Matrix4.clone(sourceMatrix)
+  relocatedHeading = undefined
+  viewer.scene.requestRender()
+}
+
+// Horizontal normal of the delivered pointcloud section, measured from its
+// X/Z covariance. The geometry already includes the source tunnel's bend.
+export const BLAST_SOURCE_FORWARD_GLTF = new Cesium.Cartesian3(0.9789006207655707, 0, -0.2043369145915156)
+
+export function blastPlacementMatrix(base: Cesium.Matrix4, center: Cesium.Cartesian3, chainage: number): Cesium.Matrix4 {
+  const station = chainageService.positionWithHeadingAt(chainage)
+  if (!station) throw new Error('爆破目标里程不在 YK 中线范围内')
+  const axisCorrection = Cesium.Matrix4.multiply(
+    Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromRotationX(Math.PI / 2)),
+    Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromRotationY(Math.PI / 2)), new Cesium.Matrix4())
+  const corrected = Cesium.Matrix4.multiplyByPointAsVector(axisCorrection, BLAST_SOURCE_FORWARD_GLTF, new Cesium.Cartesian3())
+  const sourceForward = Cesium.Matrix4.multiplyByPointAsVector(base, corrected, new Cesium.Cartesian3())
+  const sourceUp = Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(center, new Cesium.Cartesian3())
+  const frame = (origin: Cesium.Cartesian3, up: Cesium.Cartesian3, forward: Cesium.Cartesian3) => {
+    const lateral = Cesium.Cartesian3.normalize(Cesium.Cartesian3.cross(up, forward, new Cesium.Cartesian3()), new Cesium.Cartesian3())
+    const along = Cesium.Cartesian3.normalize(Cesium.Cartesian3.cross(lateral, up, new Cesium.Cartesian3()), new Cesium.Cartesian3())
+    const rotation = Cesium.Matrix3.fromColumnMajorArray([lateral.x, lateral.y, lateral.z, up.x, up.y, up.z, along.x, along.y, along.z])
+    return Cesium.Matrix4.fromRotationTranslation(rotation, origin)
+  }
+  const source = frame(center, sourceUp, sourceForward)
+  const target = Cesium.Cartesian3.fromDegrees(station.longitude, station.latitude, station.height + 3)
+  const enu = Cesium.Transforms.eastNorthUpToFixedFrame(target)
+  const targetForward = Cesium.Matrix4.multiplyByPointAsVector(enu, new Cesium.Cartesian3(Math.sin(station.heading), Math.cos(station.heading), 0), new Cesium.Cartesian3())
+  const destination = frame(target, Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(target, new Cesium.Cartesian3()), targetForward)
+  return Cesium.Matrix4.multiply(destination, Cesium.Matrix4.multiply(Cesium.Matrix4.inverseTransformation(source, new Cesium.Matrix4()), base, new Cesium.Matrix4()), new Cesium.Matrix4())
+}
+
+/** Demonstration placement of the delivered blast geometry at a YK workpoint. */
+export async function placeBlastAtChainage(viewer: Cesium.Viewer, chainage: number): Promise<void> {
+  if (chainage >= 1346 && chainage <= 1351) {
+    resetBlastTaskPlacement(viewer)
+    return
+  }
+  const model = blastModel as Cesium.Model | null
+  const station = chainageService.positionWithHeadingAt(chainage)
+  if (!model || !station || !sourceMatrix) throw new Error('爆破点云示意重定位缺少模型或 YK 中线')
+  if (!model.ready) await new Promise<void>((resolve, reject) => {
+    const timeout = setTimeout(() => { remove(); reject(new Error('爆破点云首帧就绪超时')) }, 15000)
+    const remove = model.readyEvent.addEventListener(() => { clearTimeout(timeout); remove(); resolve() })
+    viewer.scene.requestRender()
+  })
+  sourceCenter ??= Cesium.Cartesian3.clone(model.boundingSphere.center)
+  model.modelMatrix = blastPlacementMatrix(sourceMatrix, sourceCenter, chainage)
+  relocatedHeading = station.heading
+  viewer.scene.requestRender()
+}
 
 /**
  * "带纹理整体隧道"总览视角 —— 与透视(persp)**同方位**, 只是拉远(range 110)。
@@ -60,7 +145,11 @@ export function flyToTunnelOverview(viewer: Cesium.Viewer) {
   const b = SEGMENT_CONFIGS[BLAST_SEGMENT_INDEX + 1] || a
   const pa = Cesium.Cartesian3.fromDegrees(a.lon, a.lat, a.height)
   const pb = Cesium.Cartesian3.fromDegrees(b.lon, b.lat, b.height)
-  const advanceRaw = Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(pb, pa, new Cesium.Cartesian3()), new Cesium.Cartesian3())
+  const advanceRaw = relocatedHeading === undefined
+    ? Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(pb, pa, new Cesium.Cartesian3()), new Cesium.Cartesian3())
+    : (() => { const enu = Cesium.Transforms.eastNorthUpToFixedFrame(center)
+      return Cesium.Matrix4.multiplyByPointAsVector(enu,
+        new Cesium.Cartesian3(Math.sin(relocatedHeading), Math.cos(relocatedHeading), 0), new Cesium.Cartesian3()) })()
   const up = Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(center, new Cesium.Cartesian3())
   // 与 flyToBlast('persp') 完全相同的方向: advance=-advanceRaw, dir = -advance + lateral = advanceRaw + lateral
   const advance = Cesium.Cartesian3.negate(advanceRaw, new Cesium.Cartesian3())
@@ -88,7 +177,7 @@ function enuHeading(worldDir: Cesium.Cartesian3, center: Cesium.Cartesian3): num
  *  side  侧视: 沿隧道横向看进尺剖面
  *  persp 透视: 3/4 斜视
  */
-export function flyToBlast(viewer: Cesium.Viewer, view: 'persp' | 'front' | 'side' | 'top' = 'persp') {
+export function blastViewOffset(view: 'persp' | 'front' | 'side' | 'top' = 'persp'): Cesium.HeadingPitchRange | undefined {
   const bs = blastModel?.boundingSphere
   if (!bs) return
   const center = bs.center
@@ -98,7 +187,10 @@ export function flyToBlast(viewer: Cesium.Viewer, view: 'persp' | 'front' | 'sid
   const b = SEGMENT_CONFIGS[BLAST_SEGMENT_INDEX + 1] || SEGMENT_CONFIGS[BLAST_SEGMENT_INDEX]
   const pa = Cesium.Cartesian3.fromDegrees(a.lon, a.lat, a.height)
   const pb = Cesium.Cartesian3.fromDegrees(b.lon, b.lat, b.height)
-  const advanceRaw = Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(pb, pa, new Cesium.Cartesian3()), new Cesium.Cartesian3())
+  const advanceRaw = relocatedHeading === undefined
+    ? Cesium.Cartesian3.normalize(Cesium.Cartesian3.subtract(pb, pa, new Cesium.Cartesian3()), new Cesium.Cartesian3())
+    : Cesium.Matrix4.multiplyByPointAsVector(Cesium.Transforms.eastNorthUpToFixedFrame(center),
+        new Cesium.Cartesian3(Math.sin(relocatedHeading), Math.cos(relocatedHeading), 0), new Cesium.Cartesian3())
   const up = Cesium.Ellipsoid.WGS84.geodeticSurfaceNormal(center, new Cesium.Cartesian3())
   // 几何已沿隧道翻转180°(掌子面朝进山), 故正视/侧视/透视从翻转后的一侧看; 俯视往下看不受影响
   const advance = (view === 'top')
@@ -125,8 +217,15 @@ export function flyToBlast(viewer: Cesium.Viewer, view: 'persp' | 'front' | 'sid
     pitchDeg = -16; range = 22
   }
   const heading = headingOverride ?? enuHeading(dirFromCenter, center)
+  return new Cesium.HeadingPitchRange(heading, Cesium.Math.toRadians(pitchDeg), range)
+}
+
+export function flyToBlast(viewer: Cesium.Viewer, view: 'persp' | 'front' | 'side' | 'top' = 'persp') {
+  const bs = blastModel?.boundingSphere
+  const offset = blastViewOffset(view)
+  if (!bs || !offset) return
   viewer.camera.flyToBoundingSphere(bs, {
     duration: 1.0,
-    offset: new Cesium.HeadingPitchRange(heading, Cesium.Math.toRadians(pitchDeg), range),
+    offset,
   })
 }

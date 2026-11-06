@@ -1,6 +1,6 @@
 import * as Cesium from 'cesium'
 import { enableUndergroundTerrainBackground } from '@/utils/Common/UndergroundTerrain'
-import { ventilationPositionToLocal, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
+import { captureVentilationFrame } from './spatialFrame'
 import { viewerService } from '@/platform/viewer/ViewerService'
 import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry'
 
@@ -25,6 +25,8 @@ interface ViewerSnapshot {
 const viewerSnapshots = new WeakMap<Cesium.Viewer, ViewerSnapshot>()
 
 const localFlightTokens = new WeakMap<Cesium.Viewer, object>()
+const topicFrame = captureVentilationFrame(false)
+const ventilationVectorToWorld = topicFrame.vectorToWorld
 const MODEL_UP = Cesium.Cartesian3.normalize(
   ventilationVectorToWorld(Cesium.Cartesian3.UNIT_Y),
   new Cesium.Cartesian3(),
@@ -232,8 +234,8 @@ export function installModelControls(
     up: MODEL_UP,
     right: MODEL_RIGHT,
     orbitSign: -1,
-    toLocal: ventilationPositionToLocal,
-    toWorld: ventilationPositionToWorld,
+    toLocal: topicFrame.toLocal,
+    toWorld: topicFrame.toWorld,
   },
 ) {
   const scene = viewer.scene

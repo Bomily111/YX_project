@@ -20,7 +20,9 @@ const scenarios = {
   'steel-frame': '在 YK1+346 只展示新模块 ZZ-IVa 支护断面',
   tem: '在 YK2+244 展示瞬变电磁视电阻率模型',
   co: 'YK1+346 爆破后通风复核，需要查看 CO 扩散分析结果',
-  'vent-flow': 'YK1+346 通风施工复核，请展示风向矢量和风场流线',
+  'vent-flow': 'YK4+000 正在进行隧道通风检查。请在主场景保留该段隧道，装配稳态风场，展示 CFD 计算点、风向矢量、流线和动态粒子，并把视角定位到风场中部。',
+  'vent-support': '请构建 YK4+000 的施工通风场景，同屏展示目标段隧道、稳态风场和 ZZ-Va 支护断面，方便检查风流与支护的空间关系。',
+  'vent-blast': 'YK4+000 爆破后通风复核，请同屏展示右洞稳态风场、爆后点云和炮孔，检查它们的空间关系。',
   'blast-cloud': 'YK1+346 爆破后复核，请展示爆后点云和炮孔布置',
   'tsp-vp': 'YK2+244 超前地质预报交底，请查看前方岩体纵波速度 Vp 分布',
   'tem-water': 'YK2+244 掌子面富水风险研判，请查看瞬变电磁富水解释结果',
@@ -135,7 +137,7 @@ try {
       const resources = [...document.querySelectorAll('.agent-assembly-info li')].map(el => el.textContent ?? '')
       if (currentScenario === 'tem') return mileage === 'YK2+244' && resources.some(text => text.includes('TEM'))
       if (currentScenario === 'co') return mileage === 'YK1+346' && resources.some(text => text.includes('CO'))
-      if (currentScenario === 'vent-flow') return mileage === 'YK1+346' && resources.some(text => text.includes('流线'))
+      if (['vent-flow', 'vent-support', 'vent-blast'].includes(currentScenario)) return mileage === 'YK4+000' && resources.some(text => text.includes('流线'))
       if (currentScenario === 'blast-cloud') return mileage === 'YK1+346' && resources.some(text => text.includes('点云'))
       if (currentScenario === 'tsp-vp') return mileage === 'YK2+244' && resources.some(text => text.includes('Vp'))
       if (currentScenario === 'tem-water') return mileage === 'YK2+244' && resources.some(text => text.includes('富水'))
@@ -189,11 +191,14 @@ try {
       })(),
     }
   })
-  if (scenario === 'vent-flow') {
+  if (['vent-flow', 'vent-support', 'vent-blast'].includes(scenario)) {
     snapshot.flowLayers = await page.evaluate(async () => {
       const { layers } = await import('/src/views/ventilation-module/cesiumVentilation.ts')
       return { cfdPoints: layers.points?.length ?? 0, vectors: layers.arrows?.length ?? 0,
         streamlines: layers.streamlines?.length ?? 0, particles: layers.particles?.length ?? 0,
+        leftPointCount: layers.points ? Array.from({ length: layers.points.length }, (_, i) => layers.points.get(i).id)
+          .filter(id => id?.tunnel === 'left').length : 0,
+        leftParticleCount: layers.particleState.filter(state => state.tube === 'left').length,
         pointsVisible: layers.points?.show ?? false, vectorsVisible: layers.arrows?.show ?? false,
         streamlinesVisible: layers.streamlines?.show ?? false, particlesVisible: layers.particles?.show ?? false }
     })
@@ -239,7 +244,8 @@ try {
     })
   }
   const assemblyExpected = !['missing-mileage', 'plan-only'].includes(scenario)
-  const expectedMileage = ['hardness-support', 'construction-task', 'design-grade', 'steel-frame', 'modeler-support', 'alternating-support', 'support-handover', 'co', 'vent-flow', 'blast-cloud'].includes(scenario) ? 'YK1+346' : 'YK2+244'
+  const expectedMileage = ['vent-flow', 'vent-support', 'vent-blast'].includes(scenario) ? 'YK4+000'
+    : ['hardness-support', 'construction-task', 'design-grade', 'steel-frame', 'modeler-support', 'alternating-support', 'support-handover', 'co', 'blast-cloud'].includes(scenario) ? 'YK1+346' : 'YK2+244'
   let persisted = null
   if (createdTaskId) {
     const endpoint = new URL(`/api/ai-agent/task-runs/${encodeURIComponent(createdTaskId)}/snapshots`, apiUrl)
@@ -262,6 +268,166 @@ try {
       await new Promise(resolve => setTimeout(resolve, 500))
     }
   }
+  if (process.env.CHECK_VENT_FRAME === '1') {
+    snapshot.ventilationFrameIsolation = await page.evaluate(async () => {
+      const { layers } = await import('/src/views/ventilation-module/cesiumVentilation.ts')
+      const { captureVentilationFrame, setVentilationCombinedPlacement } = await import('/src/views/ventilation-module/spatialFrame.ts')
+      const { viewerService } = await import('/src/platform/viewer/ViewerService.ts')
+      const { resourceManager } = await import('/src/platform/resources/ResourceManager.ts')
+      const previousField = layers.points
+      const retainedTask = chainage => ({ taskId: 'retained-frame-check', taskType: 'scene-exploration',
+        description: 'retained placement check', tunnelId: 'YK', targetTypes: ['ventilation'],
+        chainageRange: { start: chainage, end: chainage } })
+      let rejected = false
+      try { await resourceManager.update(['ventilation.steady-cfd'], retainedTask(4200)) }
+      catch (error) { rejected = error.message.includes('仅支持 YK3+900～YK4+100') }
+      if (!rejected || layers.points !== previousField) throw new Error('Invalid retained task modified the field')
+      await resourceManager.update(['ventilation.steady-cfd'], retainedTask(4000))
+      const frame = captureVentilationFrame()
+      const viewer = viewerService.current
+      if (!viewer || layers.particleState.length !== 180) throw new Error('Field is not ready')
+      const staticPoint = layers.points.get(0).position.clone()
+      try {
+        setVentilationCombinedPlacement(false)
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => { remove(); reject(new Error('No rendered frame')) }, 15000)
+          const remove = viewer.scene.postRender.addEventListener(() => { clearTimeout(timeout); remove(); resolve() })
+          viewer.scene.requestRender()
+        })
+        let maxLateralErrorM = 0
+        for (const particle of layers.particleState) {
+          const local = frame.toLocal(particle.point.position)
+          maxLateralErrorM = Math.max(maxLateralErrorM, Math.hypot(local.x - particle.localX, local.y - particle.localY))
+          if (local.z < 3804.999 || local.z > 4005.001) throw new Error('Particle escaped field interval')
+        }
+        if (maxLateralErrorM > 0.00001 || !staticPoint.equals(layers.points.get(0).position)) {
+          throw new Error('Field placement changed with the global mode')
+        }
+        return { particles: layers.particleState.length, maxLateralErrorM, staticPointUnchanged: true,
+          retainedOutOfRangeRejected: rejected, validTaskResumed: true }
+      } finally {
+        setVentilationCombinedPlacement(true)
+        viewer.scene.requestRender()
+      }
+    })
+  }
+  if (process.env.CHECK_BLAST_LAYERS === '1') {
+    const readLayers = () => page.evaluate(async () => {
+      const { getBlastModel } = await import('/src/views/tunnel-module/blast.ts')
+      const model = getBlastModel()
+      return { holes: model.getNode('holes').show, pointcloud: model.getNode('pointcloud').show }
+    })
+    const holes = page.getByTestId('blast-holes-toggle')
+    const cloud = page.getByTestId('blast-cloud-toggle')
+    const initial = await readLayers()
+    if (initial.holes || !initial.pointcloud) throw new Error('Combined scene must default to cloud only')
+    await holes.check()
+    const both = await readLayers()
+    await cloud.uncheck()
+    const holesOnly = await readLayers()
+    await holes.uncheck()
+    const neither = await readLayers()
+    await cloud.check()
+    const cloudOnly = await readLayers()
+    if (!both.holes || !both.pointcloud || !holesOnly.holes || holesOnly.pointcloud ||
+        neither.holes || neither.pointcloud || cloudOnly.holes || !cloudOnly.pointcloud) {
+      throw new Error('Blast node controls are not independent')
+    }
+    snapshot.blastLayerControls = { initial, both, holesOnly, neither, cloudOnly }
+  }
+  if (process.env.CHECK_BLAST_LIFECYCLE === '1') {
+    snapshot.blastLifecycle = await page.evaluate(async () => {
+      const { blastEffectResource: resource } = await import('/src/modules/blast/resources.ts')
+      const { getBlastModel } = await import('/src/views/tunnel-module/blast.ts')
+      const { segmentModelMatrix, BLAST_SEGMENT_INDEX } = await import('/src/views/tunnel-module/tunnel.ts')
+      const model = getBlastModel()
+      if (!model?.ready) throw new Error('Blast model is not ready')
+      const matrix = () => Array.from({ length: 16 }, (_, i) => model.modelMatrix[i])
+      const task = chainage => ({ taskId: 'browser-placement-check', taskType: 'scene-exploration',
+        description: 'placement regression', tunnelId: 'YK', targetTypes: ['blast'],
+        chainageRange: { start: chainage, end: chainage } })
+      const different = (a, b) => a.some((value, i) => Math.abs(value - b[i]) > 1e-7)
+      const original = Array.from({ length: 16 }, (_, i) => segmentModelMatrix(BLAST_SEGMENT_INDEX)[i])
+      await resource.update(task(4000))
+      const first = matrix()
+      await resource.update(task(4050))
+      const moved = different(first, matrix())
+      await resource.update(task(4000))
+      const repeatStable = !different(first, matrix())
+      await resource.activate(task(1346))
+      const restored = !different(original, matrix())
+      await resource.update(task(1200))
+      const lowerChainageMoved = different(original, matrix())
+      await resource.resetTaskPlacement()
+      const resetRestored = !different(original, matrix())
+      await resource.activate(task(4000))
+      const reactivated = !different(first, matrix())
+      if (![moved, repeatStable, restored, lowerChainageMoved, resetRestored, reactivated].every(Boolean)) {
+        throw new Error('Blast placement lifecycle regression')
+      }
+      return { moved, repeatStable, restored, lowerChainageMoved, resetRestored, reactivated,
+        reusedSameModel: getBlastModel() === model }
+    })
+  }
+  if (process.env.CHECK_TOPIC_ROUTES === '1') {
+    const waitInPage = async (predicate, timeoutMs = 90000) => {
+      const deadline = Date.now() + timeoutMs
+      while (Date.now() < deadline) {
+        if (await page.evaluate(predicate)) return
+        await new Promise(resolve => setTimeout(resolve, 250))
+      }
+      const state = await page.evaluate(async () => {
+        const { resourceManager } = await import('/src/platform/resources/ResourceManager.ts')
+        return { path: location.pathname, text: document.body.innerText.slice(0, 600),
+          resources: resourceManager.listStates().filter(state => state.status !== 'idle') }
+      })
+      throw new Error(`Topic route did not reach its expected resource state: ${JSON.stringify(state)}`)
+    }
+    const navigate = path => page.evaluate(async path => {
+      const { default: router } = await import('/src/router/index.ts')
+      await router.push(path)
+    }, path)
+    await navigate('/ventilation-twin')
+    await waitInPage(async () => {
+      const { layers } = await import('/src/views/ventilation-module/cesiumVentilation.ts')
+      return layers.model?.ready === true && layers.points?.length === 6786
+    })
+    const directVentFocus = await page.locator('.location-status b').innerText()
+    if (directVentFocus !== 'K3+905') throw new Error(`Vent topic focus inherited combined frame: ${directVentFocus}`)
+    await navigate('/blast-twin?view=front')
+    await waitInPage(async () => {
+      const { getBlastModel } = await import('/src/views/tunnel-module/blast.ts')
+      return getBlastModel()?.ready === true && !!document.querySelector('.tm-root')
+    })
+    const blast = await page.evaluate(async () => {
+      const { getBlastModel } = await import('/src/views/tunnel-module/blast.ts')
+      const { segmentModelMatrix, BLAST_SEGMENT_INDEX } = await import('/src/views/tunnel-module/tunnel.ts')
+      const model = getBlastModel(), base = segmentModelMatrix(BLAST_SEGMENT_INDEX)
+      if (!model) {
+        const { resourceManager } = await import('/src/platform/resources/ResourceManager.ts')
+        throw new Error(`Missing blast after topic transition: ${JSON.stringify(resourceManager.listStates())}; page=${document.body.innerText.slice(0, 800)}`)
+      }
+      return { holes: model.getNode('holes').show, cloud: model.getNode('pointcloud').show,
+        originalPlacement: Array.from({ length: 16 }, (_, i) => Math.abs(model.modelMatrix[i] - base[i]) < 1e-7).every(Boolean) }
+    })
+    if (!blast.holes || !blast.cloud || !blast.originalPlacement) throw new Error(`Blast topic inherited task state: ${JSON.stringify(blast)}`)
+    await navigate('/ventilation-twin')
+    await waitInPage(async () => {
+      const { layers } = await import('/src/views/ventilation-module/cesiumVentilation.ts')
+      return layers.model?.ready === true && layers.points?.length === 6786
+    })
+    const ventilation = await page.evaluate(async () => {
+      const { layers } = await import('/src/views/ventilation-module/cesiumVentilation.ts')
+      return { modelReady: layers.model.ready, points: layers.points.length, particles: layers.particleState.length }
+    })
+    await navigate('/')
+    await waitInPage(async () => {
+      const { resourceManager } = await import('/src/platform/resources/ResourceManager.ts')
+      return resourceManager.getState('common.tunnel').status === 'loaded' &&
+        ['blast.effect', 'ventilation.scene', 'ventilation.steady-cfd'].every(id => resourceManager.getState(id).status === 'idle')
+    })
+    snapshot.topicRoutes = { directVentFocusCorrect: true, blast, ventilation, returnedHome: true }
+  }
   const result = { scenario, ...snapshot, timedOut, chatStatuses, taskRunsCreated, createdTaskId,
     persisted, errors: errors.slice(0, 15) }
   if (process.env.SCREENSHOT_PATH) {
@@ -275,7 +441,8 @@ try {
   console.log(JSON.stringify(result))
   const failures = []
   if (timedOut) failures.push('页面未在时限内给出目标结果')
-  if (snapshot.assistantMessages.slice(repliesBefore).some(text => /场景装配未完成|加载超时|执行失败/.test(text))) failures.push('平台报告装配失败')
+  if (snapshot.assistantMessages.slice(repliesBefore)
+    .some(text => /场景装配未完成|加载超时|执行失败/.test(text))) failures.push('平台报告装配失败')
   if (errors.length) failures.push(`页面错误 ${errors.length} 条`)
   if (!chatStatuses.length || chatStatuses.some(status => status !== 200)) failures.push('模型接口未全部返回 200')
   if (assemblyExpected) {
@@ -286,12 +453,16 @@ try {
          !snapshot.assemblyResources.some(text => /支护/.test(text)))) failures.push('TSP 坚硬度或支护资源未显示')
     if (scenario === 'tem' && !snapshot.assemblyResources.some(text => /TEM|电阻率/.test(text))) failures.push('TEM 资源未显示')
     if (scenario === 'co' && !snapshot.assemblyResources.some(text => /CO/.test(text))) failures.push('CO 资源未显示')
-    if (scenario === 'vent-flow' && (!snapshot.flowLayers?.cfdPoints || !snapshot.flowLayers?.vectors ||
+    if (['vent-flow', 'vent-support', 'vent-blast'].includes(scenario) && (!snapshot.flowLayers?.cfdPoints || !snapshot.flowLayers?.vectors ||
       !snapshot.flowLayers?.streamlines || !snapshot.flowLayers?.particles ||
       !snapshot.flowLayers?.pointsVisible || !snapshot.flowLayers?.vectorsVisible ||
       !snapshot.flowLayers?.streamlinesVisible || !snapshot.flowLayers?.particlesVisible)) {
       failures.push('CFD 点云、风向矢量、流线或动态粒子未生成或不可见')
     }
+    if (['vent-flow', 'vent-support', 'vent-blast'].includes(scenario) &&
+        (snapshot.flowLayers?.cfdPoints !== 3340 || snapshot.flowLayers?.vectors !== 96 ||
+         snapshot.flowLayers?.streamlines !== 6 || snapshot.flowLayers?.leftPointCount !== 0 ||
+         snapshot.flowLayers?.leftParticleCount !== 0)) failures.push('组合场景未仅保留右洞风场')
     if (scenario === 'tsp-vp' && !snapshot.assemblyResources.some(text => /Vp/.test(text))) failures.push('TSP Vp 资源未显示')
     if (scenario === 'tem-water' && !snapshot.assemblyResources.some(text => /富水/.test(text))) failures.push('TEM 富水资源未显示')
     if (scenario === 'integrity' && !snapshot.assemblyResources.some(text => /完整度/.test(text))) failures.push('TSP 完整度资源未显示')
@@ -321,6 +492,8 @@ try {
     }
     const required = scenario === 'tem' ? ['rock.tem-resistivity']
       : scenario === 'vent-flow' ? ['ventilation.steady-cfd']
+      : scenario === 'vent-support' ? ['ventilation.steady-cfd', 'support.modeler-zz-va']
+      : scenario === 'vent-blast' ? ['ventilation.steady-cfd', 'blast.effect']
       : scenario === 'blast-cloud' ? ['blast.effect']
       : scenario === 'tsp-vp' ? ['rock.tsp-vp']
       : scenario === 'tem-water' ? ['rock.tem-water']
@@ -337,7 +510,7 @@ try {
     }
     if (required.some(id => !persisted?.loadedIds.includes(id))) failures.push('数据库快照缺少实际加载的根资源')
     const sourceFile = scenario === 'tem' ? '/data/geophysical_tem/resistivity_contrast.json'
-      : scenario === 'vent-flow' ? '/data/ventilation/cfd_arrows.json'
+      : ['vent-flow', 'vent-support', 'vent-blast'].includes(scenario) ? '/data/ventilation/cfd_arrows.json'
       : scenario === 'blast-cloud' ? '/data/blast/blast_effect.glb'
       : scenario === 'tsp-vp' ? '/data/tsp_actual/vp.json'
       : scenario === 'tem-water' ? '/data/geophysical_tem/water.json'

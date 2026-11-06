@@ -22,6 +22,7 @@
     </header>
 
     <div class="gpr-body" v-show="!collapsed">
+      <p v-if="taskDataset" style="padding:0 12px;font-size:12px;color:#a7c5d8">任务剖面参考：保留测线局部横距/深度，尚未建立与目标 YK 的测量对应。</p>
       <div v-if="!radarData" class="gpr-loading">加载雷达剖面数据中...</div>
 
       <template v-else>
@@ -30,7 +31,7 @@
           <div class="gpr-section-title"><span class="gpr-si">▸</span> 显示设置</div>
           <div class="gpr-ctrl-row">
             <label class="gpr-label">测线
-              <select v-model="currentLine" @change="switchLine">
+              <select v-model="currentLine" @change="switchLine" :disabled="!!taskDataset">
                 <option :value="1">测线 1</option>
                 <option :value="2">测线 2</option>
               </select>
@@ -79,6 +80,8 @@ import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 const props = defineProps({
   initialX: { type: Number, default: 310 },
   initialY: { type: Number, default: 480 },
+  initialLine: { type: Number, default: 1 },
+  taskDataset: { type: Object, default: null },
 })
 
 // ---- Panel state ----
@@ -89,7 +92,7 @@ const pos = ref({ x: props.initialX, y: props.initialY })
 
 // ---- Data ----
 const radarData = ref(null)
-const currentLine = ref(1)
+const currentLine = ref(props.initialLine)
 const cmap = ref('gray')
 const gain = ref(1.0)
 const showReflectors = ref(true)
@@ -135,11 +138,13 @@ async function switchLine() { await loadData() }
 
 async function loadData() {
   try {
-    const url = `data/GPR_new/output/radargram_line${currentLine.value}.json`
-    const resp = await fetch(url)
-    const json = await resp.json()
-    const key = Object.keys(json)[0]
-    radarData.value = json[key]
+    if (props.taskDataset) radarData.value = props.taskDataset
+    else {
+      const resp = await fetch(`/data/GPR_new/output/radargram_line${currentLine.value}.json`)
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+      const json = await resp.json()
+      radarData.value = json[Object.keys(json)[0]]
+    }
     rawData = {
       data: new Float32Array(radarData.value.data),
       shape: radarData.value.ds_shape,

@@ -72,7 +72,7 @@ describe('agent workflow tools', () => {
       targetMileage: 'YK1+346', resourceIds: ['rock.design-grade'], assemblyModes: ['replace'],
     }))
     expect(executeNext).toHaveBeenCalledOnce()
-    expect(lookAt).toHaveBeenCalledTimes(2)
+    expect(lookAt).toHaveBeenCalledOnce() // final camera belongs to the post-construction phase
     expect(output).toMatchObject({ ok: true, targetMileage: 'YK1+346', requestedMileage: 'DK278+330', assembledResourceIds: ['rock.design-grade'] })
   })
 

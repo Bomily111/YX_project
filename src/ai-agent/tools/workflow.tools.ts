@@ -1,14 +1,22 @@
 import type { ToolRegistration } from '../types'
 import { advancePlatformTask, dispatchValidatedWorkflow, orchestratePlatformTask } from '../TaskOrchestrator'
 import { AGENT_SCENE_RESOURCES, SCENE_ENHANCEMENT_MODES, SCENE_ASSEMBLY_MODES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
+import { getBlastDesignSummary } from '@/modules/blast/design-resource'
+import { getActiveFaceSlices } from '@/modules/face-sketch/resources'
+import { getActiveDrillModels } from '@/modules/rock/drill-resource'
+import { canRetrySceneLoad } from '../SceneRecovery'
+import { resourceManager } from '@/platform/resources/ResourceManager'
+import { requestedThermalTimes, thermalRequestIssue, thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import { viewerService } from '@/platform/viewer/ViewerService'
 import { getActiveModelerSupportModel } from '@/modules/support/modeler-resources'
 import { ALTERNATING_SUPPORT_ID, getActiveAlternatingSupportModel, getActiveAlternatingSupportSpan } from '@/modules/support/alternating-resource'
-import { clearFocusedTunnelSegment, focusTunnelSegmentAt } from '@/utils/Common/DrawLine'
+import { clearFocusedTunnelSegment, focusTunnelSegmentAt, setTunnelTranslucent } from '@/utils/Common/DrawLine'
+import { blastViewOffset, getBlastModel, setBlastLayerVisible } from '@/views/tunnel-module/blast'
 import * as Cesium from 'cesium'
 import {
   getTaskWorkflowController,
+  hasTaskWorkflowController,
   type AgentTaskWorkflowInput,
   type AgentTaskWorkflowStatus,
 } from '@/platform/tasks/TaskWorkflowBridge'
@@ -20,7 +28,9 @@ const result = (action: string, status: AgentTaskWorkflowStatus): string => JSON
 })
 const agentResourceIds = (value: unknown): string[] => {
   if (!Array.isArray(value) || value.some(id => typeof id !== 'string')) throw new Error('场景资源必须是字符串数组')
-  const ids = value as string[]
+  // The tunnel and ventilation base scene are dependencies, not user-selected
+  // business layers. Tolerate a model naming either explicitly.
+  const ids = (value as string[]).filter(id => id !== 'common.tunnel' && id !== 'ventilation.scene')
   const forbidden = ids.find(id => !AGENT_SCENE_RESOURCES.includes(id as typeof AGENT_SCENE_RESOURCES[number]))
   if (forbidden) throw new Error(`智能体当前不可调度资源：${forbidden}`)
   return ids
@@ -95,6 +105,49 @@ export function normalizeAgentTaskInput(input: Record<string, any>): AgentTaskWo
 export const workflowTools: ToolRegistration[] = [
   {
     module: 'common',
+    tool: { name: 'set_blast_layers', description: '调整当前已显示爆破模型的炮孔和爆后点云开关；不创建任务、不加载资源、不改变里程。只保留某层时同时明确另一层为false，未指定的层保持当前状态。没有活动爆破模型时失败。',
+      input_schema: { type: 'object', properties: { holes: { type: 'boolean', description: '炮孔是否显示' }, pointcloud: { type: 'boolean', description: '爆后点云是否显示' } } } },
+    executor: async input => {
+      const action = 'set_blast_layers'
+      if ((input.holes === undefined && input.pointcloud === undefined) ||
+          ['holes', 'pointcloud'].some(key => input[key] !== undefined && typeof input[key] !== 'boolean')) {
+        return JSON.stringify({ ok: false, action, reason: '请明确至少一个图层的显示或隐藏状态，参数必须为布尔值' })
+      }
+      const model = getBlastModel()
+      if (!model?.ready || !model.show) return JSON.stringify({ ok: false, action, reason: '当前没有可操作的爆破模型，请先装配爆破场景或打开爆破专题页' })
+      const nodes = { holes: model.getNode('holes'), pointcloud: model.getNode('pointcloud') }
+      if (!nodes.holes || !nodes.pointcloud) return JSON.stringify({ ok: false, action, reason: '当前模型缺少独立炮孔或爆后点云节点，未修改图层' })
+      for (const key of ['holes', 'pointcloud'] as const) if (input[key] !== undefined) setBlastLayerVisible(key, input[key])
+      const status = hasTaskWorkflowController() ? getTaskWorkflowController().getStatus() : undefined
+      return JSON.stringify({ ok: true, action,
+        taskId: status?.lastCompletedStage?.assembledResourceIds.includes('blast.effect') ? status.taskId : undefined,
+        layers: { holes: nodes.holes.show, pointcloud: nodes.pointcloud.show } })
+    },
+  },
+  {
+    module: 'common',
+    tool: { name: 'retry_scene_load', description: '仅在装配返回recovery提示时，对同一失败任务重试一次临时网络加载；不修改里程、资源或组合。',
+      input_schema: { type: 'object', properties: { taskId: { type: 'string' } }, required: ['taskId'] } },
+    executor: async input => {
+      const controller = getTaskWorkflowController()
+      const before = controller.getStatus()
+      const ids = before.scenePlans.flatMap(plan => plan.resources)
+      if (before.taskId !== input.taskId || !canRetrySceneLoad(before) || ids.some(id => {
+        const state = resourceManager.getState(id)
+        return state.references > 0 || !['idle', 'failed'].includes(state.status)
+      })) throw new Error('当前任务不满足受控加载重试条件')
+      let status = await controller.retryFailed()
+      if (status.status !== 'failed' && status.status !== 'completed') status = (await dispatchValidatedWorkflow(controller, status)).status
+      const chainage = status.lastCompletedStage?.chainageRange.start
+      return JSON.stringify({ action: 'retry_scene_load', ok: status.status === 'completed', ...status,
+        targetMileage: chainage === undefined ? undefined : chainageService.format(chainage, 'YK'),
+        assembledResourceIds: status.lastCompletedStage?.assembledResourceIds ?? [],
+        ...(ids.includes('blast.design-data') ? { blastDesign: getBlastDesignSummary() } : {}),
+        reason: status.notice?.message })
+    },
+  },
+  {
+    module: 'common',
     tool: {
       name: 'assemble_scene_at_mileage',
       description: '主界面自主装配的单一入口：给出明确目标里程和要同屏装配的现有模型。平台校验 YK 中线目标与同屏规则，必要时将示例资产沿目标中线示意重定位，再按依赖顺序装配到主 Cesium 场景；返回实际资源与失败原因。无需再调用准备、推进或修订工具。',
@@ -105,7 +158,7 @@ export const workflowTools: ToolRegistration[] = [
           targetMileage: { type: 'string', description: '明确的目标里程，优先使用工地真实中线 YK，例如 YK1+346 或 YK2+244；旧 DK 可作为兼容输入，平台统一转换为 YK' },
           resourceIds: { type: 'array', minItems: 1, maxItems: 4,
             items: { type: 'string', enum: [...AGENT_SCENE_RESOURCES] },
-            description: '最终同屏资源。围岩解释四层源锚点为 YK2+244，四层互斥。单断面选 support.modeler-zz-va 等；在目标附近 50 m 每米交替装配 ZZ-Va 与 Z-PM 选 support.alternating-zz-va-z-pm。' },
+            description: '最终同屏资源。公共隧道由平台自动加载，无需列入。稳态通风与支护组合仅在 YK3+900～YK4+100 示意配准工段；支护单断面选 support.modeler-zz-va 等。围岩解释四层互斥。' },
           tunnelId: { type: 'string', description: '当前隧洞 ID，可省略' },
         },
         required: ['description', 'targetMileage', 'resourceIds'],
@@ -119,10 +172,19 @@ export const workflowTools: ToolRegistration[] = [
       const position = chainageService.positionWithHeadingAt(targetChainage)
       if (!position) throw new Error(`目标里程 ${targetMileage} 不在现有 YK 中线数据范围内`)
       const resourceIds = agentResourceIds(input.resourceIds)
+      const timeIssue = thermalRequestIssue(String(input.userRequest ?? ''))
+      if (timeIssue) throw new Error(timeIssue)
+      const requestedTimes = requestedThermalTimes(String(input.userRequest ?? ''))
+      const selectedSlices = thermalSnapshotCatalog.filter(snapshot => resourceIds.includes(snapshot.id))
+      if (input.userRequest !== undefined && selectedSlices.length &&
+          (!requestedTimes.length || selectedSlices.some(snapshot => !requestedTimes.includes(snapshot.time)))) {
+        throw new Error('所选热场时间片与用户指定时间不一致，请明确时间，不能自动取最近值')
+      }
       if (resourceIds.length < 1 || resourceIds.length > 4) throw new Error('单次场景装配需要 1–4 个模型资源')
       const controller = getTaskWorkflowController()
       const prepared = await controller.prepareScene({
         description: String(input.description ?? '').trim(), targetMileage, resourceIds,
+        enhanceAfterAssembly: true,
         assemblyModes: resourceIds.map((_, index) => index === 0 ? 'replace' : 'retain'),
         enhancementModes: resourceIds.map(() => 'auto'),
         tunnelId: input.tunnelId === undefined ? undefined : String(input.tunnelId),
@@ -134,6 +196,32 @@ export const workflowTools: ToolRegistration[] = [
       const viewer = viewerService.require()
       focusTunnelSegmentAt(targetChainage, viewer)
       const focusTarget = (assembled = false) => {
+        const drills = assembled && resourceIds.includes('rock.advance-drill') ? getActiveDrillModels() : []
+        if (drills.length && drills.every(model => model.ready)) {
+          setTunnelTranslucent(true, viewer)
+          viewer.camera.viewBoundingSphere(Cesium.BoundingSphere.fromBoundingSpheres(drills.map(model => model.boundingSphere)),
+            new Cesium.HeadingPitchRange(position.heading + 1.8, -0.3, 65))
+          viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
+          viewer.scene.requestRender()
+          return
+        }
+        const face = assembled && resourceIds.includes('rock.face-photos') ? getActiveFaceSlices().find(slice => slice.show) : undefined
+        const faceCenter = face?.position?.getValue(Cesium.JulianDate.now())
+        if (faceCenter) {
+          viewer.camera.viewBoundingSphere(new Cesium.BoundingSphere(faceCenter, 5), new Cesium.HeadingPitchRange(position.heading + Math.PI, -0.1, 24))
+          viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
+          viewer.scene.requestRender()
+          return
+        }
+        const blast = assembled && resourceIds.includes('blast.effect') ? getBlastModel() as Cesium.Model | undefined : undefined
+        const blastOffset = blast?.ready ? blastViewOffset('persp') : undefined
+        if (blast && blastOffset) {
+          setTunnelTranslucent(true, viewer)
+          viewer.camera.viewBoundingSphere(blast.boundingSphere, blastOffset)
+          viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY)
+          viewer.scene.requestRender()
+          return
+        }
         const support = assembled && resourceIds
           .map(id => id === ALTERNATING_SUPPORT_ID ? getActiveAlternatingSupportModel() : getActiveModelerSupportModel(id))
           .find((model): model is Cesium.Model => !!model?.ready)
@@ -157,11 +245,15 @@ export const workflowTools: ToolRegistration[] = [
       const outcome = await dispatchValidatedWorkflow(controller, prepared)
       if (outcome.ok) {
         focusTunnelSegmentAt(targetChainage, viewer)
-        focusTarget(true)
       }
       else clearFocusedTunnelSegment(viewer)
       return JSON.stringify({ action: 'assemble_scene_at_mileage', targetMileage, requestedMileage,
+        ...(!outcome.ok && canRetrySceneLoad(outcome.status) && resourceIds.every(id => {
+          const state = resourceManager.getState(id)
+          return state.references === 0 && ['idle', 'failed'].includes(state.status)
+        }) ? { recovery: { kind: 'retry-scene-load', taskId: outcome.status.taskId } } : {}),
         assembledResourceIds: outcome.status.lastCompletedStage?.assembledResourceIds ?? [],
+        ...(outcome.ok && resourceIds.includes('blast.design-data') ? { blastDesign: getBlastDesignSummary() } : {}),
         ...outcome, ...outcome.status,
         ...(outcome.ok && resourceIds.includes(ALTERNATING_SUPPORT_ID)
           ? { supportSpan: getActiveAlternatingSupportSpan() } : {}) })

@@ -162,6 +162,10 @@
       <h2>{{ agentAssembly.targetMileage }}</h2>
       <p>已沿中线定位，并装配以下模型：</p>
       <ul><li v-for="resource in agentAssembly.resources" :key="resource.id">{{ resource.label }}</li></ul>
+      <div v-if="agentAssembly.resources.some(resource => resource.id === 'blast.effect')" class="blast-layer-controls">
+        <label><input v-model="blastCloudVisible" type="checkbox" data-testid="blast-cloud-toggle"> 爆后点云</label>
+        <label><input v-model="blastHolesVisible" type="checkbox" data-testid="blast-holes-toggle"> 炮孔</label>
+      </div>
       <p v-if="agentAssembly.supportRange">支护范围 {{ agentAssembly.supportRange.start }}—{{ agentAssembly.supportRange.end }}<br>
         共 {{ agentAssembly.supportRange.sections }} 个断面：ZZ-Va {{ agentAssembly.supportRange.zzVa }}，Z-PM {{ agentAssembly.supportRange.zPm }}</p>
       <small>以实际加载结果为准；示例场景不代表工程质量结论。</small>
@@ -238,6 +242,11 @@
     <DispatchEquipment v-if="showDispatchEquipment" @close="showDispatchEquipment = false" />
     <DispatchGantt v-if="showDispatchGantt" @close="showDispatchGantt = false" />
 
+    <Design2DPanel v-if="agentAssembly && !activeScene && agentAssembly.resources.some(resource => resource.id === 'blast.design-data')"
+      :visible="true" style="left:20px;top:auto;bottom:64px;width:280px;max-height:42vh" />
+    <GPRRadargram v-for="resource in (agentAssembly && !activeScene ? agentAssembly.resources.filter(item => item.id.startsWith('rock.gpr-line')) : [])"
+      :key="resource.id" :task-dataset="getActiveGprSection(resource.id)" :initial-line="resource.id.endsWith('2') ? 2 : 1"
+      :initial-x="20" style="top:auto;bottom:64px;width:min(600px,calc(100% - 440px))" />
     <!-- 底部状态与进度栏（仅总览模式显示） -->
     <div v-if="agentAssembly && !activeScene" class="agent-assembly-bottom" aria-label="当前任务场景状态">
       <strong>{{ agentAssembly.targetMileage }}</strong>
@@ -303,6 +312,12 @@
 </template>
 
 <script setup lang="ts">
+import { viewerService } from '@/platform/viewer/ViewerService';
+import { registerSceneLayerController } from '@/ai-agent/SceneLayerBridge';
+import GPRRadargram from '@/components/SceneManagement/DZLDComponents/Modules/GPRRadargram.vue';
+import { getActiveGprSection } from '@/modules/rock/gpr-resources';
+import Design2DPanel from '@/views/tunnel-module/Design2DPanel.vue';
+import { setBlastLayerVisible, blastLayerVisibility } from '@/views/tunnel-module/blast';
 import { ref, reactive, computed, nextTick, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import * as Cesium from 'cesium'; // 引入 Cesium
@@ -343,7 +358,7 @@ import { createMileageRuler, getMileageRuler, destroyMileageRuler } from '@/util
 import { resourceManager } from '@/platform/resources/ResourceManager';
 import { chainageService } from '@/platform/coordinates/ChainageService';
 import { registerCommonResources } from '@/platform/resources/common';
-import { activateGeoModel, deactivateGeoModel, refreshActiveGeoVolume, loadRockModel, setRockModelVisible, loadJumboModel, removeJumboModel, mergeModelConfigsFromApi, setGeoModelDifferenceHighlight } from '@/utils/Common/GeoModelController';
+import { activateGeoModel, deactivateGeoModel, refreshActiveGeoVolume, loadRockModel, setRockModelVisible, loadJumboModel, setJumboModelVisible, removeJumboModel, mergeModelConfigsFromApi, setGeoModelDifferenceHighlight } from '@/utils/Common/GeoModelController';
 import { loadTerrain, unloadTerrain } from '@/utils/Maps/TerrainSource';
 import { addTunnelEntities, removeTunnelEntities } from '@/utils/Common/TunnelEntities';
 import { removeVectorField } from '@/utils/Common/WindVectorField';
@@ -368,7 +383,21 @@ const showGeophysicalVoxelWorkbench = ref(false);
 const showTaskWorkflow = ref(false);
 const agentAssembly = ref<{ targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }>;
   supportRange?: { start: string; end: string; sections: number; zzVa: number; zPm: number } } | null>(null);
-watch(agentAssembly, scene => { if (!scene) clearFocusedTunnelSegment(); });
+const blastCloudVisible = computed({ get: () => blastLayerVisibility.pointcloud, set: visible => setBlastLayerVisible('pointcloud', visible) });
+const blastHolesVisible = computed({ get: () => blastLayerVisibility.holes, set: visible => setBlastLayerVisible('holes', visible) });
+watch(agentAssembly, scene => {
+  if (!scene) clearFocusedTunnelSegment();
+  setWorksiteVisible(!scene && layerState.showModel);
+  setRockModelVisible(!scene && layerState.showRock);
+  setJumboModelVisible(!scene);
+  setCenterLineVisible(!scene && layerState.showModel);
+  const ruler = getMileageRuler();
+  if (scene) ruler?.hide(); else if (layerState.showMileageRuler) ruler?.show();
+  blastCloudVisible.value = true;
+  blastHolesVisible.value = !scene?.resources.some(resource => resource.id === 'ventilation.steady-cfd');
+  setBlastLayerVisible('pointcloud', blastCloudVisible.value);
+  setBlastLayerVisible('holes', blastHolesVisible.value);
+});
 const activeScene = ref<string | null>(null);
 const agentVolumeKey = computed(() => {
   if (activeScene.value) return null;
@@ -585,21 +614,27 @@ const keyNameMap: Record<string, string> = {
 
 // --- 辅助函数：安全获取 Viewer 实例 ---
 const getViewer = (): any => {
+  if (viewerService.current) return viewerService.current;
   if ((window as any).viewer) return (window as any).viewer;
   if (DTScopeEngine && (DTScopeEngine as any).viewer) return (DTScopeEngine as any).viewer;
   return null;
 };
 
 // ── 添加工点实体 ─────────────────────────────────────────
+const worksiteEntityIds = new Set<string>();
 const addWorksiteEntities = (viewer: any) => {
+  const currentIds = new Set(worksiteList.value.map(site => site.id));
+  for (const id of worksiteEntityIds) if (!currentIds.has(id)) { viewer.entities.removeById(id); worksiteEntityIds.delete(id); }
   worksiteList.value.forEach(site => {
+    worksiteEntityIds.add(site.id);
     const existing = viewer.entities.getById(site.id);
     if (existing) {
-      existing.show = true;
+      existing.show = !agentAssembly.value && layerState.showModel;
       return;
     }
     viewer.entities.add({
       id: site.id,
+      show: !agentAssembly.value && layerState.showModel,
       name: site.name,
       position: Cesium.Cartesian3.fromDegrees(site.lon, site.lat, site.height),
       point: {
@@ -625,16 +660,17 @@ const addWorksiteEntities = (viewer: any) => {
 };
 
 const removeWorksiteEntities = (viewer: any) => {
-  worksiteList.value.forEach(site => viewer.entities.removeById(site.id));
+  for (const id of worksiteEntityIds) viewer.entities.removeById(id);
+  worksiteEntityIds.clear();
 };
 
 // ── 工点显隐控制 ─────────────────────────────────────────
 const setWorksiteVisible = (show: boolean) => {
   const viewer = getViewer();
   if (!viewer) return;
-  worksiteList.value.forEach(site => {
-    const entity = viewer.entities.getById(site.id);
-    if (entity) entity.show = show;
+  worksiteEntityIds.forEach(id => {
+    const entity = viewer.entities.getById(id);
+    if (entity) entity.show = show && !agentAssembly.value;
   });
 };
 
@@ -1029,7 +1065,7 @@ const toggleRockModel = () => {
   if (layerState.showRock) {
     loadRockModel(getViewer());
   }
-  setRockModelVisible(layerState.showRock);
+  setRockModelVisible(!agentAssembly.value && layerState.showRock);
   getViewer()?.scene.requestRender();
 };
 
@@ -1252,7 +1288,7 @@ const handleBackToOverview = () => {
       // 确保在总览模式下，图层可见性与勾选框一致
       setCenterLineVisible(layerState.showModel);
       setTunnelGlbVisible(layerState.showTunnel);
-      setRockModelVisible(layerState.showRock);
+      setRockModelVisible(!agentAssembly.value && layerState.showRock);
       setWorksiteVisible(layerState.showModel);
     }
   });
@@ -1285,6 +1321,30 @@ async function loadApiData() {
   }
 }
 
+const releaseAgentLayerControl = registerSceneLayerController(async (layer, visible) => {
+  const viewer = getViewer();
+  if (!viewer || viewer.isDestroyed()) throw new Error('主场景尚未就绪');
+  if (activeScene.value) throw new Error('请先返回主场景再调整公共图层');
+  if (agentAssembly.value && visible && (layer === 'rock' || layer === 'centerline')) {
+    throw new Error('任务展示期间背景围岩和中线由场景管理，请先复位任务再显示');
+  }
+  if (layer === 'rock') {
+    if (visible) throw new Error('背景围岩显示尚不支持智能体控制，请使用页面模型入口');
+    layerState.showRock = false; setRockModelVisible(false);
+  } else if (layer === 'centerline') {
+    setCenterLineVisible(visible);
+  } else if (layer === 'tunnel') {
+    layerState.showTunnel = visible; toggleTunnelModel();
+  } else {
+    if (!viewer.imageryLayers.length) throw new Error('当前没有可控制的影像图层');
+    layerState.showMap = visible;
+    if (agentAssembly.value) viewer.imageryLayers.get(0).show = visible;
+    else toggleImagery();
+  }
+  viewer.scene.requestRender();
+  return visible;
+});
+
 onMounted(() => {
   updateTime();
   timer = setInterval(updateTime, 1000);
@@ -1305,6 +1365,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  releaseAgentLayerControl();
   clearFocusedTunnelSegment();
   clearInterval(timer);
   void resourceManager.release(['common.tunnel']);

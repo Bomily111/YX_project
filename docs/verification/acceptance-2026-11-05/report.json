@@ -1,0 +1,125 @@
+{
+  "cases": [
+    {
+      "id": "workface-support-drill",
+      "taskId": "scene-1793881831715-7rf8b",
+      "total": 4,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/ahd/ahd1/2320835.glb",
+        "/data/ahd/ahd2/2336197.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 8457
+    },
+    {
+      "id": "post-blast-airflow",
+      "taskId": "scene-1793881841146-m02tx",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/blast/blast_effect.glb",
+        "/data/ventilation/cfd_cell_data_lite.json",
+        "/data/ventilation/cfd_arrows.json"
+      ],
+      "elapsedMs": 7698
+    },
+    {
+      "id": "workface-radar",
+      "taskId": "scene-1793881851273-1riv9",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/data/GPR_new/output/radargram_line1.json"
+      ],
+      "elapsedMs": 8070
+    },
+    {
+      "id": "thermal-200",
+      "taskId": "scene-1793881861277-5usa3",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/cfd_transient_index.json",
+        "/data/ventilation/transient_thermal_monitors.json",
+        "/data/ventilation/cfd_transient_t200s.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 6984
+    },
+    {
+      "id": "fan-shutdown",
+      "taskId": "scene-1793881870734-b6kzh",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/transient_fan_shutdown.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 4463
+    },
+    {
+      "id": "design-only",
+      "taskId": "scene-1793881877023-nl9m8",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel000.glb",
+        "/data/blast/blast-design.json"
+      ],
+      "elapsedMs": 6315
+    },
+    {
+      "id": "rock-support",
+      "taskId": "scene-1793881886321-vqkqs",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "/data/tsp_actual/hardness.json",
+        "/data/tsp_actual/hardness_volume.png",
+        "/data/tunnel/tunnel000.glb"
+      ],
+      "elapsedMs": 33053
+    },
+    {
+      "id": "unavailable-time",
+      "rejected": true,
+      "previousScenePreserved": true,
+      "elapsedMs": 3242
+    },
+    {
+      "id": "incompatible-layers",
+      "rejected": true,
+      "previousScenePreserved": true,
+      "elapsedMs": 1489
+    },
+    {
+      "id": "repeat-at-new-station",
+      "taskId": "scene-1793881938603-o46vl",
+      "total": 4,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/ahd/ahd1/2320835.glb",
+        "/data/ahd/ahd2/2336197.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 6597
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 2382
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

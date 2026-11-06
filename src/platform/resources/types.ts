@@ -31,6 +31,8 @@ export interface EnhanceTarget {
 }
 
 export interface ResourceLoadContext {
+  /** Unified workflows postpone resource-owned camera presentation until construction completes. */
+  deferPresentation?: boolean
   viewer: Cesium.Viewer
   task?: TaskContext
   signal?: AbortSignal

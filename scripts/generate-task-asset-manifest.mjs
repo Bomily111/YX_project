@@ -23,6 +23,11 @@ const paths = [
   ...Array.from({ length: 17 }, (_, index) =>
     `/data/tunnel/tunnel${String(index).padStart(3, '0')}.glb`),
   '/data/blast/blast_effect.glb',
+  '/data/blast/blast-design.json',
+  '/data/ahd/ahd1/2320835.glb', '/data/ahd/ahd2/2336197.glb',
+  '/data/GPR_new/output/radargram_line1.json', '/data/GPR_new/output/radargram_line2.json',
+  ...['880_6', '885_4', '892_6', '900_0', '905_0'].map(value => `/data/face_sketch/X1DK2_${value}.jpg`),
+  ...['880_6', '885_4', '892_6', '900_0', '905_0'].map(value => `/data/face_sketch/X1DK2_${value}_clean.png`),
   ...[
     'tunnel-assembled.glb',
     'cfd_cell_data_lite.json', 'cfd_arrows.json', 'co_transport_results.json',

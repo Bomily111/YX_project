@@ -1,0 +1,25 @@
+{
+  "cases": [
+    {
+      "id": "rock-support",
+      "taskId": "scene-1793955432525-ol0rh",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "/data/tsp_actual/hardness.json",
+        "/data/tsp_actual/hardness_volume.png",
+        "/data/tunnel/tunnel000.glb"
+      ],
+      "elapsedMs": 7379
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 2921
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

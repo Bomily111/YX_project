@@ -11,7 +11,7 @@
 
 ## 当前样本和接入位置
 
-现有样本位于 `public/data/ventilation/`：`cfd_cell_data_lite.json` 有 6786 个计算点，`cfd_arrows.json` 有 208 条矢量。前者 `meta.n=6785` 与数组实际长度不符，校验只给提示，不删改原始采样。两份数据的原始纵向范围约 K3+805～K4+005，当前通过 `src/views/ventilation-module/spatialFrame.ts` 示意配准到 YK1+246～YK1+446，中心 YK1+346。
+现有样本位于 `public/data/ventilation/`：`cfd_cell_data_lite.json` 有 6786 个计算点，`cfd_arrows.json` 有 208 条矢量。前者 `meta.n=6785` 与数组实际长度不符，校验只给提示，不删改原始采样。两份数据的原始纵向范围约 K3+805～K4+005。通风专题页保留完整隧道 GLB 的原有示意展示；智能体组合场景只投影稳态风场到 YK3+900～YK4+100，并使用主页面隧道承载。该配准不代表目标工段实测风场。
 
 新文件接入时，在 `src/modules/ventilation/dataset-contract.ts` 的 `STEADY_DATASET_FILES` 选择文件，并在 `src/modules/ventilation/resources.ts` 注册实际使用的资产路径。若坐标系、模型或工段发生变化，同时更新 `spatialFrame.ts`、资源任务范围和来源提示；仅替换 JSON 不能保证 GLB 与流场重合。资产清单由 `scripts/generate-task-asset-manifest.mjs` 维护，以供任务快照记录文件版本。
 

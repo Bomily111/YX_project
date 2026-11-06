@@ -1,0 +1,25 @@
+{
+  "taskId": "scene-1793875687103-qwi0p",
+  "sliceState": {
+    "count": 1,
+    "visible": 1,
+    "walls": 1
+  },
+  "radar": {
+    "width": 580,
+    "height": 248,
+    "shades": 256
+  },
+  "status": "completed",
+  "loaded": [
+    "common.tunnel",
+    "rock.face-photos",
+    "rock.gpr-line1"
+  ],
+  "assets": [
+    "/data/face_sketch/X1DK2_880_6_clean.png",
+    "/data/GPR_new/output/radargram_line1.json"
+  ],
+  "chat": "👷\nYK2+244 掌子面前方雷达复核，请装配一张掌子面模型，并调出GPR测线1剖面同屏参考，不需要TSP、TEM或支护。\n🤖\n已定位 YK2+244，主场景装配完成：单掌子面模型 · 示意装配、GPR测线1 · 剖面参考。GPR为现有处理剖面参考，未建立与目标YK的测量对应，不将反射异常直接作为富水或破碎带结论。\n掌子面照片保留原始X1DK桩号和日期，仅作为资料参考，尚未建立与目标YK的测量对应；已按目标YK中线示意装配照片切片。\n👍\n👎",
+  "errors": []
+}

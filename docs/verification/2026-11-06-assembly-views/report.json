@@ -1,0 +1,33 @@
+{
+  "cases": [
+    {
+      "id": "post-blast-airflow",
+      "taskId": "scene-1793953466087-827gu",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/blast/blast_effect.glb",
+        "/data/ventilation/cfd_cell_data_lite.json",
+        "/data/ventilation/cfd_arrows.json"
+      ],
+      "elapsedMs": 3756
+    },
+    {
+      "id": "rock-support",
+      "taskId": "scene-1793953471022-ued9f",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "/data/tsp_actual/hardness.json",
+        "/data/tsp_actual/hardness_volume.png",
+        "/data/tunnel/tunnel000.glb"
+      ],
+      "elapsedMs": 5799
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "page.screenshot: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n"
+}

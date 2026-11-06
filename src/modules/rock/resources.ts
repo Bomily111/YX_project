@@ -1,4 +1,7 @@
 import * as Cesium from 'cesium'
+import { facePhotoResource } from '@/modules/face-sketch/resources'
+import { gprResources } from './gpr-resources'
+import { advanceDrillResource } from './drill-resource'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import { demoReanchorTransform } from '@/platform/coordinates/DemoReanchor'
 import type { TaskContext } from '@/platform/context/TaskContext'
@@ -186,7 +189,7 @@ export const rockInterpretationResources: SceneResource[] = interpretedRockLayer
       const target = context.task?.chainageRange.start
       const demoTransform = target !== undefined && (target < layer.range.start || target > layer.range.end)
         ? demoReanchorTransform(2244, target) : undefined
-      activateGeoModel(layer.key, context.viewer, undefined, demoTransform)
+      activateGeoModel(layer.key, context.viewer, undefined, demoTransform, !context.deferPresentation)
       await waitForGeoModelReady(layer.key)
     } catch (error) {
       if (getActiveGeoModelKey() === layer.key) {
@@ -203,7 +206,7 @@ export const rockInterpretationResources: SceneResource[] = interpretedRockLayer
   getActiveAssetPaths() { return getActiveGeoModelKey() === layer.key ? [layer.asset, layer.texture] : [] },
 }))
 
-export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources] as const
+export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources, facePhotoResource, ...gprResources, advanceDrillResource] as const
 
 export const rockModuleManifest: SceneModuleManifest = {
   id: 'rock',

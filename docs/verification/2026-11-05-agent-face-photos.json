@@ -1,0 +1,21 @@
+{
+  "taskId": "scene-1793874920691-i9k8k",
+  "sliceState": {
+    "count": 1,
+    "visible": 1,
+    "walls": 1
+  },
+  "status": "completed",
+  "loaded": [
+    "common.tunnel",
+    "rock.face-photos",
+    "support.modeler-zz-va"
+  ],
+  "assets": [
+    "/data/tunnel/tunnel002.glb",
+    "/data/face_sketch/X1DK2_880_6_clean.png",
+    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+  ],
+  "chat": "👷\nYK2+244 施工地质交底，请装配一张掌子面模型和ZZ-Va支护断面，查看掌子面支护关系，不要二维照片或多切片切换，也不需要TSP或TEM模型。\n🤖\n已定位 YK2+244，主场景装配完成：单掌子面模型 · 示意装配、新支护模块 ZZ-Va · 1 m 断面。掌子面照片保留原始X1DK桩号和日期，仅作为资料参考，尚未建立与目标YK的测量对应；已按目标YK中线示意装配照片切片。\n新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。\n👍\n👎",
+  "errors": []
+}

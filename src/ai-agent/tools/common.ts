@@ -2,6 +2,7 @@
 // 这些工具操作主 Cesium Viewer，放在 common 中全局可用
 
 import type { ToolRegistration } from '../types'
+import { changeSceneLayer } from '../SceneLayerBridge'
 import { aiEvents } from '../events'
 import { DTScopeEngine } from '@/utils/Common/Viewer'
 import { activateGeoModel } from '@/utils/Common/GeoModelController'
@@ -136,9 +137,12 @@ export const commonTools: ToolRegistration[] = [
       },
     },
     executor: async (input) => {
-      const { layer, visible } = input as { layer: string; visible: boolean }
-      // 实际项目中调用对应的图层控制函数
-      return `✅ ${visible ? '显示' : '隐藏'}图层：${layer}`
+      try {
+        const state = await changeSceneLayer(input.layer, input.visible)
+        return JSON.stringify({ ok: true, action: 'toggle_layer', ...state })
+      } catch (error) {
+        return JSON.stringify({ ok: false, action: 'toggle_layer', reason: error instanceof Error ? error.message : String(error) })
+      }
     },
   },
 ]

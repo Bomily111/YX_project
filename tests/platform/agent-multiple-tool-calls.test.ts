@@ -7,6 +7,57 @@ afterEach(() => {
   unregisterModule('common')
 })
 
+it('offers only existing blast layer control and rejects a model attempt to assemble or repeat it', async () => {
+  registerTools('common', ['set_blast_layers', 'assemble_scene_at_mileage'].map(name => ({
+    module: 'common', tool: { name, description: name, input_schema: { type: 'object' } }, executor: async () => '{}',
+  })))
+  let offered: string[] = []
+  vi.stubGlobal('fetch', vi.fn(async (_url, init) => {
+    offered = JSON.parse(String(init?.body)).tools.map((tool: { name: string }) => tool.name)
+    const events = ['set_blast_layers', 'assemble_scene_at_mileage', 'set_blast_layers'].flatMap((name, index) => [
+      { type: 'content_block_start', content_block: { type: 'tool_use', id: `call-${index}`, name } },
+      { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '{"holes":true,"pointcloud":false}' } },
+      { type: 'content_block_stop' },
+    ])
+    return new Response(events.map(event => `data: ${JSON.stringify(event)}\n\n`).join(''))
+  }))
+  const executed: string[] = []
+  await new AgentEngine().chat('只保留炮孔，隐藏爆后点云', { scene: 'blast' }, {
+    onText: () => {}, onComplete: () => {}, onError: error => { throw error },
+    onToolUse: async tool => { executed.push(tool.name); return JSON.stringify({ ok: true, action: tool.name }) },
+  })
+  expect(offered).toEqual(['set_blast_layers'])
+  expect(executed).toEqual(['set_blast_layers'])
+})
+
+it('offers only the exact failed-task retry on feedback and stops after one failed retry', async () => {
+  registerTools('common', ['assemble_scene_at_mileage', 'retry_scene_load'].map(name => ({
+    module: 'common', tool: { name, description: name, input_schema: { type: 'object' } }, executor: async () => '{}',
+  })))
+  const offered: string[][] = []
+  vi.stubGlobal('fetch', vi.fn(async (_url, init) => {
+    offered.push(JSON.parse(String(init?.body)).tools.map((tool: { name: string }) => tool.name))
+    const retry = offered.length > 1
+    const events = [
+      { type: 'content_block_start', content_block: { type: 'tool_use', id: `call-${offered.length}`, name: retry ? 'retry_scene_load' : 'assemble_scene_at_mileage' } },
+      { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: JSON.stringify(retry ? { taskId: 'failed-task' } : {}) } },
+      { type: 'content_block_stop' }, { type: 'message_stop' },
+    ]
+    return new Response(events.map(event => `data: ${JSON.stringify(event)}\n\n`).join(''))
+  }))
+  const executed: string[] = []
+  await new AgentEngine().chat('在YK1+346调出炮孔设计图', {}, {
+    onText: () => {}, onComplete: () => {}, onError: error => { throw error },
+    onToolUse: async tool => {
+      executed.push(tool.name)
+      return JSON.stringify({ ok: false, action: tool.name, taskId: 'failed-task',
+        recovery: { kind: 'retry-scene-load', taskId: 'failed-task' } })
+    },
+  }, 5)
+  expect(executed).toEqual(['assemble_scene_at_mileage', 'retry_scene_load'])
+  expect(offered).toEqual([['assemble_scene_at_mileage'], ['retry_scene_load']])
+})
+
 it('keeps multiple tool calls in one assistant turn with linked results', async () => {
   const events = [
     { type: 'content_block_start', content_block: { type: 'tool_use', id: 'call-1', name: 'first' } },

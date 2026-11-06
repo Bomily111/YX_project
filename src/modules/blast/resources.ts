@@ -1,10 +1,11 @@
 import type * as Cesium from 'cesium'
-import { chainageService } from '@/platform/coordinates/ChainageService'
 import type { SceneResource } from '@/platform/resources/types'
 import { moduleRegistry } from '@/platform/modules/ModuleRegistry'
 import type { SceneModuleManifest } from '@/platform/modules/types'
-import { getBlastModel, loadBlast, removeBlast, setBlastVisible } from '@/views/tunnel-module/blast'
+import { getBlastModel, loadBlast, placeBlastAtChainage, resetBlastTaskPlacement, removeBlast, setBlastVisible } from '@/views/tunnel-module/blast'
 import { registerCommonResources } from '@/platform/resources/common'
+import { setTunnelTranslucent } from '@/utils/Common/DrawLine'
+import { blastDesignResource } from './design-resource'
 
 let blastViewer: Cesium.Viewer | undefined
 
@@ -12,7 +13,7 @@ export const blastEffectResource: SceneResource = {
   id: 'blast.effect',
   module: 'blast',
   type: 'blast-effect',
-  chainageRange: { start: chainageService.legacyDkToCanonical(278330), end: chainageService.legacyDkToCanonical(278335) },
+  chainageRange: { start: 1116, end: 9400 },
   processes: ['drilling', 'charging', 'blasting', 'inspection'],
   states: ['designed', 'charged', 'blasted'],
   dependencies: ['common.tunnel'],
@@ -21,16 +22,32 @@ export const blastEffectResource: SceneResource = {
     blastViewer = context.viewer
     context.reportProgress?.(0.75, '加载爆破效果')
     await loadBlast(context.viewer)
+    const chainage = context.task?.chainageRange.start
+    if (chainage !== undefined) {
+      await placeBlastAtChainage(context.viewer, chainage)
+    }
     context.reportProgress?.(1, '爆破场景加载完成')
   },
-  async activate() {
-    if (blastViewer) setBlastVisible(blastViewer, true)
+  async activate(task) {
+    if (blastViewer) {
+      await placeBlastAtChainage(blastViewer, task.chainageRange.start)
+      setBlastVisible(blastViewer, true)
+    }
+  },
+  async update(task) {
+    if (blastViewer) await placeBlastAtChainage(blastViewer, task.chainageRange.start)
+  },
+  resetTaskPlacement() {
+    if (blastViewer) resetBlastTaskPlacement(blastViewer)
   },
   async deactivate() {
     if (blastViewer) setBlastVisible(blastViewer, false)
   },
   async unload() {
-    if (blastViewer) removeBlast(blastViewer)
+    if (blastViewer) {
+      setTunnelTranslucent(false, blastViewer)
+      removeBlast(blastViewer)
+    }
     blastViewer = undefined
   },
   getEnhanceTargets() {
@@ -44,7 +61,7 @@ export const blastEffectResource: SceneResource = {
   },
 }
 
-export const blastResources = [blastEffectResource] as const
+export const blastResources = [blastEffectResource, blastDesignResource] as const
 
 export const blastModuleManifest: SceneModuleManifest = {
   id: 'blast',

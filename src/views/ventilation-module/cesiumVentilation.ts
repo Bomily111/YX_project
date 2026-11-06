@@ -1,5 +1,5 @@
 import * as Cesium from 'cesium'
-import { VENTILATION_MODEL_MATRIX, ventilationPositionToWorld, ventilationVectorToWorld } from './spatialFrame'
+import { VENTILATION_MODEL_MATRIX, ventilationPositionToWorld, captureVentilationFrame } from './spatialFrame'
 
 export type ColorMode = 'velocity' | 'temperature'
 
@@ -54,7 +54,7 @@ interface Mapper {
   point(i: number): Cesium.Cartesian3
 }
 
-function createMapper(data: CfdData): Mapper {
+function createMapper(data: CfdData, toWorld: typeof ventilationPositionToWorld): Mapper {
   const gap = data.meta.x_gap ?? 20
   const left = data.x.filter(x => x <= gap)
   const right = data.x.filter(x => x > gap)
@@ -69,7 +69,7 @@ function createMapper(data: CfdData): Mapper {
       const mappedX = x <= gap
         ? remap(x, lx0, lx1, 26.5, 37.5)
         : remap(x, rx0, rx1, -5.5, 5.5)
-      return ventilationPositionToWorld(
+      return toWorld(
         new Cesium.Cartesian3(mappedX, remap(data.y[i], yMin, yMax, 0.2, 6.8), data.z[i]),
       )
     },
@@ -143,13 +143,18 @@ export function buildSteadyLayers(
   cells: CfdData,
   arrows: CfdData,
   mode: ColorMode,
+  tunnel: 'both' | 'right' = 'both',
 ) {
   removeFlowLayers(viewer)
-  const cellMapper = createMapper(cells)
-  const arrowMapper = createMapper(arrows)
+  const frame = captureVentilationFrame()
+  const ventilationPositionToWorld = frame.toWorld
+  const ventilationVectorToWorld = frame.vectorToWorld
+  const cellMapper = createMapper(cells, frame.toWorld)
+  const arrowMapper = createMapper(arrows, frame.toWorld)
 
   const points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection())
   for (let i = 0; i < cells.x.length; i++) {
+    if (tunnel === 'right' && cells.x[i] <= (cells.meta.x_gap ?? 20)) continue
     points.add({
       position: cellMapper.point(i),
       color: valueColor(mode, cells.vel[i], cells.temp[i], 0.72),
@@ -163,6 +168,7 @@ export function buildSteadyLayers(
   const lines = viewer.scene.primitives.add(new Cesium.PolylineCollection())
   const heads = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection())
   for (let i = 0; i < arrows.x.length; i++) {
+    if (tunnel === 'right' && arrows.x[i] <= (arrows.meta.x_gap ?? 20)) continue
     const start = arrowMapper.point(i)
     const velocity = Math.max(arrows.vel[i], 0.001)
     const direction = Cesium.Cartesian3.normalize(
@@ -185,7 +191,7 @@ export function buildSteadyLayers(
   const sampled = Array.from({ length: arrows.x.length }, (_, i) => i)
     .filter(i => arrows.vel[i] > 0.01)
     .sort((a, b) => arrows.z[a] - arrows.z[b])
-  for (const side of ['left', 'right'] as const) {
+  for (const side of (tunnel === 'right' ? ['right'] : ['left', 'right']) as Array<'left' | 'right'>) {
     const gap = arrows.meta.x_gap ?? 20
     const ids = sampled.filter(i => side === 'left' ? arrows.x[i] <= gap : arrows.x[i] > gap)
     for (let lane = 0; lane < 6; lane++) {
@@ -206,7 +212,7 @@ export function buildSteadyLayers(
   const particles = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection())
   layers.particleState = []
   for (let i = 0; i < 180; i++) {
-    const tube = Math.random() < 0.5 ? 'left' : 'right'
+    const tube = tunnel === 'right' || Math.random() >= 0.5 ? 'right' : 'left'
     const x = tube === 'left' ? 32 + (Math.random() - 0.5) * 10 : (Math.random() - 0.5) * 10
     const y = 0.5 + Math.random() * 5.8
     const point = particles.add({
@@ -238,11 +244,12 @@ export function recolorSteady(cells: CfdData, mode: ColorMode) {
   }
 }
 
-export function updateThermalPoints(viewer: Cesium.Viewer, data: CfdData) {
+export function updateThermalPoints(viewer: Cesium.Viewer, data: CfdData, tunnel: 'both' | 'right' = 'both') {
   if (layers.points) viewer.scene.primitives.remove(layers.points)
-  const mapper = createMapper(data)
+  const mapper = createMapper(data, captureVentilationFrame().toWorld)
   const points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection())
   for (let i = 0; i < data.x.length; i++) {
+    if (tunnel === 'right' && data.x[i] <= (data.meta.x_gap ?? 20)) continue
     points.add({
       position: mapper.point(i),
       color: temperatureColor(data.temp[i], 0.78),
@@ -253,6 +260,7 @@ export function updateThermalPoints(viewer: Cesium.Viewer, data: CfdData) {
   }
   layers.points = points
   viewer.scene.requestRender()
+  return points
 }
 
 export function setLayerVisible(name: 'points' | 'arrows' | 'streamlines' | 'particles', show: boolean) {
