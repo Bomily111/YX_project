@@ -1,0 +1,39 @@
+{
+  "cases": [
+    {
+      "id": "thermal-200",
+      "taskId": "scene-1794057835653-e2fzf",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/cfd_transient_index.json",
+        "/data/ventilation/transient_thermal_monitors.json",
+        "/data/ventilation/cfd_transient_t200s.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 5856,
+      "preflights": [
+        {
+          "request": "YK1+346只做装配预检：TSP坚硬度与TEM视电阻率能否同屏？不要执行。",
+          "compatible": false,
+          "reply": "🤖\n装配兼容性预检未通过：阶段 2 的资源不允许同屏装配：rock.tsp-hardness、rock.tem-resistivity。未加载模型或创建任务；尚未核验文件可读性和目标实测资料对应。\n👍\n👎",
+          "thermalSlicePreserved": true
+        },
+        {
+          "request": "YK1+346只做装配预检：岩体完整性与ZZ-Va支护能否同屏？不要执行。",
+          "compatible": true,
+          "reply": "🤖\n装配兼容性预检通过：YK1+346。未加载模型或创建任务；尚未核验文件可读性和目标实测资料对应。\n👍\n👎",
+          "thermalSlicePreserved": true
+        }
+      ]
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 3390
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

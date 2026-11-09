@@ -5,8 +5,10 @@ import type { Message, ToolUseBlock, AgentContext, AgentTool } from './types'
 import { getAgentConfig, getApiBase } from './config'
 import { getAllTools, getToolsForModule, executeTool } from './ToolRegistry'
 import { buildSystemPrompt } from './knowledge/prompts/system'
-import { blocksUnrevisedSceneAdvance, mustReviseAssemblyBeforeAdvance, wantsDirectSceneAssembly, wantsBlastLayerControl } from './AgentDispatchIntent'
+import { blocksUnrevisedSceneAdvance, mustReviseAssemblyBeforeAdvance, wantsDirectSceneAssembly, wantsBlastLayerControl, wantsTaskViewControl, wantsTaskCutControl, resolveClarifiedSceneRequest } from './AgentDispatchIntent'
 import { thermalRequestIssue } from '@/modules/ventilation/thermal-catalog'
+import { readSceneCapabilities } from './SceneCapabilities'
+import { wantsScenePreflight } from './AgentDispatchIntent'
 
 interface StreamCallbacks {
   onText: (delta: string) => void
@@ -107,6 +109,7 @@ async function sendChatRequest(
  * AgentEngine — 管理对话和工具调用循环
  */
 export class AgentEngine {
+  private pendingSceneRequest?: string
   private messages: Message[] = []
   private systemPrompt: string = ''
   private abortController: AbortController | null = null
@@ -129,6 +132,7 @@ export class AgentEngine {
 
   clearHistory(): void {
     this.messages = []
+    this.pendingSceneRequest = undefined
   }
 
   abort(): void {
@@ -159,21 +163,30 @@ export class AgentEngine {
         ? [...getToolsForModule('common'), ...getToolsForModule(context.scene)]
         : getAllTools()
       const availableTools = [...new Map(selectedTools.map(tool => [tool.name, tool])).values()]
-      const directSceneAssembly = wantsDirectSceneAssembly(userMessage)
+      const effectiveRequest = resolveClarifiedSceneRequest(userMessage, this.pendingSceneRequest)
+      this.pendingSceneRequest = undefined
+      const directSceneAssembly = wantsDirectSceneAssembly(effectiveRequest)
       const blastLayerControl = wantsBlastLayerControl(userMessage)
-      const timeIssue = directSceneAssembly ? thermalRequestIssue(userMessage) : undefined
+      const viewControl = wantsTaskViewControl(userMessage)
+      const cutControl = wantsTaskCutControl(userMessage)
+      const preflightControl = wantsScenePreflight(userMessage)
+      const timeIssue = directSceneAssembly ? thermalRequestIssue(effectiveRequest) : undefined
       if (timeIssue) {
         this.addMessage('assistant', timeIssue)
         callbacks.onText(timeIssue)
         callbacks.onComplete(timeIssue)
         return
       }
-      const tools = blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
+      const tools = preflightControl ? availableTools.filter(tool => tool.name === 'check_scene_assembly') : cutControl ? availableTools.filter(tool => tool.name === 'set_task_volume_cut') : viewControl ? availableTools.filter(tool => tool.name === 'set_task_view') : blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
         ? availableTools.filter(tool => tool.name === 'assemble_scene_at_mileage')
         : availableTools
 
       // 3. 构建增强的 system prompt（包含 RAG 上下文）
       let system = buildSystemPrompt(context, userMessage)
+      if (directSceneAssembly) {
+        const capabilities = readSceneCapabilities()
+        if (capabilities) system += `\n\n平台本轮实际注册能力（只读元数据核查）：${JSON.stringify(capabilities)}\n仅从上述资源选择。declaredRange是模块声明范围，可能是源资料范围，不能据此声称目标工段有实测资料或允许任意迁移；最终由装配校验判定。state仅是运行加载状态，不表示文件可读性或工程有效性。targetDataVerified=false表示尚未核验目标资料对应关系。`
+      }
 
       // 4. Agent 循环（最多 maxToolRounds 轮）
       let round = 0
@@ -203,11 +216,21 @@ export class AgentEngine {
           {
             onText: callbacks.onText,
             onToolUse: async (tool: ToolUseBlock) => {
+              if (tool.name === 'assemble_scene_at_mileage') tool.input = { ...tool.input, userRequest: effectiveRequest }
               hadToolUse = true
               let result: string
-              if ((directSceneAssembly || blastLayerControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
+              if ((directSceneAssembly || blastLayerControl || viewControl || cutControl || preflightControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
                 result = JSON.stringify({ ok: false, action: tool.name,
                   reason: '本轮场景工具调用已结束，后续调用已拒绝' })
+              } else if (preflightControl && tool.name !== 'check_scene_assembly') {
+                result = JSON.stringify({ ok: false, action: tool.name, reason: '只读预检不得执行装配或修改场景' })
+                stopAfterTool = true
+              } else if (cutControl && tool.name !== 'set_task_volume_cut') {
+                result = JSON.stringify({ ok: false, action: tool.name, reason: '剖切调整不得重新装配场景' })
+                stopAfterTool = true
+              } else if (!cutControl && viewControl && tool.name !== 'set_task_view') {
+                result = JSON.stringify({ ok: false, action: tool.name, reason: '视角调整不得重新装配场景' })
+                stopAfterTool = true
               } else if (blastLayerControl && tool.name !== 'set_blast_layers') {
                 result = JSON.stringify({ ok: false, action: tool.name, reason: '当前图层显示指令只允许调整已有爆破模型，不得创建任务或更改里程' })
                 stopAfterTool = true
@@ -234,7 +257,7 @@ export class AgentEngine {
                 result = await executeTool(tool.name, tool.input)
               }
               // Single-entry assembly already runs the validated workflow internally.
-              if (tool.name === 'assemble_scene_at_mileage' || tool.name === 'retry_scene_load' || tool.name === 'set_blast_layers') {
+              if (tool.name === 'assemble_scene_at_mileage' || tool.name === 'retry_scene_load' || tool.name === 'set_blast_layers' || tool.name === 'set_task_view' || tool.name === 'set_task_volume_cut' || tool.name === 'check_scene_assembly') {
                 stopAfterTool = true
                 assemblyReturnedThisRound = true
               }
@@ -292,6 +315,7 @@ export class AgentEngine {
         }
         if (stopAfterTool) break
         if (!hadToolUse) {
+          if (directSceneAssembly && /[？?]|请.*(?:明确|提供|选择|补充|确认)|需要.*(?:哪|什么)/.test(roundText)) this.pendingSceneRequest = effectiveRequest
           if (pendingTask && completionNudges < 1 && round < maxToolRounds) {
             completionNudges++
             // The model still decides whether to advance; the platform never auto-executes here.

@@ -6,6 +6,26 @@ afterEach(() => {
   vi.unstubAllGlobals()
   unregisterModule('common')
 })
+it('restricts preflight to a single read-only operation even if a model also asks to assemble', async () => {
+  registerTools('common', ['check_scene_assembly', 'assemble_scene_at_mileage'].map(name => ({ module: 'common', tool: { name, description: name, input_schema: { type: 'object' } }, executor: async () => '{}' })))
+  let offered: string[] = []
+  vi.stubGlobal('fetch', vi.fn(async (_url, init) => {
+    offered = JSON.parse(String(init?.body)).tools.map((tool: { name: string }) => tool.name)
+    const events = ['check_scene_assembly', 'assemble_scene_at_mileage'].flatMap((name, index) => [
+      { type: 'content_block_start', content_block: { type: 'tool_use', id: `preflight-${index}`, name } },
+      { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '{}' } },
+      { type: 'content_block_stop' },
+    ])
+    return new Response(events.map(event => `data: ${JSON.stringify(event)}\n\n`).join(''))
+  }))
+  const executed: string[] = []
+  await new AgentEngine().chat('YK1+346只做装配预检，检查能否同屏，不执行', {}, {
+    onText: () => {}, onComplete: () => {}, onError: error => { throw error },
+    onToolUse: async tool => { executed.push(tool.name); return '{}' },
+  })
+  expect(offered).toEqual(['check_scene_assembly'])
+  expect(executed).toEqual(['check_scene_assembly'])
+})
 
 it('offers only existing blast layer control and rejects a model attempt to assemble or repeat it', async () => {
   registerTools('common', ['set_blast_layers', 'assemble_scene_at_mileage'].map(name => ({

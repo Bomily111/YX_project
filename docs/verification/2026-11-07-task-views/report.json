@@ -1,0 +1,58 @@
+{
+  "cases": [
+    {
+      "id": "workface-support-drill",
+      "taskId": "scene-1794049625037-msyfc",
+      "total": 4,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/ahd/ahd1/2320835.glb",
+        "/data/ahd/ahd2/2336197.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 37909,
+      "viewChanges": [
+        {
+          "text": "拉近掌子面，查看近景",
+          "reply": "🤖\n已切换到掌子面近景视角，当前装配保持不变。\n👍\n👎",
+          "position": [
+            -475209.774183374,
+            5536148.608665286,
+            3126933.4149651662
+          ]
+        },
+        {
+          "text": "聚焦支护近景",
+          "reply": "🤖\n已切换到支护近景视角，当前装配保持不变。\n👍\n👎",
+          "position": [
+            -475160.7459491171,
+            5536147.155557969,
+            3126957.4934711065
+          ]
+        },
+        {
+          "text": "聚焦水平钻布置",
+          "reply": "🤖\n已切换到水平钻布置视角，当前装配保持不变。\n👍\n👎",
+          "position": [
+            -475246.9613841309,
+            5536148.001011939,
+            3126939.6563455644
+          ]
+        },
+        {
+          "text": "切换到整体布置视角",
+          "reply": "🤖\n已切换到整体布置视角，当前装配保持不变。\n👍\n👎",
+          "position": [
+            -475150.6897366951,
+            5536144.208869261,
+            3126975.315190187
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

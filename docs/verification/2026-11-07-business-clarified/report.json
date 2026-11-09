@@ -1,0 +1,19 @@
+{
+  "cases": [
+    {
+      "id": "business-clarified",
+      "taskId": "scene-1794052842316-tph3b",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tsp_actual/integrity.json",
+        "/data/tsp_actual/integrity_volume.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "/data/tunnel/tunnel002.glb"
+      ],
+      "elapsedMs": 41445
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

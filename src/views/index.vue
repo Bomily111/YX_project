@@ -162,12 +162,25 @@
       <h2>{{ agentAssembly.targetMileage }}</h2>
       <p>已沿中线定位，并装配以下模型：</p>
       <ul><li v-for="resource in agentAssembly.resources" :key="resource.id">{{ resource.label }}</li></ul>
+      <div class="task-view-controls" aria-label="任务场景视角">
+        <small>最近选择：{{ taskViewLabels[taskCameraSelection] }}</small>
+        <div class="task-view-buttons">
+          <button v-for="view in availableTaskViews" :key="view" type="button" :data-testid="`task-view-${view}`" :aria-pressed="taskCameraSelection === view" @click="chooseTaskView(view)">{{ taskViewLabels[view] }}</button>
+        </div>
+        <p v-if="taskViewError" role="alert">{{ taskViewError }}</p>
+      </div>
       <div v-if="agentAssembly.resources.some(resource => resource.id === 'blast.effect')" class="blast-layer-controls">
         <label><input v-model="blastCloudVisible" type="checkbox" data-testid="blast-cloud-toggle"> 爆后点云</label>
         <label><input v-model="blastHolesVisible" type="checkbox" data-testid="blast-holes-toggle"> 炮孔</label>
       </div>
       <p v-if="agentAssembly.supportRange">支护范围 {{ agentAssembly.supportRange.start }}—{{ agentAssembly.supportRange.end }}<br>
         共 {{ agentAssembly.supportRange.sections }} 个断面：ZZ-Va {{ agentAssembly.supportRange.zzVa }}，Z-PM {{ agentAssembly.supportRange.zPm }}</p>
+      <div v-if="agentAssembly.resources.some(resource => ['rock.tsp-hardness', 'rock.tsp-integrity'].includes(resource.id))" class="task-cut-controls">
+        <span data-testid="task-cut-status">{{ taskVolumeCutDisplay.enabled ? '解释体：剖切展示' : '解释体：完整范围' }}</span>
+        <button type="button" data-testid="task-cut-toggle" :disabled="!taskVolumeCutDisplay.available" @click="toggleTaskCut">{{ taskVolumeCutDisplay.enabled ? '恢复完整范围' : '开启展示剖切' }}</button>
+        <small>显示裁剪边界不是地质边界。</small>
+        <p v-if="taskCutError" role="alert">{{ taskCutError }}</p>
+      </div>
       <small>以实际加载结果为准；示例场景不代表工程质量结论。</small>
     </aside>
 
@@ -313,6 +326,9 @@
 
 <script setup lang="ts">
 import { viewerService } from '@/platform/viewer/ViewerService';
+import { taskCameraSelection, resetTaskCameraSelection, type TaskView } from '@/platform/tasks/TaskCameraView';
+import { executeTool } from '@/ai-agent/ToolRegistry';
+import { taskVolumeCutDisplay, setTaskVolumeCut } from '@/platform/tasks/TaskVolumeCut';
 import { registerSceneLayerController } from '@/ai-agent/SceneLayerBridge';
 import GPRRadargram from '@/components/SceneManagement/DZLDComponents/Modules/GPRRadargram.vue';
 import { getActiveGprSection } from '@/modules/rock/gpr-resources';
@@ -384,8 +400,31 @@ const showTaskWorkflow = ref(false);
 const agentAssembly = ref<{ targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }>;
   supportRange?: { start: string; end: string; sections: number; zzVa: number; zPm: number } } | null>(null);
 const blastCloudVisible = computed({ get: () => blastLayerVisibility.pointcloud, set: visible => setBlastLayerVisible('pointcloud', visible) });
+const taskViewError = ref('');
+const taskViewLabels = { auto: '自动取景', overview: '整体布置', face: '掌子面', support: '支护', drill: '水平钻', blast: '爆破断面' };
+const availableTaskViews = computed<TaskView[]>(() => {
+  const ids = agentAssembly.value?.resources.map(resource => resource.id) ?? [];
+  return (['overview', ...(ids.includes('rock.face-photos') ? ['face'] : []), ...(ids.some(id => id.startsWith('support.modeler-')) ? ['support'] : []), ...(ids.includes('rock.advance-drill') ? ['drill'] : []), ...(ids.includes('blast.effect') ? ['blast'] : [])] as TaskView[]);
+});
+async function chooseTaskView(view: TaskView) {
+  try {
+    const result = await executeTool('set_task_view', { view });
+    let parsed: any;
+    try { parsed = JSON.parse(result); } catch { throw new Error(result); }
+    if (!parsed.ok) throw new Error(parsed.reason || '当前任务视角不可用');
+    taskViewError.value = '';
+  } catch (error) { taskViewError.value = error instanceof Error ? error.message : String(error); }
+}
+const taskCutError = ref('');
+function toggleTaskCut() {
+  try { setTaskVolumeCut(!taskVolumeCutDisplay.value.enabled); taskCutError.value = ''; }
+  catch (error) { taskCutError.value = error instanceof Error ? error.message : String(error); }
+}
 const blastHolesVisible = computed({ get: () => blastLayerVisibility.holes, set: visible => setBlastLayerVisible('holes', visible) });
 watch(agentAssembly, scene => {
+  resetTaskCameraSelection();
+  taskViewError.value = '';
+  taskCutError.value = '';
   if (!scene) clearFocusedTunnelSegment();
   setWorksiteVisible(!scene && layerState.showModel);
   setRockModelVisible(!scene && layerState.showRock);
@@ -1763,6 +1802,13 @@ onBeforeUnmount(() => {
 .agent-assembly-info p, .agent-assembly-info small { color: #a9c8d8; font-size: 12px; line-height: 1.5; }
 .agent-assembly-info ul { margin: 10px 0 12px; padding-left: 20px; font-size: 13px; line-height: 1.8; }
 .agent-assembly-info li::marker { color: #00d4ff; }
+.task-cut-controls { display: grid; gap: 8px; margin: 12px 0; color: #bce8f4; font-size: 12px; }
+.task-view-controls { display: grid; gap: 6px; margin: 10px 0; }
+.task-view-buttons { display: flex; flex-wrap: wrap; gap: 5px; }
+.task-view-buttons button { padding: 5px 8px; color: #c9edff; background: #06314a; border: 1px solid #087caa; cursor: pointer; }
+.task-view-buttons button[aria-pressed="true"] { color: #001824; background: #53d8f0; }
+.task-cut-controls button { padding: 7px; border: 1px solid #087caa; background: #06314a; color: #d5f6ff; cursor: pointer; }
+.task-cut-controls button:disabled { opacity: .5; cursor: wait; }
 .agent-assembly-bottom {
   position: absolute; z-index: 10; bottom: 0; left: 20px; right: 380px;
   min-height: 46px; box-sizing: border-box; padding: 8px 18px;

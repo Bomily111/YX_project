@@ -12,6 +12,7 @@ import { blastViewOffset, getBlastModel } from '@/views/tunnel-module/blast'
 import { setTunnelTranslucent, focusTunnelSegmentAt, waitForTunnelGlbSegment } from '@/utils/Common/DrawLine'
 import { ventilationPositionToWorld, ventilationVectorToWorld } from '@/views/ventilation-module/spatialFrame'
 import { modelerSupportCatalog } from '@/modules/support/modeler-resources'
+import { continuousSupportCatalog, planContinuousSupport } from '@/modules/support/continuous-layout'
 import { ALTERNATING_SUPPORT_ID } from '@/modules/support/alternating-resource'
 import { transientScenarioCatalog } from '@/modules/ventilation/transient-catalog'
 import { thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
@@ -32,6 +33,7 @@ export const SCENE_EXPLORATION_RESOURCES = [
   ...transientScenarioCatalog.map(scenario => scenario.id),
   ...thermalSnapshotCatalog.map(snapshot => snapshot.id),
   ...modelerSupportCatalog.map(asset => asset.id),
+  ...continuousSupportCatalog.map(asset => asset.id),
   ALTERNATING_SUPPORT_ID,
 ] as const
 
@@ -349,6 +351,10 @@ export function createSceneExplorationExecutor(
     }
     if (finalize) planned.push({ ...planned[planned.length - 1], stepId: steps[steps.length - 1].stepId })
     return planned
+  }
+  for (const resource of resources) {
+    const continuous = continuousSupportCatalog.find(item => item.id === resource.id)
+    if (continuous) planContinuousSupport(options.targetChainage ?? task.chainageRange.start, continuous.length)
   }
   const scenePlans = buildScenePlans(assemblyStages)
   const resolve = (_action: string, step: TaskStep) => {

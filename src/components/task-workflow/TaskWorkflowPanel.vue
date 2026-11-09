@@ -622,28 +622,37 @@ const createTask = (): TaskContext => {
   }
 }
 
+const inspectSceneInput = (sceneInput: AgentSceneWorkflowInput) => {
+  const evidence = { targetDataVerified: false as const, filesVerified: false as const, resourceIds: [...sceneInput.resourceIds] }
+  try {
+    registerRockModule(); registerSupportModule(); registerBlastModule(); registerVentilationModule()
+    const target = sceneInput.targetMileage === undefined ? undefined : chainageService.toCanonicalChainage(sceneInput.targetMileage)
+    if (target !== undefined && !chainageService.positionWithHeadingAt(target)) throw new Error('目标里程不在现有中线范围内')
+    const task: TaskContext = { ...createTask(), taskId: 'scene-preflight', taskType: 'scene-exploration', description: sceneInput.description, targetTypes: ['scene'],
+      ...(target === undefined ? {} : { chainageRange: { start: target, end: target } }) }
+    const preview = createSceneExplorationExecutor(task, sceneInput.resourceIds, resourceRegistry, {
+      selector: new ResourceSelector(resourceRegistry), executor: new ScenePlanExecutor(resourceRegistry, resourceManager),
+      loadContext: { viewer: viewerService.require() }, targetChainage: target,
+      assemblyModes: sceneInput.assemblyModes, enhancementModes: sceneInput.enhancementModes,
+    })
+    return { ...evidence, compatible: true as const, loadOrder: [...new Set(preview.scenePlans.flatMap(plan => plan.loadOrder))], warnings: [...new Set(preview.scenePlans.flatMap(plan => plan.warnings))] }
+  } catch (error) { return { ...evidence, compatible: false as const, reason: error instanceof Error ? error.message : String(error) } }
+}
+
 const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?: AgentSceneWorkflowInput): Promise<void> => {
   if (busy.value) return
   busy.value = true
   notice.value = undefined
   auditError.value = ''
   assetVersionWarning.value = ''
-  selectedTransientScenario.value = 'fan_ramp_up'
-  selectedThermalFile.value = ''
   try {
     // Reject invalid replacement requests before rolling back the valid scene.
     if (sceneInput) {
-      registerRockModule(); registerSupportModule(); registerBlastModule(); registerVentilationModule()
-      const target = sceneInput.targetMileage === undefined ? undefined : chainageService.toCanonicalChainage(sceneInput.targetMileage)
-      const validationTask: TaskContext = { ...createTask(), taskId: 'scene-preflight', taskType: 'scene-exploration',
-        description: sceneInput.description, targetTypes: ['scene'],
-        ...(target === undefined ? {} : { chainageRange: { start: target, end: target } }) }
-      createSceneExplorationExecutor(validationTask, sceneInput.resourceIds, resourceRegistry, {
-        selector: new ResourceSelector(resourceRegistry), executor: new ScenePlanExecutor(resourceRegistry, resourceManager),
-        loadContext: { viewer: viewerService.require() }, targetChainage: target,
-        assemblyModes: sceneInput.assemblyModes, enhancementModes: sceneInput.enhancementModes,
-      })
+      const preflight = inspectSceneInput(sceneInput)
+      if (preflight.compatible === false) throw new Error(preflight.reason)
     }
+    selectedTransientScenario.value = 'fan_ramp_up'
+    selectedThermalFile.value = ''
     await exitHistoryPreview()
     if (sceneInput) form.description = sceneInput.description
     if (executor.value) await executor.value.reset()
@@ -953,6 +962,7 @@ onMounted(() => {
   unregisterTaskController = registerTaskWorkflowController({
     prepare: prepareFromAgent,
     prepareScene: prepareSceneFromAgent,
+    inspectScene: inspectSceneInput,
     reviseSceneAssembly: reviseSceneAssemblyFromAgent,
     executeNext: async () => { await executeNext('agent'); return getAgentStatus() },
     runAll: async () => { await runAll('agent'); return getAgentStatus() },

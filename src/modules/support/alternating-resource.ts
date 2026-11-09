@@ -34,7 +34,7 @@ export function supportAssemblySpanAt(chainage: number): { index: number; start:
   return { index: segment.index, start, end: start + SUPPORT_WINDOW_LENGTH }
 }
 
-function preparedMeshes(root: THREE.Group, type: keyof typeof urls): THREE.Mesh[] {
+export function preparedMeshes(root: THREE.Group, type: keyof typeof urls): THREE.Mesh[] {
   root.updateMatrixWorld(true)
   const buckets = new Map<THREE.Material, THREE.BufferGeometry[]>()
   root.traverse(object => {

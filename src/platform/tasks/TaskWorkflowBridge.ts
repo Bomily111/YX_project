@@ -34,6 +34,7 @@ export interface AgentTaskWorkflowStatus {
 }
 
 export interface TaskWorkflowController {
+  inspectScene?(input: AgentSceneWorkflowInput): { compatible: boolean; targetDataVerified: false; filesVerified: false; reason?: string; resourceIds: string[]; loadOrder?: string[]; warnings?: string[] }
   prepare(input: AgentTaskWorkflowInput): Promise<AgentTaskWorkflowStatus>
   prepareScene(input: AgentSceneWorkflowInput): Promise<AgentTaskWorkflowStatus>
   reviseSceneAssembly(input: { taskId: string; stepId: string; mode: string }): Promise<AgentTaskWorkflowStatus>

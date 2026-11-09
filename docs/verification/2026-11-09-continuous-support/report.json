@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "id": "continuous-support",
+      "taskId": "scene-1794203044280-0ovi5",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "/data/tunnel/tunnel002.glb"
+      ],
+      "elapsedMs": 16844,
+      "segment": {
+        "ready": true,
+        "radius": 16.55376204317464,
+        "metadata": {
+          "supportType": "ZZ-Va",
+          "startChainage": 2244,
+          "endChainage": 2264,
+          "lengthM": 20,
+          "sectionCount": 20,
+          "sourceUnitLengthM": 1,
+          "internalEndCapsRemoved": true,
+          "placement": "demonstration",
+          "source": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        }
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 4070
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

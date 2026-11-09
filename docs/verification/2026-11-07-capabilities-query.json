@@ -1,0 +1,8 @@
+{
+  "errors": [],
+  "passed": true,
+  "reply": "🤖\n已核查平台注册资源目录（仅代表能力已接入，未核验文件可读性与目标工段实测对应）：\n\n围岩与地质\n- 设计分级 rock.design-grade（YK1+116～YK9+400）\n- 物探融合分级 rock.geophysical-grade、TSP 坚硬度/完整度/纵波/横波/波速比/异常解释（rock.tsp-*）、TEM 视电阻率/富水解释（rock.tem-*）：声明范围集中在 YK2+244～YK2+344（TEM 至 YK2+303），源锚点 YK2+244，属示意重定位；四类物探解释体共享单个体渲染入口，不能同屏堆叠，比较需分阶段 replace。\n- 掌子面模型 rock.face-photos（单张限制，示例纹理来源 X1DK2+880.6，非目标里程实测）\n- 雷达剖面 rock.gpr-line1 / line2（两条现成处理剖面，需指定测线；不是已配准三维异常体）\n- 超前水平钻示例 rock.advance-drill（复用两份 GLB，不含钻进岩性、出水量、钻孔日志）\n\n爆破\n- blast.design-data（二维炮孔设计图、分类数量、方案参数，逐孔姿态含经验值）\n- blast.effect（同一 GLB 含炮孔与约 45 万点爆后点云，可分层开关）\n\n通风（声明范围 YK3+900～YK4+100）\n- 稳态风场 ventilation.steady-cfd（风向箭头、流线、动态粒子；原始局部里程 K3+805～K4+005，属异工点空间投影）\n- 一维网络工况：transient-network（风机爬升）、fan-oscillation、damper-close、fan-shutdown、combined\n- 热场：thermal-field（出口温度历程）与 0/100/200/300/400/600/800/1000 s 时间片（稳态解+指数松弛近似，完整瞬态 CFD 待重跑）\n- CO 扩散分析 ventilation.co-analysis（分析图表，非实时监测）\n\n支护\n- 新支护模块已导出单断面：ZZ-II、III、IIIX、IVa、IVb、IVc、IVsx、IVx、QJSX、S、VSX、Y1、Va（support.modeler-zz-*），均为 1 m 模板，参数不可由智能体修改；旧结构树支护已退役。\n- support.alternating-zz-va-z-pm：目标附近 50 m 的 ZZ-Va 与 Z-PM 交替测试组合，Z-PM 仅含二衬及 N1–N7 钢筋，非完整支护体系。\n\n共性限制：注册存在、声明范围与 idle 状态不代表文件存在或目标工段有实测资料；示例资产只能沿目标 YK 中线示意重定位，装配结果不能作为目标工点实测或工程结论。需要装配时请给出明确目标里程和观察对象。\n👍\n👎",
+  "capabilityCount": 46,
+  "loadedResourcesUnchanged": true,
+  "tasksCreated": 0
+}

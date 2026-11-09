@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { routeWorkflowToolCall, wantsTaskExecution, wantsDirectSceneAssembly, wantsBlastLayerControl, mustReviseAssemblyBeforeAdvance, blocksUnrevisedSceneAdvance } from '@/ai-agent/AgentDispatchIntent'
 
 describe('agent dispatch intent gate', () => {
+  it('recognizes business preparation while leaving how-to questions conversational', () => {
+    expect(wantsDirectSceneAssembly('目前平台支持哪些模型和资料，先不要装配')).toBe(false)
+    expect(wantsDirectSceneAssembly('准备YK1+346施工交底场景，说明岩体完整性与ZZ-Va支护关系')).toBe(true)
+    expect(wantsDirectSceneAssembly('如何准备支护交底场景')).toBe(false)
+  })
   it.each(['只保留炮孔，隐藏爆后点云', '显示爆后点云', '关闭炮孔', '恢复炮孔和爆后点云显示'])('routes existing blast layer changes without reassembly: %s', message => {
     expect(wantsBlastLayerControl(message)).toBe(true)
     expect(wantsDirectSceneAssembly(message)).toBe(false)

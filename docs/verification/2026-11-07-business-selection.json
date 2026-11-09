@@ -1,0 +1,452 @@
+{
+  "scope": "AgentEngine input guards plus real online model selection; tool execution intercepted; not assembly acceptance",
+  "passed": 21,
+  "total": 21,
+  "results": [
+    {
+      "id": "business-support-detail",
+      "request": "准备YK1+346的ZZ-Va支护交底场景，重点核对断面构件的位置关系。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "ZZ-Va支护交底：核对断面构件位置关系",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "support.modeler-zz-va"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "support.modeler-zz-va",
+                "reason": "核对ZZ-Va单断面各构件的位置关系"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "business-rock-support",
+      "request": "准备YK1+346施工交底场景，说明前方岩体完整性与ZZ-Va支护的空间关系。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "施工交底：前方岩体完整性与ZZ-Va支护空间关系",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "rock.tsp-integrity",
+              "support.modeler-zz-va"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "rock.tsp-integrity",
+                "reason": "展示前方岩体完整性解释体，用于说明围岩完整性变化"
+              },
+              {
+                "resourceId": "support.modeler-zz-va",
+                "reason": "展示ZZ-Va单断面支护组合，用于核对与围岩完整性的空间关系"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "business-design",
+      "request": "准备YK1+346钻孔施工交底，核对炮眼布置和本循环进尺。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "钻孔施工交底：核对炮眼布置与本循环进尺",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "blast.design-data"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "blast.design-data",
+                "reason": "提供炮孔二维设计图、炮孔分类数量与设计循环进尺参数，用于核对炮眼布置和本循环进尺"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "business-outline",
+      "request": "准备YK1+346开挖效果复核场景，查看扫描得到的开挖轮廓。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "YK1+346 开挖效果复核：查看扫描得到的开挖轮廓",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "blast.effect"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "blast.effect",
+                "reason": "提供爆后扫描点云，用于查看实际开挖轮廓"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "business-air-direction",
+      "request": "准备YK4+000通风交底场景，看看空气流动方向。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "通风交底：查看空气流动方向（风向矢量与流线）",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.steady-cfd"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "ventilation.steady-cfd",
+                "reason": "通风交底需查看空气流动方向，稳态风场提供风向箭头、流线与风速分布"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "business-unclear",
+      "request": "准备YK2+244初期支护交底场景。",
+      "passed": true,
+      "calls": [],
+      "text": "需要先确认两点，才能装配：\n\n1. 本次交底主要核对什么——某个断面（如 ZZ-Va）的构件位置关系，还是连续作业段的支护布置衔接？\n2. 支护类型是哪种（如 ZZ-Va、ZZ-IVa 等）？\n\n请补充后我再调取对应资源。"
+    },
+    {
+      "id": "face-not-default-support",
+      "request": "YK1+346 初期支护交底，查看既有ZZ-Va支护断面。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "初期支护交底：查看既有 ZZ-Va 支护断面",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "support.modeler-zz-va"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "support.modeler-zz-va",
+                "reason": "交底需核对 ZZ-Va 单断面支护构件布置"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "face-context-only",
+      "request": "YK2+244 掌子面超前地质预报交底，查看前方岩体完整性变化。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "掌子面超前地质预报交底：查看前方岩体完整性变化",
+            "targetMileage": "YK2+244",
+            "resourceIds": [
+              "rock.tsp-integrity"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "rock.tsp-integrity",
+                "reason": "超前地质预报交底需观察掌子面前方岩体完整性变化，选用TSP完整度解释体"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "face-not-default-gpr",
+      "request": "YK2+244 雷达复核，查看GPR测线1处理剖面。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "雷达复核：查看GPR测线1处理剖面",
+            "targetMileage": "YK2+244",
+            "resourceIds": [
+              "rock.gpr-line1"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "rock.gpr-line1",
+                "reason": "用户明确要求查看GPR测线1的处理剖面，用于雷达复核"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "face-photo-needed",
+      "request": "YK2+244 施工交底，需要用掌子面照片观察岩面，请装配掌子面模型。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "施工交底：掌子面岩面观察",
+            "targetMileage": "YK2+244",
+            "resourceIds": [
+              "rock.face-photos"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "rock.face-photos",
+                "reason": "任务需通过掌子面照片观察岩面，装配一张掌子面模型"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "thermal-200",
+      "request": "YK4+000 展示模拟200秒时的右洞温度场。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "查看模拟200秒时右洞温度场",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.thermal-t200s"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "ventilation.thermal-t200s",
+                "reason": "用户明确指定模拟200秒时刻，展示右洞温度点与出口温度历程"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "thermal-minutes",
+      "request": "YK4+000 查看热场模拟10分钟时的温度分布。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "查看热场模拟10分钟（600秒）时的温度分布",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.thermal-t600s"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "ventilation.thermal-t600s",
+                "reason": "用户指定模拟10分钟即600秒，选用对应时间片展示右洞温度点与出口温度历程"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "thermal-unavailable",
+      "request": "YK4+000 查看模拟250秒时的温度场。",
+      "passed": true,
+      "calls": [],
+      "text": "当前没有模拟 250 秒的热场时间片。现有时间为 0、100、200、300、400、600、800、1000 秒，请指定一个现有时间；平台不会自动取最近值。"
+    },
+    {
+      "id": "design-only",
+      "request": "YK1+346 炮孔施工交底，调出二维设计图，核对分类数量和进尺，不需要爆后点云。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "炮孔施工交底：二维炮孔设计图，核对炮孔分类数量与本循环进尺",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "blast.design-data"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "blast.design-data",
+                "reason": "提供二维炮孔设计图、炮孔分类数量与设计进尺参数，用于交底核对"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "post-blast",
+      "request": "YK1+346 爆后复核，请展示扫描点云和炮孔，不用二维设计图。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "爆后复核：扫描点云与炮孔对照（不含二维设计图）",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "blast.effect"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "blast.effect",
+                "reason": "爆后复核需查看扫描点云与炮孔布置，该资源同时包含 holes 与 pointcloud 两层"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "design-compare",
+      "request": "YK1+346 施工交底，把炮孔设计图和爆后点云同屏对照。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "爆破施工交底：炮孔设计图与爆后点云同屏对照",
+            "targetMileage": "YK1+346",
+            "resourceIds": [
+              "blast.design-data",
+              "blast.effect"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "blast.design-data",
+                "reason": "提供炮孔二维设计图、炮孔分类数量与设计进尺，用于交底核对"
+              },
+              {
+                "resourceId": "blast.effect",
+                "reason": "提供爆后扫描点云，与设计炮孔布置对照"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "airflow-review",
+      "request": "YK4+000 爆后通风复核，请同屏看右洞流线与爆后点云，不用设计图和CO分析。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "YK4+000 爆后通风复核：右洞流线与爆后点云同屏对照",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.steady-cfd",
+              "blast.effect"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "ventilation.steady-cfd",
+                "reason": "查看右洞风向矢量、流线与风速分布，用于爆后通风复核"
+              },
+              {
+                "resourceId": "blast.effect",
+                "reason": "查看爆后扫描点云，与通风流线同屏对照"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "co-review",
+      "request": "YK4+000 爆后通风复核，调出CO浓度随时间变化的分析曲线，不需要三维风流或爆后点云。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "assemble_scene_at_mileage",
+          "input": {
+            "description": "YK4+000 爆后通风复核：查看CO浓度随时间变化分析曲线",
+            "targetMileage": "YK4+000",
+            "resourceIds": [
+              "ventilation.co-analysis"
+            ],
+            "resourceReasons": [
+              {
+                "resourceId": "ventilation.co-analysis",
+                "reason": "爆后通风复核需查看CO浓度—时间分析曲线；按要求不加载三维风流与爆后点云"
+              }
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "plan-only",
+      "request": "先给我YK1+346炮孔二维设计与爆后点云对照的场景计划，暂不执行。",
+      "passed": true,
+      "calls": [
+        {
+          "name": "compose_scene_workflow",
+          "input": {
+            "description": "YK1+346 爆破施工交底：炮孔二维设计与爆后点云对照",
+            "resourceIds": [
+              "blast.design-data",
+              "blast.effect"
+            ]
+          }
+        }
+      ],
+      "text": ""
+    },
+    {
+      "id": "missing-mileage",
+      "request": "调出炮孔二维设计图和循环进尺。",
+      "passed": true,
+      "calls": [],
+      "text": "请提供目标里程（真实中线 YK，例如 YK1+346），我才能调出该处的炮孔二维设计图与循环进尺信息。"
+    },
+    {
+      "id": "ambiguous-target",
+      "request": "YK1+346或YK4+000做爆后复核，帮我调出点云。",
+      "passed": true,
+      "calls": [],
+      "text": "您给了两个候选里程，需要先确认一个目标里程：YK1+346 还是 YK4+000？确认后我再调出爆后扫描点云。"
+    }
+  ]
+}

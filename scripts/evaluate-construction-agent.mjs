@@ -10,6 +10,14 @@ try {
   await page.route(`${app}/api/**`, route => { const url = new URL(route.request().url()); url.port = '3000'; return route.continue({ url: url.toString() }) })
   await page.goto(app, { waitUntil: 'domcontentloaded' })
   await page.locator('.agent-fab').waitFor()
+  const capabilityCheck = await page.evaluate(async () => {
+    const { readSceneCapabilities } = await import('/src/ai-agent/SceneCapabilities.ts')
+    const { resourceManager } = await import('/src/platform/resources/ResourceManager.ts')
+    const loaded = () => resourceManager.listStates().filter(state => state.status === 'loaded').map(state => state.id).sort()
+    const before = loaded(), report = readSceneCapabilities(), after = loaded()
+    if (!report?.resources.length || report.targetDataVerified !== false || JSON.stringify(before) !== JSON.stringify(after)) throw new Error('Capability inspection was unavailable or changed loaded resources')
+    return { resources: report.resources.length, targetDataVerified: report.targetDataVerified, loadedResourcesUnchanged: true }
+  })
   const results = []
   for (const entry of cases) {
     const result = await page.evaluate(async entry => {
@@ -26,14 +34,16 @@ try {
     }, entry)
     const expected = [...(entry.resources || [])].sort()
     const actual = [...(result.calls[0]?.input.resourceIds || [])].sort()
-    const passed = !result.error && (entry.clarify ? result.calls.length === 0 && /里程|YK|工点|时间|秒|时间片/.test(result.text)
+    const passed = !result.error && (entry.clarify ? result.calls.length === 0 && /里程|YK|工点|时间|秒|时间片|重点|断面|支护|类型/.test(result.text)
       : result.calls.length === 1 && result.calls[0].name === (entry.planOnly ? 'compose_scene_workflow' : 'assemble_scene_at_mileage') &&
         JSON.stringify(actual) === JSON.stringify(expected))
-    results.push({ id: entry.id, request: entry.request, passed, ...result })
-    console.log(`${passed ? 'PASS' : 'FAIL'} ${entry.id}`)
+    const reasons = result.calls[0]?.input.resourceReasons
+    const reasonsValid = !entry.id.startsWith('business-') || entry.clarify || (Array.isArray(reasons) && expected.every(id => reasons.some(item => item.resourceId === id && typeof item.reason === 'string' && item.reason.trim())))
+    results.push({ id: entry.id, request: entry.request, passed: passed && reasonsValid, ...result })
+    console.log(`${passed && reasonsValid ? 'PASS' : 'FAIL'} ${entry.id}`)
   }
   const report = { scope: 'AgentEngine input guards plus real online model selection; tool execution intercepted; not assembly acceptance',
-    passed: results.filter(result => result.passed).length, total: results.length, results }
+    capabilityCheck, passed: results.filter(result => result.passed).length, total: results.length, results }
   await writeFile('docs/verification/2026-11-05-construction-agent-eval.json', JSON.stringify(report, null, 2))
   if (report.passed !== report.total) process.exitCode = 1
 } finally { await browser.close() }

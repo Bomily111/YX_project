@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "id": "rock-support",
+      "taskId": "scene-1794050002577-cnt71",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "/data/tsp_actual/hardness.json",
+        "/data/tsp_actual/hardness_volume.png",
+        "/data/tunnel/tunnel000.glb"
+      ],
+      "elapsedMs": 7667
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "locator.isEnabled: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.send-btn')\u001b[22m\n"
+}

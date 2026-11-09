@@ -1,0 +1,2 @@
+Reference: D:/研/周报/2026/周报_1108 _敖圣博.doc converted read-only to reference.docx.
+A4 595.3x841.9pt; margins top/bottom72 left/right90pt. Preserve original title, table grid, header metadata, author red line, review and signature fields. Body row rewritten for November 8 progress, with three actual screenshots. Original retained unchanged. Body uses Song 12pt; captions10.5pt. Page breaks before result sections 2 and 3. Word export PDF used because bundled renderer requires unavailable LibreOffice on this Windows host.

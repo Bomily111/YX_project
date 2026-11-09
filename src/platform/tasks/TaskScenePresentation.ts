@@ -12,7 +12,7 @@ export const taskPresentationProfile = (ids: readonly string[]) => ({
   theme: 'task-focus',
   volumeCut: ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.')) ? { xmax: 0.5, ymin: 0.2 } : undefined,
   view: ids.some(id => /^rock\.(tsp-|tem-|geophysical-grade)/.test(id)) ? 'geophysical-context' : ids.includes('ventilation.steady-cfd') ? 'airflow-context' : 'component-detail',
-  tunnelOpacity: ids.includes('rock.face-photos') ? 0.06 : ids.includes('rock.advance-drill') || ids.includes('blast.effect') ||
+  tunnelOpacity: ids.includes('rock.face-photos') || ids.some(id => id.startsWith('support.modeler-continuous-')) ? 0.06 : ids.includes('rock.advance-drill') || ids.includes('blast.effect') ||
     (ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.'))) ? 0.12 : undefined,
 })
 export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chainage: number): () => void {
@@ -67,7 +67,8 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
     }
     const geophysical = profile.view === 'geophysical-context'
     const airflow = ids.includes('ventilation.steady-cfd')
-    const range = geophysical ? 160 : airflow ? 170 : drills.length ? 65 : face ? 24 : blast ? 22 : spheres.length ? 42 : 220
+    const supportRange = spheres.length ? Math.max(42, C.BoundingSphere.fromBoundingSpheres(spheres).radius * 3) : 42
+    const range = geophysical ? 160 : airflow ? 170 : drills.length ? 65 : face ? 24 : blast ? 22 : spheres.length ? supportRange : 220
     if (geophysical || airflow) {
       // The interpreted volume extends ahead of the task section; a support
       // detail camera would otherwise sit inside it and hide the assembly.
@@ -78,7 +79,7 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
     else if (drills.length) viewer.camera.viewBoundingSphere(C.BoundingSphere.fromBoundingSpheres(spheres), new C.HeadingPitchRange(station.heading + Math.PI - 0.7, -0.3, 65))
     else if (face?.position) viewer.camera.viewBoundingSphere(new C.BoundingSphere(face.position.getValue(C.JulianDate.now()), 6), new C.HeadingPitchRange(station.heading + Math.PI, -0.1, 24))
     else if (blast?.ready) viewer.camera.viewBoundingSphere(blast.boundingSphere, blastViewOffset('persp'))
-    else if (spheres.length) viewer.camera.viewBoundingSphere(C.BoundingSphere.fromBoundingSpheres(spheres), new C.HeadingPitchRange(station.heading + 0.4, -0.28, 42))
+    else if (spheres.length) viewer.camera.viewBoundingSphere(C.BoundingSphere.fromBoundingSpheres(spheres), new C.HeadingPitchRange(station.heading + (ids.some(id => id.startsWith('support.modeler-continuous-')) ? 1.1 : 0.4), -0.28, supportRange))
     else viewer.camera.lookAt(C.Cartesian3.fromDegrees(station.longitude, station.latitude, station.height + 3), new C.HeadingPitchRange(station.heading + 0.4, -0.55, ids.includes('ventilation.steady-cfd') ? 220 : 160))
     viewer.camera.lookAtTransform(C.Matrix4.IDENTITY)
     if (viewer.container.closest('.dashboard-container')) {

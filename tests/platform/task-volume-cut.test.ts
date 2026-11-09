@@ -1,5 +1,33 @@
 import { expect, it, vi } from 'vitest'
-import { applyTaskVolumeCut, registerTaskVolumeAccess } from '@/platform/tasks/TaskVolumeCut'
+import { applyTaskVolumeCut, registerTaskVolumeAccess, setTaskVolumeCut, taskVolumeCutDisplay, refreshTaskVolumeCutState } from '@/platform/tasks/TaskVolumeCut'
+it('synchronizes presentation state after toggles and a volume replacement', () => {
+  let volume: any = { properties: { xmax: 0.99, ymin: 0.01 }, draw: vi.fn() }
+  registerTaskVolumeAccess(() => volume)
+  expect(taskVolumeCutDisplay.value).toEqual({ available: true, enabled: false })
+  setTaskVolumeCut(true)
+  expect(taskVolumeCutDisplay.value.enabled).toBe(true)
+  setTaskVolumeCut(false)
+  expect(taskVolumeCutDisplay.value.enabled).toBe(false)
+  volume = undefined
+  refreshTaskVolumeCutState()
+  expect(taskVolumeCutDisplay.value).toEqual({ available: false, enabled: false })
+})
+it('restores the original bounds after repeated manual cut toggles and final undo', () => {
+  const volume = { properties: { xmax: 0.93, ymin: 0.03 }, draw: vi.fn() }
+  registerTaskVolumeAccess(() => volume)
+  const undo = applyTaskVolumeCut()
+  expect(setTaskVolumeCut(false)).toEqual({ enabled: false, xmax: 0.93, ymin: 0.03 })
+  setTaskVolumeCut(true)
+  setTaskVolumeCut(false)
+  undo()
+  expect(volume.properties).toMatchObject({ xmax: 0.93, ymin: 0.03 })
+})
+it('restores current bounds if the renderer rejects an update', () => {
+  const volume = { properties: { xmax: 0.9, ymin: 0.1 }, draw: () => { throw new Error('render failed') } }
+  registerTaskVolumeAccess(() => volume)
+  expect(() => setTaskVolumeCut(true)).toThrow('render failed')
+  expect(volume.properties).toMatchObject({ xmax: 0.9, ymin: 0.1 })
+})
 it('clips the active volume without altering its original settings after undo', () => {
   const volume = { properties: { xmax: 0.99, ymin: 0.01, density: 5 }, draw: vi.fn() }
   registerTaskVolumeAccess(() => volume)

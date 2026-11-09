@@ -1,4 +1,8 @@
 import type { ToolRegistration } from '../types'
+import { continuousSupportCatalog } from '@/modules/support/continuous-layout'
+import { readSceneCapabilities } from '../SceneCapabilities'
+import { setTaskVolumeCut } from '@/platform/tasks/TaskVolumeCut'
+import { focusTaskCamera, taskViews, type TaskView } from '@/platform/tasks/TaskCameraView'
 import { advancePlatformTask, dispatchValidatedWorkflow, orchestratePlatformTask } from '../TaskOrchestrator'
 import { AGENT_SCENE_RESOURCES, SCENE_ENHANCEMENT_MODES, SCENE_ASSEMBLY_MODES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import { getBlastDesignSummary } from '@/modules/blast/design-resource'
@@ -105,6 +109,55 @@ export function normalizeAgentTaskInput(input: Record<string, any>): AgentTaskWo
 export const workflowTools: ToolRegistration[] = [
   {
     module: 'common',
+    tool: { name: 'check_scene_assembly', description: '只读预检明确里程和资源组合的装配兼容性及依赖，不创建任务、不加载或释放资源。通过不代表文件可读或目标实测资料齐全。用于先检查能否同屏，不执行装配的请求。',
+      input_schema: { type: 'object', properties: { targetMileage: { type: 'string' }, resourceIds: { type: 'array', minItems: 1, maxItems: 4, items: { type: 'string', enum: [...AGENT_SCENE_RESOURCES] } } }, required: ['targetMileage', 'resourceIds'] } },
+    executor: async input => {
+      const mileage = resolveAssemblyMileage(input.targetMileage, input.userRequest)
+      const resourceIds = agentResourceIds(input.resourceIds)
+      if (!resourceIds.length || resourceIds.length > 4) throw new Error('预检需要1–4个资源')
+      const controller = getTaskWorkflowController()
+      if (!controller.inspectScene) throw new Error('当前页面尚未接入装配预检')
+      const preflight = controller.inspectScene({ description: '只读装配预检', targetMileage: mileage, resourceIds,
+        assemblyModes: resourceIds.map((_, index) => index ? 'retain' : 'replace'), enhancementModes: resourceIds.map(() => 'auto') })
+      return JSON.stringify({ ok: true, action: 'check_scene_assembly', targetMileage: mileage, ...preflight })
+    },
+  },
+  {
+    module: 'common',
+    tool: { name: 'inspect_scene_capabilities', description: '只读核查当前平台实际注册的资源能力、模块声明范围和加载状态。不装配、不查实测对应、不证明文件可读。用于回答目前支持哪些资料或模型。', input_schema: { type: 'object', properties: {} } },
+    executor: async () => {
+      const report = readSceneCapabilities()
+      if (!report) throw new Error('当前页面尚未接入资源能力核查')
+      return JSON.stringify({ ok: true, action: 'inspect_scene_capabilities', ...report })
+    },
+  },
+  {
+    module: 'common',
+    tool: { name: 'set_task_volume_cut', description: '开启或关闭当前任务TSP坚硬度/完整度解释体的展示剖切。enabled=false恢复该体原始显示范围，true使用支护观察剖切；不改原始数据、位置或相机，不创建任务。',
+      input_schema: { type: 'object', properties: { enabled: { type: 'boolean' } }, required: ['enabled'] } },
+    executor: async input => {
+      const status = getTaskWorkflowController().getStatus()
+      const ids = status.lastCompletedStage?.assembledResourceIds ?? []
+      if (status.status !== 'completed' || !ids.some(id => ['rock.tsp-hardness', 'rock.tsp-integrity'].includes(id) && resourceManager.getState(id).status === 'loaded')) throw new Error('当前任务没有可剖切的TSP坚硬度或完整度解释体')
+      return JSON.stringify({ ok: true, action: 'set_task_volume_cut', taskId: status.taskId, cut: setTaskVolumeCut(input.enabled) })
+    },
+  },
+  {
+    module: 'common',
+    tool: { name: 'set_task_view', description: '仅调整已完成装配任务的相机：整体布置overview，掌子面近景face，支护support，水平钻drill，爆破断面blast。不加载资源、不改变里程、剖切或图层。没有当前任务或对应模型时失败。',
+      input_schema: { type: 'object', properties: { view: { type: 'string', enum: [...taskViews] } }, required: ['view'] } },
+    executor: async input => {
+      if (!taskViews.includes(input.view)) throw new Error('不支持的任务视角')
+      const status = getTaskWorkflowController().getStatus()
+      const stage = status.lastCompletedStage
+      if (status.status !== 'completed' || !stage || !stage.assembledResourceIds.length ||
+          stage.assembledResourceIds.some(id => resourceManager.getState(id).status !== 'loaded')) throw new Error('请先完成当前任务场景装配')
+      focusTaskCamera(viewerService.require(), stage.assembledResourceIds, stage.chainageRange.start, input.view as TaskView)
+      return JSON.stringify({ ok: true, action: 'set_task_view', taskId: status.taskId, view: input.view, resourceIds: stage.assembledResourceIds })
+    },
+  },
+  {
+    module: 'common',
     tool: { name: 'set_blast_layers', description: '调整当前已显示爆破模型的炮孔和爆后点云开关；不创建任务、不加载资源、不改变里程。只保留某层时同时明确另一层为false，未指定的层保持当前状态。没有活动爆破模型时失败。',
       input_schema: { type: 'object', properties: { holes: { type: 'boolean', description: '炮孔是否显示' }, pointcloud: { type: 'boolean', description: '爆后点云是否显示' } } } },
     executor: async input => {
@@ -155,6 +208,7 @@ export const workflowTools: ToolRegistration[] = [
         type: 'object',
         properties: {
           description: { type: 'string', description: '用户要构建的场景目标' },
+          resourceReasons: { type: 'array', description: '逐项说明资源服务于什么任务需求；不得编造目标工段资料', items: { type: 'object', properties: { resourceId: { type: 'string' }, reason: { type: 'string' } }, required: ['resourceId', 'reason'] } },
           targetMileage: { type: 'string', description: '明确的目标里程，优先使用工地真实中线 YK，例如 YK1+346 或 YK2+244；旧 DK 可作为兼容输入，平台统一转换为 YK' },
           resourceIds: { type: 'array', minItems: 1, maxItems: 4,
             items: { type: 'string', enum: [...AGENT_SCENE_RESOURCES] },
@@ -172,6 +226,11 @@ export const workflowTools: ToolRegistration[] = [
       const position = chainageService.positionWithHeadingAt(targetChainage)
       if (!position) throw new Error(`目标里程 ${targetMileage} 不在现有 YK 中线数据范围内`)
       const resourceIds = agentResourceIds(input.resourceIds)
+      const resourceReasons = resourceIds.map(resourceId => ({ resourceId, reason: Array.isArray(input.resourceReasons)
+        ? String(input.resourceReasons.find((item: any) => item?.resourceId === resourceId)?.reason ?? '').trim().slice(0, 300) : '' }))
+      for (const item of continuousSupportCatalog.filter(item => resourceIds.includes(item.id))) {
+        if (input.userRequest === undefined || !new RegExp(`(?:^|[^0-9.])${item.length}\\s*(?:米|m\\b)`, 'i').test(String(input.userRequest))) throw new Error('连续支护必须由用户明确给出长度，不能默认选用或改成最近长度')
+      }
       const timeIssue = thermalRequestIssue(String(input.userRequest ?? ''))
       if (timeIssue) throw new Error(timeIssue)
       const requestedTimes = requestedThermalTimes(String(input.userRequest ?? ''))
@@ -248,6 +307,7 @@ export const workflowTools: ToolRegistration[] = [
       }
       else clearFocusedTunnelSegment(viewer)
       return JSON.stringify({ action: 'assemble_scene_at_mileage', targetMileage, requestedMileage,
+        resourceReasons,
         ...(!outcome.ok && canRetrySceneLoad(outcome.status) && resourceIds.every(id => {
           const state = resourceManager.getState(id)
           return state.references === 0 && ['idle', 'failed'].includes(state.status)

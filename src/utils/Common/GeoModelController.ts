@@ -4,7 +4,7 @@
  * 坐标来源：Layue-master DataController.js
  */
 import * as Cesium from 'cesium';
-import { registerTaskVolumeAccess } from '@/platform/tasks/TaskVolumeCut';
+import { registerTaskVolumeAccess, refreshTaskVolumeCutState } from '@/platform/tasks/TaskVolumeCut';
 import { DTScopeEngine } from './Viewer';
 import { unloadTemVoxelCloud } from './TemVoxelCloud';
 import { FACE_SKETCH_RECORDS, FACE_SKETCH_REFERENCE } from '@/modules/face-sketch/data';
@@ -649,7 +649,7 @@ export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?:
       const readyPromise = new Promise<void>(resolve => { resolveReady = resolve; });
       pendingGeoModelReady = { key, promise: readyPromise };
       initVolume(volumeUrl, placedVolumeConfig(cfg.cesiumConfig), () => {
-        if (activeGeoModelKey === key) resolveReady();
+        if (activeGeoModelKey === key) { refreshTaskVolumeCutState(); resolveReady(); }
       });
       if (key === 'tem') scheduleTemVolumeControlApply();
       if (key === 'geophysical_grade') scheduleFusedGradeControlApply();
@@ -1023,6 +1023,7 @@ export function setGeoModelDifferenceHighlight(enabled: boolean) {
 
 function _cleanup(viewer: any) {
   activeGeoModelKey = null;
+  refreshTaskVolumeCutState();
   pendingGeoModelReady = undefined;
   activeDemoVolumeTransform = undefined;
   if (tunnelEntity) {

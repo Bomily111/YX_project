@@ -16,6 +16,7 @@ export const modelerSupportCatalog = sectionTypes.map(type => ({
     : `${outputRoot}/multi_support/${type}_support_1m.glb`,
 }))
 const activeModels = new Map<string, Cesium.Model>()
+export function trackModelerSupportModel(id: string, model?: Cesium.Model) { if (model) activeModels.set(id, model); else activeModels.delete(id) }
 export const getActiveModelerSupportModel = (id: string): Cesium.Model | undefined => activeModels.get(id)
 
 /** The delivered 1 m templates use x=right, y=up, z=forward and a crown-circle origin. */
