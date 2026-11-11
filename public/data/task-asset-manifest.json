@@ -162,6 +162,26 @@
       "digest": "62c1901ca982e1a8dbbb187dfce0d5c8b7f3a5d27a513682f2de0aa871868ffc"
     },
     {
+      "path": "/support-modeler/outputs/centerline/task-reference-1064.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "ff28d4372c196e464217d21fa7590f8b19d2d641db2d8a874223cea290257d53"
+    },
+    {
+      "path": "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "96b5dcd2f51dd8a85fb39389fe578c62e58d080846f8f6f12f0ec4fede591596"
+    },
+    {
+      "path": "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "f61e787fb671ab0ab397a3fa6e119cea44492d322652aec7b1586b90f1b57e9b"
+    },
+    {
+      "path": "/support-modeler/outputs/centerline/real_centerline_0_1064m.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "8421ee71a2728901a8cce3da4a4cdea7e6cc9fe31f8066093863e5dee52bfb99"
+    },
+    {
       "path": "/data/tunnel/tunnel000.glb",
       "algorithm": "sha256-bytes-v1",
       "digest": "960b0328e1e2b34457177133512a8c12821f63fda44d734fdddf038ee32edd48"
@@ -250,6 +270,11 @@
       "path": "/data/blast/blast_effect.glb",
       "algorithm": "sha256-bytes-v1",
       "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+    },
+    {
+      "path": "/data/tunnel/三台阶.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
     },
     {
       "path": "/data/blast/blast-design.json",

@@ -1,0 +1,19 @@
+{
+  "excavation": {
+    "name": "三台阶",
+    "advanceMin": 0,
+    "advanceMax": 22,
+    "meshes": 3,
+    "nonManifoldEdges": 0
+  },
+  "support": {
+    "name": "测试工段支护",
+    "advanceMin": -10,
+    "advanceMax": 0,
+    "meshes": 11,
+    "nonManifoldEdges": 0
+  },
+  "contactGapM": 0,
+  "passed": true,
+  "scope": "local source coordinate geometry; not surveyed accuracy"
+}

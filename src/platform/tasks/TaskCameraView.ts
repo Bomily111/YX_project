@@ -5,6 +5,8 @@ import { getActiveFaceSlices } from '@/modules/face-sketch/resources'
 import { getActiveDrillModels } from '@/modules/rock/drill-resource'
 import { getActiveModelerSupportModel } from '@/modules/support/modeler-resources'
 import { getBlastModel, blastViewOffset } from '@/views/tunnel-module/blast'
+import { THREE_BENCH_ID, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
+import { getTestSectionSupportModels } from '@/modules/support/test-section-resource'
 export const taskViews = ['overview', 'face', 'support', 'drill', 'blast'] as const
 export type TaskView = typeof taskViews[number]
 const selection = ref<TaskView | 'auto'>('auto')
@@ -17,6 +19,7 @@ export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chaina
   const face = ids.includes('rock.face-photos') ? getActiveFaceSlices()[0] : undefined
   const drills = ids.includes('rock.advance-drill') ? getActiveDrillModels().filter(model => model.ready) : []
   const supports = ids.map(getActiveModelerSupportModel).filter((model): model is C.Model => !!model?.ready)
+  supports.push(...getTestSectionSupportModels(ids).filter(model => model.ready))
   const blast = ids.includes('blast.effect') ? getBlastModel() as C.Model | undefined : undefined
   const faceSphere = face?.position ? new C.BoundingSphere(face.position.getValue(C.JulianDate.now()), 6) : undefined
   if (view === 'face' && faceSphere) spheres.push(faceSphere)
@@ -24,6 +27,10 @@ export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chaina
   if (view === 'drill') spheres.push(...drills.map(model => model.boundingSphere))
   if (view === 'blast' && blast?.ready) spheres.push(blast.boundingSphere)
   if (view === 'overview') {
+    const solid = ids.includes(THREE_BENCH_ID) ? getActiveThreeBenchModel() : undefined
+    if (solid?.ready) spheres.push(solid.boundingSphere)
+    const testSupports = getTestSectionSupportModels(ids)
+    spheres.push(...testSupports.filter(model => model.ready).map(model => model.boundingSphere))
     if (faceSphere) spheres.push(faceSphere)
     spheres.push(...supports.map(model => model.boundingSphere), ...drills.map(model => model.boundingSphere))
     if (blast?.ready) spheres.push(blast.boundingSphere)

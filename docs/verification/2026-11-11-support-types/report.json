@@ -1,0 +1,96 @@
+{
+  "cases": [
+    {
+      "id": "three-bench-support",
+      "taskId": "scene-1794375688197-atw2z",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 7396,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "type": "ZZ-Va",
+        "activePaths": [
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "count": 10,
+        "ready": true
+      }
+    },
+    {
+      "id": "three-bench-support-ivb",
+      "taskId": "scene-1794375697781-zc2tq",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+      ],
+      "elapsedMs": 6186,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+        "type": "ZZ-IVb",
+        "activePaths": [
+          "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+        ],
+        "count": 10,
+        "ready": true
+      }
+    },
+    {
+      "id": "three-bench-support-ii",
+      "taskId": "scene-1794375707149-qe4r9",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/multi_support/ZZ-II_support_1m.glb"
+      ],
+      "elapsedMs": 46284,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/multi_support/ZZ-II_support_1m.glb",
+        "type": "ZZ-II",
+        "activePaths": [
+          "/support-modeler/outputs/multi_support/ZZ-II_support_1m.glb"
+        ],
+        "count": 10,
+        "ready": true
+      }
+    },
+    {
+      "id": "three-bench-support-clarified",
+      "taskId": "scene-1794375756244-ryx1h",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+      ],
+      "elapsedMs": 9272,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+        "type": "ZZ-IVb",
+        "activePaths": [
+          "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+        ],
+        "count": 10,
+        "ready": true
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 4793
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

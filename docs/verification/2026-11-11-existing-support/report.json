@@ -1,0 +1,44 @@
+{
+  "cases": [
+    {
+      "id": "three-bench-support",
+      "taskId": "scene-1794375031762-1gtsl",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 9530,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "count": 10,
+        "ready": true
+      }
+    },
+    {
+      "id": "three-bench",
+      "taskId": "scene-1794375042372-b4185",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb"
+      ],
+      "elapsedMs": 4733,
+      "solid": {
+        "ready": true,
+        "radius": 14.008079640448809
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 4658
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

@@ -1,5 +1,6 @@
 import * as Cesium from 'cesium'
 import { facePhotoResource } from '@/modules/face-sketch/resources'
+import { threeBenchResource } from './three-bench-resource'
 import { gprResources } from './gpr-resources'
 import { advanceDrillResource } from './drill-resource'
 import { chainageService } from '@/platform/coordinates/ChainageService'
@@ -206,7 +207,7 @@ export const rockInterpretationResources: SceneResource[] = interpretedRockLayer
   getActiveAssetPaths() { return getActiveGeoModelKey() === layer.key ? [layer.asset, layer.texture] : [] },
 }))
 
-export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources, facePhotoResource, ...gprResources, advanceDrillResource] as const
+export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources, facePhotoResource, threeBenchResource, ...gprResources, advanceDrillResource] as const
 
 export const rockModuleManifest: SceneModuleManifest = {
   id: 'rock',

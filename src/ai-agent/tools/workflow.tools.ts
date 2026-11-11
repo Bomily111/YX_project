@@ -14,6 +14,10 @@ import { requestedThermalTimes, thermalRequestIssue, thermalSnapshotCatalog } fr
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import { viewerService } from '@/platform/viewer/ViewerService'
 import { getActiveModelerSupportModel } from '@/modules/support/modeler-resources'
+import { validateTestSupportRequest, isTestSupportId } from '@/modules/support/test-section-resource'
+import { resolveTestSupportLength } from '@/modules/support/test-section-layout'
+import { resolveTestSupportUpdate } from '../TestSupportUpdate'
+import { getTestSectionSupportModels, getTestSectionSupportSummaries } from '@/modules/support/test-section-resource'
 import { ALTERNATING_SUPPORT_ID, getActiveAlternatingSupportModel, getActiveAlternatingSupportSpan } from '@/modules/support/alternating-resource'
 import { clearFocusedTunnelSegment, focusTunnelSegmentAt, setTunnelTranslucent } from '@/utils/Common/DrawLine'
 import { blastViewOffset, getBlastModel, setBlastLayerVisible } from '@/views/tunnel-module/blast'
@@ -81,6 +85,7 @@ export function resolveAssemblyMileage(modelValue: unknown, userRequest?: string
   const mileagePattern = /(?:DK|YK)\s*\d+\s*\+\s*\d+(?:\.\d+)?/gi
   const explicit = [...new Set((userRequest ?? '').match(mileagePattern)?.map(value => value.replace(/\s+/g, '').toUpperCase()) ?? [])]
   if (userRequest !== undefined) {
+    if (explicit.length === 0 && /测试工段|论文测试|(?:展示|查看|加载|装配|看看).{0,8}三台阶/.test(userRequest)) return 'YK2+244'
     if (explicit.length === 0) throw new Error('用户未明确给出目标里程，请先询问')
     if (explicit.length > 1) throw new Error('用户给出了多个里程，请先明确本次装配目标')
     return explicit[0]
@@ -118,6 +123,7 @@ export const workflowTools: ToolRegistration[] = [
       const controller = getTaskWorkflowController()
       if (!controller.inspectScene) throw new Error('当前页面尚未接入装配预检')
       const preflight = controller.inspectScene({ description: '只读装配预检', targetMileage: mileage, resourceIds,
+        supportLengthM: resourceIds.some(isTestSupportId) ? resolveTestSupportLength(String(input.userRequest ?? '')) : undefined,
         assemblyModes: resourceIds.map((_, index) => index ? 'retain' : 'replace'), enhancementModes: resourceIds.map(() => 'auto') })
       return JSON.stringify({ ok: true, action: 'check_scene_assembly', targetMileage: mileage, ...preflight })
     },
@@ -201,6 +207,21 @@ export const workflowTools: ToolRegistration[] = [
   },
   {
     module: 'common',
+    tool: { name: 'update_test_support', description: '承接当前已完成的测试支护任务，修改用户明确要求的已有支护类型或1～20米整数长度；其余长度、类型及三台阶组合从平台当前任务保留。只在用户明确要求改成/改为等变更时调用，不用于新建任意场景或修改构件几何。', input_schema: { type: 'object', properties: {}, required: [] } },
+    executor: async input => {
+      const status = getTaskWorkflowController().getStatus()
+      const update = resolveTestSupportUpdate(String(input.userRequest ?? ''), status)
+      const current = getTestSectionSupportModels(status.lastCompletedStage?.assembledResourceIds)
+      const layout=getTestSectionSupportSummaries(status.lastCompletedStage?.assembledResourceIds)[0]
+      if (!layout || layout.lengthM !== update.previousLengthM || !current.length || current.some(model => !model.ready)) throw new Error('当前支护模型不完整或已释放，请重新装配后再调整')
+      const assemble = workflowTools.find(item => item.tool.name === 'assemble_scene_at_mileage')!
+      const result = JSON.parse(await assemble.executor({ description: `测试支护调整：${update.previousType}→${update.supportType}，${update.previousLengthM}→${update.supportLengthM}米；承接${update.parentTaskId}`, targetMileage: 'YK2+244', resourceIds: update.resourceIds, userRequest: update.request,
+        resourceReasons: update.resourceIds.map(resourceId=>({resourceId,reason:'承接当前测试任务，保留未修改的类型/长度及资源组合'})) }))
+      return JSON.stringify({ ...result, action: 'update_test_support', parentTaskId: update.parentTaskId })
+    },
+  },
+  {
+    module: 'common',
     tool: {
       name: 'assemble_scene_at_mileage',
       description: '主界面自主装配的单一入口：给出明确目标里程和要同屏装配的现有模型。平台校验 YK 中线目标与同屏规则，必要时将示例资产沿目标中线示意重定位，再按依赖顺序装配到主 Cesium 场景；返回实际资源与失败原因。无需再调用准备、推进或修订工具。',
@@ -228,6 +249,8 @@ export const workflowTools: ToolRegistration[] = [
       const resourceIds = agentResourceIds(input.resourceIds)
       const resourceReasons = resourceIds.map(resourceId => ({ resourceId, reason: Array.isArray(input.resourceReasons)
         ? String(input.resourceReasons.find((item: any) => item?.resourceId === resourceId)?.reason ?? '').trim().slice(0, 300) : '' }))
+      validateTestSupportRequest(resourceIds, String(input.userRequest ?? ''))
+      const supportLengthM = resourceIds.some(isTestSupportId) ? resolveTestSupportLength(String(input.userRequest ?? '')) : undefined
       for (const item of continuousSupportCatalog.filter(item => resourceIds.includes(item.id))) {
         if (input.userRequest === undefined || !new RegExp(`(?:^|[^0-9.])${item.length}\\s*(?:米|m\\b)`, 'i').test(String(input.userRequest))) throw new Error('连续支护必须由用户明确给出长度，不能默认选用或改成最近长度')
       }
@@ -243,6 +266,7 @@ export const workflowTools: ToolRegistration[] = [
       const controller = getTaskWorkflowController()
       const prepared = await controller.prepareScene({
         description: String(input.description ?? '').trim(), targetMileage, resourceIds,
+        supportLengthM,
         enhanceAfterAssembly: true,
         assemblyModes: resourceIds.map((_, index) => index === 0 ? 'replace' : 'retain'),
         enhancementModes: resourceIds.map(() => 'auto'),
@@ -313,6 +337,7 @@ export const workflowTools: ToolRegistration[] = [
           return state.references === 0 && ['idle', 'failed'].includes(state.status)
         }) ? { recovery: { kind: 'retry-scene-load', taskId: outcome.status.taskId } } : {}),
         assembledResourceIds: outcome.status.lastCompletedStage?.assembledResourceIds ?? [],
+        supportLengthM: outcome.status.lastCompletedStage?.supportLengthM,
         ...(outcome.ok && resourceIds.includes('blast.design-data') ? { blastDesign: getBlastDesignSummary() } : {}),
         ...outcome, ...outcome.status,
         ...(outcome.ok && resourceIds.includes(ALTERNATING_SUPPORT_ID)

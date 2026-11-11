@@ -1,0 +1,6 @@
+{
+  "cases": [],
+  "errors": [],
+  "passed": false,
+  "failure": "Task failed: {\"steps\":[{\"name\":\"展示 support · support.modeler-continuous-zz-va-20m\",\"action\":\"scene.show-resource\",\"module\":\"support\",\"status\":\"failed\",\"stepId\":\"scene-1\",\"dependsOn\":[],\"inputKeys\":[\"task.description\"],\"outputKeys\":[\"scene.stage.1\"],\"completionRule\":{\"requiredOutputs\":[\"scene.stage.1\"]}},{\"name\":\"构建完成后统一增强\",\"action\":\"scene.finalize\",\"module\":\"support\",\"status\":\"pending\",\"stepId\":\"scene-2\",\"dependsOn\":[\"scene-1\"],\"inputKeys\":[\"scene.stage.1\"],\"outputKeys\":[\"scene.stage.2\"],\"completionRule\":{\"requiredOutputs\":[\"scene.stage.2\"]}}],\"total\":2,\"failed\":1,\"status\":\"failed\",\"skipped\":0,\"completed\":0,\"chainageFrame\":\"YK\",\"currentStepId\":\"scene-1\",\"sharedContext\":{},\"plannedSceneRoots\":[{\"stepId\":\"scene-1\",\"resources\":[\"support.modeler-continuous-zz-va-20m\"]},{\"stepId\":\"scene-2\",\"resources\":[\"support.modeler-continuous-zz-va-20m\"]}],\"sceneAssemblyModes\":[\"replace\"],\"sceneEnhancementModes\":[\"auto\"]}"
+}

@@ -1,0 +1,192 @@
+{
+  "sourcePage": "/support-modeler/demo/real_tunnel_1064m_demo.html",
+  "ready": true,
+  "segmentCount": 23,
+  "modeledSegmentCount": 21,
+  "incompleteSegmentCount": 2,
+  "meshInstanceCount": 5061,
+  "engineeringComponentCount": 14333,
+  "drawGroups": 101,
+  "frameValidation": {
+    "sample_count": 2129,
+    "minimum_consecutive_right_dot": 0.9999994016999705,
+    "minimum_consecutive_up_dot": 0.9999999999842276,
+    "maximum_axis_dot_error": 5.551115123125783e-17,
+    "section_flip_detected": false
+  },
+  "centerlineVisible": true,
+  "rangeLinesVisible": true,
+  "componentVisibility": {
+    "support_body": true,
+    "steel_arch": true,
+    "primary_mesh": false,
+    "system_anchor": false,
+    "lock_foot_anchor": false,
+    "advance_support": false,
+    "secondary_rebar": false
+  },
+  "visibleTypes": [
+    "Z-PM",
+    "ZZ-QJsx",
+    "ZZ-Vsx",
+    "ZZ-IVsx",
+    "ZZ-IVx",
+    "ZZ-IIIx",
+    "ZZ-III",
+    "ZZ-IVa",
+    "ZZ-II",
+    "ZZ-IVc",
+    "ZZ-S",
+    "ZZ-Va",
+    "ZZ-IVb",
+    "TZ-III",
+    "ZZ-Y1"
+  ],
+  "selectedSegmentIndex": null,
+  "segmentVariantAssignment": [
+    {
+      "start_chainage": 1098,
+      "end_chainage": 1121,
+      "support_type": "Z-PM",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1121,
+      "end_chainage": 1165,
+      "support_type": "ZZ-QJsx",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1165,
+      "end_chainage": 1185,
+      "support_type": "ZZ-Vsx",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1185,
+      "end_chainage": 1197,
+      "support_type": "ZZ-IVsx",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1197,
+      "end_chainage": 1265,
+      "support_type": "ZZ-IVx",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1265,
+      "end_chainage": 1285,
+      "support_type": "ZZ-IIIx",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1285,
+      "end_chainage": 1330,
+      "support_type": "ZZ-IVx",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1330,
+      "end_chainage": 1360,
+      "support_type": "ZZ-IIIx",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1360,
+      "end_chainage": 1385,
+      "support_type": "ZZ-III",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1385,
+      "end_chainage": 1425,
+      "support_type": "ZZ-IVa",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1425,
+      "end_chainage": 1465,
+      "support_type": "ZZ-III",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1465,
+      "end_chainage": 1540,
+      "support_type": "ZZ-IVa",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1540,
+      "end_chainage": 1600,
+      "support_type": "ZZ-III",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1600,
+      "end_chainage": 1660,
+      "support_type": "ZZ-II",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1660,
+      "end_chainage": 1772,
+      "support_type": "ZZ-III",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1772,
+      "end_chainage": 1832,
+      "support_type": "ZZ-IVa",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1832,
+      "end_chainage": 1852,
+      "support_type": "ZZ-IVc",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1852,
+      "end_chainage": 1902,
+      "support_type": "ZZ-S",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1902,
+      "end_chainage": 1937,
+      "support_type": "ZZ-Va",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1937,
+      "end_chainage": 1972,
+      "support_type": "ZZ-IVb",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 1972,
+      "end_chainage": 2022,
+      "support_type": "TZ-III",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 2022,
+      "end_chainage": 2132,
+      "support_type": "ZZ-III",
+      "variant_id": "ORIGINAL"
+    },
+    {
+      "start_chainage": 2132,
+      "end_chainage": 2162,
+      "support_type": "ZZ-Y1",
+      "variant_id": "ORIGINAL"
+    }
+  ],
+  "currentView": "overall",
+  "camera": [
+    -263.0984242529365,
+    765.7555106624602,
+    -1294.8226215699558
+  ]
+}

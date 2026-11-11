@@ -8,7 +8,7 @@ import { buildSystemPrompt } from './knowledge/prompts/system'
 import { blocksUnrevisedSceneAdvance, mustReviseAssemblyBeforeAdvance, wantsDirectSceneAssembly, wantsBlastLayerControl, wantsTaskViewControl, wantsTaskCutControl, resolveClarifiedSceneRequest } from './AgentDispatchIntent'
 import { thermalRequestIssue } from '@/modules/ventilation/thermal-catalog'
 import { readSceneCapabilities } from './SceneCapabilities'
-import { wantsScenePreflight } from './AgentDispatchIntent'
+import { wantsScenePreflight, wantsTestSupportUpdate } from './AgentDispatchIntent'
 
 interface StreamCallbacks {
   onText: (delta: string) => void
@@ -165,9 +165,10 @@ export class AgentEngine {
       const availableTools = [...new Map(selectedTools.map(tool => [tool.name, tool])).values()]
       const effectiveRequest = resolveClarifiedSceneRequest(userMessage, this.pendingSceneRequest)
       this.pendingSceneRequest = undefined
-      const directSceneAssembly = wantsDirectSceneAssembly(effectiveRequest)
+      const supportUpdate = wantsTestSupportUpdate(userMessage)
+      const directSceneAssembly = !supportUpdate && wantsDirectSceneAssembly(effectiveRequest)
       const blastLayerControl = wantsBlastLayerControl(userMessage)
-      const viewControl = wantsTaskViewControl(userMessage)
+      const viewControl = !supportUpdate && wantsTaskViewControl(userMessage)
       const cutControl = wantsTaskCutControl(userMessage)
       const preflightControl = wantsScenePreflight(userMessage)
       const timeIssue = directSceneAssembly ? thermalRequestIssue(effectiveRequest) : undefined
@@ -177,7 +178,7 @@ export class AgentEngine {
         callbacks.onComplete(timeIssue)
         return
       }
-      const tools = preflightControl ? availableTools.filter(tool => tool.name === 'check_scene_assembly') : cutControl ? availableTools.filter(tool => tool.name === 'set_task_volume_cut') : viewControl ? availableTools.filter(tool => tool.name === 'set_task_view') : blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
+      const tools = supportUpdate ? availableTools.filter(tool => tool.name === 'update_test_support') : preflightControl ? availableTools.filter(tool => tool.name === 'check_scene_assembly') : cutControl ? availableTools.filter(tool => tool.name === 'set_task_volume_cut') : viewControl ? availableTools.filter(tool => tool.name === 'set_task_view') : blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
         ? availableTools.filter(tool => tool.name === 'assemble_scene_at_mileage')
         : availableTools
 
@@ -216,7 +217,7 @@ export class AgentEngine {
           {
             onText: callbacks.onText,
             onToolUse: async (tool: ToolUseBlock) => {
-              if (tool.name === 'assemble_scene_at_mileage') tool.input = { ...tool.input, userRequest: effectiveRequest }
+              if (tool.name === 'assemble_scene_at_mileage' || tool.name === 'update_test_support') tool.input = { ...tool.input, userRequest: tool.name === 'update_test_support' ? userMessage : effectiveRequest }
               hadToolUse = true
               let result: string
               if ((directSceneAssembly || blastLayerControl || viewControl || cutControl || preflightControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
@@ -233,6 +234,9 @@ export class AgentEngine {
                 stopAfterTool = true
               } else if (blastLayerControl && tool.name !== 'set_blast_layers') {
                 result = JSON.stringify({ ok: false, action: tool.name, reason: '当前图层显示指令只允许调整已有爆破模型，不得创建任务或更改里程' })
+                stopAfterTool = true
+              } else if (supportUpdate && tool.name !== 'update_test_support') {
+                result = JSON.stringify({ ok: false, action: tool.name, reason: '当前支护变更必须通过update_test_support承接实际任务，不能另猜场景或参数' })
                 stopAfterTool = true
               } else if (recoveryTaskId && (tool.name !== 'retry_scene_load' || tool.input.taskId !== recoveryTaskId)) {
                 result = JSON.stringify({ ok: false, reason: '只能重试刚返回的失败任务，不能改换任务或资源' })
@@ -257,7 +261,7 @@ export class AgentEngine {
                 result = await executeTool(tool.name, tool.input)
               }
               // Single-entry assembly already runs the validated workflow internally.
-              if (tool.name === 'assemble_scene_at_mileage' || tool.name === 'retry_scene_load' || tool.name === 'set_blast_layers' || tool.name === 'set_task_view' || tool.name === 'set_task_volume_cut' || tool.name === 'check_scene_assembly') {
+              if (tool.name === 'update_test_support' || tool.name === 'assemble_scene_at_mileage' || tool.name === 'retry_scene_load' || tool.name === 'set_blast_layers' || tool.name === 'set_task_view' || tool.name === 'set_task_volume_cut' || tool.name === 'check_scene_assembly') {
                 stopAfterTool = true
                 assemblyReturnedThisRound = true
               }

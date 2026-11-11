@@ -628,7 +628,7 @@ const inspectSceneInput = (sceneInput: AgentSceneWorkflowInput) => {
     registerRockModule(); registerSupportModule(); registerBlastModule(); registerVentilationModule()
     const target = sceneInput.targetMileage === undefined ? undefined : chainageService.toCanonicalChainage(sceneInput.targetMileage)
     if (target !== undefined && !chainageService.positionWithHeadingAt(target)) throw new Error('目标里程不在现有中线范围内')
-    const task: TaskContext = { ...createTask(), taskId: 'scene-preflight', taskType: 'scene-exploration', description: sceneInput.description, targetTypes: ['scene'],
+    const task: TaskContext = { ...createTask(), taskId: 'scene-preflight', taskType: 'scene-exploration', description: sceneInput.description, targetTypes: ['scene'], supportLengthM: sceneInput.supportLengthM,
       ...(target === undefined ? {} : { chainageRange: { start: target, end: target } }) }
     const preview = createSceneExplorationExecutor(task, sceneInput.resourceIds, resourceRegistry, {
       selector: new ResourceSelector(resourceRegistry), executor: new ScenePlanExecutor(resourceRegistry, resourceManager),
@@ -671,6 +671,7 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
       taskId: `scene-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       taskType: 'scene-exploration',
       description: sceneInput.description,
+      supportLengthM: sceneInput.supportLengthM,
       targetTypes: ['scene'],
       process: undefined,
       targetState: undefined,
@@ -871,7 +872,7 @@ const lastCompletedStage = (): AgentTaskWorkflowStatus['lastCompletedStage'] => 
   if (!executor.value || executor.value.task.taskType !== 'scene-exploration' || count < 1) return undefined
   const value = executor.value.plan.sharedContext[`scene.stage.${count}`]?.value
   if (!value || typeof value !== 'object' || !('assembledResourceIds' in value)) return undefined
-  const stage = value as { assembledResourceIds: unknown; chainageRange?: { start?: unknown; end?: unknown }; note?: unknown; phase?: unknown }
+  const stage = value as { assembledResourceIds: unknown; chainageRange?: { start?: unknown; end?: unknown }; note?: unknown; phase?: unknown; supportLengthM?: unknown }
   if (!Array.isArray(stage.assembledResourceIds)
     || typeof stage.chainageRange?.start !== 'number'
     || typeof stage.chainageRange.end !== 'number') return undefined
@@ -879,6 +880,7 @@ const lastCompletedStage = (): AgentTaskWorkflowStatus['lastCompletedStage'] => 
     stepId: `scene-${count}`,
     assembledResourceIds: stage.assembledResourceIds.filter((id): id is string => typeof id === 'string'),
     chainageRange: { start: stage.chainageRange.start, end: stage.chainageRange.end },
+    ...(typeof stage.supportLengthM === 'number' ? { supportLengthM: stage.supportLengthM } : {}),
     ...(typeof stage.note === 'string' ? { note: stage.note } : {}),
     ...(typeof stage.phase === 'string' ? { phase: stage.phase } : {}),
   }

@@ -1,0 +1,26 @@
+{
+  "meshes": [
+    {
+      "name": "Lower_bench_remaining_rock",
+      "vertices": 9466,
+      "triangles": 5976,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Middle_bench_remaining_rock",
+      "vertices": 8511,
+      "triangles": 4416,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Upper_bench_remaining_rock",
+      "vertices": 5639,
+      "triangles": 2856,
+      "nonManifoldEdges": 0
+    }
+  ],
+  "maxBoundaryErrorM": 0.0004135694262883405,
+  "maxStationPlaneErrorM": 0.0000010101774916559947,
+  "oldFixedPlaneObliquityDeg": 10.86397218807977,
+  "passed": true
+}

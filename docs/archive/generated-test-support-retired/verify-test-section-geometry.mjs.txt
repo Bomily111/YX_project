@@ -1,0 +1,26 @@
+import fs from 'node:fs'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { Vector3 } from 'three'
+async function inspect(name) {
+ const b=fs.readFileSync(`public/data/tunnel/${name}.glb`),gltf=await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'')
+ gltf.scene.updateMatrixWorld(true)
+ const result={name,advanceMin:Infinity,advanceMax:-Infinity,meshes:0,nonManifoldEdges:0}
+ gltf.scene.traverse(mesh=>{
+  if(!mesh.isMesh)return
+  result.meshes++
+  const positions=mesh.geometry.getAttribute('position'),indices=mesh.geometry.index,keys=[],edges=new Map()
+  for(let i=0;i<positions.count;i++){
+   const v=new Vector3().fromBufferAttribute(positions,i).applyMatrix4(mesh.matrixWorld)
+   result.advanceMin=Math.min(result.advanceMin,-v.z);result.advanceMax=Math.max(result.advanceMax,-v.z)
+   keys.push([v.x,v.y,v.z].map(x=>Math.round(x*1e5)).join(','))
+  }
+  for(let i=0;i<indices.count;i+=3){const t=[0,1,2].map(k=>keys[indices.getX(i+k)]);for(let j=0;j<3;j++){const key=[t[j],t[(j+1)%3]].sort().join(':');edges.set(key,(edges.get(key)||0)+1)}}
+  result.nonManifoldEdges += [...edges.values()].filter(count=>count!==2).length
+ })
+ return result
+}
+const excavation=await inspect('三台阶'),support=await inspect('测试工段支护')
+const contactGapM=excavation.advanceMin-support.advanceMax
+if(Math.abs(contactGapM)>1e-5||support.nonManifoldEdges||excavation.nonManifoldEdges||Math.abs(support.advanceMin+10)>1e-5||support.meshes!==11)throw Error(JSON.stringify({excavation,support,contactGapM}))
+const report={excavation,support,contactGapM,passed:true,scope:'local source coordinate geometry; not surveyed accuracy'}
+fs.writeFileSync('docs/verification/2026-11-11-test-section-geometry.json',JSON.stringify(report,null,2)+'\n');console.log(report)

@@ -6,8 +6,13 @@ export interface RoutedToolCall {
 export function wantsScenePreflight(message: string): boolean {
   return /装配预检|能否同屏|只.{0,6}预检|是否支持.*(?:同屏|组合)/.test(message)
 }
+export function wantsTestSupportUpdate(message: string): boolean {
+  if (/[DY]K\s*\d|如何|怎么|能否|是否|预检|不执行|计划|新任务|复位|照片|通风|炮孔|雷达|水平钻|不要|去掉|移除|隐藏|取消/i.test(message)) return false
+  return /改为|改成|换成|换为|改用|调整为|调整到|改到|设为|设置为|缩短到|延长到/.test(message)
+    && /支护|长度|ZZ-|Z-PM|米|m\b/i.test(message)
+}
 export function resolveClarifiedSceneRequest(message: string, pending?: string): string {
-  if (!pending || !/[DY]K\s*\d+\s*\+/i.test(pending) || /[DY]K\s*\d+\s*\+/i.test(message)) return message
+  if (!pending || !/(?:[DY]K\s*\d+\s*\+|测试工段|论文测试)/i.test(pending) || /[DY]K\s*\d+\s*\+/i.test(message)) return message
   if (/准备|构建|装配|加载|换个任务|新任务|取消|复位|不执行/.test(message)) return message
   if (/通风|风向|流线|温度|热场/.test(message) && !/通风|风向|流线|温度|热场/.test(pending)) return message
   if (!/断面|围岩|完整|坚硬|ZZ-|支护|照片|测线|GPR|温度|秒|分钟|流线|风向|岩面|水平钻|钻孔|类型/i.test(message)) return message
@@ -32,6 +37,7 @@ export function wantsBlastLayerControl(message: string): boolean {
 
 /** Ordinary scene requests use one platform assembly call; explicit step-debug tasks retain the older tools. */
 export function wantsDirectSceneAssembly(message: string): boolean {
+  if (wantsTestSupportUpdate(message)) return false
   if (wantsScenePreflight(message)) return false
   if (/支持哪些|有哪些可用|资源目录|能力清单/.test(message)) return false
   if (wantsTaskCutControl(message)) return false

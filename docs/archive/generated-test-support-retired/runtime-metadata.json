@@ -1,0 +1,22 @@
+{
+  "displayName": "测试工段支护",
+  "demonstration": true,
+  "source": "tunnel002.glb",
+  "sourceGltfOrigin": [
+    128,
+    0,
+    21.03451925478543
+  ],
+  "localAdvanceRange": [
+    -10,
+    0
+  ],
+  "excavationRange": [
+    0,
+    22
+  ],
+  "shellRadialThicknessM": 0.26,
+  "ribSpacingM": 1,
+  "ribCount": 10,
+  "note": "Test-section illustrative shell and ribs; not a ZZ-Va design or manufactured steel profile. Shared source frame with 三台阶; axial intervals meet without overlap."
+}

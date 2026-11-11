@@ -1,0 +1,8 @@
+{
+  "ready": true,
+  "boundingRadius": 14.008079640448809,
+  "profileSections": 23,
+  "source": "public/data/tunnel/tunnel002.glb",
+  "mode": "isolated asset preview with source-section overlays; not agent dispatch",
+  "passed": true
+}

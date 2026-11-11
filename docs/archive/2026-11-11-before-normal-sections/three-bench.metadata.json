@@ -1,0 +1,25 @@
+{
+  "demonstration": true,
+  "profileSource": "public/data/tunnel/tunnel002.glb",
+  "profileMethod": "triangle-plane-intersection-inner-loop",
+  "sourceGltfOrigin": [
+    128,
+    0,
+    21.03451925478543
+  ],
+  "advanceAxis": "Blender +Y; glTF -Z",
+  "units": "m",
+  "upperFront": 12,
+  "middleFront": 6,
+  "lowerFront": 0,
+  "end": 22,
+  "elevations": [
+    -2.3027542086522437,
+    0,
+    2.8,
+    5.412689389938257
+  ],
+  "stationCount": 23,
+  "stationSpacingM": 1,
+  "note": "Fitted to sampled tunnel002 opening, not surveyed excavation. Illustrative bench heights and offsets. No photographs or invented surveyed relief."
+}

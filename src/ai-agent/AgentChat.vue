@@ -161,6 +161,7 @@ import { dispatchValidatedWorkflow } from './TaskOrchestrator'
 import { routeWorkflowToolCall } from './AgentDispatchIntent'
 import { AGENT_SCENE_RESOURCES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import { modelerSupportCatalog } from '@/modules/support/modeler-resources'
+import { testSupportCatalog, isTestSupportId, getTestSectionSupportSummaries } from '@/modules/support/test-section-resource'
 import { transientScenarioCatalog } from '@/modules/ventilation/transient-catalog'
 import { thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
 import { faceSourceDescription } from '@/modules/face-sketch/resources'
@@ -219,13 +220,15 @@ const sceneResourceLabels: Record<string, string> = {
   'blast.effect': '爆破炮孔与爆后点云（45 万点）',
   'blast.design-data': '炮孔设计 · 二维图与参数参考',
   'rock.face-photos': '单掌子面模型 · 示意装配',
+  'rock.three-bench': '三台阶 · 论文测试工段',
+  ...Object.fromEntries(testSupportCatalog.map(asset => [asset.id, `已有${asset.type}${asset.type === 'Z-PM' ? '二衬及配筋' : '支护'} · 后方支护示意段`])),
   'rock.gpr-line1': 'GPR测线1 · 剖面参考', 'rock.gpr-line2': 'GPR测线2 · 剖面参考',
   'rock.advance-drill': '超前水平钻 · 示例模型',
   ...Object.fromEntries(transientScenarioCatalog.map(scenario => [scenario.id, `瞬态风网 · ${scenario.label}`])),
   ...Object.fromEntries(thermalSnapshotCatalog.map(snapshot => [snapshot.id, snapshot.label])),
   'support.modeler-zz-va': '新支护模块 ZZ-Va · 1 m 断面',
   'support.alternating-zz-va-z-pm': 'ZZ-Va / Z-PM · 50 m 交替装配',
-  ...Object.fromEntries(modelerSupportCatalog.map(asset => [asset.id, `新支护模块 ${asset.type} · 1 m 断面`])),
+  ...Object.fromEntries(modelerSupportCatalog.map(asset => [asset.id, `新支护模块 ${asset.type} · 1 m ${asset.type === 'Z-PM' ? '二衬及配筋' : '断面'}`])),
   ...Object.fromEntries(continuousSupportCatalog.map(asset => [asset.id, `ZZ-Va · ${asset.length} m 连续支护示意段`])),
   'ventilation.steady-cfd': '稳态 CFD · 点云、矢量、流线、动态粒子', 'ventilation.transient-network': '瞬态风网',
   'ventilation.thermal-field': '热场时间片', 'ventilation.co-analysis': 'CO 扩散分析',
@@ -239,11 +242,18 @@ const sceneSourceNotes = (plans: Array<{ resources: string[] }> = [], volumeCutA
     ids.includes('rock.advance-drill') ? '水平钻模型沿目标中线示意装配，孔位和轨迹非目标实测，不含钻进日志或涌水记录。' : '',
     ids.some(id => id.startsWith('rock.gpr-line')) ? 'GPR为现有处理剖面参考，未建立与目标YK的测量对应，不将反射异常直接作为富水或破碎带结论。' : '',
     ids.includes('rock.face-photos') ? faceSourceDescription() : '',
+    ids.includes('rock.three-bench') ? '论文测试工段：三台阶使用tunnel002源断面，台阶高度与错距为示意参数，不代表现场工法设计。' : '',
+    ids.some(isTestSupportId) ? '按1064米支护区段示例复用已有构件，混凝土、钢架、锚杆和配筋分别沿用示例间距；默认显示主体和钢架/格栅。Z-PM在该示例为空范围，保留独立模型备选，不冒称其有完整示例布置。' : '',
+    ...getTestSectionSupportSummaries(ids).filter(layout=>layout.layout==='1064m-component-example').map(layout=>{
+      const arch=layout.groups.find((group:any)=>group.component==='steel_arch'||group.component==='lattice_arch')
+      return `${layout.supportType}：${arch?`钢架/格栅间距${arch.spacingM}米，${arch.stations}组`:'示例未提供钢架实例'}；构件组成与显隐沿用1064米页面。`
+    }),
+    ids.some(id => id === 'support.modeler-z-pm' || id === 'support.test-section-z-pm') ? 'Z-PM为已有部分构件模型，仅包含二衬及N1～N7钢筋，不代表完整初期支护体系。' : '',
     ids.some(id => id.startsWith('ventilation.thermal-t')) ? '热场时间片基于稳态解与指数松弛近似，仅示意显示右洞；完整瞬态CFD待重跑，不是目标工点实测温度。' : '',
     ids.some(id => id.startsWith('ventilation.transient-')) ? '瞬态风网为现有一维网络分析工况的流量—时间曲线，不是该工况的三维CFD，也不代表目标工点实时监测。' : '',
     ids.some(id => id.startsWith('support.modeler-') && !id.startsWith('support.modeler-continuous-')) ? '新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。' : '',
     ids.includes('support.alternating-zz-va-z-pm') ? '目标里程附近 50 m 内按 50 个 1 m 位置交替装配 ZZ-Va 和 Z-PM；Z-PM 当前仅有二衬及 N1–N7 钢筋，为示意模型。' : '',
-    ids.some(id => id.startsWith('rock.') && id !== 'rock.design-grade' && id !== 'rock.face-photos' && id !== 'rock.advance-drill' && !id.startsWith('rock.gpr-line'))
+    ids.some(id => id.startsWith('rock.') && id !== 'rock.three-bench' && id !== 'rock.design-grade' && id !== 'rock.face-photos' && id !== 'rock.advance-drill' && !id.startsWith('rock.gpr-line'))
       ? '物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。' : '',
     ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity')
       ? 'TSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。' : '',
@@ -255,10 +265,11 @@ const publishAssembledScene = (status: AgentTaskWorkflowStatus): void => {
   emit('assemblyChange', {
     targetMileage: chainageService.format(stage.chainageRange.start),
     taskId: status.taskId,
-    resources: stage.assembledResourceIds.map(id => ({ id, label: sceneResourceLabels[id] ?? id })),
+    resources: stage.assembledResourceIds.map(id => ({ id, label: (sceneResourceLabels[id] ?? id) + (isTestSupportId(id) ? ` · ${stage.supportLengthM ?? 10}米` : '') })),
   })
 }
 const workflowToolNames = new Set([
+  'update_test_support',
   'retry_scene_load',
   'assemble_scene_at_mileage', 'orchestrate_platform_task', 'prepare_platform_task', 'advance_platform_task', 'revise_next_scene_assembly',
   'create_task', 'create_workflow', 'execute_task_step', 'continue_workflow',
@@ -468,12 +479,13 @@ const send = async () => {
               : `图层未修改：${parsed.reason || (result.startsWith('❌') ? result : '操作未完成')}。` })
             await scrollToBottom()
           }
-          if (routed.name === 'assemble_scene_at_mileage' || routed.name === 'retry_scene_load') {
+          if (routed.name === 'assemble_scene_at_mileage' || routed.name === 'retry_scene_load' || routed.name === 'update_test_support') {
             canonicalDispatchShown = true
             streaming.value = false
             streamBuffer.value = ''
             const ids: string[] = Array.isArray(parsed.assembledResourceIds) ? parsed.assembledResourceIds : []
-            const resources = ids.map(id => sceneResourceLabels[id] ?? id).join('、')
+            const supportLength = parsed.supportLengthM ?? parsed.lastCompletedStage?.supportLengthM ?? 10
+            const resources = ids.map(id => (sceneResourceLabels[id] ?? id) + (isTestSupportId(id) ? ` · ${supportLength}米` : '')).join('、')
             const span = parsed.supportSpan
             const design = parsed.blastDesign
             const selectionText = parsed.ok && Array.isArray(parsed.resourceReasons)
@@ -485,7 +497,7 @@ const send = async () => {
                 sections: span.sections, zzVa: span.zzVa, zPm: span.zPm } : undefined
             if (parsed.ok) emit('assemblyChange', {
               targetMileage: String(parsed.targetMileage), taskId: String(parsed.taskId),
-              resources: ids.map(id => ({ id, label: sceneResourceLabels[id] ?? id })),
+              resources: ids.map(id => ({ id, label: (sceneResourceLabels[id] ?? id) + (isTestSupportId(id) ? ` · ${supportLength}米` : '') })),
               ...(supportRange ? { supportRange } : {}),
             })
             messages.value.push({ role: 'assistant', content: parsed.ok

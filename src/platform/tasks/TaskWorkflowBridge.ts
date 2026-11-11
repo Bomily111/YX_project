@@ -7,6 +7,7 @@ export interface AgentTaskWorkflowInput {
 }
 
 export interface AgentSceneWorkflowInput {
+  supportLengthM?: number
   enhanceAfterAssembly?: boolean
   description: string
   resourceIds: string[]
@@ -29,7 +30,7 @@ export interface AgentTaskWorkflowStatus {
   steps: Array<{ stepId: string; name: string; module: string; status: string }>
   contextKeys: string[]
   scenePlans: Array<{ stepId: string; resources: string[]; estimatedMemoryMb: number; enhancementMode?: string; assemblyMode?: string }>
-  lastCompletedStage?: { stepId: string; assembledResourceIds: string[]; chainageRange: { start: number; end: number }; note?: string; phase?: string }
+  lastCompletedStage?: { stepId: string; assembledResourceIds: string[]; chainageRange: { start: number; end: number }; supportLengthM?: number; note?: string; phase?: string }
   notice?: { type: string; title: string; message: string }
 }
 

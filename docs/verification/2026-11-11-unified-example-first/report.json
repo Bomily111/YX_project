@@ -1,0 +1,6 @@
+{
+  "cases": [],
+  "errors": [],
+  "passed": false,
+  "failure": "snapshots.at is not a function"
+}

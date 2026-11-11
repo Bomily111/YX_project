@@ -11,6 +11,8 @@ export interface TaskContext {
   process?: string
   targetTypes: string[]
   targetState?: string
+  /** Nominal test-section support length; original 1 m units remain unchanged. */
+  supportLengthM?: number
   time?: { start?: string; end?: string }
   constraints?: { maxLoadMb?: number; minFps?: number }
 }
@@ -45,6 +47,7 @@ export const TASK_CONTEXT_SCHEMA = {
       items: { type: 'string', minLength: 1 },
     },
     targetState: { type: 'string', minLength: 1 },
+    supportLengthM: { type: 'integer', minimum: 1, maximum: 20 },
     time: {
       type: 'object',
       additionalProperties: false,
@@ -99,6 +102,7 @@ export function validateTaskContext(
   options: TaskValidationOptions = {},
 ): TaskValidationResult {
   const issues: TaskValidationIssue[] = []
+  if (task.supportLengthM !== undefined && (!Number.isInteger(task.supportLengthM) || task.supportLengthM < 1 || task.supportLengthM > 20)) issues.push({ path: 'supportLengthM', code: 'invalid-value', message: '测试支护长度须为1～20米整数' })
   const requiredStrings: Array<[keyof Pick<TaskContext, 'taskId' | 'description' | 'tunnelId'>, string]> = [
     ['taskId', task.taskId],
     ['description', task.description],

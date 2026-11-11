@@ -1,0 +1,27 @@
+{
+  "cases": [
+    {
+      "id": "three-bench",
+      "taskId": "scene-1794373714734-4qvac",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb"
+      ],
+      "elapsedMs": 7151,
+      "solid": {
+        "ready": true,
+        "radius": 14.008079640448809
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 4881
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

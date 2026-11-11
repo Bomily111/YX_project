@@ -1,0 +1,74 @@
+{
+  "surfaces": [
+    {
+      "id": "main",
+      "viewerId": "1",
+      "owners": [
+        "viewer.debug-camera-position",
+        "platform.camera-controls",
+        "main.pointer-style",
+        "main.worksite-pick"
+      ],
+      "orbitPositionDelta": 29.728643471874328,
+      "panDirectionDelta": 1.4285360930241543e-15,
+      "zoomDirectionDelta": 2.5476231888929306e-16,
+      "shiftPanDirectionDelta": 2.942745555079944e-15
+    },
+    {
+      "id": "rock",
+      "viewerId": "1",
+      "owners": [
+        "viewer.debug-camera-position",
+        "platform.camera-controls",
+        "main.pointer-style",
+        "main.worksite-pick"
+      ],
+      "orbitPositionDelta": 29.728643471874328,
+      "panDirectionDelta": 1.4285360930241543e-15,
+      "zoomDirectionDelta": 2.5476231888929306e-16,
+      "shiftPanDirectionDelta": 3.0379678876673583e-15
+    },
+    {
+      "id": "dispatch",
+      "viewerId": "1",
+      "owners": [
+        "viewer.debug-camera-position",
+        "platform.camera-controls",
+        "main.pointer-style",
+        "main.worksite-pick"
+      ],
+      "orbitPositionDelta": 29.728643471874328,
+      "panDirectionDelta": 1.4285360930241543e-15,
+      "zoomDirectionDelta": 2.5476231888929306e-16,
+      "shiftPanDirectionDelta": 3.0379678876673583e-15
+    },
+    {
+      "id": "blast",
+      "viewerId": "1",
+      "owners": [
+        "viewer.debug-camera-position",
+        "platform.camera-controls"
+      ],
+      "orbitPositionDelta": 37.513444003529436,
+      "panDirectionDelta": 7.239098962355514e-16,
+      "zoomDirectionDelta": 4.85722573273506e-16,
+      "shiftPanDirectionDelta": 1.0764011587430408e-15
+    },
+    {
+      "id": "main-return",
+      "viewerId": "1",
+      "owners": [
+        "viewer.debug-camera-position",
+        "platform.camera-controls",
+        "main.pointer-style",
+        "main.worksite-pick"
+      ],
+      "orbitPositionDelta": 29.728643471874328,
+      "panDirectionDelta": 1.4285360930241543e-15,
+      "zoomDirectionDelta": 2.5476231888929306e-16,
+      "shiftPanDirectionDelta": 3.0379678876673583e-15
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

@@ -18,6 +18,8 @@ import { transientScenarioCatalog } from '@/modules/ventilation/transient-catalo
 import { thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
 import { presentTaskScene, taskPresentationProfile } from '../TaskScenePresentation'
 import { faceSourceDescription } from '@/modules/face-sketch/resources'
+import { THREE_BENCH_ID, validateThreeBenchChainage, threeBenchDescription } from '@/modules/rock/three-bench-resource'
+import { isTestSupportId, testSupportCatalog } from '@/modules/support/test-section-resource'
 
 /** 只允许现有四类可展示资产进入智能体的场景编排，不能把任意路径当作资源加载。 */
 export const SCENE_EXPLORATION_RESOURCES = [
@@ -26,6 +28,8 @@ export const SCENE_EXPLORATION_RESOURCES = [
   'rock.tsp-anomaly', 'rock.tem-resistivity', 'rock.tem-water',
   'support.scene', 'blast.effect', 'blast.design-data',
   'rock.face-photos',
+  THREE_BENCH_ID,
+  ...testSupportCatalog.map(asset => asset.id),
   'rock.gpr-line1', 'rock.gpr-line2',
   'rock.advance-drill',
   'ventilation.steady-cfd', 'ventilation.transient-network', 'ventilation.thermal-field',
@@ -113,6 +117,7 @@ export function sceneStageTask(task: TaskContext, resource: SceneResource, reque
 
 /** Demo assembly permits one interpreted rock layer with the reanchored structure-tree support layout. */
 function compatibleAssembly(ids: readonly string[]): boolean {
+  if (ids.includes(THREE_BENCH_ID) || ids.some(isTestSupportId)) return new Set(ids).size === ids.length && ids.filter(isTestSupportId).length <= 1 && ids.every(id => id === THREE_BENCH_ID || isTestSupportId(id))
   if (ids.includes('rock.face-photos')) {
     const others = ids.filter(id => id !== 'rock.face-photos')
     return new Set(ids).size === ids.length && (others.length <= 1 || compatibleAssembly(others))
@@ -149,6 +154,7 @@ export function resolveAssemblyStages(
   for (const [index, current] of resources.entries()) {
     const previous = stages[index - 1] ?? []
     const autoRetain = modes[index] === 'auto' && (
+      (isTestSupportId(current.id) && resources[index - 1]?.id === THREE_BENCH_ID) || (current.id === THREE_BENCH_ID && isTestSupportId(resources[index - 1]?.id ?? '')) ||
       (current.id.startsWith('support.modeler-') || current.id === ALTERNATING_SUPPORT_ID) && resources[index - 1]?.id.startsWith('rock.')
       || current.id === 'support.scene' && resources[index - 1]?.id === 'rock.design-grade'
     )
@@ -252,7 +258,7 @@ async function focusScene(resource: SceneResource, viewer: Cesium.Viewer, retain
     direction: Cesium.Cartesian3.clone(camera.directionWC),
     up: Cesium.Cartesian3.clone(camera.upWC),
   }
-  const supportModel = (resource.id.startsWith('support.modeler-') || resource.id === ALTERNATING_SUPPORT_ID ? resource : retainedSupport)
+  const supportModel = (isTestSupportId(resource.id) || resource.id === THREE_BENCH_ID || resource.id.startsWith('support.modeler-') || resource.id === ALTERNATING_SUPPORT_ID ? resource : retainedSupport)
     ?.getEnhanceTargets?.()[0]?.object as Cesium.Model | undefined
   if (supportModel) {
     await waitForModelReady(supportModel, () => viewer.scene.requestRender())
@@ -353,6 +359,7 @@ export function createSceneExplorationExecutor(
     return planned
   }
   for (const resource of resources) {
+    if (resource.id === THREE_BENCH_ID || isTestSupportId(resource.id)) validateThreeBenchChainage(options.targetChainage ?? task.chainageRange.start)
     const continuous = continuousSupportCatalog.find(item => item.id === resource.id)
     if (continuous) planContinuousSupport(options.targetChainage ?? task.chainageRange.start, continuous.length)
   }
@@ -399,12 +406,14 @@ export function createSceneExplorationExecutor(
         module: resource.module,
         chainageRange: stageTask(task, resources, assemblyStages, index, options.targetChainage).chainageRange,
         assembledResourceIds: options.executor.getActiveState().plan?.rootResourceIds ?? [],
+        supportLengthM: stageResources(assemblyStages, index).some(item => isTestSupportId(item.id)) ? task.supportLengthM ?? 10 : undefined,
         note: [...new Set(stageResources(assemblyStages, index).map(resource => resource.id === 'blast.design-data'
           ? '炮孔设计来自现有方案示例，逐孔姿态含经验值；非目标工点实测或审批设计，不据此给出药量或安全结论'
           : resource.id === 'rock.advance-drill'
           ? '既有水平钻GLB示例按目标中线示意装配，孔位和轨迹非目标工点实测，不含钻进日志或涌水记录'
           : resource.id.startsWith('rock.gpr-line')
           ? '现有GPR处理剖面参考，测线横距/深度为局部轴；未建立目标YK测量对应，不将反射异常直接判为富水或破碎带'
+          : resource.id === THREE_BENCH_ID ? threeBenchDescription
           : resource.id === 'rock.face-photos'
           ? faceSourceDescription()
           : resource.id.startsWith('ventilation.thermal-t')

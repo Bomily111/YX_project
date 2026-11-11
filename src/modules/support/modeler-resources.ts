@@ -5,14 +5,16 @@ import { chainageService } from '@/platform/coordinates/ChainageService'
 const outputRoot = '/support-modeler/outputs'
 const sectionTypes = [
   'ZZ-II', 'ZZ-III', 'ZZ-IIIx', 'ZZ-IVa', 'ZZ-IVb', 'ZZ-IVc',
-  'ZZ-IVsx', 'ZZ-IVx', 'ZZ-QJsx', 'ZZ-S', 'ZZ-Vsx', 'ZZ-Y1', 'ZZ-Va',
+  'ZZ-IVsx', 'ZZ-IVx', 'ZZ-QJsx', 'ZZ-S', 'ZZ-Vsx', 'ZZ-Y1', 'ZZ-Va', 'Z-PM',
 ] as const
 
 export const modelerSupportCatalog = sectionTypes.map(type => ({
   type,
   id: `support.modeler-${type.toLowerCase()}`,
+  designElevationY: type === 'Z-PM' ? 0 : -2.1,
   path: type === 'ZZ-Va'
     ? `${outputRoot}/master_demo/ZZ-Va_support_1m_current.glb`
+    : type === 'Z-PM' ? `${outputRoot}/master_demo/Z-PM_support_1m_partial.glb`
     : `${outputRoot}/multi_support/${type}_support_1m.glb`,
 }))
 const activeModels = new Map<string, Cesium.Model>()
@@ -44,12 +46,13 @@ export function modelerSectionFrame(chainage: number): Cesium.Matrix4 {
 }
 
 export const modelerSupportResources: SceneResource[] = modelerSupportCatalog.map(asset => {
+  const placement = (chainage: number) => Cesium.Matrix4.multiplyByTranslation(modelerSectionFrame(chainage), new Cesium.Cartesian3(0, -2.1 - asset.designElevationY, 0), new Cesium.Matrix4())
   let viewer: Cesium.Viewer | undefined
   let model: Cesium.Model | undefined
   let placedChainage = 1116
   const place = (chainage: number) => {
     if (!model || !viewer) return
-    model.modelMatrix = modelerSectionFrame(chainage)
+    model.modelMatrix = placement(chainage)
     placedChainage = chainage
     viewer.scene.requestRender()
   }
@@ -62,7 +65,7 @@ export const modelerSupportResources: SceneResource[] = modelerSupportCatalog.ma
       viewer = context.viewer
       try {
         model = await Cesium.Model.fromGltfAsync({ url: asset.path,
-          modelMatrix: modelerSectionFrame(context.task?.chainageRange.start ?? 1116),
+          modelMatrix: placement(context.task?.chainageRange.start ?? 1116),
           upAxis: Cesium.Axis.Z, forwardAxis: Cesium.Axis.X })
         if (context.signal?.aborted) throw new DOMException('支护模型加载已取消', 'AbortError')
         viewer.scene.primitives.add(model)
@@ -79,6 +82,7 @@ export const modelerSupportResources: SceneResource[] = modelerSupportCatalog.ma
     },
     getEnhanceTargets: () => model ? [{ id: asset.id, type: 'support-section', object: model,
       metadata: { supportType: asset.type, source: 'support-modeler-export',
+        componentScope: asset.type === 'Z-PM' ? 'secondary-lining-and-N1-N7-only' : 'source-model-components', designElevationY: asset.designElevationY,
         chainage: placedChainage, lengthM: 1, parameterizedEditor: true, generatedForTask: false } }] : [],
     getActiveAssetPaths: () => model ? [asset.path] : [],
   }

@@ -1,0 +1,66 @@
+"""Illustrative continuous shell/ribs behind the three-bench lower face."""
+import bpy,json,math,bmesh
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+OUT=ROOT/'public/data/tunnel'
+profile=json.loads((ROOT/'src/modules/face-sketch/tunnel-excavation-profile.json').read_text())
+origin=json.loads((OUT/'三台阶.metadata.json').read_text())['sourceGltfOrigin']
+bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
+def material(name,color):
+    m=bpy.data.materials.new(name);m.use_nodes=True;m.diffuse_color=color
+    node=next((n for n in m.node_tree.nodes if n.type=='BSDF_PRINCIPLED'),None)
+    if node is None:
+        node=m.node_tree.nodes.new('ShaderNodeBsdfPrincipled');output=m.node_tree.nodes.new('ShaderNodeOutputMaterial');m.node_tree.links.new(node.outputs['BSDF'],output.inputs['Surface'])
+    node.inputs['Base Color'].default_value=color;node.inputs['Roughness'].default_value=.85;node.inputs['Alpha'].default_value=color[3]
+    if color[3]<1:m.surface_render_method='DITHERED'
+    return m
+concrete=material('Demonstration concrete',(.42,.48,.52,.28))
+steel=material('Demonstration ribs',(.16,.28,.34,1))
+def contour(section):
+    ring=section['outline'];center=[(min(p[0] for p in ring)+max(p[0] for p in ring))/2,1.4]
+    points=[]
+    for i in range(192):
+        angle=2*math.pi*i/192;dx,dy=math.cos(angle),math.sin(angle);hits=[]
+        for a,b in zip(ring,ring[1:]+ring[:1]):
+            ex,ey=b[0]-a[0],b[1]-a[1];det=dx*ey-dy*ex
+            if abs(det)<1e-10:continue
+            ax,ay=a[0]-center[0],a[1]-center[1]
+            t=(ax*ey-ay*ex)/det;u=(ax*dy-ay*dx)/det
+            if t>0 and 0<=u<=1:hits.append(t)
+        if not hits:raise RuntimeError('Opening ray missed')
+        t=min(hits);points.append((center[0]+t*dx-origin[2],center[1]+t*dy))
+    return points,center[0]-origin[2]
+sections=profile['supportSections'];rings=[contour(s) for s in sections]
+def shell(name,station_rings,inner_offset,outer_offset,mat):
+    vertices=[];n=192
+    for y,(ring,cx) in station_rings:
+        for offset in [inner_offset,outer_offset]:
+            for x,h in ring:
+                dx,dh=x-cx,h-1.4;length=math.hypot(dx,dh)
+                vertices.append((x+dx/length*offset,y,h+dh/length*offset))
+    faces=[]
+    for j in range(len(station_rings)-1):
+        for k in range(n):
+            q=(k+1)%n
+            for layer in [0,1]:
+                a=j*2*n+layer*n;b=(j+1)*2*n+layer*n
+                faces.append((a+k,a+q,b+q,b+k))
+    for j in [0,len(station_rings)-1]:
+        for k in range(n):q=(k+1)%n;a=j*2*n;faces.append((a+k,a+q,a+n+q,a+n+k))
+    mesh=bpy.data.meshes.new(name);mesh.from_pydata(vertices,[],faces);mesh.update()
+    bm=bmesh.new();bm.from_mesh(mesh);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
+    if any(not e.is_manifold for e in bm.edges):raise RuntimeError('Non-manifold support')
+    bm.to_mesh(mesh);bm.free()
+    obj=bpy.data.objects.new(name,mesh);bpy.context.collection.objects.link(obj);mesh.materials.append(mat)
+    obj['demonstration_only']=True
+    return obj
+shell('Continuous support shell',[(s['gltfPlaneX']-128,rings[i]) for i,s in enumerate(sections)],0,.26,concrete)
+for i in range(10):
+    a=sections[i]['gltfPlaneX']-128+.05;b=a+.10
+    shell(f'Illustrative rib {i+1:02d}',[(a,rings[i]),(b,rings[i])],-.09,0,steel)
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.export_scene.gltf(filepath=str(OUT/'测试工段支护.glb'),export_format='GLB',use_selection=True,export_extras=True)
+bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'测试工段支护.blend'))
+metadata={'displayName':'测试工段支护','demonstration':True,'source':'tunnel002.glb','sourceGltfOrigin':origin,'localAdvanceRange':[-10,0],'excavationRange':[0,22],'shellRadialThicknessM':.26,'ribSpacingM':1,'ribCount':10,'note':'Test-section illustrative shell and ribs; not a ZZ-Va design or manufactured steel profile. Shared source frame with 三台阶; axial intervals meet without overlap.'}
+(OUT/'测试工段支护.metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+(ROOT/'src/modules/support/test-section.metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf8')

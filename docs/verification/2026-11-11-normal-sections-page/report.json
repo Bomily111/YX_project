@@ -1,0 +1,28 @@
+{
+  "cases": [
+    {
+      "id": "support-length-20",
+      "taskId": "scene-1794380844518-mu93p",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 6857,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "type": "ZZ-Va",
+        "activePaths": [
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "count": 20,
+        "ready": true
+      }
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "page.evaluate: TypeError: C.Cartesian3.toArray is not a function\n    at pose (eval at evaluate (:370:30), <anonymous>:22:61)\n    at eval (eval at evaluate (:370:30), <anonymous>:23:136)\n    at async <anonymous>:396:30"
+}

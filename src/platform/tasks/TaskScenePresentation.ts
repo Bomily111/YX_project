@@ -6,13 +6,15 @@ import { getBlastModel, blastViewOffset } from '@/views/tunnel-module/blast'
 import { getTunnelGlbSegment } from '@/utils/Common/DrawLine'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import { applyTaskVolumeCut } from './TaskVolumeCut'
+import { THREE_BENCH_ID, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
+import { isTestSupportId, getTestSectionSupportModels } from '@/modules/support/test-section-resource'
 
 /** Final presentation transaction. All resources must already be assembled. */
 export const taskPresentationProfile = (ids: readonly string[]) => ({
   theme: 'task-focus',
   volumeCut: ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.')) ? { xmax: 0.5, ymin: 0.2 } : undefined,
   view: ids.some(id => /^rock\.(tsp-|tem-|geophysical-grade)/.test(id)) ? 'geophysical-context' : ids.includes('ventilation.steady-cfd') ? 'airflow-context' : 'component-detail',
-  tunnelOpacity: ids.includes('rock.face-photos') || ids.some(id => id.startsWith('support.modeler-continuous-')) ? 0.06 : ids.includes('rock.advance-drill') || ids.includes('blast.effect') ||
+  tunnelOpacity: ids.includes(THREE_BENCH_ID) || ids.some(isTestSupportId) ? 0.035 : ids.includes('support.modeler-z-pm') || ids.includes('rock.face-photos') || ids.some(id => id.startsWith('support.modeler-continuous-')) ? 0.06 : ids.includes('rock.advance-drill') || ids.includes('blast.effect') ||
     (ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.'))) ? 0.12 : undefined,
 })
 export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chainage: number): () => void {
@@ -29,22 +31,8 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
   try {
     const profile = taskPresentationProfile(ids)
     if (profile.volumeCut) undo.push(applyTaskVolumeCut())
-    const background = C.Color.clone(viewer.scene.backgroundColor)
-    undo.push(() => { viewer.scene.backgroundColor = background })
-    viewer.scene.backgroundColor = C.Color.fromCssColorString('#07121e')
-    for (const layer of [viewer.scene.globe, viewer.scene.skyBox, viewer.scene.skyAtmosphere, viewer.scene.sun, viewer.scene.moon]) {
-      if (!layer) continue
-      const visibility = layer as unknown as { show?: boolean }
-      const show = visibility.show
-      if (typeof show !== 'boolean') continue
-      undo.push(() => { visibility.show = show })
-      visibility.show = false
-    }
-    if (viewer.scene.fog) {
-      const enabled = viewer.scene.fog.enabled
-      undo.push(() => { viewer.scene.fog.enabled = enabled })
-      viewer.scene.fog.enabled = false
-    }
+    // Task assembly uses the current platform viewer/environment. Only model
+    // emphasis and camera framing belong to this transaction.
     const drills = ids.includes('rock.advance-drill') ? getActiveDrillModels() : []
     const face = ids.includes('rock.face-photos') ? getActiveFaceSlices()[0] : undefined
     const blast = ids.includes('blast.effect') ? getBlastModel() as C.Model | undefined : undefined
@@ -60,6 +48,10 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
       }
     }
     const spheres: C.BoundingSphere[] = drills.map(model => model.boundingSphere)
+    const excavation = ids.includes(THREE_BENCH_ID) ? getActiveThreeBenchModel() : undefined
+    if (excavation?.ready) spheres.push(excavation.boundingSphere)
+    const testSupports = getTestSectionSupportModels(ids)
+    spheres.push(...testSupports.filter(model => model.ready).map(model => model.boundingSphere))
     if (face?.position) spheres.push(new C.BoundingSphere(face.position.getValue(C.JulianDate.now()), 6))
     for (const id of ids) {
       const support = getActiveModelerSupportModel(id)
@@ -69,6 +61,13 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
     const airflow = ids.includes('ventilation.steady-cfd')
     const supportRange = spheres.length ? Math.max(42, C.BoundingSphere.fromBoundingSpheres(spheres).radius * 3) : 42
     const range = geophysical ? 160 : airflow ? 170 : drills.length ? 65 : face ? 24 : blast ? 22 : spheres.length ? supportRange : 220
+    if (excavation?.ready || testSupports.some(model => model.ready)) {
+      const combined = C.BoundingSphere.fromBoundingSpheres(spheres)
+      viewer.camera.viewBoundingSphere(combined, new C.HeadingPitchRange(station.heading - .65, -.45, Math.max(48, combined.radius * 3)))
+      viewer.camera.lookAtTransform(C.Matrix4.IDENTITY)
+      viewer.scene.requestRender()
+      return restore
+    }
     if (geophysical || airflow) {
       // The interpreted volume extends ahead of the task section; a support
       // detail camera would otherwise sit inside it and hide the assembly.

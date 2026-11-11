@@ -237,6 +237,7 @@ export function installModelControls(
     toLocal: topicFrame.toLocal,
     toWorld: topicFrame.toWorld,
   },
+  owner = 'ventilation.camera-controls',
 ) {
   const scene = viewer.scene
   const camera = viewer.camera
@@ -257,7 +258,7 @@ export function installModelControls(
   const ZOOM_OUT_FACTOR = 1.16
   const pivot = Cesium.Cartesian3.clone(getDefaultFocus())
   const lastPointer = new Cesium.Cartesian2(canvas.clientWidth / 2, canvas.clientHeight / 2)
-  const handler = createScreenSpaceEventHandler('ventilation.camera-controls', canvas)
+  const handler = createScreenSpaceEventHandler(owner, canvas)
   const pivotPoints = scene.primitives.add(new Cesium.PointPrimitiveCollection())
   const pivotPoint = pivotPoints.add({
     position: pivot,
@@ -317,7 +318,8 @@ export function installModelControls(
     if (scene.pickPositionSupported && Cesium.defined(scene.pick(screenPosition))) {
       try {
         const depthPoint = scene.pickPosition(screenPosition)
-        if (Cesium.defined(depthPoint)) picked = Cesium.Cartesian3.clone(depthPoint)
+        const pickLimit = Math.min(MAX_DISTANCE, Math.max(100, Cesium.Cartesian3.distance(camera.positionWC, pivot) * 4))
+        if (Cesium.defined(depthPoint) && Cesium.Cartesian3.distance(camera.positionWC, depthPoint) <= pickLimit) picked = Cesium.Cartesian3.clone(depthPoint)
       } catch {
         // 模型尚未完成深度写入时退回当前观察平面。
       }
@@ -349,7 +351,9 @@ export function installModelControls(
     const delta = Cesium.Cartesian3.add(horizontal, vertical, new Cesium.Cartesian3())
     const position = Cesium.Cartesian3.add(camera.positionWC, delta, new Cesium.Cartesian3())
     Cesium.Cartesian3.add(target, delta, target)
-    setLookAt(position, target)
+    // Panning preserves the current view even after pointer zoom moved the
+    // interaction pivot away from the optical axis.
+    camera.setView({destination:position,orientation:{direction:Cesium.Cartesian3.clone(camera.directionWC),up:Cesium.Cartesian3.clone(camera.upWC)}})
   }
 
   const orbitByPixels = (dx: number, dy: number) => {

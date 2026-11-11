@@ -12,6 +12,7 @@ import type { DataVersion } from '@/platform/telemetry/TaskDataProvenance'
 import { modelerSupportResources } from './modeler-resources'
 import { alternatingSupportResource } from './alternating-resource'
 import { continuousSupportResources } from './continuous-resource'
+import { testSectionSupportResources } from './test-section-resource'
 
 let supportViewer: Cesium.Viewer | undefined
 let referenceTunnel: Cesium.Model | undefined
@@ -123,7 +124,7 @@ export const supportSceneResource: SceneResource = {
   },
 }
 
-export const supportResources = [supportSceneResource, ...modelerSupportResources, alternatingSupportResource, ...continuousSupportResources] as const
+export const supportResources = [supportSceneResource, ...modelerSupportResources, alternatingSupportResource, ...continuousSupportResources, ...testSectionSupportResources] as const
 
 export const supportModuleManifest: SceneModuleManifest = {
   id: 'support',

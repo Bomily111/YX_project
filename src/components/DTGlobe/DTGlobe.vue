@@ -28,9 +28,10 @@ import { ref, reactive, getCurrentInstance, onBeforeMount, onBeforeUnmount } fro
 import { nextTick } from "vue";
 
 // 3. 确保这个路径对应你刚才创建的文件
-import { throttle, debounce } from "@/utils/Performance";
+import { throttle } from "@/utils/Performance";
 import Cesium, { type ScreenSpaceEventHandler, ScreenSpaceEventType, defined, Cartographic, Cartesian3 } from 'cesium';
 import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry';
+import { installPlatformModelControls } from '@/platform/input/PlatformModelControls';
 
 const ctx = getCurrentInstance();
 const _this = ctx.appContext.config.globalProperties;
@@ -44,8 +45,10 @@ const lonlat = reactive({
 });
 
 let inputHandler: ScreenSpaceEventHandler | undefined;
+let navigation: ReturnType<typeof installPlatformModelControls> | undefined;
 
 onBeforeUnmount(() => {
+  navigation?.destroy();
   inputHandler?.destroy();
   inputHandler = undefined;
 });
@@ -66,23 +69,10 @@ onBeforeMount(() => {
       loadMap(DTScopeEngine.viewer);
     }
     let viewer = DTScopeEngine.viewer;
+    navigation = installPlatformModelControls(viewer);
 
     let handler = createScreenSpaceEventHandler('main.pointer-style', viewer.canvas);
     inputHandler = handler;
-
-    // 左键拖动样式
-    handler.setInputAction((movement) => {
-      cursorTypeStyle.value = 'panStyle';
-    }, ScreenSpaceEventType.LEFT_DOWN);
-
-    handler.setInputAction((movement) => {
-      cursorTypeStyle.value = '';
-    }, ScreenSpaceEventType.LEFT_UP);
-
-    // 只在最后用户停止缩放的时候执行
-    const wheelDebounce = debounce(() => {
-      cursorTypeStyle.value = ''; // 恢复正常
-    }, 300);
 
     // 更新界面的标签
     const positionThrottle = throttle((movement) => {
@@ -95,29 +85,6 @@ onBeforeMount(() => {
         lonlat.lon = longitudeString;
       }
     }, 300);
-
-    handler.setInputAction((movement) => {
-      cursorTypeStyle.value = 'zoomStyle';
-      wheelDebounce();
-    }, ScreenSpaceEventType.WHEEL);
-
-    // 右键缩放样式
-    handler.setInputAction((movement) => {
-      let fixedPosition = movement.position;
-      cursorTypeStyle.value = 'hiddenStyle';
-      isCustom.value = true;
-
-      let zoomCustomContainer = document.getElementsByClassName('customCursor')[0] as HTMLElement;
-
-      zoomCustomContainer.style.left = fixedPosition.x + 'px';
-      zoomCustomContainer.style.top = fixedPosition.y + 'px';
-    }, ScreenSpaceEventType.RIGHT_DOWN);
-
-    // 右键抬起恢复样式
-    handler.setInputAction((movement) => {
-      cursorTypeStyle.value = '';
-      isCustom.value = false;
-    }, ScreenSpaceEventType.RIGHT_UP);
 
     // 更新 DTGlobe下侧的鼠标位置信息
     handler.setInputAction((movement) => {

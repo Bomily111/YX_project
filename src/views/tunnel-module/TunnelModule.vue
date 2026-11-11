@@ -80,7 +80,8 @@
 import { onMounted, onBeforeUnmount, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import * as Cesium from 'cesium'
-import { createViewer, enableOnDemandRender, installOrbitControls, releaseViewer } from './scene'
+import { createViewer, enableOnDemandRender, releaseViewer } from './scene'
+import { installPlatformModelControls } from '@/platform/input/PlatformModelControls'
 import { setBlastVisible, setBlastLayerVisible, blastLayerVisibility, flyToBlast, flyToTunnelOverview, getBlastModel, BLAST_INFO } from './blast'
 import { resourceManager } from '@/platform/resources/ResourceManager'
 import { registerBlastModule } from '@/modules/blast/resources'
@@ -130,7 +131,13 @@ async function initializeBlast() {
   const model = getBlastModel()
   if (!model) throw new Error('爆破资源加载完成但模型不存在')
   // 标准轨道控制(左键环绕/右键平移/滚轮缩放, 绕断面中心), 修复 Ctrl+左键甩飞黑屏
-  orbit = installOrbitControls(viewer, () => getBlastModel()?.boundingSphere?.center)
+  const navigation = installPlatformModelControls(viewer, () => {
+    const active = getBlastModel()
+    return active?.ready ? active.boundingSphere.center : active
+      ? Cesium.Matrix4.getTranslation(active.modelMatrix, new Cesium.Cartesian3())
+      : viewer.camera.positionWC
+  })
+  orbit = { handler: { destroy: () => navigation.destroy() }, resetFocus: () => navigation.reset() }
   const initView = new URLSearchParams(location.search).get('view')
   const finishLoading = () => {
     if (disposed) return

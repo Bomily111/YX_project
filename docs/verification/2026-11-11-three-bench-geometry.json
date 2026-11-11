@@ -1,0 +1,24 @@
+{
+  "meshes": [
+    {
+      "name": "Lower_bench_remaining_rock",
+      "vertices": 9532,
+      "triangles": 5976,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Middle_bench_remaining_rock",
+      "vertices": 8417,
+      "triangles": 4416,
+      "nonManifoldEdges": 0
+    },
+    {
+      "name": "Upper_bench_remaining_rock",
+      "vertices": 5512,
+      "triangles": 2856,
+      "nonManifoldEdges": 0
+    }
+  ],
+  "maxBoundaryErrorM": 0.00016466628486355717,
+  "passed": true
+}

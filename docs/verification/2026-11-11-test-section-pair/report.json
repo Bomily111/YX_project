@@ -1,0 +1,39 @@
+{
+  "cases": [
+    {
+      "id": "three-bench-support",
+      "taskId": "scene-1794374201505-o2yn5",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/data/tunnel/测试工段支护.glb"
+      ],
+      "elapsedMs": 8654
+    },
+    {
+      "id": "three-bench",
+      "taskId": "scene-1794374211756-apbe8",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb"
+      ],
+      "elapsedMs": 9265,
+      "solid": {
+        "ready": true,
+        "radius": 14.008079640448809
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 2226
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

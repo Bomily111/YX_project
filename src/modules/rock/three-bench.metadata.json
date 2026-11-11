@@ -1,0 +1,26 @@
+{
+  "demonstration": true,
+  "profileSource": "public/data/tunnel/tunnel002.glb",
+  "profileMethod": "arc-length-stations-normal-to-fitted-source-centerline",
+  "sourceGltfOrigin": [
+    128,
+    0,
+    21.03451925478543
+  ],
+  "advanceAxis": "source-centerline arc-length; asset coordinates retain source basis",
+  "units": "m",
+  "upperFront": 12,
+  "middleFront": 6,
+  "lowerFront": 0,
+  "end": 22,
+  "elevations": [
+    -2.098310410902915,
+    0,
+    2.8,
+    5.503001578004057
+  ],
+  "stationCount": 23,
+  "stationSpacingM": 1,
+  "centerlineFitResidualM": 0.00038016676202988036,
+  "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief."
+}

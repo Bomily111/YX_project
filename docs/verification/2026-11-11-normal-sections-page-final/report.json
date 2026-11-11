@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "id": "support-length-20",
+      "taskId": "scene-1794381110751-upy4e",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 9225,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "type": "ZZ-Va",
+        "activePaths": [
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "count": 20,
+        "ready": true
+      },
+      "geometry": {
+        "maxSupportNormalAngleDeg": 0,
+        "maxSupportJointGapM": 0.0026409670844562048,
+        "oldFixedCutAngleDeg": 10.86397218807977
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 2356
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
