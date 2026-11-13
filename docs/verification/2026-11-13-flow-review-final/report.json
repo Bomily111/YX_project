@@ -1,0 +1,189 @@
+{
+  "cases": [
+    {
+      "id": "post-blast-airflow",
+      "taskId": "scene-1794552377494-a88mp",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/blast/blast_effect.glb",
+        "/data/ventilation/cfd_cell_data_lite.json",
+        "/data/ventilation/cfd_arrows.json"
+      ],
+      "elapsedMs": 5909,
+      "terrainContext": {
+        "enabled": true,
+        "front": 0.08,
+        "back": 0.08,
+        "rectangle": {
+          "west": 1.656617571340095,
+          "south": 0.5152558678263424,
+          "east": 1.656766629153298,
+          "north": 0.5153864950167498
+        },
+        "active": true
+      },
+      "flowReviewChat": "🤖\n已读取当前复核反馈（未调整场景，仍为 focus 局部复核表达）：\n\n实际反馈\n- 采样范围：局部 CFD 样本，半径约 26.0 m；局部样本 888 个，总样本 3340 个。\n- 入镜情况：抽取 222 个 CFD 样本，222 个全部落在视口内；被屏幕面板遮挡 0 个，位于相机后方 0 个。\n- 目标尺度：爆破目标近似屏幕直径约 202.6 px（视口 1400×900）。\n- 风速样本区间约 0.034～1.372（资源自带单位，未换算为现场实测值）。\n\n限制\n- 遮挡字段为 not-measured：以上只是屏幕投影与面板矩形近似，未测模型间深度遮挡，不能据此称“无遮挡”。\n- 该反馈不代表通风达标或安全验收；风场为局部 K3+805～K4+005 数据示意配准到 YK3+900～YK4+100，点云为 YK1+346 示例重定位，均非 YK4+000 实测。\n\n下一步建议：若需看全段风场表达，可切换 context 模式再读取一次反馈对照；若需确认实际遮挡，需另行做深度遮挡测量（当前未接入）。\n👍\n👎",
+      "flowReview": {
+        "focus": {
+          "radiusM": 25.980607198605,
+          "localSamples": 888,
+          "totalSamples": 3340,
+          "velocityMin": 0.0337599478662014,
+          "velocityMax": 1.3721190690994263,
+          "strategy": "blast-airflow-local-review",
+          "occlusion": "not-measured",
+          "mode": "focus",
+          "sameModels": true,
+          "styleHash": -1779218533,
+          "diameterPx": 202.58913124483718,
+          "streamlines": false,
+          "particles": false
+        },
+        "context": {
+          "radiusM": 25.980607198605,
+          "localSamples": 888,
+          "totalSamples": 3340,
+          "velocityMin": 0.0337599478662014,
+          "velocityMax": 1.3721190690994263,
+          "strategy": "blast-airflow-local-review",
+          "occlusion": "not-measured",
+          "mode": "context",
+          "sameModels": true,
+          "styleHash": 350482299,
+          "diameterPx": 59.845834702060756,
+          "streamlines": true,
+          "particles": true
+        },
+        "again": {
+          "radiusM": 25.980607198605,
+          "localSamples": 888,
+          "totalSamples": 3340,
+          "velocityMin": 0.0337599478662014,
+          "velocityMax": 1.3721190690994263,
+          "strategy": "blast-airflow-local-review",
+          "occlusion": "not-measured",
+          "mode": "focus",
+          "sameModels": true,
+          "styleHash": -1779218533,
+          "diameterPx": 202.5891312448373,
+          "streamlines": false,
+          "particles": false
+        },
+        "feedback": {
+          "ok": true,
+          "action": "inspect_task_flow_review",
+          "taskId": "scene-1794552377494-a88mp",
+          "feedback": {
+            "radiusM": 25.980607198605,
+            "localSamples": 888,
+            "totalSamples": 3340,
+            "velocityMin": 0.0337599478662014,
+            "velocityMax": 1.3721190690994263,
+            "strategy": "blast-airflow-local-review",
+            "occlusion": "not-measured",
+            "mode": "focus",
+            "scope": "local-cfd-samples",
+            "sampled": 222,
+            "inside": 222,
+            "panelCovered": 0,
+            "behind": 0,
+            "targetDiameterPxApprox": 202.58913124483718,
+            "viewport": {
+              "width": 1400,
+              "height": 900
+            },
+            "measurement": "screen-projection-and-panel-rectangles",
+            "note": "投影范围和屏幕面板覆盖的采样近似；未测模型间深度遮挡，不代表通风或安全结论。"
+          }
+        },
+        "taskCountUnchanged": true
+      }
+    },
+    {
+      "id": "post-blast-airflow-overview",
+      "taskId": "scene-1794552388578-jix8v",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/blast/blast_effect.glb",
+        "/data/ventilation/cfd_cell_data_lite.json",
+        "/data/ventilation/cfd_arrows.json"
+      ],
+      "elapsedMs": 2587,
+      "terrainContext": {
+        "enabled": true,
+        "front": 0.08,
+        "back": 0.08,
+        "rectangle": {
+          "west": 1.656617571340095,
+          "south": 0.5152558678263424,
+          "east": 1.656766629153298,
+          "north": 0.5153864950167498
+        },
+        "active": true
+      },
+      "explicitFullFieldGoal": {
+        "mode": "context",
+        "passed": true
+      }
+    },
+    {
+      "id": "thermal-200",
+      "taskId": "scene-1794552391283-i01c5",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/cfd_transient_index.json",
+        "/data/ventilation/transient_thermal_monitors.json",
+        "/data/ventilation/cfd_transient_t200s.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 1869,
+      "terrainContext": {
+        "enabled": true,
+        "front": 1,
+        "back": 1,
+        "frontDistance": {
+          "near": 400,
+          "nearValue": 0.9,
+          "far": 800,
+          "farValue": 0.9
+        },
+        "rectangle": {
+          "west": -3.141592653589793,
+          "south": -1.5707963267948966,
+          "east": 3.141592653589793,
+          "north": 1.5707963267948966
+        },
+        "active": false
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 3029
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

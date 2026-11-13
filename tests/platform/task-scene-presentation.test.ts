@@ -24,15 +24,20 @@ it.each([false, true])('restores task-specific transparency on undo or presentat
     scene: { requestRender: vi.fn(), backgroundColor: C.Color.CORNFLOWERBLUE.clone(), globe: { show: true }, skyBox: { show: true }, skyAtmosphere: { show: true }, sun: { show: true }, moon: { show: true }, fog: { enabled: true } }, container: { closest: () => true }, isDestroyed: () => false } as any
   const environment=()=>JSON.stringify({background:viewer.scene.backgroundColor,globe:viewer.scene.globe,skyBox:viewer.scene.skyBox,skyAtmosphere:viewer.scene.skyAtmosphere,sun:viewer.scene.sun,moon:viewer.scene.moon,fog:viewer.scene.fog})
   const beforeEnvironment=environment()
+  const imagery={brightness:.8,saturation:.6}
+  viewer.imageryLayers={length:1,get:()=>imagery}
   if (fail) expect(() => presentTaskScene(viewer, ['rock.face-photos', 'rock.advance-drill'], 2244)).toThrow('camera failure')
   else {
     const undo = presentTaskScene(viewer, ['rock.face-photos', 'rock.advance-drill'], 2244)
+    expect(imagery.brightness).toBeCloseTo(.8*.22)
+    expect(imagery.saturation).toBeCloseTo(.6*.18)
     expect(state.tunnel.color.alpha).toBe(0.06)
     expect(environment()).toBe(beforeEnvironment)
     expect((face.wall!.material as C.ImageMaterialProperty).color!.getValue(C.JulianDate.now()).alpha).toBe(1)
     undo()
   }
   expect(state.tunnel.color.alpha).toBe(1)
+  expect(imagery).toEqual({brightness:.8,saturation:.6})
   expect(environment()).toBe(beforeEnvironment)
   expect((face.wall!.material as C.ImageMaterialProperty).color!.getValue(C.JulianDate.now()).alpha).toBe(1)
 })

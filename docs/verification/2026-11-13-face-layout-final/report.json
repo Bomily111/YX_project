@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {
+      "id": "workface-radar",
+      "taskId": "scene-1794548107605-pghwg",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/data/GPR_new/output/radargram_line1.json"
+      ],
+      "elapsedMs": 3635,
+      "faceCarrier": {
+        "polygon": true,
+        "wall": false,
+        "coplanarReady": true,
+        "vertices": 649,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+880.6",
+        "sourceDate": "2022-07-03",
+        "targetChainage": 2244,
+        "placement": "demonstration",
+        "carrier": "source-normal-section",
+        "profileSource": "tunnel002.glb / tunnel-normal-sections.json / sections[0]",
+        "textureCalibration": "unverified",
+        "surfaceReconstruction": false
+      }
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "任务雷达面板未缩窄: {\"width\":600,\"cssWidth\":\"600px\"}"
+}

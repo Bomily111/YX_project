@@ -1,0 +1,26 @@
+{
+  "cases": [
+    {
+      "quick": false,
+      "before": {
+        "enabled": true,
+        "labels": 17,
+        "colored": 0,
+        "blastReady": false,
+        "viewerId": "1",
+        "renderError": ""
+      },
+      "after": {
+        "enabled": true,
+        "labels": 0,
+        "colored": 5,
+        "blastReady": false,
+        "viewerId": "1",
+        "renderError": ""
+      }
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "围岩设计残留: {\"enabled\":true,\"labels\":0,\"colored\":5,\"blastReady\":false,\"viewerId\":\"1\",\"renderError\":\"\"}"
+}

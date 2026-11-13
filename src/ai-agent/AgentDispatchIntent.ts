@@ -1,3 +1,4 @@
+import {wantsSupportLayerControl,wantsSupportInspection} from './SupportLayerIntent'
 export interface RoutedToolCall {
   name: string
   input: Record<string, any>
@@ -37,6 +38,7 @@ export function wantsBlastLayerControl(message: string): boolean {
 
 /** Ordinary scene requests use one platform assembly call; explicit step-debug tasks retain the older tools. */
 export function wantsDirectSceneAssembly(message: string): boolean {
+  if(wantsSupportLayerControl(message)||wantsSupportInspection(message))return false
   if (wantsTestSupportUpdate(message)) return false
   if (wantsScenePreflight(message)) return false
   if (/支持哪些|有哪些可用|资源目录|能力清单/.test(message)) return false

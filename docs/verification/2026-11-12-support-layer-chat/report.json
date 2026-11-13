@@ -1,0 +1,166 @@
+{
+  "cases": [
+    {
+      "id": "followup-base",
+      "taskId": "scene-1794469949593-32n7t",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+        "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+        "/support-modeler/outputs/centerline/real_centerline_0_1064m.json",
+        "generated://support.test-section",
+        "generated://support.test-section"
+      ],
+      "elapsedMs": 5119,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "type": "ZZ-Va",
+        "activePaths": [
+          "/support-modeler/outputs/centerline/task-reference-1064.glb",
+          "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+          "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+          "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+        ],
+        "count": 1,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section",
+          "supportType": "ZZ-Va",
+          "lengthM": 5,
+          "layout": "1064m-component-example",
+          "sourceSegment": 19,
+          "groups": [
+            {
+              "name": "task_example_0_primary_concrete",
+              "component": "primary_concrete",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "visible": true
+            },
+            {
+              "name": "task_example_1_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "visible": false
+            },
+            {
+              "name": "task_example_2_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "visible": false
+            },
+            {
+              "name": "task_example_3_secondary_lining",
+              "component": "secondary_lining",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "visible": true
+            },
+            {
+              "name": "task_example_4_secondary_rebar_N3",
+              "component": "secondary_rebar_N3",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "visible": false
+            },
+            {
+              "name": "task_example_5_secondary_rebar_N4",
+              "component": "secondary_rebar_N4",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "visible": false
+            },
+            {
+              "name": "task_example_6_steel_arch",
+              "component": "steel_arch",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "visible": true
+            },
+            {
+              "name": "task_example_7_system_anchor",
+              "component": "system_anchor",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "visible": false
+            },
+            {
+              "name": "task_example_8_lock_foot_anchor",
+              "component": "lock_foot_anchor",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "visible": false
+            },
+            {
+              "name": "task_example_9_secondary_rebar_N1",
+              "component": "secondary_rebar_N1",
+              "spacingM": 0.25,
+              "stations": 20,
+              "instances": 20,
+              "visible": false
+            },
+            {
+              "name": "task_example_10_secondary_rebar_N2",
+              "component": "secondary_rebar_N2",
+              "spacingM": 0.25,
+              "stations": 20,
+              "instances": 20,
+              "visible": false
+            }
+          ],
+          "sourceStatus": "PARTIAL"
+        }
+      },
+      "componentControls": {
+        "passed": true,
+        "count": 10
+      },
+      "naturalLanguageLayers": true
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 2743
+    },
+    {
+      "id": "no-support-layers",
+      "rejected": true,
+      "previousScenePreserved": true,
+      "elapsedMs": 1547
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

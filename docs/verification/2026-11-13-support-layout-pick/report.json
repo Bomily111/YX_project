@@ -1,0 +1,340 @@
+{
+  "cases": [
+    {
+      "id": "followup-base",
+      "taskId": "scene-1794555936999-iczvz",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+        "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+        "/support-modeler/outputs/centerline/real_centerline_0_1064m.json",
+        "generated://support.test-section",
+        "generated://support.test-section"
+      ],
+      "elapsedMs": 5588,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "type": "ZZ-Va",
+        "activePaths": [
+          "/support-modeler/outputs/centerline/task-reference-1064.glb",
+          "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+          "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+          "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+        ],
+        "count": 1,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section",
+          "supportType": "ZZ-Va",
+          "lengthM": 5,
+          "layout": "1064m-component-example",
+          "sourceSegment": 19,
+          "groups": [
+            {
+              "name": "task_example_0_primary_concrete",
+              "component": "primary_concrete",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.720000267028809,
+              "sourceHeightM": 9.292589426040651,
+              "stationOffsetsM": [
+                -5.5,
+                -4.5,
+                -3.5,
+                -2.5,
+                -1.5
+              ],
+              "visible": true
+            },
+            {
+              "name": "task_example_1_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 0.8079999834299088,
+              "repeatGapM": 0.19200001657009125,
+              "sourceWidthM": 12.655999183654785,
+              "sourceHeightM": 9.251942634582521,
+              "stationOffsetsM": [
+                -5.5,
+                -4.5,
+                -3.5,
+                -2.5,
+                -1.5
+              ],
+              "visible": false
+            },
+            {
+              "name": "task_example_2_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.655593872070312,
+              "sourceHeightM": 9.164902448654177,
+              "stationOffsetsM": [
+                -5.5,
+                -4.5,
+                -3.5,
+                -2.5,
+                -1.5
+              ],
+              "visible": false
+            },
+            {
+              "name": "task_example_3_secondary_lining",
+              "component": "secondary_lining",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12,
+              "sourceHeightM": 10.300005912780763,
+              "stationOffsetsM": [
+                -5.5,
+                -4.5,
+                -3.5,
+                -2.5,
+                -1.5
+              ],
+              "visible": true
+            },
+            {
+              "name": "task_example_4_secondary_rebar_N3",
+              "component": "secondary_rebar_N3",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 11.888343811035156,
+              "sourceHeightM": 10.190006256103517,
+              "stationOffsetsM": [
+                -5.5,
+                -4.5,
+                -3.5,
+                -2.5,
+                -1.5
+              ],
+              "visible": false
+            },
+            {
+              "name": "task_example_5_secondary_rebar_N4",
+              "component": "secondary_rebar_N4",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 0.8192548416554928,
+              "repeatGapM": 0.18074515834450722,
+              "sourceWidthM": 11.922978401184082,
+              "sourceHeightM": 10.225921154022219,
+              "stationOffsetsM": [
+                -5.5,
+                -4.5,
+                -3.5,
+                -2.5,
+                -1.5
+              ],
+              "visible": false
+            },
+            {
+              "name": "task_example_6_steel_arch",
+              "component": "steel_arch",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "sourceAxialExtentM": 0.10000000521540642,
+              "repeatGapM": 0.6999999947845936,
+              "sourceWidthM": 12.639996528625488,
+              "sourceHeightM": 9.241765022277836,
+              "stationOffsetsM": [
+                -5.5,
+                -4.7,
+                -3.9,
+                -3.0999999999999996,
+                -2.3,
+                -1.5,
+                -0.7000000000000002
+              ],
+              "visible": true
+            },
+            {
+              "name": "task_example_7_system_anchor",
+              "component": "system_anchor",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "sourceAxialExtentM": 0.02499999850988388,
+              "repeatGapM": 0.7750000014901162,
+              "sourceWidthM": 20.68246078491211,
+              "sourceHeightM": 13.105984926223758,
+              "stationOffsetsM": [
+                -5.5,
+                -4.7,
+                -3.9,
+                -3.0999999999999996,
+                -2.3,
+                -1.5,
+                -0.7000000000000002
+              ],
+              "visible": false
+            },
+            {
+              "name": "task_example_8_lock_foot_anchor",
+              "component": "lock_foot_anchor",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "sourceAxialExtentM": 0.6520901918411255,
+              "repeatGapM": 0.14790980815887456,
+              "sourceWidthM": 18.696475982666016,
+              "sourceHeightM": 2.652200460433961,
+              "stationOffsetsM": [
+                -5.5,
+                -4.7,
+                -3.9,
+                -3.0999999999999996,
+                -2.3,
+                -1.5,
+                -0.7000000000000002
+              ],
+              "visible": false
+            },
+            {
+              "name": "task_example_9_secondary_rebar_N1",
+              "component": "secondary_rebar_N1",
+              "spacingM": 0.25,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.020923256874084473,
+              "repeatGapM": 0.22907674312591553,
+              "sourceWidthM": 11.89999771118164,
+              "sourceHeightM": 10.200006008148195,
+              "stationOffsetsM": [
+                -5.5,
+                -5.25,
+                -5,
+                -4.75,
+                -4.5,
+                -4.25,
+                -4,
+                -3.75,
+                -3.5,
+                -3.25,
+                -3,
+                -2.75,
+                -2.5,
+                -2.25,
+                -2,
+                -1.75,
+                -1.5,
+                -1.25,
+                -1,
+                -0.75
+              ],
+              "visible": false
+            },
+            {
+              "name": "task_example_10_secondary_rebar_N2",
+              "component": "secondary_rebar_N2",
+              "spacingM": 0.25,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.020923256874084473,
+              "repeatGapM": 0.22907674312591553,
+              "sourceWidthM": 11.143998146057129,
+              "sourceHeightM": 9.444005966186525,
+              "stationOffsetsM": [
+                -5.5,
+                -5.25,
+                -5,
+                -4.75,
+                -4.5,
+                -4.25,
+                -4,
+                -3.75,
+                -3.5,
+                -3.25,
+                -3,
+                -2.75,
+                -2.5,
+                -2.25,
+                -2,
+                -1.75,
+                -1.5,
+                -1.25,
+                -1,
+                -0.75
+              ],
+              "visible": false
+            }
+          ],
+          "sourceStatus": "PARTIAL",
+          "geometryTreatment": "source-instance-frame; concrete source vertices follow target end sections; internal axial caps omitted; other components rigid"
+        }
+      },
+      "supportLayout": {
+        "passed": true,
+        "row": {
+          "id": "support.test-section:steel_arch",
+          "resourceId": "support.test-section",
+          "component": "steel_arch",
+          "kind": "component-base",
+          "type": "ZZ-Va",
+          "lengthM": 5,
+          "offsetsM": [
+            -5.5,
+            -4.7,
+            -3.9,
+            -3.0999999999999996,
+            -2.3,
+            -1.5,
+            -0.7000000000000002
+          ],
+          "spacingM": 0.8,
+          "sourceSegment": 19
+        },
+        "markers": 7,
+        "picked2d": -4.7,
+        "picked3d": -3.9,
+        "sameModels": true,
+        "taskCountUnchanged": true
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 2427
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

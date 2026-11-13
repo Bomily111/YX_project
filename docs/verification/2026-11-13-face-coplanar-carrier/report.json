@@ -1,0 +1,105 @@
+{
+  "cases": [
+    {
+      "id": "workface-support-drill",
+      "taskId": "scene-1794547644402-yuh8m",
+      "total": 4,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/ahd/ahd1/2320835.glb",
+        "/data/ahd/ahd2/2336197.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 6192,
+      "faceCarrier": {
+        "polygon": true,
+        "wall": false,
+        "vertices": 649,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+880.6",
+        "sourceDate": "2022-07-03",
+        "targetChainage": 2244,
+        "placement": "demonstration",
+        "carrier": "source-normal-section",
+        "profileSource": "tunnel002.glb / tunnel-normal-sections.json / sections[0]",
+        "textureCalibration": "unverified",
+        "surfaceReconstruction": false
+      }
+    },
+    {
+      "id": "workface-radar",
+      "taskId": "scene-1794547648597-gu1bi",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/data/GPR_new/output/radargram_line1.json"
+      ],
+      "elapsedMs": 1886,
+      "faceCarrier": {
+        "polygon": true,
+        "wall": false,
+        "vertices": 649,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+880.6",
+        "sourceDate": "2022-07-03",
+        "targetChainage": 2244,
+        "placement": "demonstration",
+        "carrier": "source-normal-section",
+        "profileSource": "tunnel002.glb / tunnel-normal-sections.json / sections[0]",
+        "textureCalibration": "unverified",
+        "surfaceReconstruction": false
+      }
+    },
+    {
+      "id": "repeat-at-new-station",
+      "taskId": "scene-1794547650902-vn5o8",
+      "total": 4,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/ahd/ahd1/2320835.glb",
+        "/data/ahd/ahd2/2336197.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 2907,
+      "faceCarrier": {
+        "polygon": false,
+        "wall": true,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+880.6",
+        "sourceDate": "2022-07-03",
+        "targetChainage": 4000,
+        "placement": "demonstration"
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 2744
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

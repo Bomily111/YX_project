@@ -1,0 +1,148 @@
+{
+  "cases": [
+    {
+      "mode": "normal",
+      "before": {
+        "focused": null,
+        "loaded": [
+          0,
+          1,
+          2
+        ],
+        "enabled": true,
+        "labels": 17,
+        "colored": 3,
+        "blastReady": false,
+        "viewerId": "1",
+        "renderError": ""
+      },
+      "after": {
+        "focused": 0,
+        "loaded": [
+          0
+        ],
+        "enabled": false,
+        "labels": 0,
+        "colored": 0,
+        "blastReady": true,
+        "viewerId": "1",
+        "renderError": ""
+      },
+      "carrier": {
+        "focused": 0,
+        "loaded": [
+          0
+        ],
+        "enabled": false,
+        "labels": 0,
+        "colored": 0,
+        "blastReady": true,
+        "viewerId": "1",
+        "renderError": ""
+      },
+      "restored": {
+        "focused": null,
+        "loaded": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "enabled": true,
+        "labels": 17,
+        "colored": 5,
+        "blastReady": false,
+        "viewerId": "1",
+        "renderError": ""
+      }
+    },
+    {
+      "mode": "pending-request",
+      "before": {
+        "focused": null,
+        "loaded": [],
+        "enabled": false,
+        "labels": 0,
+        "colored": 0,
+        "blastReady": false,
+        "viewerId": "1",
+        "renderError": ""
+      },
+      "after": {
+        "focused": 0,
+        "loaded": [
+          0
+        ],
+        "enabled": false,
+        "labels": 0,
+        "colored": 0,
+        "blastReady": true,
+        "viewerId": "1",
+        "renderError": ""
+      },
+      "carrier": {
+        "focused": 0,
+        "loaded": [
+          0
+        ],
+        "enabled": false,
+        "labels": 0,
+        "colored": 0,
+        "blastReady": true,
+        "viewerId": "1",
+        "renderError": ""
+      }
+    },
+    {
+      "mode": "early-exit",
+      "before": {
+        "focused": null,
+        "loaded": [],
+        "enabled": false,
+        "labels": 0,
+        "colored": 0,
+        "blastReady": false,
+        "viewerId": "1",
+        "renderError": ""
+      },
+      "after": {
+        "focused": 0,
+        "loaded": [
+          0
+        ],
+        "enabled": false,
+        "labels": 0,
+        "colored": 0,
+        "blastReady": true,
+        "viewerId": "1",
+        "renderError": ""
+      },
+      "carrier": {
+        "focused": 0,
+        "loaded": [
+          0
+        ],
+        "enabled": false,
+        "labels": 0,
+        "colored": 0,
+        "blastReady": true,
+        "viewerId": "1",
+        "renderError": ""
+      }
+    }
+  ],
+  "errors": [],
+  "modules": [
+    "http://localhost:5178/src/views/tunnel-module/blast.ts",
+    "http://localhost:5178/src/utils/Common/DrawLine.ts",
+    "http://localhost:5178/src/ai-agent/knowledge/blast.ts",
+    "http://localhost:5178/src/views/tunnel-module/blast.ts",
+    "http://localhost:5178/src/utils/Common/DrawLine.ts",
+    "http://localhost:5178/src/ai-agent/knowledge/blast.ts",
+    "http://localhost:5178/src/views/tunnel-module/blast.ts",
+    "http://localhost:5178/src/utils/Common/DrawLine.ts",
+    "http://localhost:5178/src/ai-agent/knowledge/blast.ts"
+  ],
+  "passed": true
+}

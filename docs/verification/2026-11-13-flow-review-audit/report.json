@@ -1,0 +1,48 @@
+{
+  "cases": [
+    {
+      "id": "post-blast-airflow",
+      "taskId": "scene-1794552557942-cidpk",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/blast/blast_effect.glb",
+        "/data/ventilation/cfd_cell_data_lite.json",
+        "/data/ventilation/cfd_arrows.json"
+      ],
+      "elapsedMs": 5185,
+      "terrainContext": {
+        "enabled": true,
+        "front": 0.08,
+        "back": 0.08,
+        "rectangle": {
+          "west": 1.656617571340095,
+          "south": 0.5152558678263424,
+          "east": 1.656766629153298,
+          "north": 0.5153864950167498
+        },
+        "active": true
+      }
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  },
+  "failure": "重点表达未生效 {\"sameModels\":true,\"styleHash\":-1779218533,\"diameterPx\":202.5891312448373,\"streamlines\":false,\"particles\":false}"
+}

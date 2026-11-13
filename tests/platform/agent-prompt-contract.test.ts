@@ -1,8 +1,22 @@
 import { describe, expect, it } from 'vitest'
-import { buildSystemPrompt } from '@/ai-agent/knowledge/prompts/system'
+import { AGENT_PROMPT_VERSION, buildSystemPrompt } from '@/ai-agent/knowledge/prompts/system'
+import { BLAST_KB } from '@/ai-agent/knowledge/blast'
 
 describe('scene agent prompt contract', () => {
   const prompt = buildSystemPrompt()
+  it('distinguishes execution, visual feedback and engineering acceptance',()=>{
+    expect(prompt).toContain(AGENT_PROMPT_VERSION)
+    expect(prompt).toContain('这五种状态不能互相替代')
+    expect(prompt).toContain('phase=constructed-then-enhanced只证明平台展示阶段已执行')
+    expect(prompt).toContain('文件路径出现不代表正文已读取')
+  })
+  it('does not inject fictional engineering parameters as retrieval evidence',()=>{
+    const retrieved=buildSystemPrompt({scene:'blast'},'炮孔 孔径 孔深 孔距 装药 施工流程 通风')
+    expect(retrieved).toContain('fictional-example')
+    expect(retrieved).toContain('"referenceable":false')
+    for(const chunk of BLAST_KB)expect(retrieved).not.toContain(chunk.content)
+    expect(retrieved).not.toContain('24ppm')
+  })
   it('derives minimum resources from business needs without inventing worksite data', () => {
     expect(prompt).toContain('业务目标→资料需求→必要资源→展示方式')
     expect(prompt).toContain('不默认ZZ-Va、掌子面或TSP属性')

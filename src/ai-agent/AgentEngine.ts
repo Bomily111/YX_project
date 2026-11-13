@@ -9,6 +9,7 @@ import { blocksUnrevisedSceneAdvance, mustReviseAssemblyBeforeAdvance, wantsDire
 import { thermalRequestIssue } from '@/modules/ventilation/thermal-catalog'
 import { readSceneCapabilities } from './SceneCapabilities'
 import { wantsScenePreflight, wantsTestSupportUpdate } from './AgentDispatchIntent'
+import {wantsSupportLayerControl,wantsSupportInspection} from './SupportLayerIntent'
 
 interface StreamCallbacks {
   onText: (delta: string) => void
@@ -165,7 +166,10 @@ export class AgentEngine {
       const availableTools = [...new Map(selectedTools.map(tool => [tool.name, tool])).values()]
       const effectiveRequest = resolveClarifiedSceneRequest(userMessage, this.pendingSceneRequest)
       this.pendingSceneRequest = undefined
-      const supportUpdate = wantsTestSupportUpdate(userMessage)
+      const supportInspection=wantsSupportInspection(userMessage)
+      const supportTool=supportInspection?'inspect_current_support':'set_support_layers'
+      const supportLayers = supportInspection||wantsSupportLayerControl(userMessage)
+      const supportUpdate = !supportLayers && wantsTestSupportUpdate(userMessage)
       const directSceneAssembly = !supportUpdate && wantsDirectSceneAssembly(effectiveRequest)
       const blastLayerControl = wantsBlastLayerControl(userMessage)
       const viewControl = !supportUpdate && wantsTaskViewControl(userMessage)
@@ -178,7 +182,7 @@ export class AgentEngine {
         callbacks.onComplete(timeIssue)
         return
       }
-      const tools = supportUpdate ? availableTools.filter(tool => tool.name === 'update_test_support') : preflightControl ? availableTools.filter(tool => tool.name === 'check_scene_assembly') : cutControl ? availableTools.filter(tool => tool.name === 'set_task_volume_cut') : viewControl ? availableTools.filter(tool => tool.name === 'set_task_view') : blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
+      const tools = supportLayers ? availableTools.filter(tool=>tool.name===supportTool) : supportUpdate ? availableTools.filter(tool => tool.name === 'update_test_support') : preflightControl ? availableTools.filter(tool => tool.name === 'check_scene_assembly') : cutControl ? availableTools.filter(tool => tool.name === 'set_task_volume_cut') : viewControl ? availableTools.filter(tool => tool.name === 'set_task_view') : blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
         ? availableTools.filter(tool => tool.name === 'assemble_scene_at_mileage')
         : availableTools
 
@@ -217,10 +221,11 @@ export class AgentEngine {
           {
             onText: callbacks.onText,
             onToolUse: async (tool: ToolUseBlock) => {
+              if(supportLayers)tool.input={userRequest:userMessage}
               if (tool.name === 'assemble_scene_at_mileage' || tool.name === 'update_test_support') tool.input = { ...tool.input, userRequest: tool.name === 'update_test_support' ? userMessage : effectiveRequest }
               hadToolUse = true
               let result: string
-              if ((directSceneAssembly || blastLayerControl || viewControl || cutControl || preflightControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
+              if ((supportLayers || directSceneAssembly || blastLayerControl || viewControl || cutControl || preflightControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
                 result = JSON.stringify({ ok: false, action: tool.name,
                   reason: '本轮场景工具调用已结束，后续调用已拒绝' })
               } else if (preflightControl && tool.name !== 'check_scene_assembly') {
@@ -232,6 +237,8 @@ export class AgentEngine {
               } else if (!cutControl && viewControl && tool.name !== 'set_task_view') {
                 result = JSON.stringify({ ok: false, action: tool.name, reason: '视角调整不得重新装配场景' })
                 stopAfterTool = true
+              } else if (supportLayers && tool.name !== supportTool) {
+                result=JSON.stringify({ok:false,reason:'当前仅允许调整已有支护构件显隐'})
               } else if (blastLayerControl && tool.name !== 'set_blast_layers') {
                 result = JSON.stringify({ ok: false, action: tool.name, reason: '当前图层显示指令只允许调整已有爆破模型，不得创建任务或更改里程' })
                 stopAfterTool = true
@@ -261,7 +268,7 @@ export class AgentEngine {
                 result = await executeTool(tool.name, tool.input)
               }
               // Single-entry assembly already runs the validated workflow internally.
-              if (tool.name === 'update_test_support' || tool.name === 'assemble_scene_at_mileage' || tool.name === 'retry_scene_load' || tool.name === 'set_blast_layers' || tool.name === 'set_task_view' || tool.name === 'set_task_volume_cut' || tool.name === 'check_scene_assembly') {
+              if (tool.name === 'inspect_current_support' || tool.name === 'set_support_layers' || tool.name === 'update_test_support' || tool.name === 'assemble_scene_at_mileage' || tool.name === 'retry_scene_load' || tool.name === 'set_blast_layers' || tool.name === 'set_task_view' || tool.name === 'set_task_volume_cut' || tool.name === 'check_scene_assembly') {
                 stopAfterTool = true
                 assemblyReturnedThisRound = true
               }

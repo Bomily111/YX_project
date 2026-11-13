@@ -7,7 +7,7 @@
     v-if="visible"
     ref="panelRef"
     class="gpr-float"
-    :class="{ collapsed }"
+    :class="{ collapsed, 'task-reference':!!taskDataset }"
     :style="{ left: pos.x + 'px', top: pos.y + 'px' }"
   >
     <!-- Drag handle -->
@@ -313,6 +313,8 @@ onBeforeUnmount(() => {
   overflow: hidden;
   font-family: 'Microsoft YaHei', sans-serif;
 }
+.gpr-float.task-reference{width:400px;max-width:calc(100vw - 40px);box-sizing:border-box}
+.task-reference .gpr-meta{display:none}
 
 /* ── Header — matches .scp-header / .dgf-header ─────── */
 .gpr-header {

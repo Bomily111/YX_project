@@ -85,7 +85,8 @@ import { installPlatformModelControls } from '@/platform/input/PlatformModelCont
 import { setBlastVisible, setBlastLayerVisible, blastLayerVisibility, flyToBlast, flyToTunnelOverview, getBlastModel, BLAST_INFO } from './blast'
 import { resourceManager } from '@/platform/resources/ResourceManager'
 import { registerBlastModule } from '@/modules/blast/resources'
-import { setTunnelGlbVisible, setTunnelTranslucent } from '@/utils/Common/DrawLine'
+import { setTunnelGlbVisible, setTunnelTranslucent, focusTunnelSegmentAt, clearFocusedTunnelSegment } from '@/utils/Common/DrawLine'
+import { BLAST_SEGMENT_INDEX } from './tunnel'
 import Design2DPanel from './Design2DPanel.vue'
 import { aiEvents } from '@/ai-agent'
 
@@ -113,6 +114,9 @@ registerBlastModule()
 
 onMounted(() => {
   viewer = createViewer(host.value!)
+  // Apply before common.tunnel loads: keep only the source blast's carrier,
+  // including when the shared Viewer still holds the rock module's 17 segments.
+  focusTunnelSegmentAt(1116 + BLAST_SEGMENT_INDEX * 500 + 250, viewer)
   void initializeBlast()
 })
 
@@ -170,6 +174,7 @@ onBeforeUnmount(() => {
   stopLayerPanelDrag?.()
   orbit?.handler?.destroy()
   if (viewer) {
+    clearFocusedTunnelSegment(viewer)
     setTunnelGlbVisible(true)
     setTunnelTranslucent(false, viewer)
     void resourceManager.release(['blast.effect'])

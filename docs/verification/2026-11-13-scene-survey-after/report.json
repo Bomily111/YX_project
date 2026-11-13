@@ -1,0 +1,115 @@
+{
+  "cases": [
+    {
+      "id": "workface-support-drill",
+      "taskId": "scene-1794544328185-okv95",
+      "total": 4,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/ahd/ahd1/2320835.glb",
+        "/data/ahd/ahd2/2336197.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 4786
+    },
+    {
+      "id": "post-blast-airflow",
+      "taskId": "scene-1794544333281-97egq",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/blast/blast_effect.glb",
+        "/data/ventilation/cfd_cell_data_lite.json",
+        "/data/ventilation/cfd_arrows.json"
+      ],
+      "elapsedMs": 2853
+    },
+    {
+      "id": "workface-radar",
+      "taskId": "scene-1794544336023-v3h02",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/data/GPR_new/output/radargram_line1.json"
+      ],
+      "elapsedMs": 2193
+    },
+    {
+      "id": "thermal-200",
+      "taskId": "scene-1794544338946-n0nqo",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/cfd_transient_index.json",
+        "/data/ventilation/transient_thermal_monitors.json",
+        "/data/ventilation/cfd_transient_t200s.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 2522
+    },
+    {
+      "id": "fan-shutdown",
+      "taskId": "scene-1794544341285-pi8mk",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/transient_fan_shutdown.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 1457
+    },
+    {
+      "id": "design-only",
+      "taskId": "scene-1794544342647-0w6l5",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel000.glb",
+        "/data/blast/blast-design.json"
+      ],
+      "elapsedMs": 2518
+    },
+    {
+      "id": "rock-support",
+      "taskId": "scene-1794544345860-cd4tk",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "/data/tsp_actual/hardness.json",
+        "/data/tsp_actual/hardness_volume.png",
+        "/data/tunnel/tunnel000.glb"
+      ],
+      "elapsedMs": 3274
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 1912
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

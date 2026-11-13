@@ -52,6 +52,7 @@ interface DesignRockGradeData {
 
 let designRockGradeData: DesignRockGradeData | null = null;
 let designRockGradeEnabled = false;
+let designRockGradeRequestVersion = 0;
 let designRockGradeLabels: Cesium.Entity[] = [];
 let designRockGradeSavedGlobeShow: boolean | null = null;
 
@@ -1193,12 +1194,15 @@ function addDesignRockGradeLabels(viewer: any) {
 export async function setDesignRockGradeModelEnabled(enabled: boolean, customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
+  const requestVersion = ++designRockGradeRequestVersion;
 
   if (enabled && !designRockGradeData) {
     const response = await fetch('/data/tunnel/design-rock-grades.json');
     if (!response.ok) throw new Error(`设计围岩分级文件加载失败: ${response.status}`);
     designRockGradeData = await response.json();
   }
+  // Leaving the page wins over an earlier, still-loading enable request.
+  if (requestVersion !== designRockGradeRequestVersion || viewer.isDestroyed()) return;
   designRockGradeEnabled = enabled;
   for (let i = 0; i < tunnelGlbPrimitives.length; i++) {
     const model = tunnelGlbPrimitives[i];
@@ -1249,6 +1253,7 @@ export async function flyToDesignRockGradeOverview(customViewer?: any) {
   const viewer = customViewer || DTScopeEngine.viewer;
   if (!viewer) return;
   await setDesignRockGradeModelEnabled(true, viewer);
+  if (!designRockGradeEnabled || viewer.isDestroyed()) return;
   setDesignRockGradeOverviewEnvironment(viewer, true);
   const positions = CENTERLINE_COORDINATES
     .filter((_, index) => index % 24 === 0 || index === CENTERLINE_COORDINATES.length - 1)
@@ -1277,6 +1282,7 @@ export async function flyToDesignRockGradeSegment(modelIndex: number, customView
   if (!viewer || !startCfg || !endCfg) return;
 
   await setDesignRockGradeModelEnabled(true, viewer);
+  if (!designRockGradeEnabled || viewer.isDestroyed()) return;
   setDesignRockGradeOverviewEnvironment(viewer, false);
 
   for (let i = 0; i < tunnelGlbPrimitives.length; i++) {

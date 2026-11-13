@@ -1,7 +1,11 @@
 import type { ToolRegistration } from '../types'
+import {resolveSupportLayers} from '../SupportLayerIntent'
+import {planSupportDisplayContinuity} from '../SupportDisplayContinuity'
+import {getTaskSupportLayers,setTaskSupportLayer,getCurrentSupportReport} from '@/modules/support/test-section-resource'
 import { continuousSupportCatalog } from '@/modules/support/continuous-layout'
 import { readSceneCapabilities } from '../SceneCapabilities'
 import { setTaskVolumeCut } from '@/platform/tasks/TaskVolumeCut'
+import {setTaskFlowReview,inspectTaskFlowReview} from '@/platform/tasks/TaskFlowReview'
 import { focusTaskCamera, taskViews, type TaskView } from '@/platform/tasks/TaskCameraView'
 import { advancePlatformTask, dispatchValidatedWorkflow, orchestratePlatformTask } from '../TaskOrchestrator'
 import { AGENT_SCENE_RESOURCES, SCENE_ENHANCEMENT_MODES, SCENE_ASSEMBLY_MODES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
@@ -29,6 +33,13 @@ import {
   type AgentTaskWorkflowStatus,
 } from '@/platform/tasks/TaskWorkflowBridge'
 
+const supportLayerTool:ToolRegistration={module:'common',tool:{name:'set_support_layers',description:'按用户原话调整当前已完成任务的支护构件显隐，不重装、不新建任务；可恢复默认。',input_schema:{type:'object',properties:{}}},executor:async input=>{
+ const status=getTaskWorkflowController().getStatus(),ids=status.lastCompletedStage?.assembledResourceIds??[]
+ if(status.status!=='completed')throw Error('请先完成支护任务装配')
+ const layers=getTaskSupportLayers(ids),changes=resolveSupportLayers(String(input.userRequest??''),layers.map(l=>l.component))
+ for(const layer of layers)if(changes.has(layer.component))setTaskSupportLayer(layer.resourceId,layer.component,changes.get(layer.component)!)
+ return JSON.stringify({ok:true,action:'set_support_layers',taskId:status.taskId,layers:getTaskSupportLayers(ids)})
+}}
 const result = (action: string, status: AgentTaskWorkflowStatus): string => JSON.stringify({
   ok: status.notice?.type !== 'error',
   action,
@@ -112,6 +123,22 @@ export function normalizeAgentTaskInput(input: Record<string, any>): AgentTaskWo
 }
 
 export const workflowTools: ToolRegistration[] = [
+  {module:'common',tool:{name:'inspect_task_flow_review',description:'只读获取当前爆破与稳态风场复核的实际表达、局部关联样本数、最多256个CFD样本的屏幕投影入镜及面板覆盖、爆破目标近似像素直径。不会切换、装配或改数据；不测深度遮挡，不代表通风达标。',input_schema:{type:'object',properties:{}}},executor:async()=>{
+    const status=getTaskWorkflowController().getStatus()
+    if(status.status!=='completed')throw Error('当前任务尚未完成，不能读取最终复核反馈')
+    return JSON.stringify({ok:true,action:'inspect_task_flow_review',taskId:status.taskId,feedback:inspectTaskFlowReview()})
+  }},
+  {module:'common',tool:{name:'set_task_flow_review',description:'切换当前已完成的爆破与稳态风场组合复核表达。focus突出爆后轮廓与附近风向、降低CFD点层干扰并暂停显示流线/粒子；context恢复原风场显示并查看全段。仅显示和相机变化，不重装、不改数据，不代表真实无遮挡或安全验收。',input_schema:{type:'object',properties:{mode:{type:'string',enum:['focus','context']}},required:['mode']}},executor:async input=>{
+    const status=getTaskWorkflowController().getStatus(),ids=status.lastCompletedStage?.assembledResourceIds??[]
+    if(status.status!=='completed'||!['blast.effect','ventilation.steady-cfd'].every(id=>ids.includes(id)&&resourceManager.getState(id).status==='loaded'))throw Error('当前没有已完成的爆破与稳态风场组合任务')
+    return JSON.stringify({ok:true,action:'set_task_flow_review',taskId:status.taskId,...setTaskFlowReview(input.mode)})
+  }},
+  {module:'common',tool:{name:'inspect_current_support',description:'只读查询当前已完成任务的实际支护类型、长度、构件间距与站位、显隐和来源；不新建任务，不装配或改变模型。',input_schema:{type:'object',properties:{}}},executor:async()=>{
+    const status=getTaskWorkflowController().getStatus()
+    if(status.status!=='completed'||!status.lastCompletedStage)throw Error('当前没有已完成的支护任务，请先完成装配')
+    return JSON.stringify({ok:true,action:'inspect_current_support',taskId:status.taskId,supports:getCurrentSupportReport(status.lastCompletedStage.assembledResourceIds)})
+  }},
+  supportLayerTool,
   {
     module: 'common',
     tool: { name: 'check_scene_assembly', description: '只读预检明确里程和资源组合的装配兼容性及依赖，不创建任务、不加载或释放资源。通过不代表文件可读或目标实测资料齐全。用于先检查能否同屏，不执行装配的请求。',
@@ -150,7 +177,7 @@ export const workflowTools: ToolRegistration[] = [
   },
   {
     module: 'common',
-    tool: { name: 'set_task_view', description: '仅调整已完成装配任务的相机：整体布置overview，掌子面近景face，支护support，水平钻drill，爆破断面blast。不加载资源、不改变里程、剖切或图层。没有当前任务或对应模型时失败。',
+    tool: { name: 'set_task_view', description: '仅调整已完成装配任务的相机：整体布置overview，掌子面近景face，支护support，三台阶excavation，水平钻drill，爆破断面blast。不加载资源、不改变里程、剖切或图层。没有当前任务或对应模型时失败。',
       input_schema: { type: 'object', properties: { view: { type: 'string', enum: [...taskViews] } }, required: ['view'] } },
     executor: async input => {
       if (!taskViews.includes(input.view)) throw new Error('不支持的任务视角')
@@ -212,12 +239,20 @@ export const workflowTools: ToolRegistration[] = [
       const status = getTaskWorkflowController().getStatus()
       const update = resolveTestSupportUpdate(String(input.userRequest ?? ''), status)
       const current = getTestSectionSupportModels(status.lastCompletedStage?.assembledResourceIds)
+      const previousLayers=getTaskSupportLayers(status.lastCompletedStage?.assembledResourceIds??[])
       const layout=getTestSectionSupportSummaries(status.lastCompletedStage?.assembledResourceIds)[0]
       if (!layout || layout.lengthM !== update.previousLengthM || !current.length || current.some(model => !model.ready)) throw new Error('当前支护模型不完整或已释放，请重新装配后再调整')
       const assemble = workflowTools.find(item => item.tool.name === 'assemble_scene_at_mileage')!
       const result = JSON.parse(await assemble.executor({ description: `测试支护调整：${update.previousType}→${update.supportType}，${update.previousLengthM}→${update.supportLengthM}米；承接${update.parentTaskId}`, targetMileage: 'YK2+244', resourceIds: update.resourceIds, userRequest: update.request,
         resourceReasons: update.resourceIds.map(resourceId=>({resourceId,reason:'承接当前测试任务，保留未修改的类型/长度及资源组合'})) }))
-      return JSON.stringify({ ...result, action: 'update_test_support', parentTaskId: update.parentTaskId })
+      let displayContinuity
+      if(result.ok){
+        if(getTaskWorkflowController().getStatus().taskId!==result.taskId)throw Error('任务已变化，未应用旧显示状态')
+        const nextLayers=getTaskSupportLayers(update.resourceIds),plan=planSupportDisplayContinuity(previousLayers,nextLayers)
+        for(const change of plan.changes)for(const layer of nextLayers.filter(layer=>layer.component===change.component))setTaskSupportLayer(layer.resourceId,layer.component,change.visible)
+        displayContinuity={mode:plan.mode,preservedComponents:plan.changes.map(change=>change.component),layers:getTaskSupportLayers(update.resourceIds)}
+      }
+      return JSON.stringify({ ...result, action: 'update_test_support', parentTaskId: update.parentTaskId,displayContinuity })
     },
   },
   {
@@ -265,7 +300,7 @@ export const workflowTools: ToolRegistration[] = [
       if (resourceIds.length < 1 || resourceIds.length > 4) throw new Error('单次场景装配需要 1–4 个模型资源')
       const controller = getTaskWorkflowController()
       const prepared = await controller.prepareScene({
-        description: String(input.description ?? '').trim(), targetMileage, resourceIds,
+        description: String(resourceIds.includes('blast.effect')&&resourceIds.includes('ventilation.steady-cfd')&&input.userRequest?input.userRequest:input.description??'').trim(), targetMileage, resourceIds,
         supportLengthM,
         enhanceAfterAssembly: true,
         assemblyModes: resourceIds.map((_, index) => index === 0 ? 'replace' : 'retain'),

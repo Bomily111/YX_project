@@ -23,6 +23,14 @@ export interface VentilationLayers {
 }
 
 export const layers: VentilationLayers = { particleState: [] }
+/** Bounds of the currently drawn CFD/thermal samples, not the full tunnel asset. */
+export function getFlowBoundingSphere():Cesium.BoundingSphere|undefined {
+  const points=layers.points
+  if(!points?.show||!points.length)return undefined
+  const positions:Cesium.Cartesian3[]=[]
+  for(let i=0;i<points.length;i++){const point=points.get(i);if(point.show)positions.push(point.position)}
+  return positions.length?Cesium.BoundingSphere.fromPoints(positions):undefined
+}
 
 export function velocityColor(value: number, alpha = 1): Cesium.Color {
   const t = Math.min(1, Math.max(0, (value - 0.03) / 1.0))

@@ -1,6 +1,7 @@
 import * as T from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js'
+import { placeSourceShell } from './source-shell'
 export const examplePaths = [
   '/support-modeler/outputs/centerline/task-reference-1064.glb',
   '/support-modeler/outputs/centerline/task-reference-1064.capture.json',
@@ -30,13 +31,20 @@ export async function buildExampleSupport(type:string,length:number,pose:(distan
   const data=await source()
   const segment=data.segments.find(s=>s.support_type===type&&s.mesh_instance_count>0)
   if(!segment)return undefined
-  const line=data.line
-  const at=(distance:number)=>{let hi=line.chainage.findIndex((s:number)=>s>=distance);if(hi<0)return new T.Vector3(...line.points.at(-1));if(!hi)return new T.Vector3(...line.points[0]);return new T.Vector3(...line.points[hi-1]).lerp(new T.Vector3(...line.points[hi]),(distance-line.chainage[hi-1])/(line.chainage[hi]-line.chainage[hi-1]))}
   const start=segment.centerline_start_distance_m
-  const forward=at(start+.5).sub(at(start-.5)).normalize(),up=new T.Vector3(0,1,0),right=new T.Vector3().crossVectors(up,forward).normalize()
-  const inverse=new T.Matrix4().makeBasis(right,up,forward).setPosition(at(start)).invert()
   data.scene.updateMatrixWorld(true)
-  const root=new T.Group(),groups:Array<{name:string;component:string;spacingM:number;stations:number;instances:number;visible:boolean}>=[]
+  // The capture uses an orthogonal section frame. Recover that exact frame,
+  // rather than recomputing a different basis from a fitted route tangent.
+  let sourceFrame:T.Matrix4|undefined
+  data.scene.traverse(object=>{
+    if(object instanceof T.InstancedMesh&&object.userData.support_type===type&&object.userData.centerline_start_distance===start&&object.userData.component==='primary_concrete'){
+      const matrix=new T.Matrix4();object.getMatrixAt(0,matrix)
+      sourceFrame=object.matrixWorld.clone().multiply(matrix)
+    }
+  })
+  if(!sourceFrame)throw new Error('源示例缺少可核实的初支断面坐标架')
+  const inverse=sourceFrame.clone().invert()
+  const root=new T.Group(),groups:Array<{name:string;component:string;spacingM:number;stations:number;instances:number;visible:boolean;sourceAxialExtentM:number;repeatGapM:number;sourceWidthM:number;sourceHeightM:number;stationOffsetsM:number[]}>=[]
   data.scene.traverse(object=>{
     if(!(object instanceof T.InstancedMesh)||object.userData.support_type!==type||object.userData.centerline_start_distance!==start)return
     const component=String(object.userData.component),spacing=componentSpacing(component,segment.spacing_m,object.userData.parameters)
@@ -45,16 +53,37 @@ export async function buildExampleSupport(type:string,length:number,pose:(distan
     const rows=component==='advance_support'?Number(object.userData.count_per_ring):1
     if(!rows||rows>object.count)throw new Error('1064米示例构件排数无效')
     const prototypes=Array.from({length:rows},(_,index)=>{const m=new T.Matrix4();object.getMatrixAt(index,m);return inverse.clone().multiply(object.matrixWorld).multiply(m)})
-    const mesh=new T.InstancedMesh(object.geometry,object.material,stations.length*rows)
+    object.geometry.computeBoundingBox()
+    const bounds=new T.Box3()
+    for(const prototype of prototypes) bounds.union(object.geometry.boundingBox!.clone().applyMatrix4(prototype))
+    const sourceAxialExtentM=bounds.max.z-bounds.min.z
+    // Presentation materials are derived copies; never mutate the cached source.
+    // Concrete uses an opaque neutral surface, so overlapping transparent rings
+    // cannot masquerade as holes or construction joints. Type remains a label.
+    const material = (Array.isArray(object.material) ? object.material : [object.material]).map(source => {
+      const copy = source.clone() as T.MeshStandardMaterial
+      if(component==='primary_concrete'||component==='secondary_lining') {
+        copy.color.set(component==='primary_concrete'?'#a9aaa5':'#c2ccd0')
+        copy.opacity=1;copy.transparent=false;copy.depthWrite=true
+        copy.metalness=0;copy.roughness=.88
+      }
+      return copy
+    })
+    const shell=component==='primary_concrete'||component==='secondary_lining'
+    const mesh=shell?new T.Group():new T.InstancedMesh(object.geometry,Array.isArray(object.material)?material:material[0],stations.length*rows)
     mesh.name=`task_example_${groups.length}_${component}`
     let index=0
-    for(const station of stations)for(const prototype of prototypes)mesh.setMatrixAt(index++,pose(-length-.5+station).multiply(prototype))
-    mesh.instanceMatrix.needsUpdate=true
+    for(const [s,station] of stations.entries())for(const prototype of prototypes){
+      if(mesh instanceof T.InstancedMesh)mesh.setMatrixAt(index++,pose(-length-.5+station).multiply(prototype))
+      else mesh.add(new T.Mesh(placeSourceShell(object.geometry,prototype,pose,-length-.5+station,s===0,s===stations.length-1),Array.isArray(object.material)?material:material[0]))
+    }
+    if(mesh instanceof T.InstancedMesh)mesh.instanceMatrix.needsUpdate=true
     mesh.userData={component,sourceNode:object.name,spacingM:spacing,sourceSegment:segment.segment_index}
     root.add(mesh)
-    groups.push({name:mesh.name,component,spacingM:spacing,stations:stations.length,instances:mesh.count,visible:['primary_concrete','secondary_lining','steel_arch','lattice_arch'].includes(component)})
+    groups.push({name:mesh.name,component,spacingM:spacing,stations:stations.length,instances:stations.length*rows,sourceAxialExtentM,repeatGapM:spacing-sourceAxialExtentM,sourceWidthM:bounds.max.x-bounds.min.x,sourceHeightM:bounds.max.y-bounds.min.y,stationOffsetsM:stations.map(station=>-length-.5+station),visible:['primary_concrete','secondary_lining','steel_arch','lattice_arch'].includes(component)})
   })
   if(!groups.length)throw new Error(`1064米示例未找到${type}构件`)
   const buffer=await new GLTFExporter().parseAsync(root,{binary:true,onlyVisible:false}) as ArrayBuffer
-  return {buffer,groups,sourceSegment:segment.segment_index,sourceStatus:segment.model_status,sourceSpacing:segment.spacing_m}
+  return {buffer,groups,sourceSegment:segment.segment_index,sourceStatus:segment.model_status,sourceSpacing:segment.spacing_m,
+    geometryTreatment:'source-instance-frame; concrete source vertices follow target end sections; internal axial caps omitted; other components rigid'}
 }

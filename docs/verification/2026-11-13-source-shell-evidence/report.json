@@ -1,0 +1,807 @@
+{
+  "cases": [
+    {
+      "id": "followup-base",
+      "taskId": "scene-1794545141138-9kgxa",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+        "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+        "/support-modeler/outputs/centerline/real_centerline_0_1064m.json",
+        "generated://support.test-section",
+        "generated://support.test-section"
+      ],
+      "elapsedMs": 5102,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "type": "ZZ-Va",
+        "activePaths": [
+          "/support-modeler/outputs/centerline/task-reference-1064.glb",
+          "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+          "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+          "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+        ],
+        "count": 1,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section",
+          "supportType": "ZZ-Va",
+          "lengthM": 5,
+          "layout": "1064m-component-example",
+          "sourceSegment": 19,
+          "groups": [
+            {
+              "name": "task_example_0_primary_concrete",
+              "component": "primary_concrete",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.720000267028809,
+              "sourceHeightM": 9.292589426040651,
+              "visible": true
+            },
+            {
+              "name": "task_example_1_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 0.8079999834299088,
+              "repeatGapM": 0.19200001657009125,
+              "sourceWidthM": 12.655999183654785,
+              "sourceHeightM": 9.251942634582521,
+              "visible": false
+            },
+            {
+              "name": "task_example_2_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.655593872070312,
+              "sourceHeightM": 9.164902448654177,
+              "visible": false
+            },
+            {
+              "name": "task_example_3_secondary_lining",
+              "component": "secondary_lining",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12,
+              "sourceHeightM": 10.300005912780763,
+              "visible": true
+            },
+            {
+              "name": "task_example_4_secondary_rebar_N3",
+              "component": "secondary_rebar_N3",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 11.888343811035156,
+              "sourceHeightM": 10.190006256103517,
+              "visible": false
+            },
+            {
+              "name": "task_example_5_secondary_rebar_N4",
+              "component": "secondary_rebar_N4",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 0.8192548416554928,
+              "repeatGapM": 0.18074515834450722,
+              "sourceWidthM": 11.922978401184082,
+              "sourceHeightM": 10.225921154022219,
+              "visible": false
+            },
+            {
+              "name": "task_example_6_steel_arch",
+              "component": "steel_arch",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "sourceAxialExtentM": 0.10000000521540642,
+              "repeatGapM": 0.6999999947845936,
+              "sourceWidthM": 12.639996528625488,
+              "sourceHeightM": 9.241765022277836,
+              "visible": true
+            },
+            {
+              "name": "task_example_7_system_anchor",
+              "component": "system_anchor",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "sourceAxialExtentM": 0.02499999850988388,
+              "repeatGapM": 0.7750000014901162,
+              "sourceWidthM": 20.68246078491211,
+              "sourceHeightM": 13.105984926223758,
+              "visible": false
+            },
+            {
+              "name": "task_example_8_lock_foot_anchor",
+              "component": "lock_foot_anchor",
+              "spacingM": 0.8,
+              "stations": 7,
+              "instances": 7,
+              "sourceAxialExtentM": 0.6520901918411255,
+              "repeatGapM": 0.14790980815887456,
+              "sourceWidthM": 18.696475982666016,
+              "sourceHeightM": 2.652200460433961,
+              "visible": false
+            },
+            {
+              "name": "task_example_9_secondary_rebar_N1",
+              "component": "secondary_rebar_N1",
+              "spacingM": 0.25,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.020923256874084473,
+              "repeatGapM": 0.22907674312591553,
+              "sourceWidthM": 11.89999771118164,
+              "sourceHeightM": 10.200006008148195,
+              "visible": false
+            },
+            {
+              "name": "task_example_10_secondary_rebar_N2",
+              "component": "secondary_rebar_N2",
+              "spacingM": 0.25,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.020923256874084473,
+              "repeatGapM": 0.22907674312591553,
+              "sourceWidthM": 11.143998146057129,
+              "sourceHeightM": 9.444005966186525,
+              "visible": false
+            }
+          ],
+          "sourceStatus": "PARTIAL",
+          "geometryTreatment": "source-instance-frame; concrete source vertices follow target end sections; internal axial caps omitted; other components rigid"
+        }
+      },
+      "sourceBaseline": {
+        "passed": true,
+        "text": "源断面核对 · 尚未通过工程适用性验收\n\nZZ-Va：隧道源断面宽约 11.00m。\n\n源构件\t宽 / 高（m）\n初支混凝土\t12.72 / 9.29\n二次衬砌\t12.00 / 10.30\n轮廓来自不同源资产，宽度有差异；未自动缩放。包围盒尺寸不能证明断面贴合，仍需对应设计断面与标高核查。\n支护依据：1064米示例，第19段；隧道依据：tunnel002.glb提取法向断面。均非本工段实测资料。"
+      },
+      "componentControls": {
+        "passed": true,
+        "count": 10
+      },
+      "geometry": {
+        "maxSupportNormalAngleDeg": null,
+        "maxSupportJointGapM": null,
+        "oldFixedCutAngleDeg": 10.86397218807977
+      }
+    },
+    {
+      "id": "followup-type",
+      "taskId": "scene-1794545148816-xy4ss",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+        "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+        "/support-modeler/outputs/centerline/real_centerline_0_1064m.json",
+        "generated://support.test-section-zz-ivb",
+        "generated://support.test-section-zz-ivb"
+      ],
+      "elapsedMs": 1491,
+      "parentTaskId": "scene-1794545141138-9kgxa",
+      "existingSupport": {
+        "source": "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "type": "ZZ-IVb",
+        "activePaths": [
+          "/support-modeler/outputs/centerline/task-reference-1064.glb",
+          "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+          "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+          "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+        ],
+        "count": 1,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section-zz-ivb",
+          "supportType": "ZZ-IVb",
+          "lengthM": 5,
+          "layout": "1064m-component-example",
+          "sourceSegment": 20,
+          "groups": [
+            {
+              "name": "task_example_0_primary_concrete",
+              "component": "primary_concrete",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.399999618530273,
+              "sourceHeightM": 8.369722366333006,
+              "visible": true
+            },
+            {
+              "name": "task_example_1_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 0.5080000013113022,
+              "repeatGapM": 0.4919999986886978,
+              "sourceWidthM": 12.047999382019043,
+              "sourceHeightM": 8.158029556274412,
+              "visible": false
+            },
+            {
+              "name": "task_example_2_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.04781723022461,
+              "sourceHeightM": 8.058973550796507,
+              "visible": false
+            },
+            {
+              "name": "task_example_3_secondary_lining",
+              "component": "secondary_lining",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 11.800000190734863,
+              "sourceHeightM": 10.100006103515623,
+              "visible": true
+            },
+            {
+              "name": "task_example_4_steel_arch",
+              "component": "steel_arch",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 0.08800002932548523,
+              "repeatGapM": 0.9119999706745148,
+              "sourceWidthM": 12.319953441619873,
+              "sourceHeightM": 9.076753854751585,
+              "visible": true
+            },
+            {
+              "name": "task_example_5_system_anchor",
+              "component": "system_anchor",
+              "spacingM": 1,
+              "stations": 5,
+              "instances": 5,
+              "sourceAxialExtentM": 0.02499997615814209,
+              "repeatGapM": 0.9750000238418579,
+              "sourceWidthM": 20.395410537719727,
+              "sourceHeightM": 11.667163372039793,
+              "visible": false
+            }
+          ],
+          "sourceStatus": "PARTIAL",
+          "geometryTreatment": "source-instance-frame; concrete source vertices follow target end sections; internal axial caps omitted; other components rigid"
+        }
+      },
+      "sourceBaseline": {
+        "passed": true,
+        "text": "源断面核对 · 尚未通过工程适用性验收\n\nZZ-IVb：隧道源断面宽约 11.00m。\n\n源构件\t宽 / 高（m）\n初支混凝土\t12.40 / 8.37\n二次衬砌\t11.80 / 10.10\n轮廓来自不同源资产，宽度有差异；未自动缩放。包围盒尺寸不能证明断面贴合，仍需对应设计断面与标高核查。\n支护依据：1064米示例，第20段；隧道依据：tunnel002.glb提取法向断面。均非本工段实测资料。"
+      },
+      "componentControls": {
+        "passed": true,
+        "count": 5
+      },
+      "geometry": {
+        "maxSupportNormalAngleDeg": null,
+        "maxSupportJointGapM": null,
+        "oldFixedCutAngleDeg": 10.86397218807977
+      }
+    },
+    {
+      "id": "support-length-20",
+      "taskId": "scene-1794545154467-zghyt",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+        "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+        "/support-modeler/outputs/centerline/real_centerline_0_1064m.json",
+        "generated://support.test-section",
+        "generated://support.test-section"
+      ],
+      "elapsedMs": 3614,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "type": "ZZ-Va",
+        "activePaths": [
+          "/support-modeler/outputs/centerline/task-reference-1064.glb",
+          "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+          "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+          "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+        ],
+        "count": 1,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section",
+          "supportType": "ZZ-Va",
+          "lengthM": 20,
+          "layout": "1064m-component-example",
+          "sourceSegment": 19,
+          "groups": [
+            {
+              "name": "task_example_0_primary_concrete",
+              "component": "primary_concrete",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.720000267028809,
+              "sourceHeightM": 9.292589426040651,
+              "visible": true
+            },
+            {
+              "name": "task_example_1_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.8079999834299088,
+              "repeatGapM": 0.19200001657009125,
+              "sourceWidthM": 12.655999183654785,
+              "sourceHeightM": 9.251942634582521,
+              "visible": false
+            },
+            {
+              "name": "task_example_2_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.655593872070312,
+              "sourceHeightM": 9.164902448654177,
+              "visible": false
+            },
+            {
+              "name": "task_example_3_secondary_lining",
+              "component": "secondary_lining",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12,
+              "sourceHeightM": 10.300005912780763,
+              "visible": true
+            },
+            {
+              "name": "task_example_4_secondary_rebar_N3",
+              "component": "secondary_rebar_N3",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 11.888343811035156,
+              "sourceHeightM": 10.190006256103517,
+              "visible": false
+            },
+            {
+              "name": "task_example_5_secondary_rebar_N4",
+              "component": "secondary_rebar_N4",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.8192548416554928,
+              "repeatGapM": 0.18074515834450722,
+              "sourceWidthM": 11.922978401184082,
+              "sourceHeightM": 10.225921154022219,
+              "visible": false
+            },
+            {
+              "name": "task_example_6_steel_arch",
+              "component": "steel_arch",
+              "spacingM": 0.8,
+              "stations": 25,
+              "instances": 25,
+              "sourceAxialExtentM": 0.10000000521540642,
+              "repeatGapM": 0.6999999947845936,
+              "sourceWidthM": 12.639996528625488,
+              "sourceHeightM": 9.241765022277836,
+              "visible": true
+            },
+            {
+              "name": "task_example_7_system_anchor",
+              "component": "system_anchor",
+              "spacingM": 0.8,
+              "stations": 25,
+              "instances": 25,
+              "sourceAxialExtentM": 0.02499999850988388,
+              "repeatGapM": 0.7750000014901162,
+              "sourceWidthM": 20.68246078491211,
+              "sourceHeightM": 13.105984926223758,
+              "visible": false
+            },
+            {
+              "name": "task_example_8_lock_foot_anchor",
+              "component": "lock_foot_anchor",
+              "spacingM": 0.8,
+              "stations": 25,
+              "instances": 25,
+              "sourceAxialExtentM": 0.6520901918411255,
+              "repeatGapM": 0.14790980815887456,
+              "sourceWidthM": 18.696475982666016,
+              "sourceHeightM": 2.652200460433961,
+              "visible": false
+            },
+            {
+              "name": "task_example_9_secondary_rebar_N1",
+              "component": "secondary_rebar_N1",
+              "spacingM": 0.25,
+              "stations": 80,
+              "instances": 80,
+              "sourceAxialExtentM": 0.020923256874084473,
+              "repeatGapM": 0.22907674312591553,
+              "sourceWidthM": 11.89999771118164,
+              "sourceHeightM": 10.200006008148195,
+              "visible": false
+            },
+            {
+              "name": "task_example_10_secondary_rebar_N2",
+              "component": "secondary_rebar_N2",
+              "spacingM": 0.25,
+              "stations": 80,
+              "instances": 80,
+              "sourceAxialExtentM": 0.020923256874084473,
+              "repeatGapM": 0.22907674312591553,
+              "sourceWidthM": 11.143998146057129,
+              "sourceHeightM": 9.444005966186525,
+              "visible": false
+            }
+          ],
+          "sourceStatus": "PARTIAL",
+          "geometryTreatment": "source-instance-frame; concrete source vertices follow target end sections; internal axial caps omitted; other components rigid"
+        }
+      },
+      "sourceBaseline": {
+        "passed": true,
+        "text": "源断面核对 · 尚未通过工程适用性验收\n\nZZ-Va：隧道源断面宽约 11.00m。\n\n源构件\t宽 / 高（m）\n初支混凝土\t12.72 / 9.29\n二次衬砌\t12.00 / 10.30\n轮廓来自不同源资产，宽度有差异；未自动缩放。包围盒尺寸不能证明断面贴合，仍需对应设计断面与标高核查。\n支护依据：1064米示例，第19段；隧道依据：tunnel002.glb提取法向断面。均非本工段实测资料。"
+      },
+      "componentControls": {
+        "passed": true,
+        "count": 10
+      },
+      "geometry": {
+        "maxSupportNormalAngleDeg": null,
+        "maxSupportJointGapM": null,
+        "oldFixedCutAngleDeg": 10.86397218807977
+      }
+    },
+    {
+      "id": "baseline-ivb-20",
+      "taskId": "scene-1794545162129-vz5dh",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+        "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+        "/support-modeler/outputs/centerline/real_centerline_0_1064m.json",
+        "generated://support.test-section-zz-ivb",
+        "generated://support.test-section-zz-ivb"
+      ],
+      "elapsedMs": 3599,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "type": "ZZ-IVb",
+        "activePaths": [
+          "/support-modeler/outputs/centerline/task-reference-1064.glb",
+          "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+          "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+          "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+        ],
+        "count": 1,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section-zz-ivb",
+          "supportType": "ZZ-IVb",
+          "lengthM": 20,
+          "layout": "1064m-component-example",
+          "sourceSegment": 20,
+          "groups": [
+            {
+              "name": "task_example_0_primary_concrete",
+              "component": "primary_concrete",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.399999618530273,
+              "sourceHeightM": 8.369722366333006,
+              "visible": true
+            },
+            {
+              "name": "task_example_1_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.5080000013113022,
+              "repeatGapM": 0.4919999986886978,
+              "sourceWidthM": 12.047999382019043,
+              "sourceHeightM": 8.158029556274412,
+              "visible": false
+            },
+            {
+              "name": "task_example_2_primary_mesh",
+              "component": "primary_mesh",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 12.04781723022461,
+              "sourceHeightM": 8.058973550796507,
+              "visible": false
+            },
+            {
+              "name": "task_example_3_secondary_lining",
+              "component": "secondary_lining",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 1,
+              "repeatGapM": 0,
+              "sourceWidthM": 11.800000190734863,
+              "sourceHeightM": 10.100006103515623,
+              "visible": true
+            },
+            {
+              "name": "task_example_4_steel_arch",
+              "component": "steel_arch",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.08800002932548523,
+              "repeatGapM": 0.9119999706745148,
+              "sourceWidthM": 12.319953441619873,
+              "sourceHeightM": 9.076753854751585,
+              "visible": true
+            },
+            {
+              "name": "task_example_5_system_anchor",
+              "component": "system_anchor",
+              "spacingM": 1,
+              "stations": 20,
+              "instances": 20,
+              "sourceAxialExtentM": 0.02499997615814209,
+              "repeatGapM": 0.9750000238418579,
+              "sourceWidthM": 20.395410537719727,
+              "sourceHeightM": 11.667163372039793,
+              "visible": false
+            }
+          ],
+          "sourceStatus": "PARTIAL",
+          "geometryTreatment": "source-instance-frame; concrete source vertices follow target end sections; internal axial caps omitted; other components rigid"
+        }
+      },
+      "sourceBaseline": {
+        "passed": true,
+        "text": "源断面核对 · 尚未通过工程适用性验收\n\nZZ-IVb：隧道源断面宽约 11.00m。\n\n源构件\t宽 / 高（m）\n初支混凝土\t12.40 / 8.37\n二次衬砌\t11.80 / 10.10\n轮廓来自不同源资产，宽度有差异；未自动缩放。包围盒尺寸不能证明断面贴合，仍需对应设计断面与标高核查。\n支护依据：1064米示例，第20段；隧道依据：tunnel002.glb提取法向断面。均非本工段实测资料。"
+      },
+      "componentControls": {
+        "passed": true,
+        "count": 5
+      },
+      "geometry": {
+        "maxSupportNormalAngleDeg": null,
+        "maxSupportJointGapM": null,
+        "oldFixedCutAngleDeg": 10.86397218807977
+      }
+    },
+    {
+      "id": "baseline-zpm-5",
+      "taskId": "scene-1794545169843-on5lf",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb"
+      ],
+      "elapsedMs": 3636,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb",
+        "type": "Z-PM",
+        "activePaths": [
+          "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb"
+        ],
+        "count": 5,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section-z-pm",
+          "supportType": "Z-PM",
+          "lengthM": 5,
+          "layout": "original-unit-fallback",
+          "note": "1064米示例该类型为空范围，使用已有独立模型，未冒称示例布置；仅二衬和N1～N7已有分组可控制，配筋为PARTIAL，适用性仍待确认；构件间距未核验",
+          "groups": [
+            {
+              "component": "secondary_lining",
+              "name": "ZPMSecondaryLiningConcrete",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N1",
+              "name": "N1Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N2",
+              "name": "N2Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N3",
+              "name": "N3Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N4",
+              "name": "N4Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N5",
+              "name": "N5Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N6",
+              "name": "N6Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N7",
+              "name": "N7Group",
+              "visible": true
+            }
+          ]
+        }
+      },
+      "componentControls": {
+        "passed": true,
+        "count": 8
+      },
+      "geometry": {
+        "maxSupportNormalAngleDeg": 2.003316533165348e-16,
+        "maxSupportJointGapM": 0.0026321664599419188,
+        "oldFixedCutAngleDeg": 10.86397218807977
+      }
+    },
+    {
+      "id": "baseline-zpm-20",
+      "taskId": "scene-1794545181244-a8kdg",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb"
+      ],
+      "elapsedMs": 6794,
+      "existingSupport": {
+        "source": "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb",
+        "type": "Z-PM",
+        "activePaths": [
+          "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb"
+        ],
+        "count": 20,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section-z-pm",
+          "supportType": "Z-PM",
+          "lengthM": 20,
+          "layout": "original-unit-fallback",
+          "note": "1064米示例该类型为空范围，使用已有独立模型，未冒称示例布置；仅二衬和N1～N7已有分组可控制，配筋为PARTIAL，适用性仍待确认；构件间距未核验",
+          "groups": [
+            {
+              "component": "secondary_lining",
+              "name": "ZPMSecondaryLiningConcrete",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N1",
+              "name": "N1Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N2",
+              "name": "N2Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N3",
+              "name": "N3Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N4",
+              "name": "N4Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N5",
+              "name": "N5Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N6",
+              "name": "N6Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N7",
+              "name": "N7Group",
+              "visible": true
+            }
+          ]
+        }
+      },
+      "componentControls": {
+        "passed": true,
+        "count": 8
+      },
+      "geometry": {
+        "maxSupportNormalAngleDeg": 1.7402530467069375e-15,
+        "maxSupportJointGapM": 0.0026413334182161753,
+        "oldFixedCutAngleDeg": 10.86397218807977
+      }
+    },
+    {
+      "id": "reset-scene",
+      "reset": true,
+      "modelsReleased": true,
+      "elapsedMs": 2592
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

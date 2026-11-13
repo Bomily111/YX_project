@@ -114,10 +114,10 @@
           <input
             class="terrain-alpha-slider"
             type="range" min="0" max="100" step="1"
-            :value="Math.round(terrainAlpha * 100)"
+            :value="Math.round(terrainAlpha * 100)" :disabled="taskTerrainContextActive"
             @input="onTerrainAlphaInput"
           />
-          <span class="terrain-alpha-value">{{ Math.round(terrainAlpha * 100) }}%</span>
+          <span class="terrain-alpha-value">{{ taskTerrainContextActive ? '任务范围' : Math.round(terrainAlpha * 100) + '%' }}</span>
         </div>
 
         </div>
@@ -162,6 +162,10 @@
       <h2>{{ agentAssembly.targetMileage }}</h2>
       <p>已沿中线定位，并装配以下模型：</p>
       <ul><li v-for="resource in agentAssembly.resources" :key="resource.id">{{ resource.label }}</li></ul>
+      <small v-if="taskTerrainContextActive" data-testid="task-terrain-context">任务范围地形已淡化 · 仅展示状态，复位恢复</small>
+      <TaskSupportLayers :key="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource => resource.id)" />
+      <TaskSupportLayout :key="agentAssembly.taskId" :task-id="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource=>resource.id)" />
+      <TaskFlowReview :key="agentAssembly.taskId" />
       <div class="task-view-controls" aria-label="任务场景视角">
         <small>最近选择：{{ taskViewLabels[taskCameraSelection] }}</small>
         <div class="task-view-buttons">
@@ -259,7 +263,7 @@
       :visible="true" style="left:20px;top:auto;bottom:64px;width:280px;max-height:42vh" />
     <GPRRadargram v-for="resource in (agentAssembly && !activeScene ? agentAssembly.resources.filter(item => item.id.startsWith('rock.gpr-line')) : [])"
       :key="resource.id" :task-dataset="getActiveGprSection(resource.id)" :initial-line="resource.id.endsWith('2') ? 2 : 1"
-      :initial-x="20" style="top:auto;bottom:64px;width:min(600px,calc(100% - 440px))" />
+      :initial-x="20" style="top:auto;bottom:64px" />
     <!-- 底部状态与进度栏（仅总览模式显示） -->
     <div v-if="agentAssembly && !activeScene" class="agent-assembly-bottom" aria-label="当前任务场景状态">
       <strong>{{ agentAssembly.targetMileage }}</strong>
@@ -326,7 +330,7 @@
 
 <script setup lang="ts">
 import { viewerService } from '@/platform/viewer/ViewerService';
-import { taskCameraSelection, resetTaskCameraSelection, type TaskView } from '@/platform/tasks/TaskCameraView';
+import { taskCameraSelection, resetTaskCameraSelection, availableTaskCameraViews, type TaskView } from '@/platform/tasks/TaskCameraView';
 import { executeTool } from '@/ai-agent/ToolRegistry';
 import { taskVolumeCutDisplay, setTaskVolumeCut } from '@/platform/tasks/TaskVolumeCut';
 import { registerSceneLayerController } from '@/ai-agent/SceneLayerBridge';
@@ -368,6 +372,10 @@ import Toolbar from '@/components/Toolbar.vue';
 import RoamingToolbar from '@/components/RoamingToolbar.vue';
 import MileageSearchBar from '@/components/MileageSearchBar.vue';
 import TaskWorkflowPanel from '@/components/task-workflow/TaskWorkflowPanel.vue';
+import TaskSupportLayers from '@/components/task-workflow/TaskSupportLayers.vue';
+import TaskSupportLayout from '@/components/task-workflow/TaskSupportLayout.vue';
+import TaskFlowReview from '@/components/task-workflow/TaskFlowReview.vue';
+import {taskTerrainContextActive} from '@/platform/tasks/TaskTerrainContext';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 import { loadCenterLine, enableBlackModelMode, restoreEarthMode, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, clearFocusedTunnelSegment, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
 import { createMileageRuler, getMileageRuler, destroyMileageRuler } from '@/utils/Common/MileageRuler';
@@ -401,10 +409,10 @@ const agentAssembly = ref<{ targetMileage: string; taskId: string; resources: Ar
   supportRange?: { start: string; end: string; sections: number; zzVa: number; zPm: number } } | null>(null);
 const blastCloudVisible = computed({ get: () => blastLayerVisibility.pointcloud, set: visible => setBlastLayerVisible('pointcloud', visible) });
 const taskViewError = ref('');
-const taskViewLabels = { auto: '自动取景', overview: '整体布置', face: '掌子面', support: '支护', drill: '水平钻', blast: '爆破断面' };
+const taskViewLabels = { auto: '自动取景', overview: '整体布置', face: '掌子面', support: '支护', excavation: '三台阶', drill: '水平钻', blast: '爆破断面' };
 const availableTaskViews = computed<TaskView[]>(() => {
   const ids = agentAssembly.value?.resources.map(resource => resource.id) ?? [];
-  return (['overview', ...(ids.includes('rock.face-photos') ? ['face'] : []), ...(ids.some(id => id.startsWith('support.modeler-')) ? ['support'] : []), ...(ids.includes('rock.advance-drill') ? ['drill'] : []), ...(ids.includes('blast.effect') ? ['blast'] : [])] as TaskView[]);
+  return availableTaskCameraViews(ids);
 });
 async function chooseTaskView(view: TaskView) {
   try {
@@ -611,6 +619,9 @@ let worksiteClickHandler: ScreenSpaceEventHandler | null = null;
 const timeStr = ref('');
 const dateStr = ref('');
 let timer: any = null;
+let sceneDisposed = false;
+let sceneInitTimer: ReturnType<typeof setTimeout> | undefined;
+let initialSceneTimer: ReturnType<typeof setTimeout> | undefined;
 
 const updateTime = () => {
   const now = new Date();
@@ -803,6 +814,7 @@ const initSceneData = () => {
   };
 
   const tryLoad = () => {
+    if (sceneDisposed) return;
     const viewer = getViewer();
 
     if (!viewer) {
@@ -979,6 +991,7 @@ const handleRockStageChange = async (stage: 'baseline' | 'prediction' | 'correct
   try {
     // 设计基准阶段全量加载 17 段精细上色模型；离开设计基准后恢复按距离分段加载。
     await setDesignRockGradeModelEnabled(stage === 'baseline' || resourceManager.getState('rock.design-grade').references > 0, viewer);
+    if (sceneDisposed) return;
     setGeoModelDifferenceHighlight(false);
     deactivateGeoModel();
     currentActiveKey.value = '';
@@ -1059,6 +1072,7 @@ const onTerrainAlphaInput = (e: Event) => {
   terrainAlpha.value = val;
   const viewer = getViewer();
   if (!viewer) return;
+  if(taskTerrainContextActive.value)return;
   const globe = viewer.scene.globe;
   if (!globe.translucency.enabled) return;
   globe.translucency.frontFaceAlphaByDistance.nearValue = val;
@@ -1389,8 +1403,8 @@ onMounted(() => {
   timer = setInterval(updateTime, 1000);
 
   // 延迟一点启动，给 Viewer 初始化留出缓冲时间
-  setTimeout(initSceneData, 800);
-  setTimeout(() => {
+  sceneInitTimer = setTimeout(initSceneData, 800);
+  initialSceneTimer = setTimeout(() => {
     const requestedScene = route.query.scene;
     if (typeof requestedScene === 'string' && SCENE_DEFS[requestedScene]) {
       handleSelectScene(requestedScene);
@@ -1404,6 +1418,9 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  sceneDisposed = true;
+  clearTimeout(sceneInitTimer);
+  clearTimeout(initialSceneTimer);
   releaseAgentLayerControl();
   clearFocusedTunnelSegment();
   clearInterval(timer);
@@ -1418,7 +1435,12 @@ onBeforeUnmount(() => {
   }
   removeTunnelEntities();
   const viewer = getViewer();
-  if (viewer && !viewer.isDestroyed()) removeWorksiteEntities(viewer);
+  if (viewer && !viewer.isDestroyed()) {
+    // The shared tunnel remains available to the next module, but the design
+    // grade colouring, labels and full-route loading belong to this page.
+    void setDesignRockGradeModelEnabled(false, viewer);
+    removeWorksiteEntities(viewer);
+  }
   setTunnelTranslucent(false);
   setWindTunnelTranslucent(false);
 });
@@ -1792,6 +1814,7 @@ onBeforeUnmount(() => {
 /* Left Panel */
 .agent-assembly-info {
   position: absolute; z-index: 10; top: 80px; left: 20px;
+    max-height:calc(100% - 140px);overflow-y:auto;overscroll-behavior:contain;
   width: 280px; box-sizing: border-box; padding: 16px;
   color: #d9eff9; background: rgba(1, 17, 36, .91);
   border: 1px solid rgba(0, 190, 255, .4); border-left: 4px solid #00aaff;

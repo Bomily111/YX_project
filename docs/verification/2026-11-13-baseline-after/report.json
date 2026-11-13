@@ -1,0 +1,24 @@
+{
+  "cases": [
+    {
+      "id": "followup-base",
+      "taskId": "scene-1794543696438-ryxel",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.glb",
+        "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+        "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+        "/support-modeler/outputs/centerline/real_centerline_0_1064m.json",
+        "generated://support.test-section",
+        "generated://support.test-section"
+      ],
+      "elapsedMs": 4690
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "测试支护模型未正确加载或释放"
+}

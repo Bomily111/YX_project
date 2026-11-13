@@ -269,6 +269,8 @@ const publishAssembledScene = (status: AgentTaskWorkflowStatus): void => {
   })
 }
 const workflowToolNames = new Set([
+  'inspect_current_support',
+  'set_support_layers',
   'update_test_support',
   'retry_scene_load',
   'assemble_scene_at_mileage', 'orchestrate_platform_task', 'prepare_platform_task', 'advance_platform_task', 'revise_next_scene_assembly',
@@ -456,7 +458,7 @@ const send = async () => {
             canonicalDispatchShown = true
             streaming.value = false
             streamBuffer.value = ''
-            const labels: Record<string, string> = { overview: '整体布置', face: '掌子面近景', support: '支护近景', drill: '水平钻布置', blast: '爆破断面' }
+            const labels: Record<string, string> = { overview: '整体布置', face: '掌子面近景', support: '支护近景', excavation: '三台阶近景', drill: '水平钻布置', blast: '爆破断面' }
             messages.value.push({ role: 'assistant', content: parsed.ok ? `已切换到${labels[parsed.view] || parsed.view}视角，当前装配保持不变。` : `视角未调整：${parsed.reason || result}。` })
             await scrollToBottom()
           }
@@ -468,6 +470,21 @@ const send = async () => {
             messages.value.push({ role: 'assistant', content: parsed.ok
               ? `已${parsed.visible ? '显示' : '隐藏'}${labels[parsed.layer] || parsed.layer}。`
               : `图层未修改：${parsed.reason || '操作失败'}。` })
+            await scrollToBottom()
+          }
+          if(routed.name==='inspect_current_support'){
+            canonicalDispatchShown=true;streaming.value=false;streamBuffer.value=''
+            const detail=parsed.ok?parsed.supports.map((support:any)=>{
+              const header=`当前支护：${support.type}，长度${support.lengthM}米。`
+              if(!support.components.length)return `${header}\n${support.note||'当前源模型未提供独立构件分组，不能查询各构件间距或显隐。'}`
+              const rows=support.components.map((c:any)=>`${c.label}：${c.visible?'显示':'隐藏'}；${c.spacingM.length?`布置间距${c.spacingM.join('/')}米，${c.stations}个布置站位。`:'原模型分组，构件间距未核验。'}`).join('\n')
+              return `${header}\n${rows}\n${support.layout==='1064m-component-example'?'按1064米示例装配；布置站位数不等于单根杆件数量，示例参数不代表现场设计。':support.note}`
+            }).join('\n\n'):`当前支护查询失败：${parsed.reason||result}`
+            messages.value.push({role:'assistant',content:detail});await scrollToBottom()
+          }
+          if(routed.name==='set_support_layers'){
+            canonicalDispatchShown=true;streaming.value=false;streamBuffer.value=''
+            messages.value.push({role:'assistant',content:parsed.ok?'已按要求调整当前支护构件显隐，左侧任务信息栏已同步。':`支护构件未修改：${parsed.reason||result}。`})
             await scrollToBottom()
           }
           if (routed.name === 'set_blast_layers') {
@@ -504,6 +521,7 @@ const send = async () => {
               ? `已定位 ${parsed.targetMileage}，主场景装配完成：${resources || '无'}。${supportRange
                 ? `实际范围 ${supportRange.start}—${supportRange.end}，共 ${supportRange.sections} 个断面（ZZ-Va ${supportRange.zzVa}、Z-PM ${supportRange.zPm}）。` : ''}${parsed.lastCompletedStage?.phase === 'constructed-then-enhanced' ? '整体构建后的增强已完成。' : ''}${selectionText}${designText}${sceneSourceNotes(parsed.scenePlans, parsed.lastCompletedStage?.phase === 'constructed-then-enhanced')}`
               : `场景装配未完成：${parsed.reason || parsed.notice?.message || (result.startsWith('❌') ? result : '请核对里程与资源。')}` })
+            if(parsed.ok&&parsed.displayContinuity)messages.value.push({role:'assistant',content:parsed.displayContinuity.mode==='missing-visible-components'?'新支护类型不包含原先可见的构件，已保留新模型默认显示，避免支护全部不可见。':parsed.displayContinuity.mode==='preserved'?`已承接当前构件显隐设置（${parsed.displayContinuity.preservedComponents.length}类）；可在左侧任务栏核对或恢复默认显示。`:'当前模型没有可承接的分组显隐，采用源模型默认显示。'})
             await scrollToBottom()
           }
           if ((routed.name === 'advance_platform_task' || routed.name === 'orchestrate_platform_task') && Array.isArray(parsed.dispatchTrace)) {
@@ -531,7 +549,11 @@ const send = async () => {
                 targetDataVerified: parsed.action === 'inspect_scene_capabilities' ? parsed.targetDataVerified : undefined,
                 cut: parsed.action === 'set_task_volume_cut' ? parsed.cut : undefined,
                 view: parsed.action === 'set_task_view' ? parsed.view : undefined,
-                layers: parsed.action === 'set_blast_layers' ? parsed.layers : undefined,
+                flowReview:parsed.action==='set_task_flow_review'?{mode:parsed.mode,strategy:parsed.strategy,radiusM:parsed.radiusM,localSamples:parsed.localSamples,occlusion:parsed.occlusion}:undefined,
+                flowFeedback:parsed.action==='inspect_task_flow_review'?parsed.feedback:undefined,
+                displayContinuity: parsed.displayContinuity,
+                supportReport: parsed.action==='inspect_current_support'?parsed.supports:undefined,
+                layers: ['set_blast_layers','set_support_layers'].includes(parsed.action) ? parsed.layers : undefined,
                 taskStatus: parsed.status,
                 completed: parsed.completed,
                 total: parsed.total,

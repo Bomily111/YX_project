@@ -384,10 +384,10 @@ export function createSceneExplorationExecutor(
       context.onRollback(async () => { undoPresentation?.(); const errors = await enhancement.engine.reset(); if (errors.length) throw new AggregateError(errors, '整体增强撤销失败') })
       const enhanced = await enhancement.engine.apply(enhancement.planner.create({ ...active, stepId: step.stepId }, { highlightFocus: false }))
       if (enhanced.status === 'failed') throw enhanced.error ?? new Error('整体增强失败')
-      undoPresentation = presentTaskScene(load.viewer, active.rootResourceIds, options.targetChainage ?? task.chainageRange.start)
+      undoPresentation = presentTaskScene(load.viewer, active.rootResourceIds, options.targetChainage ?? task.chainageRange.start,task.description)
       if (active.rootResourceIds.includes('rock.face-photos')) await waitForSceneEntitiesReady(load.viewer)
       const previous = context.plan.sharedContext[`scene.stage.${resources.length}`]?.value as Record<string, unknown>
-      return { outputs: { [step.outputKeys[0]]: { ...previous, phase: 'constructed-then-enhanced', presentation: taskPresentationProfile(active.rootResourceIds),
+      return { outputs: { [step.outputKeys[0]]: { ...previous, phase: 'constructed-then-enhanced', presentation: taskPresentationProfile(active.rootResourceIds,task.description),
         provenance: active.rootResourceIds.map(id => ({ resourceId: id, assets: registry.require(id).getActiveAssetPaths?.() ?? [],
           metadata: (registry.require(id).getEnhanceTargets?.() ?? []).flatMap(target => target.metadata ? [target.metadata] : []) })),
         assembledResourceIds: [...active.rootResourceIds] } } }
