@@ -12,6 +12,7 @@
       <span>低阻</span>
       <span>高阻</span>
     </div>
+    <small v-if="note" class="tem-legend__note">{{ note }}</small>
   </div>
 </template>
 
@@ -22,6 +23,7 @@ const props = defineProps({
   minValue: { type: Number, required: true },
   maxValue: { type: Number, required: true },
   unit: { type: String, default: 'Ω·m' },
+  note:{type:String,default:''},
 });
 
 const formatValue = (value: number) => value.toFixed(1);
@@ -51,6 +53,7 @@ const rangeLabel = computed(() =>
   pointer-events: none;
   backdrop-filter: blur(6px);
 }
+.tem-legend__note{display:block;margin-top:6px;color:#8eaebe;font-size:10px;line-height:1.5}
 
 .tem-legend__head,
 .tem-legend__hint,

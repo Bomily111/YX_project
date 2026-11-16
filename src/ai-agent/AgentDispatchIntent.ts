@@ -4,6 +4,14 @@ export interface RoutedToolCall {
   input: Record<string, any>
   routed: boolean
 }
+export function wantsTaskReset(message:string):boolean {
+  if(/只咨询|只读|如何|怎么|能否|是否|不执行|计划/.test(message)||/(?:不要|不必|无需|请勿).{0,6}(?:复位|重置|清空|释放)/.test(message))return false
+  return /(?:复位|重置|清空)(?:当前|本次)?任务(?:场景)?|释放(?:当前|本次)任务模型/.test(message)
+}
+export function wantsReadOnlyFlowEvaluation(message:string):boolean {
+  return /当前|现在|这次/.test(message)&&/爆破|通风|风场/.test(message)&&/画面|屏幕|反馈/.test(message)
+    &&/评价|评估|检查/.test(message)&&/只读|只查询|仅评价|不要修改/.test(message)
+}
 export function wantsScenePreflight(message: string): boolean {
   return /装配预检|能否同屏|只.{0,6}预检|是否支持.*(?:同屏|组合)/.test(message)
 }
@@ -38,6 +46,7 @@ export function wantsBlastLayerControl(message: string): boolean {
 
 /** Ordinary scene requests use one platform assembly call; explicit step-debug tasks retain the older tools. */
 export function wantsDirectSceneAssembly(message: string): boolean {
+  if(wantsReadOnlyFlowEvaluation(message))return false
   if(wantsSupportLayerControl(message)||wantsSupportInspection(message))return false
   if (wantsTestSupportUpdate(message)) return false
   if (wantsScenePreflight(message)) return false

@@ -9,6 +9,8 @@ import { getBlastModel, blastViewOffset } from '@/views/tunnel-module/blast'
 import { THREE_BENCH_ID, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
 import { getTestSectionSupportModels } from '@/modules/support/test-section-resource'
 import {getFlowBoundingSphere} from '@/views/ventilation-module/cesiumVentilation'
+import {fitTaskCameraToViewport} from './TaskViewport'
+import {getTaskVolumeDomain} from './TaskVolumeCut'
 export const taskViews = ['overview', 'face', 'support', 'excavation', 'drill', 'blast'] as const
 export type TaskView = typeof taskViews[number]
 export function availableTaskCameraViews(ids:readonly string[]):TaskView[]{
@@ -36,6 +38,8 @@ export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chaina
     if(solid?.ready)spheres.push(solid.boundingSphere)
   }
   if (view === 'overview') {
+    const volumeDomain=ids.some(id=>/^rock\.(tsp-|tem-|geophysical-grade)/.test(id))?getTaskVolumeDomain():undefined
+    if(volumeDomain)spheres.push(volumeDomain.sphere)
     const solid = ids.includes(THREE_BENCH_ID) ? getActiveThreeBenchModel() : undefined
     if (solid?.ready) spheres.push(solid.boundingSphere)
     const testSupports = getTestSectionSupportModels(ids)
@@ -45,7 +49,7 @@ export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chaina
     if (blast?.ready) spheres.push(blast.boundingSphere)
     const flow=ids.some(id=>id==='ventilation.steady-cfd'||/^ventilation\.thermal-t\d+s$/.test(id))?getFlowBoundingSphere():undefined
     if(flow)spheres.push(flow)
-    const offsets = flow?[]:ids.includes('ventilation.steady-cfd') ? [-100, 100] : ids.some(id => /^rock\.(tsp-|tem-|geophysical-grade)/.test(id)) ? [0, 100] : [0]
+    const offsets = flow||volumeDomain?[]:ids.includes('ventilation.steady-cfd') ? [-100, 100] : ids.some(id => /^rock\.(tsp-|tem-|geophysical-grade)/.test(id)) ? [0, 100] : [0]
     for (const offset of offsets) {
       const point = chainageService.positionWithHeadingAt(chainage + offset)
       if (point) spheres.push(new C.BoundingSphere(C.Cartesian3.fromDegrees(point.longitude, point.latitude, point.height + 3), offset ? 25 : 6))
@@ -60,6 +64,7 @@ export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chaina
   viewer.camera.viewBoundingSphere(sphere, offset)
   viewer.camera.lookAtTransform(C.Matrix4.IDENTITY)
   if (viewer.container.closest('.dashboard-container')) viewer.camera.moveRight(offset.range * 0.04)
+  fitTaskCameraToViewport(viewer,sphere)
   viewer.scene.requestRender()
   selection.value = view
 }

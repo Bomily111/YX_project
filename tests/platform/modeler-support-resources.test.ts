@@ -16,8 +16,9 @@ describe('delivered support section placement', () => {
   })
 
   it('exposes each delivered 1 m section once with a public GLB path', () => {
-    expect(modelerSupportCatalog).toHaveLength(13)
-    expect(new Set(modelerSupportCatalog.map(asset => asset.id)).size).toBe(13)
+    expect(modelerSupportCatalog).toHaveLength(14)
+    expect(new Set(modelerSupportCatalog.map(asset => asset.id)).size).toBe(14)
+    expect(modelerSupportCatalog.find(asset=>asset.type==='Z-PM')?.path).toContain('Z-PM_support_1m_partial.glb')
     expect(modelerSupportCatalog.every(asset => asset.path.startsWith('/support-modeler/outputs/')
       && asset.path.endsWith('.glb'))).toBe(true)
     expect(modelerSupportCatalog.every(asset => existsSync(join(process.cwd(), 'public', asset.path.slice(1))))).toBe(true)

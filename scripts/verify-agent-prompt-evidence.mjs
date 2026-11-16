@@ -1,6 +1,7 @@
 import {chromium} from 'playwright-core'
 import {mkdir,writeFile} from 'node:fs/promises'
 const root=process.env.PROMPT_EVAL_OUTPUT_DIR||'docs/verification/2026-11-13-prompt-evidence'
+const promptVersion=process.env.PROMPT_EVAL_VERSION||'2026-11-16-task-chart-v6'
 await mkdir(root,{recursive:true})
 const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',args:['--enable-webgl','--use-gl=angle','--use-angle=d3d11']})
 const report={passed:false,cases:[],errors:[]}
@@ -10,7 +11,7 @@ try{
  page.on('pageerror',e=>report.errors.push(e.message))
  page.on('request',r=>{
   if(r.method()==='POST'&&r.url().endsWith('/api/ai-agent/task-runs'))taskWrites++
-  if(r.method()==='POST'&&r.url().endsWith('/api/ai-agent/chat'))versionSeen ||= r.postDataJSON()?.system?.includes('2026-11-13-task-evidence-v2')===true
+  if(r.method()==='POST'&&r.url().endsWith('/api/ai-agent/chat'))versionSeen ||= r.postDataJSON()?.system?.includes(promptVersion)===true
  })
  await page.route('http://localhost:5178/api/**',route=>{const url=new URL(route.request().url());url.port='3000';return route.continue({url:url.toString()})})
  await page.goto('http://localhost:5178',{waitUntil:'domcontentloaded'})
@@ -37,5 +38,5 @@ try{
   await page.screenshot({path:`${root}/${c.id}.png`})
  }
  if(!versionSeen||report.errors.length)throw Error('新提示词版本未进入实际模型请求或页面出现错误')
- report.promptVersion='2026-11-13-task-evidence-v2';report.passed=true
+ report.promptVersion=promptVersion;report.passed=true
 }catch(e){report.failure=e.message;throw e}finally{await writeFile(`${root}/report.json`,JSON.stringify(report,null,2));await browser.close()}

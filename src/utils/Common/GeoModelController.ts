@@ -314,6 +314,9 @@ for (const [key, file] of Object.entries({
   MODEL_CONFIGS[key] = { ...MODEL_CONFIGS.tsp, volumeUrl: `data/tsp_actual/${file}.json` };
 }
 MODEL_CONFIGS.tem_water = { ...MODEL_CONFIGS.tem, volumeUrl: 'data/geophysical_tem/water.json' };
+// Task resource descriptors refer to these source presets. Keep them separate
+// from legacy database instances, which may carry old paths and non-metre scales.
+const taskVolumeConfigs:Record<string,ModelConfig>=JSON.parse(JSON.stringify(MODEL_CONFIGS));
 
 // ── 运行时状态 ────────────────────────────────────────────
 let tunnelEntity: any = null;
@@ -333,7 +336,7 @@ let tspAttributeContrast = 1.2;
 let activeGeoModelKey: string | null = null;
 let activeDemoVolumeTransform: Cesium.Matrix4 | undefined;
 let pendingGeoModelReady: { key: string; promise: Promise<void> } | undefined;
-registerTaskVolumeAccess(() => activeGeoModelKey ? Previous.SVData?.[1] : undefined);
+registerTaskVolumeAccess(() => activeGeoModelKey ? Previous.SVData?.[1] : undefined,()=>activeGeoModelKey);
 function placedVolumeConfig(config?: ModelConfig['cesiumConfig']): ModelConfig['cesiumConfig'] {
   if (!activeDemoVolumeTransform || !config?.matrix) return config;
   const placed = Cesium.Matrix4.multiply(
@@ -600,8 +603,8 @@ function applyDifferenceHighlight(model: any) {
 }
 
 /** 激活指定 key 的地质模型：加载体数据/GLB + 摆放随道参考 + 飞相机 */
-export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface', demoVolumeTransform?: Cesium.Matrix4, focus = true) {
-  const cfg = MODEL_CONFIGS[key];
+export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?: 'vp' | 'vs' | 'hardness' | 'ratio' | 'anomaly' | 'integrity' | 'resistivity' | 'water' | 'isosurface', demoVolumeTransform?: Cesium.Matrix4, focus = true, taskVolumeUrl?:string) {
+  const cfg = taskVolumeUrl ? taskVolumeConfigs[key] : MODEL_CONFIGS[key];
   if (!cfg) return;
 
   if (key === 'tem' && volumeSubKey === 'isosurface') {
@@ -626,13 +629,14 @@ export function activateGeoModel(key: string, customViewer?: any, volumeSubKey?:
     resistivity: 'data/geophysical_tem/resistivity_contrast.json',
     water: 'data/geophysical_tem/water.json',
   };
-  const volumeUrl = key === 'tsp'
+  // Registered task assets must not be silently replaced by legacy database URLs.
+  const volumeUrl = taskVolumeUrl ?? (key === 'tsp'
     ? (tspVolumeUrls[volumeSubKey || 'vs'] || cfg.volumeUrl)
     : key === 'tem'
       ? (temVolumeUrls[volumeSubKey || 'resistivity'] || cfg.volumeUrl)
     : key === 'geophysical_grade'
       ? fusedGradeVolumeUrl()
-      : cfg.volumeUrl;
+    : cfg.volumeUrl);
 
   const doActivate = (viewer: any) => {
     // 清理上一个模型

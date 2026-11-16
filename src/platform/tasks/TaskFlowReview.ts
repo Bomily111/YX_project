@@ -1,6 +1,8 @@
 import * as C from 'cesium'
 import {readonly,ref} from 'vue'
 import {layers,getFlowBoundingSphere} from '@/views/ventilation-module/cesiumVentilation'
+import {fitTaskCameraToViewport,readTaskViewport} from './TaskViewport'
+import {evaluateFlowReview,type FlowScreenFeedback} from './FlowReviewEvaluation'
 
 export type FlowReviewMode='focus'|'context'
 export function flowReviewInitialMode(goal:string):FlowReviewMode {
@@ -11,7 +13,7 @@ export function flowReviewInitialMode(goal:string):FlowReviewMode {
 interface ReviewState {mode:FlowReviewMode;radiusM:number;localSamples:number;totalSamples:number;velocityMin:number;velocityMax:number;strategy:'blast-airflow-local-review';occlusion:'not-measured'}
 const state=ref<ReviewState>()
 export const taskFlowReview=readonly(state)
-let current:{set:(mode:FlowReviewMode)=>void;inspect:()=>Record<string,unknown>;dispose:()=>void}|undefined
+let current:{set:(mode:FlowReviewMode)=>void;inspect:()=>Record<string,unknown>;evaluate:()=>ReturnType<typeof evaluateFlowReview>;adjust:()=>Record<string,unknown>;dispose:()=>void}|undefined
 
 /** Reversible task strategy. Existing geometry, velocity colors and visibility
  * choices are preserved; a local focus cannot imply full-field evaluation. */
@@ -27,7 +29,7 @@ export function installTaskFlowReview(viewer:C.Viewer,blast:C.BoundingSphere,hea
   const visuals=([layers.streamlines,layers.particles] as const).filter((p):p is NonNullable<typeof p>=>!!p).map(p=>({object:p,show:p.show}))
   const velocities=originals.map(p=>Number(p.point.id?.velocity)).filter(Number.isFinite)
   const base={radiusM,localSamples:local.length,totalSamples:originals.length,velocityMin:Math.min(...velocities),velocityMax:Math.max(...velocities),strategy:'blast-airflow-local-review' as const,occlusion:'not-measured' as const}
-  let mode:FlowReviewMode='context',disposed=false
+  let mode:FlowReviewMode='context',disposed=false,adjustments=0
   const valid=()=>!disposed&&!viewer.isDestroyed()&&!points.isDestroyed()&&layers.points===points
   const style=(next:FlowReviewMode)=>{
     for(const original of originals){
@@ -52,11 +54,25 @@ export function installTaskFlowReview(viewer:C.Viewer,blast:C.BoundingSphere,hea
         if(xy&&xy.x>=0&&xy.x<=rect.width&&xy.y>=0&&xy.y<=rect.height){inside++;if(panels.some(r=>xy.x+rect.left>=r.left&&xy.x+rect.left<=r.right&&xy.y+rect.top>=r.top&&xy.y+rect.top<=r.bottom))panelCovered++}
       }
       const center=C.SceneTransforms.worldToWindowCoordinates(viewer.scene,blast.center)
+      const safe=readTaskViewport(viewer)?.safe
       const edge=C.SceneTransforms.worldToWindowCoordinates(viewer.scene,C.Cartesian3.add(blast.center,C.Cartesian3.multiplyByScalar(viewer.camera.upWC,blast.radius,new C.Cartesian3()),new C.Cartesian3()))
       return {...state.value,scope:mode==='focus'?'local-cfd-samples':'full-cfd-samples',sampled,inside,panelCovered,behind,
         targetDiameterPxApprox:center&&edge?C.Cartesian2.distance(center,edge)*2:null,
+        targetInSafeViewport:center&&safe?center.x>=safe.left&&center.x<=safe.right&&center.y>=safe.top&&center.y<=safe.bottom:null,
+        safeViewport:safe??null,
         viewport:{width:rect.width,height:rect.height},measurement:'screen-projection-and-panel-rectangles',occlusion:'not-measured',
         note:'投影范围和屏幕面板覆盖的采样近似；未测模型间深度遮挡，不代表通风或安全结论。'}
+    },
+    evaluate(){return evaluateFlowReview(session.inspect() as unknown as FlowScreenFeedback,adjustments)},
+    adjust(){
+      const before=session.inspect(),evaluation=session.evaluate()
+      if(!evaluation.candidates.length)return {changed:false,before,after:before,evaluation}
+      const sphere=mode==='focus'?localSphere:getFlowBoundingSphere()
+      if(!sphere)throw Error('当前复核范围不可用，未调整')
+      adjustments++
+      const framing=fitTaskCameraToViewport(viewer,sphere)
+      const after=session.inspect()
+      return {changed:framing.status==='fitted',before,after,framing,evaluation:session.evaluate()}
     },
     set(next:FlowReviewMode){
       if(!valid())throw Error('风场复核表达已失效，未修改场景')
@@ -68,6 +84,7 @@ export function installTaskFlowReview(viewer:C.Viewer,blast:C.BoundingSphere,hea
         const range=Math.max(next==='focus'?65:100,sphere.radius*(next==='focus'?4:3.5))
         camera.viewBoundingSphere(sphere,new C.HeadingPitchRange(heading+.85,-.4,range));camera.lookAtTransform(C.Matrix4.IDENTITY)
         if(viewer.container.closest('.dashboard-container'))camera.moveRight(range*.04)
+        fitTaskCameraToViewport(viewer,sphere)
         mode=next;state.value={...base,mode};viewer.scene.requestRender()
       }catch(error){style(before);camera.setView({destination:position,orientation:{direction,up}});throw error}
     },
@@ -92,4 +109,12 @@ export function setTaskFlowReview(mode:FlowReviewMode){
 export function inspectTaskFlowReview(){
   if(!current)throw Error('当前任务没有爆破与稳态风场组合复核表达')
   return current.inspect()
+}
+export function evaluateTaskFlowReview(){
+  if(!current)throw Error('当前任务没有爆破与稳态风场组合复核表达')
+  return current.evaluate()
+}
+export function adjustTaskFlowReview(){
+  if(!current)throw Error('当前任务没有爆破与稳态风场组合复核表达')
+  return current.adjust()
 }

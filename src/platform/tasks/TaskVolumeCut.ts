@@ -1,13 +1,23 @@
 import { computed, ref } from 'vue'
+import {volumeSamplingDomain} from './VolumeSamplingDomain'
 interface CuttableVolume {
+  modelMatrix?:ArrayLike<number>
+  cesiumModelMatrix?:ArrayLike<number>
   properties: Record<string, any>
   draw: (interactive: boolean) => void
 }
+export function getTaskVolumeDomain(){
+ const volume=activeVolume?.(),matrix=volume?.cesiumModelMatrix??volume?.modelMatrix
+ if(!volume||!matrix)return undefined
+ return volumeSamplingDomain(matrix,volume.properties)
+}
 let activeVolume: (() => CuttableVolume | undefined) | undefined
+let activeKey:(()=>string|null)|undefined
+export const getTaskVolumeKey=()=>activeKey?.()
 const originals = new WeakMap<CuttableVolume, { xmax: any; ymin: any }>()
 const revision = ref(0)
 export function refreshTaskVolumeCutState() { revision.value++ }
-export function registerTaskVolumeAccess(access: () => CuttableVolume | undefined): void { activeVolume = access; refreshTaskVolumeCutState() }
+export function registerTaskVolumeAccess(access: () => CuttableVolume | undefined,key?:()=>string|null): void { activeVolume = access;activeKey=key;refreshTaskVolumeCutState() }
 export const taskVolumeCutDisplay = computed(() => {
   void revision.value
   const volume = activeVolume?.()

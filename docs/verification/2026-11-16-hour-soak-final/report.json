@@ -1,0 +1,26 @@
+{
+  "startedAt": "2026-11-16T03:14:17.356Z",
+  "rounds": [
+    {
+      "round": 1,
+      "code": 0,
+      "elapsedMs": 57765,
+      "report": "docs/verification/2026-11-16-hour-soak-final/round-1/report.json"
+    },
+    {
+      "round": 2,
+      "code": 0,
+      "elapsedMs": 52621,
+      "report": "docs/verification/2026-11-16-hour-soak-final/round-2/report.json"
+    },
+    {
+      "round": 3,
+      "code": 1,
+      "elapsedMs": 228407,
+      "report": "docs/verification/2026-11-16-hour-soak-final/round-3/report.json"
+    }
+  ],
+  "passed": false,
+  "failure": "Round 3 failed",
+  "finishedAt": "2026-11-16T03:19:56.157Z"
+}

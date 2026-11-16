@@ -10,6 +10,9 @@ import { thermalRequestIssue } from '@/modules/ventilation/thermal-catalog'
 import { readSceneCapabilities } from './SceneCapabilities'
 import { wantsScenePreflight, wantsTestSupportUpdate } from './AgentDispatchIntent'
 import {wantsSupportLayerControl,wantsSupportInspection} from './SupportLayerIntent'
+import {wantsReadOnlyFlowEvaluation,wantsTaskReset} from './AgentDispatchIntent'
+import {agentServiceError} from './ServiceError'
+import {formatSupportInspection} from './SupportInspectionReply'
 
 interface StreamCallbacks {
   onText: (delta: string) => void
@@ -51,7 +54,7 @@ async function sendChatRequest(
 
   if (!response.ok) {
     const err = await response.text().catch(() => 'Unknown error')
-    throw new Error(`AI 服务请求失败 (${response.status}): ${err}`)
+    throw new Error(agentServiceError(response.status,err))
   }
 
   const reader = response.body!.getReader()
@@ -75,7 +78,7 @@ async function sendChatRequest(
 
       try {
         const evt = JSON.parse(data)
-        if (evt.type === 'error') throw new Error(evt.error || 'AI 服务流式响应失败')
+        if (evt.type === 'error') throw new Error(agentServiceError(0,String(evt.error??'')))
 
         if (evt.type === 'content_block_start' && evt.content_block?.type === 'tool_use') {
           toolUseBlock = { type: 'tool_use', id: evt.content_block.id, name: evt.content_block.name, input: {} }
@@ -158,6 +161,21 @@ export class AgentEngine {
     try {
       // 1. 添加用户消息
       this.addMessage('user', userMessage)
+      // Explicit recovery remains available even when the model provider is down.
+      const localTool=wantsTaskReset(userMessage)?'reset_task_scene':wantsSupportInspection(userMessage)?'inspect_current_support':undefined
+      if(localTool){
+        const call:ToolUseBlock={type:'tool_use',id:`local-scene-${Date.now()}`,name:localTool,input:{}}
+        this.messages.push({role:'assistant',content:'',tool_calls:[{id:call.id,name:call.name,input:call.input}]})
+        const output=callbacks.onToolUse?await callbacks.onToolUse(call):await executeTool(call.name,call.input)
+        this.messages.push({role:'tool',content:output,tool_call_id:call.id,name:call.name})
+        let summary='平台操作未完成，请查看返回的错误。'
+        try{
+          const result=JSON.parse(output)
+          summary=result.ok===true?(localTool==='inspect_current_support'?formatSupportInspection(result.supports,userMessage):'当前任务场景已复位，任务模型已释放并恢复主场景。'):`${localTool==='reset_task_scene'?'任务复位':'支护查询'}未完成：${result.reason??result.notice?.message??'请查看任务状态'}`
+        }catch{/* no success claim for a non-JSON error */}
+        this.addMessage('assistant',summary);callbacks.onText(summary);callbacks.onComplete(summary)
+        return
+      }
 
       // 2. 根据上下文选择工具
       const selectedTools = context.scene
@@ -167,6 +185,7 @@ export class AgentEngine {
       const effectiveRequest = resolveClarifiedSceneRequest(userMessage, this.pendingSceneRequest)
       this.pendingSceneRequest = undefined
       const supportInspection=wantsSupportInspection(userMessage)
+      const flowEvaluation=wantsReadOnlyFlowEvaluation(userMessage)
       const supportTool=supportInspection?'inspect_current_support':'set_support_layers'
       const supportLayers = supportInspection||wantsSupportLayerControl(userMessage)
       const supportUpdate = !supportLayers && wantsTestSupportUpdate(userMessage)
@@ -182,12 +201,13 @@ export class AgentEngine {
         callbacks.onComplete(timeIssue)
         return
       }
-      const tools = supportLayers ? availableTools.filter(tool=>tool.name===supportTool) : supportUpdate ? availableTools.filter(tool => tool.name === 'update_test_support') : preflightControl ? availableTools.filter(tool => tool.name === 'check_scene_assembly') : cutControl ? availableTools.filter(tool => tool.name === 'set_task_volume_cut') : viewControl ? availableTools.filter(tool => tool.name === 'set_task_view') : blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
+      const tools = flowEvaluation?availableTools.filter(tool=>['evaluate_task_flow_review','inspect_task_flow_review'].includes(tool.name)):supportLayers ? availableTools.filter(tool=>tool.name===supportTool) : supportUpdate ? availableTools.filter(tool => tool.name === 'update_test_support') : preflightControl ? availableTools.filter(tool => tool.name === 'check_scene_assembly') : cutControl ? availableTools.filter(tool => tool.name === 'set_task_volume_cut') : viewControl ? availableTools.filter(tool => tool.name === 'set_task_view') : blastLayerControl ? availableTools.filter(tool => tool.name === 'set_blast_layers') : directSceneAssembly
         ? availableTools.filter(tool => tool.name === 'assemble_scene_at_mileage')
         : availableTools
 
       // 3. 构建增强的 system prompt（包含 RAG 上下文）
       let system = buildSystemPrompt(context, userMessage)
+      if(flowEvaluation)system+='\n本轮是当前风场画面的只读评价。必须先调用evaluate_task_flow_review获得实际状态、剩余预算及停止原因；可补充inspect_task_flow_review。不得修改、切换模式或装配。'
       if (directSceneAssembly) {
         const capabilities = readSceneCapabilities()
         if (capabilities) system += `\n\n平台本轮实际注册能力（只读元数据核查）：${JSON.stringify(capabilities)}\n仅从上述资源选择。declaredRange是模块声明范围，可能是源资料范围，不能据此声称目标工段有实测资料或允许任意迁移；最终由装配校验判定。state仅是运行加载状态，不表示文件可读性或工程有效性。targetDataVerified=false表示尚未核验目标资料对应关系。`
@@ -198,6 +218,7 @@ export class AgentEngine {
       let completedText = ''
       let pendingTask: { taskId: string; currentStepId: string; completed: number; total: number } | null = null
       let completionNudges = 0
+      let missingActionNudges = 0
       let rejectedAdvances = 0
       let revisionCompleted = false
       let blockedUnrevisedAdvances = 0
@@ -219,7 +240,9 @@ export class AgentEngine {
             : tools,
           system,
           {
-            onText: callbacks.onText,
+            // Scene-action prose is held until this round has a real tool result
+            // or a clarification. Historical completion text cannot prove a new action.
+            onText: delta => { if(!directSceneAssembly)callbacks.onText(delta) },
             onToolUse: async (tool: ToolUseBlock) => {
               if(supportLayers)tool.input={userRequest:userMessage}
               if (tool.name === 'assemble_scene_at_mileage' || tool.name === 'update_test_support') tool.input = { ...tool.input, userRequest: tool.name === 'update_test_support' ? userMessage : effectiveRequest }
@@ -228,6 +251,9 @@ export class AgentEngine {
               if ((supportLayers || directSceneAssembly || blastLayerControl || viewControl || cutControl || preflightControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
                 result = JSON.stringify({ ok: false, action: tool.name,
                   reason: '本轮场景工具调用已结束，后续调用已拒绝' })
+              } else if(flowEvaluation&&!['evaluate_task_flow_review','inspect_task_flow_review'].includes(tool.name)){
+                result=JSON.stringify({ok:false,action:tool.name,reason:'本轮只读评价不允许修改相机、表达或场景装配'})
+                stopAfterTool=true
               } else if (preflightControl && tool.name !== 'check_scene_assembly') {
                 result = JSON.stringify({ ok: false, action: tool.name, reason: '只读预检不得执行装配或修改场景' })
                 stopAfterTool = true
@@ -313,6 +339,16 @@ export class AgentEngine {
           signal,
         )
 
+        if(directSceneAssembly&&!hadToolUse){
+          const clarification=/[？?]|请.*(?:明确|提供|选择|补充|确认)|需要.*(?:哪|什么)/.test(roundText)
+          if(!clarification&&missingActionNudges<1&&round<maxToolRounds){
+            missingActionNudges++
+            system+='\n本轮用户明确提出场景操作，但本轮没有任何工具调用。历史装配结果不能满足本轮新要求，也不能宣称本轮已完成。请调用一次assemble_scene_at_mileage落实本轮原话；若确有缺项，明确询问缺项；若不能执行，明确说明本轮尚未执行和原因。'
+            continue
+          }
+          if(!clarification)roundText='本轮尚未取得场景工具执行结果，未执行新的场景操作。请重试；当前显示仍是上一任务，不能视为已满足这次要求。'
+          callbacks.onText(roundText)
+        }
         if (roundToolCalls.length > 0) {
           // One model response can contain several tool calls. Keep their
           // shared assistant turn before every matching tool result.

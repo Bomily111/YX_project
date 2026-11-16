@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "modelRequests": 0,
+  "errors": [],
+  "cases": [
+    {
+      "id": "tsp-support",
+      "elapsedMs": 6828,
+      "taskId": "scene-1794803742378-as0ab",
+      "sameCanvas": true,
+      "leaked": [],
+      "domain": true,
+      "edges": 12,
+      "charts": [],
+      "flow": false
+    },
+    {
+      "id": "fan-shutdown",
+      "elapsedMs": 2809,
+      "taskId": "scene-1794803746782-wokc8",
+      "sameCanvas": true,
+      "leaked": [],
+      "domain": false,
+      "edges": 0,
+      "charts": [
+        "ventilation.transient-fan-shutdown"
+      ],
+      "flow": false
+    },
+    {
+      "id": "bench-va",
+      "elapsedMs": 3863,
+      "taskId": "scene-1794803749210-39tne",
+      "sameCanvas": true,
+      "leaked": [],
+      "domain": false,
+      "edges": 0,
+      "charts": [],
+      "flow": false
+    },
+    {
+      "id": "co",
+      "elapsedMs": 2171,
+      "taskId": "scene-1794803753053-qwq8n",
+      "sameCanvas": true,
+      "leaked": [],
+      "domain": false,
+      "edges": 0,
+      "charts": [
+        "ventilation.co-analysis"
+      ],
+      "flow": false
+    },
+    {
+      "id": "tem",
+      "elapsedMs": 2224,
+      "taskId": "scene-1794803755395-wc7ts",
+      "sameCanvas": true,
+      "leaked": [],
+      "domain": true,
+      "edges": 12,
+      "charts": [],
+      "flow": false
+    },
+    {
+      "id": "airflow",
+      "elapsedMs": 1895,
+      "taskId": "scene-1794803757895-idib0",
+      "sameCanvas": true,
+      "leaked": [],
+      "domain": false,
+      "edges": 0,
+      "charts": [],
+      "flow": true
+    },
+    {
+      "id": "vs",
+      "elapsedMs": 1624,
+      "taskId": "scene-1794803760132-gjgji",
+      "sameCanvas": true,
+      "leaked": [],
+      "domain": true,
+      "edges": 12,
+      "charts": [],
+      "flow": false
+    },
+    {
+      "id": "design",
+      "elapsedMs": 1300,
+      "taskId": "scene-1794803761696-1npfp",
+      "sameCanvas": true,
+      "leaked": [],
+      "domain": false,
+      "edges": 0,
+      "charts": [],
+      "flow": false
+    }
+  ]
+}

@@ -135,10 +135,11 @@
     <!-- 体数据渲染覆盖层（进入模型视图后挂载，始终保持 DOM） -->
     <DTVolume v-show="showVolumeOverlay" />
     <RockGradeColorBar v-if="(isModelViewMode && currentActiveKey === 'geophysical_grade') || agentVolumeKey === 'geophysical_grade'" />
-    <TSPColorBar
-      v-if="(isModelViewMode && (isTSP || ['tsp', 'tsp_hardness', 'tsp_integrity'].includes(currentActiveKey))) || ['tsp_hardness', 'tsp_integrity'].includes(agentVolumeKey ?? '')"
-      :active-type="agentVolumeKey === 'tsp_hardness' ? 'hardness' : agentVolumeKey === 'tsp_integrity' ? 'integrity' : currentActiveKey === 'tsp' ? tspInitialType : currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity'"
+    <TSPColorBar :demonstration="!!agentVolumeKey" :value-range="agentTspLegend?.range" :unit="agentTspLegend?.unit" :gradient="agentTspLegend?.gradient"
+      v-if="(isModelViewMode && (isTSP || ['tsp', 'tsp_hardness', 'tsp_integrity'].includes(currentActiveKey))) || !!agentTspType"
+      :active-type="agentTspType || (currentActiveKey === 'tsp' ? tspInitialType : currentActiveKey === 'tsp_hardness' ? 'hardness' : 'integrity')"
     />
+    <TEMColorBar v-if="agentTemLegend" :min-value="agentTemLegend.range[0]!" :max-value="agentTemLegend.range[1]!" :unit="agentTemLegend.unit" :note="`源工点资料 · ${agentTemLegend.stretch}显示范围 · 示意重定位；非目标工点实测`" />
     <GeophysicalVoxelWorkbench
       v-if="showGeophysicalVoxelWorkbench"
       embedded
@@ -185,6 +186,11 @@
         <small>显示裁剪边界不是地质边界。</small>
         <p v-if="taskCutError" role="alert">{{ taskCutError }}</p>
       </div>
+      <section v-if="agentVolumeDomain" data-testid="task-volume-domain" class="task-cut-controls">
+        <span>解释体当前采样范围</span>
+        <small>局部X / Y / Z：{{ agentVolumeDomain.dimensionsM.map(v=>v.toFixed(1)+'m').join(' / ') }}</small>
+        <small>青色边框仅表示当前渲染采样盒，含无数据区，不是地质界面、测量边界或风险等级。</small>
+      </section>
       <small>以实际加载结果为准；示例场景不代表工程质量结论。</small>
     </aside>
 
@@ -260,7 +266,7 @@
     <DispatchGantt v-if="showDispatchGantt" @close="showDispatchGantt = false" />
 
     <Design2DPanel v-if="agentAssembly && !activeScene && agentAssembly.resources.some(resource => resource.id === 'blast.design-data')"
-      :visible="true" style="left:20px;top:auto;bottom:64px;width:280px;max-height:42vh" />
+      :visible="true" :task-primary="agentAssembly.resources.length===1" style="left:20px;top:auto;bottom:64px;width:280px;max-height:42vh" />
     <GPRRadargram v-for="resource in (agentAssembly && !activeScene ? agentAssembly.resources.filter(item => item.id.startsWith('rock.gpr-line')) : [])"
       :key="resource.id" :task-dataset="getActiveGprSection(resource.id)" :initial-line="resource.id.endsWith('2') ? 2 : 1"
       :initial-x="20" style="top:auto;bottom:64px" />
@@ -320,7 +326,7 @@
 
     <!-- 隧道加载动画 -->
     <Transition name="tunnel-loading-fade">
-      <div v-if="tunnelLoading" class="tunnel-loading-overlay">
+      <div v-if="tunnelLoading && !agentAssembly" class="tunnel-loading-overlay">
         <div class="tunnel-loading-spinner"></div>
         <div class="tunnel-loading-text">隧道模型加载中…</div>
       </div>
@@ -332,13 +338,16 @@
 import { viewerService } from '@/platform/viewer/ViewerService';
 import { taskCameraSelection, resetTaskCameraSelection, availableTaskCameraViews, type TaskView } from '@/platform/tasks/TaskCameraView';
 import { executeTool } from '@/ai-agent/ToolRegistry';
-import { taskVolumeCutDisplay, setTaskVolumeCut } from '@/platform/tasks/TaskVolumeCut';
+import { taskVolumeCutDisplay, setTaskVolumeCut,getTaskVolumeDomain } from '@/platform/tasks/TaskVolumeCut';
 import { registerSceneLayerController } from '@/ai-agent/SceneLayerBridge';
 import GPRRadargram from '@/components/SceneManagement/DZLDComponents/Modules/GPRRadargram.vue';
 import { getActiveGprSection } from '@/modules/rock/gpr-resources';
 import Design2DPanel from '@/views/tunnel-module/Design2DPanel.vue';
 import { setBlastLayerVisible, blastLayerVisibility } from '@/views/tunnel-module/blast';
 import { ref, reactive, computed, nextTick, watch, onMounted, onBeforeUnmount } from 'vue';
+import {refitTaskViewport} from '@/platform/tasks/TaskViewport';
+import TEMColorBar from '@/components/SceneManagement/Colorbars/TEMColorBar.vue';
+import {getActiveTemLegend,getActiveTspLegend} from '@/modules/rock/resources';
 import { useRoute, useRouter } from 'vue-router';
 import * as Cesium from 'cesium'; // 引入 Cesium
 import { type ScreenSpaceEventHandler, ScreenSpaceEventType } from 'cesium'; // 引入事件处理器
@@ -407,6 +416,13 @@ const showGeophysicalVoxelWorkbench = ref(false);
 const showTaskWorkflow = ref(false);
 const agentAssembly = ref<{ targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }>;
   supportRange?: { start: string; end: string; sections: number; zzVa: number; zPm: number } } | null>(null);
+watch(agentAssembly,async scene=>{
+  if(!scene)return
+  await nextTick()
+  if(agentAssembly.value?.taskId!==scene.taskId)return
+  const viewer=viewerService.current
+  if(viewer&&!viewer.isDestroyed())try{refitTaskViewport(viewer)}catch(e){taskViewError.value=e instanceof Error?e.message:String(e)}
+})
 const blastCloudVisible = computed({ get: () => blastLayerVisibility.pointcloud, set: visible => setBlastLayerVisible('pointcloud', visible) });
 const taskViewError = ref('');
 const taskViewLabels = { auto: '自动取景', overview: '整体布置', face: '掌子面', support: '支护', excavation: '三台阶', drill: '水平钻', blast: '爆破断面' };
@@ -461,6 +477,10 @@ const agentVolumeKey = computed(() => {
   return null;
 });
 const showVolumeOverlay = computed(() => isModelViewMode.value || !!agentVolumeKey.value);
+const agentVolumeDomain=computed(()=>{void taskVolumeCutDisplay.value;return agentVolumeKey.value?getTaskVolumeDomain():undefined})
+const agentTemLegend=computed(()=>agentVolumeKey.value==='tem'?getActiveTemLegend():undefined)
+const agentTspType=computed(()=>({tsp_hardness:'hardness',tsp_integrity:'integrity',tsp_vp:'vp',tsp_vs:'vs',tsp_ratio:'ratio',tsp_anomaly:'anomaly'} as Record<string,string>)[agentVolumeKey.value??''])
+const agentTspLegend=computed(()=>agentVolumeKey.value?getActiveTspLegend(agentVolumeKey.value):undefined)
 watch(showVolumeOverlay, async visible => {
   if (!visible) return;
   await nextTick();

@@ -1,16 +1,16 @@
 <template>
-  <div v-if="visible" class="d2d">
+  <div v-if="visible" class="d2d" :class="{'task-primary':taskPrimary}" data-testid="blast-design-panel">
     <div class="d2d-h">
       <span class="d2d-title">二维炮孔设计图</span>
     </div>
-    <div class="d2d-sub">正洞 Ⅳ级全断面光面爆破 · 桩号断面</div>
+    <div class="d2d-sub">正洞 Ⅳ级全断面光面爆破 · 方案示例参考</div>
 
     <svg v-if="loaded" :viewBox="vb" class="d2d-svg" preserveAspectRatio="xMidYMid meet">
       <polygon :points="contourPts" fill="none" stroke="#34d399" stroke-width="0.055"
         stroke-dasharray="0.22 0.16" stroke-linejoin="round" />
       <circle v-for="(h, i) in holes" :key="i" :cx="h.x" :cy="h.y" r="0.12" :fill="h.color" />
     </svg>
-    <div v-else class="d2d-loading">加载中…</div>
+    <div v-else class="d2d-loading" :role="error?'alert':undefined">{{ error||'加载中…' }}</div>
 
     <div class="d2d-legend">
       <span v-for="c in cats" :key="c.key"><i :style="{ background: c.color }"></i>{{ c.label }} {{ c.count }}</span>
@@ -19,13 +19,17 @@
     <div class="d2d-params">
       <div v-for="p in params" :key="p[0]"><label>{{ p[0] }}</label><b>{{ p[1] }}</b></div>
     </div>
+    <p v-if="source" class="d2d-note" data-testid="blast-design-source">来源：{{ source }}。现有方案示例，非本工段审批设计或现场实测。孔径未提供；不据示例图判断施工安全。</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { getBlastDesignData } from '@/modules/blast/design-resource'
-defineProps<{ visible: boolean }>()
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { getBlastDesignData,validateBlastDesign } from '@/modules/blast/design-resource'
+withDefaults(defineProps<{ visible: boolean;taskPrimary?:boolean }>(),{taskPrimary:false})
+const source=ref(''),error=ref('')
+let active=true
+onBeforeUnmount(()=>{active=false})
 
 const loaded = ref(false)
 const contourPts = ref('')
@@ -40,6 +44,9 @@ onMounted(async () => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`)
       return r.json()
     })
+    if(!active)return
+    validateBlastDesign(d)
+    source.value=d.metadata.source
     // 二维正视: svgX = x(横向), svgY = -z(上, SVG向下为正故取负)
     contourPts.value = d.contour.map((p: number[]) => `${p[0].toFixed(3)},${(-p[2]).toFixed(3)}`).join(' ')
     holes.value = d.holes.map((h: any) => ({ x: h.collar[0], y: -h.collar[2], color: h.color }))
@@ -55,11 +62,13 @@ onMounted(async () => {
       ['拱顶高', sp.crownHeightM + ' m'],
       ['循环进尺', m.advanceM + ' m'],
       ['炮孔总数', m.totalCharged + ' 个'],
-      ['孔径', 'φ45 mm'],
+      ['孔径', '未提供'],
       ['坐标系', '单循环相对(X=0 中线)'],
     ]
     loaded.value = true
   } catch (e) {
+    if(!active)return
+    error.value='设计资料加载失败，请重新打开后重试。'
     console.error('[Design2D] 加载设计失败', e)
   }
 })
@@ -91,4 +100,10 @@ onMounted(async () => {
 .d2d-params > div { background: rgba(56, 189, 248, 0.06); border-radius: 6px; padding: 6px 9px; }
 .d2d-params label { display: block; font-size: 11px; color: #8aa0bd; margin-bottom: 2px; }
 .d2d-params b { font-size: 13px; color: #eaf2ff; font-weight: 600; }
+.d2d-note{font-size:11px;line-height:1.6;color:#9fb9ce;margin:12px 0 0}
+@media(min-width:1100px){
+ .d2d.task-primary{left:316px!important;right:400px;top:80px!important;bottom:64px!important;width:auto!important;max-height:none!important;box-sizing:border-box}
+ .task-primary .d2d-svg{height:min(48vh,420px)}
+ .task-primary .d2d-params{grid-template-columns:repeat(3,1fr)}
+}
 </style>

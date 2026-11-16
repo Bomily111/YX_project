@@ -6,12 +6,15 @@ import { getActiveModelerSupportModel } from '@/modules/support/modeler-resource
 import { getBlastModel, blastViewOffset } from '@/views/tunnel-module/blast'
 import { getTunnelGlbSegment } from '@/utils/Common/DrawLine'
 import { chainageService } from '@/platform/coordinates/ChainageService'
-import { applyTaskVolumeCut } from './TaskVolumeCut'
+import { applyTaskVolumeCut,getTaskVolumeDomain } from './TaskVolumeCut'
+import {installTaskVolumeDomain} from './TaskVolumeDomain'
+import {applyTaskChartLayout} from './TaskChartLayout'
 import { THREE_BENCH_ID, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
 import { isTestSupportId, getTestSectionSupportModels } from '@/modules/support/test-section-resource'
 import {applyTaskTerrainContext} from './TaskTerrainContext'
 import {getFlowBoundingSphere} from '@/views/ventilation-module/cesiumVentilation'
 import {installTaskFlowReview,flowReviewInitialMode} from './TaskFlowReview'
+import {fitTaskCameraToViewport,clearTaskViewportTarget} from './TaskViewport'
 
 /** Final presentation transaction. All resources must already be assembled. */
 export const taskPresentationProfile = (ids: readonly string[],goal='') => ({
@@ -21,14 +24,16 @@ export const taskPresentationProfile = (ids: readonly string[],goal='') => ({
   volumeCut: ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.')) ? { xmax: 0.5, ymin: 0.2 } : undefined,
   view: ids.some(id => /^rock\.(tsp-|tem-|geophysical-grade)/.test(id)) ? 'geophysical-context' : ids.some(id=>id==='ventilation.steady-cfd'||/^ventilation\.thermal-t\d+s$/.test(id)) ? 'airflow-context' : 'component-detail',
   tunnelOpacity: ids.includes(THREE_BENCH_ID) || ids.some(isTestSupportId) ? 0.035 : ids.includes('support.modeler-z-pm') || ids.includes('rock.face-photos') || ids.some(id => id.startsWith('support.modeler-continuous-')) ? 0.06 : ids.includes('rock.advance-drill') || ids.includes('blast.effect') ||
-    (ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.'))) ? 0.12 : undefined,
+    (ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.'))) ? 0.12 : ids.some(id=>/^rock\.(tsp-|tem-|geophysical-grade)/.test(id)) ? 0.08 : undefined,
 })
 export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chainage: number,goal=''): () => void {
+  clearTaskViewportTarget(viewer)
   const station = chainageService.positionWithHeadingAt(chainage)
   if (!station) throw new Error('最终场景目标不在YK中线内')
   const previous = { position: C.Cartesian3.clone(viewer.camera.positionWC), direction: C.Cartesian3.clone(viewer.camera.directionWC), up: C.Cartesian3.clone(viewer.camera.upWC) }
   const undo: Array<() => void> = []
   const restore = () => {
+    clearTaskViewportTarget(viewer)
     if (viewer.isDestroyed()) return
     for (const action of undo.reverse()) action()
     viewer.camera.setView({ destination: previous.position, orientation: { direction: previous.direction, up: previous.up } })
@@ -36,6 +41,7 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
   }
   try {
     const profile = taskPresentationProfile(ids,goal)
+    undo.push(applyTaskChartLayout(viewer,ids))
     undo.push(applyTaskTerrainContext(viewer,chainage))
     // Retain geographic context in the shared viewer, with reversible imagery
     // attenuation. Do not replace terrain, semantic model colors or the sky.
@@ -74,6 +80,8 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
       if (support?.ready) spheres.push(support.boundingSphere)
     }
     const geophysical = profile.view === 'geophysical-context'
+    const volumeDomain=geophysical?getTaskVolumeDomain():undefined
+    if(volumeDomain){spheres.push(volumeDomain.sphere);undo.push(installTaskVolumeDomain(viewer))}
     const airflow = profile.view==='airflow-context'
     const flowSphere=airflow?getFlowBoundingSphere():undefined
     if(flowSphere)spheres.push(flowSphere)
@@ -87,10 +95,15 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
       viewer.camera.viewBoundingSphere(combined, new C.HeadingPitchRange(station.heading - .65, -.45, Math.max(48, combined.radius * 3)))
       viewer.camera.lookAtTransform(C.Matrix4.IDENTITY)
       if(viewer.container.closest('.dashboard-container')) viewer.camera.moveRight(combined.radius * .35)
+      fitTaskCameraToViewport(viewer,combined)
       viewer.scene.requestRender()
       return restore
     }
-    if(airflow&&flowSphere){
+    if(geophysical&&volumeDomain){
+      const combined=C.BoundingSphere.fromBoundingSpheres(spheres)
+      viewer.camera.viewBoundingSphere(combined,new C.HeadingPitchRange(station.heading+.85,-.45,Math.max(65,combined.radius*3.2)))
+    }
+    else if(airflow&&flowSphere){
       const combined=C.BoundingSphere.fromBoundingSpheres(spheres)
       viewer.camera.viewBoundingSphere(combined,new C.HeadingPitchRange(station.heading+.85,-.45,Math.max(65,combined.radius*3.5)))
     }
@@ -113,6 +126,7 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
       viewer.camera.moveRight((flowSphere?flowSphere.radius*3.5:range) * (chartBesideFace ? 0 : airflow ? .04 : 0.2))
     }
     if(ids.includes('ventilation.steady-cfd')&&blast?.ready)undo.push(installTaskFlowReview(viewer,blast.boundingSphere,station.heading,profile.reviewInitialMode))
+    else if(spheres.length&&(!geophysical||volumeDomain))fitTaskCameraToViewport(viewer,C.BoundingSphere.fromBoundingSpheres(spheres))
     viewer.scene.requestRender()
     return restore
   } catch (error) { restore(); throw error }

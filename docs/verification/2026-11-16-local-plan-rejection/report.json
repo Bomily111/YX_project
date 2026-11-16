@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "modelRequests": 0,
+  "errors": [],
+  "rejectedReplacementPreservedTaskAndModels": true,
+  "released": {
+    "supports": 0,
+    "bench": false,
+    "taskLoaded": []
+  }
+}

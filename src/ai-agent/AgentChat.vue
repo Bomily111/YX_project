@@ -51,7 +51,9 @@
               <label>终点 YK 绝对米数<input v-model.number="taskForm.end" type="number" required /></label>
             </div>
             <div v-else class="chat-scene-stages">
-              <span>场景阶段（按添加顺序执行，最多 8 个）</span>
+              <label>目标里程<input v-model.trim="taskForm.targetMileage" required placeholder="例如 YK2+244" /></label>
+              <span>场景资源（按添加顺序加载，最多 8 个）</span>
+              <label><input v-model="taskForm.combineResources" type="checkbox" />同屏组合展示（平台校验兼容性）</label>
               <div v-for="(id, index) in taskForm.resourceIds" :key="`${index}-${id}`" class="chat-scene-stage">
                 <span>{{ index + 1 }}. {{ sceneResourceLabels[id] ?? id }}</span>
                 <button type="button" @click="taskForm.resourceIds.splice(index, 1)">移除</button>
@@ -60,6 +62,7 @@
                 <label>追加场景资源<select v-model="taskForm.nextResourceId"><option v-for="id in sceneResourceIds" :key="id" :value="id">{{ sceneResourceLabels[id] ?? id }}</option></select></label>
                 <button type="button" :disabled="taskForm.resourceIds.length >= 8" @click="taskForm.resourceIds.push(taskForm.nextResourceId)">添加阶段</button>
               </div>
+              <label v-if="taskForm.resourceIds.some(isTestSupportId)">支护长度（米）<input v-model.number="taskForm.supportLengthM" type="number" min="1" max="20" step="1" required /></label>
             </div>
             <label>加载预算 MB<input v-model.number="taskForm.maxLoadMb" type="number" min="1" required /></label>
             <button type="submit" :disabled="chatTaskBusy">校验并创建计划</button>
@@ -145,6 +148,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { AgentEngine, createAgentEngine } from './AgentEngine'
+import {formatSupportInspection} from './SupportInspectionReply'
 import { buildSystemPrompt } from './knowledge/prompts/system'
 import { registerTools, executeTool, unregisterModule } from './ToolRegistry'
 import { commonTools } from './tools/common'
@@ -203,8 +207,9 @@ const chatTaskStatus = ref<AgentTaskWorkflowStatus>()
 const taskForm = reactive<{
   kind: 'quality-check' | 'scene-exploration'; description: string; tunnelId: string;
   start: number; end: number; maxLoadMb: number; resourceIds: string[]; nextResourceId: string
+  targetMileage:string;supportLengthM:number;combineResources:boolean
 }>({ kind: 'quality-check', description: '', tunnelId: '', start: 1346, end: 1356,
-  maxLoadMb: 1400, resourceIds: [], nextResourceId: 'rock.design-grade' })
+  maxLoadMb: 1400, resourceIds: [], nextResourceId: 'rock.design-grade',targetMileage:'',supportLengthM:10,combineResources:true })
 const sceneResourceIds: readonly string[] = AGENT_SCENE_RESOURCES
 const sceneResourceLabels: Record<string, string> = {
   'rock.design-grade': '围岩设计分级',
@@ -474,12 +479,7 @@ const send = async () => {
           }
           if(routed.name==='inspect_current_support'){
             canonicalDispatchShown=true;streaming.value=false;streamBuffer.value=''
-            const detail=parsed.ok?parsed.supports.map((support:any)=>{
-              const header=`当前支护：${support.type}，长度${support.lengthM}米。`
-              if(!support.components.length)return `${header}\n${support.note||'当前源模型未提供独立构件分组，不能查询各构件间距或显隐。'}`
-              const rows=support.components.map((c:any)=>`${c.label}：${c.visible?'显示':'隐藏'}；${c.spacingM.length?`布置间距${c.spacingM.join('/')}米，${c.stations}个布置站位。`:'原模型分组，构件间距未核验。'}`).join('\n')
-              return `${header}\n${rows}\n${support.layout==='1064m-component-example'?'按1064米示例装配；布置站位数不等于单根杆件数量，示例参数不代表现场设计。':support.note}`
-            }).join('\n\n'):`当前支护查询失败：${parsed.reason||result}`
+            const detail=parsed.ok?formatSupportInspection(parsed.supports,text):`当前支护查询失败：${parsed.reason||result}`
             messages.value.push({role:'assistant',content:detail});await scrollToBottom()
           }
           if(routed.name==='set_support_layers'){
@@ -551,6 +551,11 @@ const send = async () => {
                 view: parsed.action === 'set_task_view' ? parsed.view : undefined,
                 flowReview:parsed.action==='set_task_flow_review'?{mode:parsed.mode,strategy:parsed.strategy,radiusM:parsed.radiusM,localSamples:parsed.localSamples,occlusion:parsed.occlusion}:undefined,
                 flowFeedback:parsed.action==='inspect_task_flow_review'?parsed.feedback:undefined,
+                volumeFeedback:parsed.action==='inspect_task_volume_review'?{resourceId:parsed.resourceId,scope:parsed.scope,dimensionsM:parsed.dimensionsM,ranges:parsed.ranges,engineeringAcceptance:parsed.engineeringAcceptance}:undefined,
+                chartFeedback:parsed.action==='inspect_task_chart_review'?parsed.charts:undefined,
+                chartReview:parsed.action==='set_task_chart_review'?{before:parsed.before,after:parsed.after}:undefined,
+                flowEvaluation:['evaluate_task_flow_review','adjust_task_flow_review'].includes(parsed.action)?parsed.evaluation:undefined,
+                flowAdjustment:parsed.action==='adjust_task_flow_review'?{changed:parsed.changed,before:parsed.before,after:parsed.after,framing:parsed.framing}:undefined,
                 displayContinuity: parsed.displayContinuity,
                 supportReport: parsed.action==='inspect_current_support'?parsed.supports:undefined,
                 layers: ['set_blast_layers','set_support_layers'].includes(parsed.action) ? parsed.layers : undefined,
@@ -621,7 +626,9 @@ const createTaskFromForm = async () => {
     const controller = getTaskWorkflowController()
     const status = taskForm.kind === 'scene-exploration'
       ? await controller.prepareScene({ description: taskForm.description, tunnelId: taskForm.tunnelId,
-        resourceIds: [...taskForm.resourceIds], maxLoadMb: taskForm.maxLoadMb })
+        resourceIds: [...taskForm.resourceIds], maxLoadMb: taskForm.maxLoadMb,targetMileage:taskForm.targetMileage,enhanceAfterAssembly:true,
+        assemblyModes:taskForm.resourceIds.map((_,i)=>i&&taskForm.combineResources?'retain':'replace'),
+        supportLengthM:taskForm.resourceIds.some(isTestSupportId)?taskForm.supportLengthM:undefined })
       : await controller.prepare({ description: taskForm.description, tunnelId: taskForm.tunnelId,
         start: taskForm.start, end: taskForm.end, maxLoadMb: taskForm.maxLoadMb })
     if (!status.prepared || status.notice?.type === 'error') {

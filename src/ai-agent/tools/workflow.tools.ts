@@ -5,7 +5,9 @@ import {getTaskSupportLayers,setTaskSupportLayer,getCurrentSupportReport} from '
 import { continuousSupportCatalog } from '@/modules/support/continuous-layout'
 import { readSceneCapabilities } from '../SceneCapabilities'
 import { setTaskVolumeCut } from '@/platform/tasks/TaskVolumeCut'
-import {setTaskFlowReview,inspectTaskFlowReview} from '@/platform/tasks/TaskFlowReview'
+import {getTaskVolumeDomain,getTaskVolumeKey} from '@/platform/tasks/TaskVolumeCut'
+import {inspectVentilationCharts,setVentilationChartReview} from '@/modules/ventilation/resources'
+import {setTaskFlowReview,inspectTaskFlowReview,evaluateTaskFlowReview,adjustTaskFlowReview} from '@/platform/tasks/TaskFlowReview'
 import { focusTaskCamera, taskViews, type TaskView } from '@/platform/tasks/TaskCameraView'
 import { advancePlatformTask, dispatchValidatedWorkflow, orchestratePlatformTask } from '../TaskOrchestrator'
 import { AGENT_SCENE_RESOURCES, SCENE_ENHANCEMENT_MODES, SCENE_ASSEMBLY_MODES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
@@ -123,6 +125,34 @@ export function normalizeAgentTaskInput(input: Record<string, any>): AgentTaskWo
 }
 
 export const workflowTools: ToolRegistration[] = [
+  {module:'common',tool:{name:'inspect_task_chart_review',description:'只读读取当前任务实际图表的源支路/测点、显示选择、时间单位、显示时间窗口，以及窗口内离散源采样的首末值、极值和差值。没有插值；无源采样时摘要为null，不造零值或阈值穿越时刻。不把一维风网或模拟曲线当作三维CFD、现场实测或安全验收。',input_schema:{type:'object',properties:{}}},executor:async()=>{
+    const status=getTaskWorkflowController().getStatus(),ids=status.lastCompletedStage?.assembledResourceIds??[]
+    if(status.status!=='completed')throw Error('当前任务尚未完成')
+    return JSON.stringify({ok:true,action:'inspect_task_chart_review',taskId:status.taskId,charts:inspectVentilationCharts().filter(c=>ids.includes(c.owner))})
+  }},
+  {module:'common',tool:{name:'set_task_chart_review',description:'按当前已完成任务图表的实际支路名称和图表时间单位，选择显示序列、缩放时间区间；先读取图表状态，不能猜测支路或秒/分钟。不改源数组、三维模型或相机。',input_schema:{type:'object',properties:{owner:{type:'string'},visibleSeries:{type:'array',items:{type:'string'}},timeRange:{type:'array',items:{type:'number'},minItems:2,maxItems:2}},required:['owner']}},executor:async input=>{
+    const status=getTaskWorkflowController().getStatus(),ids=status.lastCompletedStage?.assembledResourceIds??[]
+    if(status.status!=='completed'||!ids.includes(input.owner))throw Error('图表不属于当前已完成任务')
+    return JSON.stringify({ok:true,action:'set_task_chart_review',taskId:status.taskId,...setVentilationChartReview(input.owner,input)})
+  }},
+  {module:'common',tool:{name:'inspect_task_volume_review',description:'只读读取当前围岩解释任务的实际渲染采样盒、局部轴长和裁剪范围。采样盒可能含无数据区，不是地质界面、有效体素范围、实测边界或工程验收。不会改相机、体素或色标。',input_schema:{type:'object',properties:{}}},executor:async()=>{
+    const status=getTaskWorkflowController().getStatus(),ids=status.lastCompletedStage?.assembledResourceIds??[]
+    const id=ids.find(id=>/^rock\.(tsp-|tem-|geophysical-grade)/.test(id))
+    const key=id?.replace('rock.','').replaceAll('-','_').replace('tem_resistivity','tem')
+    if(status.status!=='completed'||!id||key!==getTaskVolumeKey())throw Error('当前没有对应已完成任务的围岩解释体')
+    const domain=getTaskVolumeDomain();if(!domain)throw Error('当前解释体采样范围尚不可读取')
+    return JSON.stringify({ok:true,action:'inspect_task_volume_review',taskId:status.taskId,resourceId:id,scope:domain.scope,dimensionsM:domain.dimensionsM,ranges:domain.ranges,corners:domain.corners.map(p=>[p.x,p.y,p.z]),engineeringAcceptance:domain.engineeringAcceptance,depthOcclusion:'not-measured'})
+  }},
+  {module:'common',tool:{name:'evaluate_task_flow_review',description:'只读评价当前爆破通风任务的屏幕采样、面板覆盖与近似尺度，返回固定阈值、有限候选及停止原因。不测深度遮挡，不作工程验收。',input_schema:{type:'object',properties:{}}},executor:async()=>{
+    const status=getTaskWorkflowController().getStatus()
+    if(status.status!=='completed')throw Error('当前任务尚未完成')
+    return JSON.stringify({ok:true,action:'evaluate_task_flow_review',taskId:status.taskId,evaluation:evaluateTaskFlowReview()})
+  }},
+  {module:'common',tool:{name:'adjust_task_flow_review',description:'依据真实屏幕反馈执行一次受控取景调整，每个装配任务最多2次。保留当前局部或全段范围，不改变模型/数据/显隐；若条件已满足或无法解决则不修改。返回调整前后反馈与停止原因。',input_schema:{type:'object',properties:{}}},executor:async()=>{
+    const status=getTaskWorkflowController().getStatus()
+    if(status.status!=='completed')throw Error('当前任务尚未完成')
+    return JSON.stringify({ok:true,action:'adjust_task_flow_review',taskId:status.taskId,...adjustTaskFlowReview()})
+  }},
   {module:'common',tool:{name:'inspect_task_flow_review',description:'只读获取当前爆破与稳态风场复核的实际表达、局部关联样本数、最多256个CFD样本的屏幕投影入镜及面板覆盖、爆破目标近似像素直径。不会切换、装配或改数据；不测深度遮挡，不代表通风达标。',input_schema:{type:'object',properties:{}}},executor:async()=>{
     const status=getTaskWorkflowController().getStatus()
     if(status.status!=='completed')throw Error('当前任务尚未完成，不能读取最终复核反馈')

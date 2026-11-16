@@ -1,0 +1,256 @@
+{
+  "startedAt": "2026-11-16T03:32:12.855Z",
+  "rounds": [
+    {
+      "round": 1,
+      "code": 0,
+      "elapsedMs": 23592,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-1/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 2,
+      "code": 0,
+      "elapsedMs": 25139,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-2/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 3,
+      "code": 0,
+      "elapsedMs": 27252,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-3/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 4,
+      "code": 0,
+      "elapsedMs": 26133,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-4/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 5,
+      "code": 0,
+      "elapsedMs": 21656,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-5/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 6,
+      "code": 0,
+      "elapsedMs": 21640,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-6/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 7,
+      "code": 0,
+      "elapsedMs": 21238,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-7/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 8,
+      "code": 0,
+      "elapsedMs": 22027,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-8/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 9,
+      "code": 0,
+      "elapsedMs": 19356,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-9/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 10,
+      "code": 0,
+      "elapsedMs": 18533,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-10/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 11,
+      "code": 0,
+      "elapsedMs": 19408,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-11/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 12,
+      "code": 0,
+      "elapsedMs": 19439,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-12/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 13,
+      "code": 0,
+      "elapsedMs": 19643,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-13/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 14,
+      "code": 0,
+      "elapsedMs": 18901,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-14/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 15,
+      "code": 0,
+      "elapsedMs": 19236,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-15/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 16,
+      "code": 0,
+      "elapsedMs": 19195,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-16/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 17,
+      "code": 0,
+      "elapsedMs": 19318,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-17/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 18,
+      "code": 0,
+      "elapsedMs": 19787,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-18/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 19,
+      "code": 0,
+      "elapsedMs": 19228,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-19/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 20,
+      "code": 0,
+      "elapsedMs": 19791,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-20/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 21,
+      "code": 0,
+      "elapsedMs": 18554,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-21/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 22,
+      "code": 0,
+      "elapsedMs": 19473,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-22/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 23,
+      "code": 0,
+      "elapsedMs": 19238,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-23/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 24,
+      "code": 0,
+      "elapsedMs": 18789,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-24/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 25,
+      "code": 0,
+      "elapsedMs": 19408,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-25/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 26,
+      "code": 0,
+      "elapsedMs": 19380,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-26/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 27,
+      "code": 0,
+      "elapsedMs": 18371,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-27/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 28,
+      "code": 0,
+      "elapsedMs": 19697,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-28/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 29,
+      "code": 0,
+      "elapsedMs": 20085,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-29/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 30,
+      "code": 0,
+      "elapsedMs": 19290,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-30/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    },
+    {
+      "round": 31,
+      "code": 0,
+      "elapsedMs": 19709,
+      "report": "docs/verification/2026-11-16-local-scene-soak/round-31/report.json",
+      "checks": 6,
+      "modelRequests": 0
+    }
+  ],
+  "passed": true,
+  "scope": "real-form-assembly-and-local-tools-no-model-service",
+  "finishedAt": "2026-11-16T03:42:45.413Z"
+}

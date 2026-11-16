@@ -3,6 +3,10 @@
     <summary>纵向布置与来源 · 示意装配</summary>
     <label>定位对象<select v-model="rowId" data-testid="support-layout-component"><option v-for="r in rows" :key="r.id" :value="r.id">{{ label(r) }}</option></select></label>
     <template v-if="row">
+      <nav class="review-steps" aria-label="支护核对步骤"><button v-for="(step,i) in steps" :key="step.id" :data-testid="`support-review-${step.id}`" :aria-pressed="stepIndex===i" @click="goStep(i)">{{ i+1 }} {{ step.title }}</button></nav>
+      <section v-if="steps[stepIndex]" data-testid="support-review-question"><strong>{{ steps[stepIndex]!.question }}</strong><small>{{ steps[stepIndex]!.boundary }}</small></section>
+      <small v-if="visited.length" data-testid="support-review-history">本任务已定位：{{ visited.map(v=>v.toFixed(2)+'m').join('、') }}（访问记录，非验收通过）</small>
+      <button v-if="entryCamera" data-testid="support-review-restore" @click="restoreView">恢复进入时视角</button>
       <svg viewBox="0 0 240 90" aria-label="支护纵向基准站位图" data-testid="support-layout-svg">
         <text x="20" y="13">后方支护 → 测试断面</text>
         <rect x="20" y="26" :width="x(-.5)-20" height="18" fill="#164657" />
@@ -19,9 +23,18 @@
         <tr><th>示例基准间距</th><td>{{ row.spacingM===null?'未核验':`${row.spacingM}m` }}</td></tr>
         <tr><th>工段设计要求</th><td>未提供</td></tr><tr><th>工段实测</th><td>未提供</td></tr>
       </tbody></table>
+      <section v-if="finding" data-testid="support-layout-finding" class="finding">
+        <strong>本次核对</strong><p>{{ finding.observation }}</p><p>{{ finding.evidence }}</p><p>{{ finding.nextCheck }}</p>
+        <small>工段设计与实测未提供，工程验收尚未核验。</small>
+      </section>
       <small>0m为测试源断面；站位来自本次装配记录，不等同构件中心或实测里程。三维标记仅用于定位，不是新增支护构件。</small>
+      <section data-testid="support-evidence-gaps">
+        <strong>证据缺口与后续核查</strong>
+        <p v-for="gap in reviewEvidence.evidenceGaps" :key="gap.id">{{ gap.nextAction }}</p>
+        <small>{{ reviewEvidence.stopReason }}</small>
+      </section>
       <small v-if="row.kind==='unit-base'">Z-PM仅显示已有单元基准，不能据此推断配筋间距。</small>
-      <details><summary>源元数据依据</summary><p>{{ row.sourceSegment===null?'独立模型回退；配筋PARTIAL、间距未核验':`1064米示例第${row.sourceSegment}段；保留源构件与布置基准` }}</p>
+      <details ref="sourceDetails"><summary>源元数据依据</summary><p>{{ row.sourceSegment===null?'独立模型回退；配筋PARTIAL、间距未核验':`1064米示例第${row.sourceSegment}段；保留源构件与布置基准` }}</p>
         <a v-for="source in sources" :key="source" :href="source" target="_blank" rel="noopener">{{ source.split('/').at(-1) }}</a>
         <small>以上是模型/元数据来源，未提供对应施工方案页码，不作为现场设计或质量验收依据。</small>
       </details>
@@ -33,15 +46,21 @@
 import {computed,onBeforeUnmount,ref,watch} from 'vue'
 import * as C from 'cesium'
 import {getTestSectionSupportSummaries,testSupportStationWorld,testSectionSupportResources} from '@/modules/support/test-section-resource'
-import {supportLongitudinalRows,type SupportLayoutRow} from '@/modules/support/longitudinal-layout'
+import {supportLongitudinalRows,supportLayoutFinding,supportReviewSteps,type SupportLayoutRow} from '@/modules/support/longitudinal-layout'
 import {supportComponentLabel} from '@/modules/support/component-labels'
+import {supportReviewEvidence} from '@/modules/support/review-evidence'
 import {viewerService} from '@/platform/viewer/ViewerService'
 import {chainageService} from '@/platform/coordinates/ChainageService'
 import {getTaskWorkflowController,hasTaskWorkflowController} from '@/platform/tasks/TaskWorkflowBridge'
+import {focusTaskCamera} from '@/platform/tasks/TaskCameraView'
 const props=defineProps<{resourceIds:string[];taskId:string}>()
 const rows=computed(()=>supportLongitudinalRows(getTestSectionSupportSummaries(props.resourceIds)))
 const rowId=ref(''),selected=ref<number|null>(null),open=ref(false),error=ref('')
 const row=computed(()=>rows.value.find(r=>r.id===rowId.value))
+const reviewEvidence=computed(()=>supportReviewEvidence(rows.value))
+const steps=computed(()=>row.value?supportReviewSteps(row.value):[]),stepIndex=ref(0),visited=ref<number[]>([]),sourceDetails=ref<HTMLDetailsElement>()
+const entryCamera=ref<{position:C.Cartesian3;direction:C.Cartesian3;up:C.Cartesian3}>()
+const finding=computed(()=>row.value?supportLayoutFinding(row.value):undefined)
 const sources=computed(()=>row.value?testSectionSupportResources.find(r=>r.id===row.value!.resourceId)?.getActiveAssetPaths?.()??[]:[])
 const label=(r:SupportLayoutRow)=>r.kind==='unit-base'?'单元基准（非配筋间距）':supportComponentLabel(r.component)
 const x=(offset:number)=>20+(offset+(row.value?.lengthM??0)+.5)/((row.value?.lengthM??0)+.5)*200
@@ -81,6 +100,7 @@ function select(offset:number,from:'2d'|'3d'){
   if(!row.value||!owner||owner.isDestroyed())return
   if(!hasTaskWorkflowController()||getTaskWorkflowController().getStatus().taskId!==props.taskId){error.value='任务已切换，请等待当前装配完成后重新定位。';return}
   selected.value=offset
+  if(!visited.value.includes(offset))visited.value.push(offset)
   const time=C.JulianDate.now()
   entities.forEach((entity,i)=>{const chosen=row.value!.offsetsM[i]===offset;entity.point!.color=new C.ConstantProperty(chosen?C.Color.fromCssColorString('#fff1a8'):C.Color.CYAN);entity.point!.pixelSize=new C.ConstantProperty(chosen?12:8);entity.label!.show=new C.ConstantProperty(chosen)})
   if(from==='2d'){
@@ -90,11 +110,34 @@ function select(offset:number,from:'2d'|'3d'){
   owner.scene.requestRender()
 }
 function clearSelection(){rebuild()}
-function toggle(event:Event){open.value=(event.target as HTMLDetailsElement).open;rebuild()}
+function currentTask(){return hasTaskWorkflowController()&&getTaskWorkflowController().getStatus().taskId===props.taskId}
+function goStep(index:number){
+  if(!row.value||!owner||!currentTask())return
+  try{
+    const step=steps.value[index];if(!step)return
+    if(step.id==='overview'||step.id==='conclusion')focusTaskCamera(owner,props.resourceIds,2244,'overview')
+    if(step.id==='interface'&&row.value.offsetsM.length)select(row.value.offsetsM.at(-1)!,'2d')
+    if(step.id==='components'&&selected.value===null&&row.value.offsetsM.length)select(row.value.offsetsM[0]!,'2d')
+    if(step.id==='evidence'&&sourceDetails.value)sourceDetails.value.open=true
+    stepIndex.value=index;error.value=''
+  }catch(e){error.value=e instanceof Error?e.message:String(e)}
+}
+function restoreView(){
+  if(!owner||!entryCamera.value||!currentTask())return
+  const saved=entryCamera.value;owner.camera.cancelFlight();owner.camera.setView({destination:saved.position,orientation:{direction:saved.direction,up:saved.up}});owner.scene.requestRender()
+}
+function toggle(event:Event){
+  if(event.target!==event.currentTarget)return
+  open.value=(event.target as HTMLDetailsElement).open
+  if(open.value){const camera=viewerService.current?.camera;if(camera)entryCamera.value={position:C.Cartesian3.clone(camera.positionWC),direction:C.Cartesian3.clone(camera.directionWC),up:C.Cartesian3.clone(camera.upWC)}}
+  else entryCamera.value=undefined
+  rebuild()
+}
 watch(rows,values=>{rowId.value=values.find(r=>r.component==='steel_arch'||r.component==='lattice_arch')?.id??values[0]?.id??''},{immediate:true})
-watch(rowId,rebuild)
+watch(rowId,()=>{stepIndex.value=0;visited.value=[];rebuild()})
 onBeforeUnmount(release)
 </script>
 <style scoped>
+.review-steps{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:9px 0}.review-steps button[aria-pressed=true]{border-color:#00d4ff;background:#12526c}
 .support-layout{margin-top:12px;padding-top:9px;border-top:1px solid #18435a;color:#bedbe6;font-size:12px;line-height:1.5}summary{cursor:pointer;color:#77d9e8}label{display:block;margin:8px 0}select{display:block;width:100%;margin-top:4px;background:#0a2c40;color:#cae6ed;border:1px solid #21617c;padding:4px}svg{display:block;width:100%;height:auto;background:#061f30;border-radius:4px}svg text{fill:#a7c6d2;font-size:10px}circle{cursor:pointer}circle:focus{stroke:white;stroke-width:2}table{width:100%;border-collapse:collapse;margin:8px 0}th,td{padding:3px;border-bottom:1px solid #18435a;text-align:left}th{font-weight:400;color:#91b4c7}small{display:block;color:#91b4c7;margin:8px 0}a{display:block;color:#6bd8ed;overflow-wrap:anywhere;font-size:10px;margin:4px 0}button{border:1px solid #21617c;background:#0a2c40;color:#bde9fb;padding:4px 8px;cursor:pointer}p{margin:8px 0}
 </style>

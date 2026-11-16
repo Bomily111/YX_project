@@ -18,13 +18,13 @@
     </div>
 
     <div v-else class="scale-body">
-      <div class="scale-bar"></div>
+      <div class="scale-bar" :style="gradient?{background:gradient}:undefined"></div>
       <div class="scale-ticks"><span v-for="tick in ticks" :key="tick">{{ tick }}</span></div>
       <div class="scale-direction"><span>{{ scaleHints[0] }}</span><i></i><span>{{ scaleHints[1] }}</span></div>
     </div>
 
-    <footer v-if="!classItems" class="legend-footer">
-      <span><i></i>实测反演结果</span>
+    <footer v-if="!classItems || demonstration" class="legend-footer">
+      <span><i></i>{{ demonstration?'源工点资料 · 示意重定位':'实测反演结果' }}</span>
       <small v-if="unitLabel">单位：{{ unitLabel }}</small>
     </footer>
   </aside>
@@ -34,6 +34,8 @@
 import { computed } from 'vue';
 
 const props = defineProps({
+  demonstration: {type:Boolean,default:false},
+  gradient:{type:String,default:''},
   activeType: { type: String, default: 'vs' },
   valueRange: { type: Array, default: null },
   unit: { type: String, default: '' },

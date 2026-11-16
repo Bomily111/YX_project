@@ -209,14 +209,22 @@ try {
       report.cases.at(-1).existingSupport = support
       if(process.env.VERIFY_SOURCE_BASELINE==='1'&&support.summary.layout==='1064m-component-example'){
         const baseline=page.getByTestId('support-source-baseline')
-        await baseline.locator('summary').click()
+        await baseline.locator(':scope > summary').click()
         const text=await baseline.innerText()
+        const joints=support.summary.shellJoints
+        if(!joints?.length||joints.some(j=>j.jointCount!==support.summary.lengthM-1||j.measuredJointCount!==j.jointCount||!Number.isFinite(j.maxNearestVertexDistanceM)))throw Error('外壳端截面诊断缺失或混入未测值')
+        if(!await page.getByTestId('support-shell-joints').isVisible())throw Error('外壳端截面诊断未显示')
+        report.cases.at(-1).shellJointDiagnostics=joints
+        const comparison=page.getByTestId('support-section-comparison')
+        await comparison.locator('summary').click()
+        if(!await comparison.locator('svg').isVisible()||!(await comparison.innerText()).includes('宽高差不是壁厚、净空侵限或现场偏差'))throw Error('源断面对照未显示或缺少边界说明')
+        report.cases.at(-1).sourceSectionComparison={text:await comparison.innerText()}
         if(!text.includes('11.00m')||!text.includes('尚未通过工程适用性验收')||!text.includes('未自动缩放'))throw Error('源断面差异或验收边界未显示')
         for(const group of support.summary.groups.filter(g=>['primary_concrete','secondary_lining'].includes(g.component))){
           if(!text.includes(group.sourceWidthM.toFixed(2))||Math.abs(group.sourceAxialExtentM-1)>.001)throw Error('源坐标架或尺寸说明不正确')
         }
         await page.screenshot({path:`${root}/${entry.id}-source-baseline.png`})
-        await baseline.locator('summary').click()
+        await baseline.locator(':scope > summary').click()
         report.cases.at(-1).sourceBaseline={passed:true,text}
       }
       if(process.env.VERIFY_ASSEMBLY_FOCUS==='1'){
@@ -260,10 +268,11 @@ try {
         if(hideLining)await lining.uncheck()
         const beforeQuery=await page.evaluate(async()=>{const r=await import('/src/modules/support/test-section-resource.ts');window.__supportQueryModel=r.getTestSectionSupportModels()[0];return r.getTaskSupportLayers(r.getTestSectionSupportSummaries().map(s=>s.id))})
         const count=taskIds.length,replies=await page.locator('.agent-messages .msg-row.assistant').count()
-        await page.locator('.agent-input').fill('当前支护有哪些构件，钢架间距多少，哪些构件正在显示');await page.locator('.agent-input').press('Enter')
+        await page.locator('.agent-input').fill('当前支护有哪些构件，钢架间距多少，哪些构件正在显示，核对依据还缺什么');await page.locator('.agent-input').press('Enter')
         await wait(async()=>await page.locator('.agent-messages .msg-row.assistant').count()>replies)
         await page.locator('.agent-input').fill('idle');await wait(()=>page.locator('.send-btn').isEnabled());await page.locator('.agent-input').fill('')
         const answer=await page.locator('.agent-messages .msg-row.assistant').last().innerText()
+        if(!answer.includes('工程验收未核验')||!answer.includes('重复取景和显隐不能补齐证据'))throw Error('支护回答未说明证据缺口与停止条件')
         if(!answer.includes(support.type)||!answer.includes(`${support.summary.lengthM}米`))throw Error('查询未返回当前实际类型或长度')
         if(arch&&!answer.includes(`布置间距${arch.spacingM}米`))throw Error('查询未返回实际钢架间距')
         if(hideLining&&!answer.includes('二次衬砌：隐藏'))throw Error('查询未读取最新构件显隐状态')
@@ -338,6 +347,23 @@ try {
     }
     if (entry.reset) report.cases.push({ id: entry.id, reset: true, modelsReleased: true, elapsedMs: Date.now() - started })
     if(entry.reset&&process.env.VERIFY_SUPPORT_LAYERS==='1'&&await page.locator('[aria-label="支护构件显隐"]').count())throw Error('复位后支护构件面板残留')
+    if(process.env.VERIFY_SAFE_VIEWPORT==='1'&&!entry.reject&&!entry.reset&&entry.roots?.some(id=>id==='rock.advance-drill'||id==='rock.three-bench')){
+      const framing=await page.evaluate(async ids=>{
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts'),{inspectTaskSphereViewport}=await import('/src/platform/tasks/TaskViewport.ts')
+        const {getTestSectionSupportModels}=await import('/src/modules/support/test-section-resource.ts'),{getActiveThreeBenchModel}=await import('/src/modules/rock/three-bench-resource.ts'),{getActiveDrillModels}=await import('/src/modules/rock/drill-resource.ts')
+        const models=[...(ids.includes('rock.three-bench')?[getActiveThreeBenchModel()]:[]),...getTestSectionSupportModels(ids),...(ids.includes('rock.advance-drill')?getActiveDrillModels():[])].filter(m=>m?.ready)
+        return inspectTaskSphereViewport(viewerService.require(),window.Cesium.BoundingSphere.fromBoundingSpheres(models.map(m=>m.boundingSphere)))
+      },entry.roots)
+      report.cases.at(-1).safeViewport=framing
+      if(!framing.available||framing.projected!==26||framing.insideSafe!==26)throw Error(`场景目标包围球未完整进入可用区域: ${JSON.stringify(framing)}`)
+    }
+    if(process.env.VERIFY_DESIGN_PRIMARY==='1'&&entry.id==='design-only'){
+      const panel=page.getByTestId('blast-design-panel')
+      const dimensions=await panel.evaluate(e=>{const r=e.getBoundingClientRect(),svg=e.querySelector('svg')?.getBoundingClientRect();return {left:r.left,width:r.width,height:r.height,svgHeight:svg?.height}})
+      if(dimensions.width<500||dimensions.svgHeight<350||!(await panel.innerText()).includes('孔径未提供'))throw Error(`二维主任务布局或资料边界错误: ${JSON.stringify(dimensions)}`)
+      if(!await page.getByTestId('blast-design-source').isVisible())throw Error('方案来源缺失')
+      report.cases.at(-1).designPrimary=dimensions
+    }
     if (process.env.VERIFY_PREFLIGHT === '1' && entry.id === 'thermal-200') {
       const preflights = []
       for (const [request, compatible] of [
@@ -441,6 +467,46 @@ try {
       }
       report.cases.at(-1).geometry={maxSupportNormalAngleDeg:views.maxSupportNormalAngleDeg,maxSupportJointGapM:views.maxSupportJointGapM,oldFixedCutAngleDeg:views.oldFixedCutAngleDeg}
     }
+    if(process.env.VERIFY_FLOW_EVALUATION==='1'&&entry.id==='post-blast-airflow'){
+      const count=taskIds.length
+      const run=()=>page.evaluate(async()=>{
+        const {evaluateTaskFlowReview,adjustTaskFlowReview,setTaskFlowReview,inspectTaskFlowReview}=await import('/src/platform/tasks/TaskFlowReview.ts')
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts'),v=viewerService.require()
+        const before=inspectTaskFlowReview(),initial=evaluateTaskFlowReview(),adjustments=[]
+        // Deliberately move the real camera off target; no replacement feedback.
+        for(let i=0;i<2;i++){
+          v.camera.moveRight(180);v.scene.requestRender()
+          const bad=evaluateTaskFlowReview()
+          if(!bad.candidates.length)throw Error('偏离画面后未给出有限取景候选')
+          const changed=adjustTaskFlowReview()
+          if(!changed.changed||changed.after.mode!==before.mode)throw Error('受控调整未执行或改变了任务范围')
+          adjustments.push(changed)
+        }
+        v.camera.moveRight(180);v.scene.requestRender()
+        const exhausted=adjustTaskFlowReview()
+        if(exhausted.changed||exhausted.evaluation.status!=='budget-exhausted'||exhausted.evaluation.remainingAdjustments!==0)throw Error('调整预算未生效')
+        setTaskFlowReview('context');setTaskFlowReview('focus')
+        if(evaluateTaskFlowReview().remainingAdjustments!==0)throw Error('切换模式重置了任务预算')
+        return {initial,adjustments,exhausted,after:inspectTaskFlowReview()}
+      })
+      report.cases.at(-1).flowEvaluation=await run()
+      if(taskIds.length!==count)throw Error('反馈调整创建了新任务')
+      await page.getByTestId('flow-review-evaluate').click()
+      if(!await page.getByTestId('flow-review-evaluation').isVisible())throw Error('评价结果未显示')
+      await page.screenshot({path:`${root}/${entry.id}-evaluation.png`})
+      if(process.env.VERIFY_FLOW_EVALUATION_CHAT==='1'){
+        const replies=await page.locator('.agent-messages .msg-row.assistant').count()
+        const before=await page.evaluate(async()=>{const {viewerService}=await import('/src/platform/viewer/ViewerService.ts');return Array.from(window.Cesium.Cartesian3.pack(viewerService.require().camera.positionWC,[]))})
+        await page.locator('.agent-input').fill('只读评价当前爆破通风复核画面，报告屏幕采样问题、剩余调整次数和停止原因。不要修改相机或切换模式，不要重新装配。');await page.locator('.agent-input').press('Enter')
+        await wait(async()=>await page.locator('.agent-messages .msg-row.assistant').count()>replies)
+        await page.locator('.agent-input').fill('idle');await wait(()=>page.locator('.send-btn').isEnabled());await page.locator('.agent-input').fill('')
+        const after=await page.evaluate(async()=>{const {viewerService}=await import('/src/platform/viewer/ViewerService.ts');return Array.from(window.Cesium.Cartesian3.pack(viewerService.require().camera.positionWC,[]))})
+        if(JSON.stringify(before)!==JSON.stringify(after)||taskIds.length!==count)throw Error('只读评价改变了相机或任务')
+        const audit=await fetch(`http://localhost:3000/api/ai-agent/task-runs/${report.cases.at(-1).taskId}`).then(r=>r.json())
+        if(!audit.events?.some(e=>e.source==='agent'&&e.action==='evaluate_task_flow_review'&&e.result_summary?.flowEvaluation?.policy?.version==='2026-11-16-screen-review-v1'))throw Error('真实聊天未读取屏幕评价工具')
+        report.cases.at(-1).flowEvaluationChat={answer:await page.locator('.agent-messages .msg-row.assistant').last().innerText(),cameraUnchanged:true}
+      }
+    }
     if(process.env.VERIFY_FLOW_REVIEW==='1'&&entry.id==='post-blast-airflow'){
       const count=taskIds.length
       const state=()=>page.evaluate(async()=>{
@@ -505,6 +571,7 @@ try {
       await page.evaluate(()=>{delete window.__layoutModels})
       if((await layoutState()).markers.length)throw Error('上一任务的支护定位标记未清理')
       const detail=page.getByTestId('support-layout')
+      const entryCamera=await page.evaluate(async()=>{const {viewerService}=await import('/src/platform/viewer/ViewerService.ts');const p=viewerService.require().camera.positionWC;return [p.x,p.y,p.z]})
       await detail.locator(':scope > summary').click()
       await wait(async()=>!!(await layoutState()).markers.length)
       const option=await page.getByTestId('support-layout-component').inputValue()
@@ -527,6 +594,30 @@ try {
       if(!(await detail.innerText()).includes('工段实测')||!(await detail.innerText()).includes('未提供'))throw Error('缺少实测资料被误报')
       if(!(await layoutState()).sameModels||taskIds.length!==count)throw Error('站位联动重新装配或创建任务')
       await page.screenshot({path:`${root}/${entry.id}-layout-linked.png`})
+      const finding=page.getByTestId('support-layout-finding')
+      const evidencePanel=page.getByTestId('support-evidence-gaps')
+      if(!await evidencePanel.isVisible()||!(await evidencePanel.innerText()).includes('重复取景和显隐不能补齐证据'))throw Error('页面缺少证据缺口及停止条件')
+      if(!query.every(s=>s.reviewEvidence?.engineeringAcceptance==='not-verified'&&s.reviewEvidence?.evidenceGaps.length===3&&s.reviewEvidence?.recordStatus==='consistent'))throw Error('智能体支护报告未保留记录核查与工程验收边界')
+      if(!(await finding.innerText()).includes('工程验收尚未核验'))throw Error('任务核对说明缺失资料/验收边界')
+      if(!query.flatMap(s=>s.longitudinalLayout.findings).some(f=>f.rowId===row.id&&f.acceptance==='not-verified'&&f.designRequirement===null&&f.fieldMeasurement===null))throw Error('只读报告的任务说明与实际资料边界不符')
+      await finding.scrollIntoViewIfNeeded();await page.screenshot({path:`${root}/${entry.id}-layout-finding.png`})
+      if(process.env.VERIFY_SUPPORT_REVIEW==='1'){
+        await page.getByTestId('support-review-interface').click()
+        const last=row.offsetsM.at(-1)
+        await wait(async()=>(await page.getByTestId('support-station-selection').innerText()).includes(last.toFixed(2)))
+        await page.getByTestId('support-review-components').click()
+        await page.getByTestId('support-review-evidence').click()
+        if(!(await page.getByTestId('support-review-question').innerText()).includes('未提供'))throw Error('来源核对步骤没有保留资料缺口')
+        if(!(await page.getByTestId('support-station-selection').innerText()).includes(last.toFixed(2)))throw Error('步骤切换覆盖了前序选择')
+        await page.getByTestId('support-review-conclusion').click()
+        const history=await page.getByTestId('support-review-history').innerText()
+        if(!history.includes(screen.offset.toFixed(2))||!history.includes('非验收通过'))throw Error('前序定位证据丢失或误报通过')
+        await page.getByTestId('support-review-restore').click()
+        const gap=await page.evaluate(async before=>{const {viewerService}=await import('/src/platform/viewer/ViewerService.ts');return window.Cesium.Cartesian3.distance(viewerService.require().camera.positionWC,window.Cesium.Cartesian3.fromArray(before))},entryCamera)
+        if(gap>.001||!(await layoutState()).sameModels||taskIds.length!==count)throw Error('核对步骤未正确恢复视角或更换了模型/任务')
+        report.cases.at(-1).supportReview={passed:true,history,restoredPositionErrorM:gap}
+        await page.screenshot({path:`${root}/${entry.id}-review.png`})
+      }
       await detail.locator(':scope > summary').click()
       await wait(async()=>(await layoutState()).markers.length===0)
       await detail.locator(':scope > summary').click()

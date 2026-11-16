@@ -1,5 +1,6 @@
 import * as Cesium from 'cesium'
 import * as echarts from 'echarts'
+import {validateChartSeries,defaultTransientTraces,summarizeSeriesWindow} from './chart-series'
 import type { SceneResource } from '@/platform/resources/types'
 import type { TaskContext } from '@/platform/context/TaskContext'
 import type { SceneModuleManifest } from '@/platform/modules/types'
@@ -78,6 +79,31 @@ type EnhancementDisposer = () => void
 
 const chartColors = ['#00eaff', '#ff9e52', '#68e09b', '#c58af9', '#ef5350']
 const enhancementDisposers = new Map<string, Set<EnhancementDisposer>>()
+const activeCharts=new Set<{owner:string;title:string;host:HTMLElement;chart:ReturnType<typeof echarts.init>;x:number[];xName:string;yName:string}>()
+export function inspectVentilationCharts(includeSamples=false){
+ return [...activeCharts].map(item=>{
+   const option=item.chart.getOption() as any,selected=option.legend?.[0]?.selected??{}
+   const zoom={start:option.dataZoom?.[0]?.start??0,end:option.dataZoom?.[0]?.end??100},span=item.x.at(-1)!-item.x[0]!
+   const visibleTimeRange=[item.x[0]!+span*zoom.start/100,item.x[0]!+span*zoom.end/100]
+   return {owner:item.owner,title:item.title,timeUnit:item.xName,valueUnit:item.yName,timeRange:[item.x[0]!,item.x.at(-1)!],
+     visibleTimeRange,series:(option.series??[]).map((s:any)=>({name:s.name,visible:selected[s.name]!==false,sampleCount:s.data.length,windowSummary:summarizeSeriesWindow(s.data,visibleTimeRange),...(includeSamples?{samples:s.data.map((p:number[])=>[...p])}:{})})),
+     zoom,
+     width:item.chart.getWidth(),height:item.chart.getHeight(),sourceNote:item.host.querySelector('small')?.textContent,engineeringAcceptance:'not-verified'}
+ })
+}
+export function setVentilationChartReview(owner:string,input:{visibleSeries?:string[];timeRange?:number[]}){
+ const item=[...activeCharts].find(c=>c.owner===owner);if(!item)throw Error('当前任务图表已释放或不存在')
+ const before=inspectVentilationCharts().find(c=>c.owner===owner)!,option=item.chart.getOption() as any
+ const names=before.series.map((s:any)=>s.name)
+ if(input.visibleSeries!==undefined&&(!Array.isArray(input.visibleSeries)||input.visibleSeries.some(n=>!names.includes(n))))throw Error('请求包含当前图表不存在的支路或测点')
+ const range=input.timeRange
+ if(range!==undefined&&(!Array.isArray(range)||range.length!==2||!range.every(Number.isFinite)||range[0]!<item.x[0]!||range[1]!>item.x.at(-1)!||range[0]!>=range[1]!))throw Error('图表时间范围无效或超出源数据范围；请按图表时间单位提供')
+ const patch:any={}
+ if(input.visibleSeries!==undefined)patch.legend={selected:Object.fromEntries(names.map((n:string)=>[n,input.visibleSeries!.includes(n)]))}
+ if(range){const length=item.x.at(-1)!-item.x[0]!,start=(range[0]!-item.x[0]!)/length*100,end=(range[1]!-item.x[0]!)/length*100;patch.dataZoom=[{start,end},{start,end}]}
+ try{item.chart.setOption(patch)}catch(error){item.chart.setOption({legend:option.legend,dataZoom:option.dataZoom});throw error}
+ return {before,after:inspectVentilationCharts().find(c=>c.owner===owner)!}
+}
 
 function trackEnhancement(owner: string, dispose: EnhancementDisposer): EnhancementDisposer {
   const owners = enhancementDisposers.get(owner) ?? new Set<EnhancementDisposer>()
@@ -118,18 +144,22 @@ function createChartOverlay(
   series: ChartSeries[],
   xName: string,
   yName: string,
+  options:{note?:string;selected?:string[]}={},
 ) {
+  const checked=validateChartSeries(x,series)
+  x=checked.times;series=checked.series
   const viewer = ventilationViewer
   if (!viewer || viewer.isDestroyed()) throw new Error('[VentilationResource] Cesium Viewer 尚未初始化')
   if (typeof document === 'undefined') throw new Error('[VentilationResource] 当前环境不支持图表增强')
 
   const host = document.createElement('section')
   host.dataset.ventilationEnhancement = 'chart'
+  host.dataset.ventilationOwner=owner
   const mainScene = !!viewer.container.closest?.('.dashboard-container')
   Object.assign(host.style, {
     position: 'absolute', right: '18px', bottom: '18px', zIndex: '30',
-    width: 'min(480px, calc(100% - 36px))', height: '300px',
-    padding: '12px', boxSizing: 'border-box', pointerEvents: 'none',
+    width: 'min(480px, calc(100% - 36px))', height: '340px',
+    padding: '12px', boxSizing: 'border-box', pointerEvents: 'auto',display:'flex',flexDirection:'column',
     border: '1px solid rgba(0,234,255,.42)', borderRadius: '6px',
     background: 'rgba(2,18,31,.94)', boxShadow: '0 8px 28px rgba(0,0,0,.38)',
     ...(mainScene ? { left: '20px', right: 'auto', bottom: '64px', width: 'min(480px, calc(100% - 420px))' } : {}),
@@ -138,28 +168,35 @@ function createChartOverlay(
   heading.textContent = title
   Object.assign(heading.style, { height: '24px', color: '#9cecff', font: '600 13px Microsoft YaHei' })
   const canvas = document.createElement('div')
-  Object.assign(canvas.style, { width: '100%', height: 'calc(100% - 24px)' })
-  host.append(heading, canvas)
+  canvas.dataset.ventilationChartCanvas='true'
+  Object.assign(canvas.style, { width: '100%', flex:'1',minHeight:'0' })
+  const note=document.createElement('small')
+  note.textContent=options.note??'现有分析数据，非目标工点实时监测。'
+  Object.assign(note.style,{color:'#91aac0',font:'11px Microsoft YaHei',lineHeight:'1.5',paddingTop:'6px',maxHeight:'64px',overflow:'auto'})
+  host.append(heading, canvas,note)
   viewer.container.appendChild(host)
 
   let chart: ReturnType<typeof echarts.init> | undefined
   let resize: (() => void) | undefined
+  let observer:ResizeObserver|undefined
+  let record:Parameters<typeof activeCharts.add>[0]|undefined
   try {
     chart = echarts.init(canvas)
     chart.setOption({
       animation: false,
       backgroundColor: 'transparent',
       tooltip: { trigger: 'axis' },
-      legend: { top: 0, textStyle: { color: '#91aac0' } },
-      grid: { left: 54, right: 20, top: 38, bottom: 42 },
+      legend: {type:'scroll',top:0,textStyle:{color:'#a7bfd0'},pageTextStyle:{color:'#a7bfd0'},selected:Object.fromEntries(series.map((s,i)=>[s.name,options.selected?options.selected.includes(s.name):i<5]))},
+      grid: { left: 64, right: 40, top: 38, bottom: 72 },
+      dataZoom:[{type:'inside',xAxisIndex:0,filterMode:'none'},{type:'slider',xAxisIndex:0,height:16,bottom:12,filterMode:'none',textStyle:{color:'#a7bfd0'}}],
       xAxis: {
-        type: 'value', name: xName,
-        nameTextStyle: { color: '#607f99' }, axisLabel: { color: '#607f99' },
+        type: 'value', name: xName,min:x[0],max:x.at(-1),
+        nameTextStyle: { color: '#b6d0df' }, axisLabel: { color: '#9bb6c7',fontSize:11 },
         axisLine: { lineStyle: { color: '#29445a' } }, splitLine: { lineStyle: { color: '#162a3a' } },
       },
       yAxis: {
-        type: 'value', name: yName,
-        nameTextStyle: { color: '#607f99' }, axisLabel: { color: '#607f99' },
+        type: 'value', name: yName,nameLocation:'middle',nameGap:48,nameRotate:90,
+        nameTextStyle: { color: '#b6d0df' }, axisLabel: { color: '#9bb6c7',fontSize:11 },
         axisLine: { lineStyle: { color: '#29445a' } }, splitLine: { lineStyle: { color: '#162a3a' } },
       },
       series: series.map((item) => ({
@@ -173,13 +210,18 @@ function createChartOverlay(
     })
     resize = () => chart?.resize()
     window.addEventListener('resize', resize)
+    if(typeof ResizeObserver!=='undefined'){observer=new ResizeObserver(()=>chart?.resize());observer.observe(host)}
+    record={owner,title,host,chart,x:[...x],xName,yName};activeCharts.add(record)
   } catch (error) {
+    observer?.disconnect()
     if (resize) window.removeEventListener('resize', resize)
     chart?.dispose()
     host.remove()
     throw error
   }
   return trackEnhancement(owner, () => {
+    if(record)activeCharts.delete(record)
+    observer?.disconnect()
     if (resize) window.removeEventListener('resize', resize)
     chart?.dispose()
     host.remove()
@@ -212,42 +254,44 @@ function sectionAdapter(owner: string, parameters: Readonly<Record<string, unkno
 function coChartAdapter() {
   const document = coData as Record<string, any> | undefined
   const result = document?.Right ?? document?.[Object.keys(document ?? {})[0]]
-  const x = finiteNumbers(result?.times).map((value) => value / 60)
+  const x = Array.isArray(result?.times)?result.times.map((value:unknown)=>typeof value==='number'?value/60:NaN):[]
   const history = result?.history as Record<string, unknown> | undefined
-  const series = Object.entries(history ?? {}).slice(0, 5).map(([name, values], index) => ({
+  const series = Object.entries(history ?? {}).map(([name, values], index) => ({
     name,
-    values: finiteNumbers(values),
+    values: Array.isArray(values)?values:[],
     color: chartColors[index % chartColors.length],
   }))
-  return createChartOverlay('ventilation.co-analysis', 'CO 爆破扩散 · 浓度—时间', x, series, '时间 / min', 'CO / ppm')
+  return createChartOverlay('ventilation.co-analysis', 'CO 爆破扩散 · 浓度—时间', x, series, '时间 / min', 'CO / ppm',{note:'已有爆后扩散模拟工况，非本工点实时监测；曲线不能单独证明通风达标。'})
 }
 
 function transientChartAdapterFor(owner: string, document: Record<string, any> | undefined, title: string) {
-  const x = finiteNumbers(document?.times)
+  const x = Array.isArray(document?.times)?document.times:[]
   const history = document?.history as Record<string, { Q?: unknown }> | undefined
-  const series = Object.entries(history ?? {}).slice(0, 5).map(([name, values], index) => ({
+  const series = Object.entries(history ?? {}).map(([name, values], index) => ({
     name,
-    values: finiteNumbers(values?.Q),
+    values: Array.isArray(values?.Q)?values.Q:[],
     color: chartColors[index % chartColors.length],
   }))
-  return createChartOverlay(owner, title, x, series, '时间 / s', 'Q / m³·s⁻¹')
+  const selected=defaultTransientTraces(owner,series.map(s=>s.name)),rank=new Map(selected.map((name,i)=>[name,i]))
+  series.sort((a,b)=>(rank.get(a.name)??99)-(rank.get(b.name)??99))
+  return createChartOverlay(owner, title, x, series, '时间 / s', 'Q / m³·s⁻¹',{selected,note:`${String(document?.description??'已有瞬态工况')}。一维风网模拟，非三维CFD或本工点实时监测；保留${series.length}条源支路，可点击图例比较。`})
 }
 function transientChartAdapter() {
   return transientChartAdapterFor('ventilation.transient-network', transientData as Record<string, any> | undefined, '瞬态通风 · 网络流量')
 }
 
 function thermalChartAdapterFor(owner: string, monitors: Record<string, unknown> | undefined, title: string) {
-  const x = finiteNumbers(monitors?.times_s)
+  const x = Array.isArray(monitors?.times_s)?monitors.times_s as number[]:[]
   const fields = [
     ['右管出口', 'T_outlet_right_K'],
     ['左管出口', 'T_outlet_left_K'],
   ] as const
   const series = fields.map(([name, key], index) => ({
     name,
-    values: finiteNumbers(monitors?.[key]),
+    values: Array.isArray(monitors?.[key])?monitors[key] as number[]:[],
     color: chartColors[index % chartColors.length],
   }))
-  return createChartOverlay(owner, title, x, series, '时间 / s', '温度 / K')
+  return createChartOverlay(owner, title, x, series, '时间 / s', '温度 / K',{note:'已有热场近似工况的出口温度历程，非本工点温度实测；时间片与曲线来源一致。'})
 }
 function thermalChartAdapter() {
   return thermalChartAdapterFor('ventilation.thermal-field', thermalData?.monitors, '热瞬态 · 出口温度')

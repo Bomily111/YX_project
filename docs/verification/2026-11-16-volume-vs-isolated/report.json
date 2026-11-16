@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "modelRequests": 0,
+  "errors": [],
+  "cases": [],
+  "diagnostics": [
+    {
+      "type": "warning",
+      "text": "[ShareVolume] 体数据配置加载失败: data/tsp_new/vs_3.json SyntaxError: Unexpected token '<', \"<!doctype \"... is not valid JSON\n    at JSON.parse (<anonymous>)\n    at loadData (http://localhost:5178/src/utils/AllPrevious/All/ShareVolume01.js:1970:19)\n    at http://localhost:5178/src/utils/AllPrevious/All/ShareVolume01.js:1947:5\n    at http.onreadystatechange (http://localhost:5178/src/utils/AllPrevious/All/ShareVolume01.js:171:23)"
+    }
+  ],
+  "failure": "可逐步执行。同屏装配以各阶段校验结果为准；稳态通风局部 K3+805～K4+005 数据示意配准到 YK3+900～YK4+100，非该工点实测风场，不作联合工程结论。"
+}

@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "modelRequests": 0,
+  "errors": [],
+  "cases": [],
+  "failure": "page.evaluate: TypeError: Cannot read properties of undefined (reading 'getOption')\n    at eval (eval at evaluate (:370:30), <anonymous>:3:195)\n    at async <anonymous>:396:30"
+}

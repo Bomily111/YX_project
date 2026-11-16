@@ -13,7 +13,9 @@ import type { DataVersion } from '@/platform/telemetry/TaskDataProvenance'
 import { viewerService } from '@/platform/viewer/ViewerService'
 import { ref } from 'vue'
 import {supportComponentLabel} from './component-labels'
-import {supportLongitudinalRows} from './longitudinal-layout'
+import {supportLongitudinalRows,supportLayoutFinding} from './longitudinal-layout'
+import {supportReviewEvidence} from './review-evidence'
+import {supportSectionComparison} from './section-comparison'
 export const supportLayerRevision=ref(0)
 export const TEST_SUPPORT_ID = 'support.test-section'
 export const TEST_SUPPORT_PATH = '/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb'
@@ -45,7 +47,10 @@ export function getCurrentSupportReport(ids:readonly string[]){
   const models=activeModels.get(summary.id)
   if(!models?.length||models.some(model=>!model.ready))throw Error('当前支护尚未就绪或已释放')
   return {resourceId:summary.id,type:summary.supportType,lengthM:summary.lengthM,layout:summary.layout,note:summary.note,
-   longitudinalLayout:{scope:'assembly-base-stations-not-surveyed',rows:supportLongitudinalRows([summary]),note:'offsetsM为相对测试源断面的装配基准，不等同构件中心或实测里程；单元基准不能推断配筋间距。'},
+   reviewEvidence:supportReviewEvidence(supportLongitudinalRows([summary])),
+   shellJointDiagnostics:summary.shellJoints??null,
+   sourceSectionComparison:summary.layout==='1064m-component-example'?supportSectionComparison(summary.groups):null,
+   longitudinalLayout:{scope:'assembly-base-stations-not-surveyed',rows:supportLongitudinalRows([summary]),findings:supportLongitudinalRows([summary]).map(supportLayoutFinding),note:'offsetsM为相对测试源断面的装配基准，不等同构件中心或实测里程；单元基准不能推断配筋间距。'},
    sources:[...(testSectionSupportResources.find(resource=>resource.id===summary.id)?.getActiveAssetPaths?.()??[])],
    components:layers.filter(layer=>layer.resourceId===summary.id).map(layer=>{
     const groups=summary.groups.filter((group:any)=>group.component===layer.component)
@@ -118,7 +123,7 @@ export const testSectionSupportResources: SceneResource[] = testSupportCatalog.m
           context.viewer.scene.primitives.add(loaded);models.push(loaded);activeModels.set(asset.id,models)
         }finally{URL.revokeObjectURL(url)}
         paths=[...examplePaths]
-        summary={supportType:asset.type,lengthM:offsets.length,layout:'1064m-component-example',sourceSegment:example.sourceSegment,groups:example.groups,sourceStatus:example.sourceStatus,geometryTreatment:example.geometryTreatment}
+        summary={supportType:asset.type,lengthM:offsets.length,layout:'1064m-component-example',sourceSegment:example.sourceSegment,groups:example.groups,sourceStatus:example.sourceStatus,geometryTreatment:example.geometryTreatment,shellJoints:example.shellJoints}
       }else{
       for (const offset of offsets) {
         if (context.signal?.aborted) throw new DOMException('支护加载取消', 'AbortError')

@@ -1,4 +1,5 @@
 import * as Cesium from 'cesium'
+import {sourceInterpretationLegend} from './interpretation-legend'
 import { facePhotoResource } from '@/modules/face-sketch/resources'
 import { threeBenchResource } from './three-bench-resource'
 import { gprResources } from './gpr-resources'
@@ -175,6 +176,10 @@ const interpretedRockLayers = [
   { id: 'rock.tem-water', key: 'tem_water', type: 'tem-water-interpretation',
     range: { start: 2244, end: 2303 }, asset: '/data/geophysical_tem/water.json', texture: '/data/geophysical_tem/water_volume.png' },
 ] as const
+let activeTemLegend:{range:number[];unit:string;stretch:string}|undefined
+export const getActiveTemLegend=()=>activeTemLegend
+const activeTspLegends=new Map<string,ReturnType<typeof sourceInterpretationLegend>>()
+export const getActiveTspLegend=(key:string)=>activeTspLegends.get(key)
 
 /** These legacy ShareVolume layers are mutually exclusive and anchored to the YK2+244 demo scene. */
 export const rockInterpretationResources: SceneResource[] = interpretedRockLayers.map(layer => ({
@@ -185,14 +190,29 @@ export const rockInterpretationResources: SceneResource[] = interpretedRockLayer
     if (context.viewer.isDestroyed()) throw new Error('Cesium Viewer 已销毁')
     const response = await fetch(layer.asset, { method: 'HEAD', signal: context.signal })
     if (!response.ok) throw new Error(`围岩解释层数据不可用：${layer.asset} (${response.status})`)
+    if(['rock.tsp-vp','rock.tsp-vs','rock.tsp-ratio','rock.tsp-anomaly'].includes(layer.id)){
+      const responses=await Promise.all([fetch('/data/tsp_actual/metadata.json',{signal:context.signal}),fetch(layer.asset,{signal:context.signal})])
+      if(responses.some(r=>!r.ok))throw Error('TSP属性图例源资料不可用')
+      const [metadata,config]=await Promise.all(responses.map(r=>r.json()))
+      activeTspLegends.set(layer.key,sourceInterpretationLegend(layer.id.replace('rock.tsp-',''),metadata,config))
+    }
+    if(layer.id==='rock.tem-resistivity'){
+      const metadata=await fetch('/data/geophysical_tem/metadata.json',{signal:context.signal})
+      if(!metadata.ok)throw Error('TEM色标元数据不可用')
+      const resistivity=(await metadata.json()).resistivity,range=resistivity?.displayRange
+      if(!Array.isArray(range)||range.length!==2||!range.every(Number.isFinite)||range[0]>=range[1]||resistivity.unit!=='Ω·m')throw Error('TEM色标范围或单位缺失')
+      activeTemLegend={range:[...range],unit:resistivity.unit,stretch:String(resistivity.displayStretch??'显示范围')}
+    }
     const previousKey = getActiveGeoModelKey()
     try {
       const target = context.task?.chainageRange.start
       const demoTransform = target !== undefined && (target < layer.range.start || target > layer.range.end)
         ? demoReanchorTransform(2244, target) : undefined
-      activateGeoModel(layer.key, context.viewer, undefined, demoTransform, !context.deferPresentation)
+      activateGeoModel(layer.key, context.viewer, undefined, demoTransform, !context.deferPresentation,layer.asset)
       await waitForGeoModelReady(layer.key)
     } catch (error) {
+      activeTspLegends.delete(layer.key)
+      if(layer.id==='rock.tem-resistivity')activeTemLegend=undefined
       if (getActiveGeoModelKey() === layer.key) {
         if (previousKey && previousKey !== layer.key) activateGeoModel(previousKey, context.viewer)
         else deactivateGeoModel(context.viewer)
@@ -202,9 +222,11 @@ export const rockInterpretationResources: SceneResource[] = interpretedRockLayer
     context.reportProgress?.(1, `${layer.type} 已显示`)
   },
   async unload() {
+    activeTspLegends.delete(layer.key)
+    if(layer.id==='rock.tem-resistivity')activeTemLegend=undefined
     if (getActiveGeoModelKey() === layer.key) deactivateGeoModel()
   },
-  getActiveAssetPaths() { return getActiveGeoModelKey() === layer.key ? [layer.asset, layer.texture] : [] },
+  getActiveAssetPaths() { return getActiveGeoModelKey() === layer.key ? [layer.asset, layer.texture,...(layer.id==='rock.tem-resistivity'?['/data/geophysical_tem/metadata.json']:[]),...(activeTspLegends.has(layer.key)?['/data/tsp_actual/metadata.json']:[])] : [] },
 }))
 
 export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources, facePhotoResource, threeBenchResource, ...gprResources, advanceDrillResource] as const

@@ -20,6 +20,11 @@
         </tbody></table>
         <small>轮廓来自不同源资产，宽度有差异；未自动缩放。包围盒尺寸不能证明断面贴合，仍需对应设计断面与标高核查。</small>
         <small>支护依据：1064米示例，第{{ baseline.sourceSegment }}段；隧道依据：tunnel002.glb提取法向断面。均非本工段实测资料。</small>
+        <TaskSupportSectionCompare :groups="baseline.groups" />
+        <div data-testid="support-shell-joints">
+          <p v-for="joint in baseline.shellJoints??[]" :key="joint.component">{{ labels[joint.component] }}：{{ joint.measuredJointCount }}/{{ joint.jointCount }}处相邻端截面已计算，最大端顶点最近距离{{ joint.maxNearestVertexDistanceM===null?'未测得':(joint.maxNearestVertexDistanceM*1000).toFixed(3)+'mm' }}。</p>
+          <small>仅比较当前生成外壳的相邻端顶点；不是连续面间隙、隧道贴合或现场接缝测量，不包含刚性构件及三台阶交界。</small>
+        </div>
       </div>
     </details>
     <p v-if="error" role="alert">{{ error }}</p>
@@ -27,6 +32,7 @@
 </template>
 <script setup lang="ts">
 import {ref,watch} from 'vue'
+import TaskSupportSectionCompare from './TaskSupportSectionCompare.vue'
 import {getTaskSupportLayers,getTestSectionSupportSummaries,setTaskSupportLayer,supportLayerRevision} from '@/modules/support/test-section-resource'
 import profile from '@/modules/face-sketch/tunnel-normal-sections.json'
 const props=defineProps<{resourceIds:string[]}>()

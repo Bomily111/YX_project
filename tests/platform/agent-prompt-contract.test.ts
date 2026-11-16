@@ -4,6 +4,11 @@ import { BLAST_KB } from '@/ai-agent/knowledge/blast'
 
 describe('scene agent prompt contract', () => {
   const prompt = buildSystemPrompt()
+  it('limits volume feedback to the rendered sampling domain',()=>{
+    expect(prompt).toContain('inspect_task_volume_review')
+    expect(prompt).toContain('采样盒含无数据区')
+    expect(prompt).toContain('不能按声明里程或默认100米猜测')
+  })
   it('distinguishes execution, visual feedback and engineering acceptance',()=>{
     expect(prompt).toContain(AGENT_PROMPT_VERSION)
     expect(prompt).toContain('这五种状态不能互相替代')

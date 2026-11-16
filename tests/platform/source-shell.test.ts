@@ -2,7 +2,13 @@ import {expect,it} from 'vitest'
 import fs from 'node:fs'
 import * as T from 'three'
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js'
-import {placeSourceShell} from '@/modules/support/source-shell'
+import {placeSourceShell,shellJointDistance} from '@/modules/support/source-shell'
+
+it('measures symmetric end-vertex mismatch and refuses absent samples',()=>{
+ expect(shellJointDistance([],[[0,0,0]])).toBeNull()
+ expect(shellJointDistance([[NaN,0,0]],[[0,0,0]])).toBeNull()
+ expect(shellJointDistance([[0,0,0]],[[0,0,0],[0,0,.02]])).toBeCloseTo(.02)
+})
 
 it('joins all 13 captured support types using source vertices and removes only internal caps',async()=>{
  const bytes=fs.readFileSync('public/support-modeler/outputs/centerline/task-reference-1064.glb')
@@ -40,6 +46,9 @@ it('joins all 13 captured support types using source vertices and removes only i
     max=Math.max(max,Math.min(...back.map(j=>v.distanceTo(new T.Vector3().fromBufferAttribute(b.attributes.position,j)))))
    }
    expect(max).toBeLessThan(1e-5)
+   expect(shellJointDistance(a.userData.endSections.front,b.userData.endSections.back)).toBeLessThan(1e-5)
+   expect(a.userData).not.toBe(b.userData)
+   expect(shell.geometry.userData.endSections).toBeUndefined()
    expect(a.index!.count).toBeLessThan(shell.geometry.index!.count)
    expect(b.index!.count).toBeLessThan(shell.geometry.index!.count)
    expect(a.attributes.position.count).toBe(source.count)

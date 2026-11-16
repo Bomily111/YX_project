@@ -649,7 +649,12 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
     // Reject invalid replacement requests before rolling back the valid scene.
     if (sceneInput) {
       const preflight = inspectSceneInput(sceneInput)
-      if (preflight.compatible === false) throw new Error(preflight.reason)
+      if (preflight.compatible === false) {
+        // Reject before replacement: the existing executor still owns live models.
+        // Do not route this through the initialization-failure cleanup below.
+        notice.value = { type: 'error', title: '计划校验未通过', message: preflight.reason ?? '资源组合不兼容' }
+        return
+      }
     }
     selectedTransientScenario.value = 'fan_ramp_up'
     selectedThermalFile.value = ''

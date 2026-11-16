@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import ts from 'typescript'
 
-const output='docs/agent-prompts-current-2026-11-13.md'
+const output=process.argv[2]||'docs/agent-prompts-current-2026-11-13.md'
 const read=file=>({file,text:fs.readFileSync(file,'utf8')})
 const parse=file=>{const value=read(file);return {...value,ast:ts.createSourceFile(file,value.text,ts.ScriptTarget.Latest,true)}}
 const sections=[]
