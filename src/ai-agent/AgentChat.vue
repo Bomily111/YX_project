@@ -225,6 +225,8 @@ const sceneResourceLabels: Record<string, string> = {
   'blast.effect': '爆破炮孔与爆后点云（45 万点）',
   'blast.design-data': '炮孔设计 · 二维图与参数参考',
   'rock.face-photos': '单掌子面模型 · 示意装配',
+  'rock.three-bench-upper-first': '三台阶 · 上台阶先行（示意）',
+  'rock.three-bench-lower-follow': '三台阶 · 下台阶跟进（示意）',
   'rock.three-bench': '三台阶 · 论文测试工段',
   ...Object.fromEntries(testSupportCatalog.map(asset => [asset.id, `已有${asset.type}${asset.type === 'Z-PM' ? '二衬及配筋' : '支护'} · 后方支护示意段`])),
   'rock.gpr-line1': 'GPR测线1 · 剖面参考', 'rock.gpr-line2': 'GPR测线2 · 剖面参考',
@@ -247,7 +249,9 @@ const sceneSourceNotes = (plans: Array<{ resources: string[] }> = [], volumeCutA
     ids.includes('rock.advance-drill') ? '水平钻模型沿目标中线示意装配，孔位和轨迹非目标实测，不含钻进日志或涌水记录。' : '',
     ids.some(id => id.startsWith('rock.gpr-line')) ? 'GPR为现有处理剖面参考，未建立与目标YK的测量对应，不将反射异常直接作为富水或破碎带结论。' : '',
     ids.includes('rock.face-photos') ? faceSourceDescription() : '',
-    ids.includes('rock.three-bench') ? '论文测试工段：三台阶使用tunnel002源断面，台阶高度与错距为示意参数，不代表现场工法设计。' : '',
+    ids.some(id => id === 'rock.three-bench' || id.startsWith('rock.three-bench-')) ? '论文测试工段：三台阶使用tunnel002源断面，台阶高度与错距为示意参数，不代表现场工法设计。' : '',
+    ids.includes('rock.three-bench-upper-first') ? '上台阶先行：上/中/下台阶前缘偏移12/0/0米；高度及错距均为示意参数。' : '',
+    ids.includes('rock.three-bench-lower-follow') ? '下台阶跟进：上/中/下台阶前缘偏移12/6/4米；后方支护仍以源零点布置，不随下台阶前缘移动，不代表现场支护跟进距离。' : '',
     ids.some(isTestSupportId) ? '按1064米支护区段示例复用已有构件，混凝土、钢架、锚杆和配筋分别沿用示例间距；默认显示主体和钢架/格栅。Z-PM在该示例为空范围，保留独立模型备选，不冒称其有完整示例布置。' : '',
     ...getTestSectionSupportSummaries(ids).filter(layout=>layout.layout==='1064m-component-example').map(layout=>{
       const arch=layout.groups.find((group:any)=>group.component==='steel_arch'||group.component==='lattice_arch')
@@ -258,7 +262,7 @@ const sceneSourceNotes = (plans: Array<{ resources: string[] }> = [], volumeCutA
     ids.some(id => id.startsWith('ventilation.transient-')) ? '瞬态风网为现有一维网络分析工况的流量—时间曲线，不是该工况的三维CFD，也不代表目标工点实时监测。' : '',
     ids.some(id => id.startsWith('support.modeler-') && !id.startsWith('support.modeler-continuous-')) ? '新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。' : '',
     ids.includes('support.alternating-zz-va-z-pm') ? '目标里程附近 50 m 内按 50 个 1 m 位置交替装配 ZZ-Va 和 Z-PM；Z-PM 当前仅有二衬及 N1–N7 钢筋，为示意模型。' : '',
-    ids.some(id => id.startsWith('rock.') && id !== 'rock.three-bench' && id !== 'rock.design-grade' && id !== 'rock.face-photos' && id !== 'rock.advance-drill' && !id.startsWith('rock.gpr-line'))
+    ids.some(id => id.startsWith('rock.') && !id.startsWith('rock.three-bench') && id !== 'rock.design-grade' && id !== 'rock.face-photos' && id !== 'rock.advance-drill' && !id.startsWith('rock.gpr-line'))
       ? '物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。' : '',
     ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity')
       ? 'TSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。' : '',
@@ -455,7 +459,7 @@ const send = async () => {
             streaming.value = false
             streamBuffer.value = ''
             messages.value.push({ role: 'assistant', content: parsed.ok
-              ? `${parsed.cut.enabled ? '已开启解释体展示剖切' : '已恢复解释体原始显示范围'}，装配位置保持不变。显示边界不是地质边界。`
+              ? `${parsed.cut.enabled ? (parsed.cut.preset==='geology-section'?'已开启纵向地质参照剖切':'已开启近端支护观察窗口') : '已恢复解释体原始显示范围'}，装配位置保持不变。显示边界不是地质边界。`
               : `剖切未调整：${parsed.reason || result}。` })
             await scrollToBottom()
           }

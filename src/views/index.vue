@@ -167,6 +167,7 @@
       <TaskSupportLayers :key="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource => resource.id)" />
       <TaskSupportLayout :key="agentAssembly.taskId" :task-id="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource=>resource.id)" />
       <TaskFlowReview :key="agentAssembly.taskId" />
+      <TaskVisualReview :key="agentAssembly.taskId" />
       <div class="task-view-controls" aria-label="任务场景视角">
         <small>最近选择：{{ taskViewLabels[taskCameraSelection] }}</small>
         <div class="task-view-buttons">
@@ -181,7 +182,10 @@
       <p v-if="agentAssembly.supportRange">支护范围 {{ agentAssembly.supportRange.start }}—{{ agentAssembly.supportRange.end }}<br>
         共 {{ agentAssembly.supportRange.sections }} 个断面：ZZ-Va {{ agentAssembly.supportRange.zzVa }}，Z-PM {{ agentAssembly.supportRange.zPm }}</p>
       <div v-if="agentAssembly.resources.some(resource => ['rock.tsp-hardness', 'rock.tsp-integrity'].includes(resource.id))" class="task-cut-controls">
-        <span data-testid="task-cut-status">{{ taskVolumeCutDisplay.enabled ? '解释体：剖切展示' : '解释体：完整范围' }}</span>
+        <span data-testid="task-cut-status">{{ !taskVolumeCutDisplay.enabled ? '解释体：完整范围' : taskVolumeCutDisplay.preset==='geology-section'?'解释体：纵向参照剖切':'解释体：近端支护观察窗口' }}</span>
+        <button type="button" data-testid="task-cut-geology" :disabled="!taskVolumeCutDisplay.available" @click="chooseTaskCut('geology-section')">保留纵向地质参照</button>
+        <button type="button" data-testid="task-cut-structure" :disabled="!taskVolumeCutDisplay.available" @click="chooseTaskCut('structure-window')">显露近端支护</button>
+        <small>剖切只改变展示范围，切面不是地质边界；完整范围可作对照。</small>
         <button type="button" data-testid="task-cut-toggle" :disabled="!taskVolumeCutDisplay.available" @click="toggleTaskCut">{{ taskVolumeCutDisplay.enabled ? '恢复完整范围' : '开启展示剖切' }}</button>
         <small>显示裁剪边界不是地质边界。</small>
         <p v-if="taskCutError" role="alert">{{ taskCutError }}</p>
@@ -336,6 +340,8 @@
 
 <script setup lang="ts">
 import { viewerService } from '@/platform/viewer/ViewerService';
+import {planTaskVisualReview,applyTaskVisualReview} from '@/platform/tasks/TaskVisualReview';
+import TaskVisualReview from '@/components/task-workflow/TaskVisualReview.vue';
 import { taskCameraSelection, resetTaskCameraSelection, availableTaskCameraViews, type TaskView } from '@/platform/tasks/TaskCameraView';
 import { executeTool } from '@/ai-agent/ToolRegistry';
 import { taskVolumeCutDisplay, setTaskVolumeCut,getTaskVolumeDomain } from '@/platform/tasks/TaskVolumeCut';
@@ -425,13 +431,18 @@ watch(agentAssembly,async scene=>{
 })
 const blastCloudVisible = computed({ get: () => blastLayerVisibility.pointcloud, set: visible => setBlastLayerVisible('pointcloud', visible) });
 const taskViewError = ref('');
-const taskViewLabels = { auto: '自动取景', overview: '整体布置', face: '掌子面', support: '支护', excavation: '三台阶', drill: '水平钻', blast: '爆破断面' };
+const taskViewLabels = { auto: '自动取景', 'support-context':'支护与邻近围岩', overview: '整体布置', face: '掌子面', support: '支护', excavation: '三台阶', drill: '水平钻', blast: '爆破断面' };
 const availableTaskViews = computed<TaskView[]>(() => {
   const ids = agentAssembly.value?.resources.map(resource => resource.id) ?? [];
   return availableTaskCameraViews(ids);
 });
 async function chooseTaskView(view: TaskView) {
   try {
+    if(view==='support-context'){
+      const ids=agentAssembly.value?.resources.map(resource=>resource.id)??[];
+      const review=planTaskVisualReview({objective:'spatial-relation',referenceScope:'near-support',focusResourceIds:ids.filter(id=>id.startsWith('support.modeler-')),questions:['支护及邻近围岩是否可辨，哪些全段参照未进入局部视图？'],userRequest:'查看支护与邻近围岩的局部空间关系'});
+      applyTaskVisualReview(review.plan.taskId);taskViewError.value='';return;
+    }
     const result = await executeTool('set_task_view', { view });
     let parsed: any;
     try { parsed = JSON.parse(result); } catch { throw new Error(result); }
@@ -440,6 +451,7 @@ async function chooseTaskView(view: TaskView) {
   } catch (error) { taskViewError.value = error instanceof Error ? error.message : String(error); }
 }
 const taskCutError = ref('');
+function chooseTaskCut(preset:'structure-window'|'geology-section'){try{setTaskVolumeCut(true,preset);taskCutError.value=''}catch(error){taskCutError.value=error instanceof Error?error.message:String(error)}}
 function toggleTaskCut() {
   try { setTaskVolumeCut(!taskVolumeCutDisplay.value.enabled); taskCutError.value = ''; }
   catch (error) { taskCutError.value = error instanceof Error ? error.message : String(error); }

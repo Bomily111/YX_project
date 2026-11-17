@@ -277,6 +277,26 @@
       "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
     },
     {
+      "path": "/data/tunnel/三台阶-上台阶先行.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "8cfcab41372cca7a378445fabb89ac5a2ea30d3859c042341070fc8f928a0c24"
+    },
+    {
+      "path": "/data/tunnel/三台阶-上台阶先行.metadata.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "baf54b6648342bb8696382d2b6fda6033659f41b84105f08646ae2e50e777d54"
+    },
+    {
+      "path": "/data/tunnel/三台阶-下台阶跟进.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "611791bb63581a5b63691418e3f1ac4b536d5572d2e5bb2acf030535c37788d8"
+    },
+    {
+      "path": "/data/tunnel/三台阶-下台阶跟进.metadata.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "7885d32d778807973e3980c4e77b92ee0df98f4b7523fb4e4f9d86f321ba4fc2"
+    },
+    {
       "path": "/data/blast/blast-design.json",
       "algorithm": "sha256-bytes-v1",
       "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"

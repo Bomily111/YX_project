@@ -1,3 +1,4 @@
+import {supportContextSphere} from './SupportContextView'
 import * as C from 'cesium'
 import { readonly, ref } from 'vue'
 import { chainageService } from '@/platform/coordinates/ChainageService'
@@ -6,18 +7,19 @@ import { faceSliceSphere } from '@/modules/face-sketch/task-face-section'
 import { getActiveDrillModels } from '@/modules/rock/drill-resource'
 import { getActiveModelerSupportModel } from '@/modules/support/modeler-resources'
 import { getBlastModel, blastViewOffset } from '@/views/tunnel-module/blast'
-import { THREE_BENCH_ID, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
+import { isThreeBenchResourceId, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
 import { getTestSectionSupportModels } from '@/modules/support/test-section-resource'
 import {getFlowBoundingSphere} from '@/views/ventilation-module/cesiumVentilation'
 import {fitTaskCameraToViewport} from './TaskViewport'
 import {getTaskVolumeDomain} from './TaskVolumeCut'
-export const taskViews = ['overview', 'face', 'support', 'excavation', 'drill', 'blast'] as const
+export const taskViews = ['overview', 'support-context', 'face', 'support', 'excavation', 'drill', 'blast'] as const
 export type TaskView = typeof taskViews[number]
 export function availableTaskCameraViews(ids:readonly string[]):TaskView[]{
- return ['overview',...(ids.includes('rock.face-photos')?['face' as const]:[]),...(ids.some(id=>id.startsWith('support.modeler-')||id==='support.test-section'||id.startsWith('support.test-section-'))?['support' as const]:[]),...(ids.includes(THREE_BENCH_ID)?['excavation' as const]:[]),...(ids.includes('rock.advance-drill')?['drill' as const]:[]),...(ids.includes('blast.effect')?['blast' as const]:[])]
+ return ['overview',...(ids.some(id=>['rock.tsp-hardness','rock.tsp-integrity'].includes(id))&&ids.some(id=>id.startsWith('support.modeler-'))?['support-context' as const]:[]),...(ids.includes('rock.face-photos')?['face' as const]:[]),...(ids.some(id=>id.startsWith('support.modeler-')||id==='support.test-section'||id.startsWith('support.test-section-'))?['support' as const]:[]),...(ids.some(isThreeBenchResourceId)?['excavation' as const]:[]),...(ids.includes('rock.advance-drill')?['drill' as const]:[]),...(ids.includes('blast.effect')?['blast' as const]:[])]
 }
 const selection = ref<TaskView | 'auto'>('auto')
 export const taskCameraSelection = readonly(selection)
+export function restoreTaskCameraSelection(value:TaskView|'auto'){selection.value=value}
 export function resetTaskCameraSelection() { selection.value = 'auto' }
 export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chainage: number, view: TaskView): void {
   const station = chainageService.positionWithHeadingAt(chainage)
@@ -30,17 +32,22 @@ export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chaina
   const blast = ids.includes('blast.effect') ? getBlastModel() as C.Model | undefined : undefined
   const faceSphere = faceSliceSphere(face)
   if (view === 'face' && faceSphere) spheres.push(faceSphere)
+  if(view==='support-context'){
+    const domain=getTaskVolumeDomain()
+    if(!availableTaskCameraViews(ids).includes('support-context')||!domain||!supports.length)throw Error('当前没有可用的围岩与支护参照；未修改视角')
+    spheres.push(supportContextSphere(C.BoundingSphere.fromBoundingSpheres(supports.map(model=>model.boundingSphere)),domain.corners))
+  }
   if (view === 'support') spheres.push(...supports.map(model => model.boundingSphere))
   if (view === 'drill') spheres.push(...drills.map(model => model.boundingSphere))
   if (view === 'blast' && blast?.ready) spheres.push(blast.boundingSphere)
   if(view==='excavation'){
-    const solid=ids.includes(THREE_BENCH_ID)?getActiveThreeBenchModel():undefined
+    const solid=ids.some(isThreeBenchResourceId)?getActiveThreeBenchModel():undefined
     if(solid?.ready)spheres.push(solid.boundingSphere)
   }
   if (view === 'overview') {
     const volumeDomain=ids.some(id=>/^rock\.(tsp-|tem-|geophysical-grade)/.test(id))?getTaskVolumeDomain():undefined
     if(volumeDomain)spheres.push(volumeDomain.sphere)
-    const solid = ids.includes(THREE_BENCH_ID) ? getActiveThreeBenchModel() : undefined
+    const solid = ids.some(isThreeBenchResourceId) ? getActiveThreeBenchModel() : undefined
     if (solid?.ready) spheres.push(solid.boundingSphere)
     const testSupports = getTestSectionSupportModels(ids)
     spheres.push(...testSupports.filter(model => model.ready).map(model => model.boundingSphere))

@@ -5,7 +5,13 @@ await mkdir(root, { recursive: true })
 const app = process.env.BROWSER_APP_URL || 'http://localhost:5178'
 const selectedCases = process.env.ACCEPTANCE_CASE_IDS?.split(',')
 const cases = [
+
+ {id:'bench-upper-first',request:'在论文测试工段YK2+244只展示三台阶上台阶先行阶段示意模型，不加支护和其他资料。',roots:['rock.three-bench-upper-first']},
+ {id:'bench-lower-follow',request:'在论文测试工段YK2+244展示三台阶下台阶跟进阶段示意模型，并同屏保留后方5米ZZ-Va支护。',unitCount:5,roots:['rock.three-bench-lower-follow','support.test-section']},
+ {id:'bench-phase-support-update',request:'长度改为8米',followup:true,unitCount:8,roots:['rock.three-bench-lower-follow','support.test-section']},
+
   { id:'followup-base',request:'在论文测试工段展示三台阶和后方5米ZZ-Va支护，不用其他资料。',unitCount:5,roots:['rock.three-bench','support.test-section'] },
+  {id:'location-inspection',request:'只读读取当前任务核查摘要，按观察事实、证据缺口和下一步核查回答，并引用实际事实ID。说明二维和三维访问过哪些站位，不要重新装配。',reject:true},
   { id:'followup-type',request:'把支护改成ZZ-IVb',followup:true,unitCount:5,roots:['rock.three-bench','support.test-section-zz-ivb'] },
   { id:'followup-length',request:'长度改为15米',followup:true,unitCount:15,roots:['rock.three-bench','support.test-section-zz-ivb'] },
   { id:'followup-both',request:'把支护改成Z-PM，长度改为8米',followup:true,unitCount:8,roots:['rock.three-bench','support.test-section-z-pm'] },
@@ -120,6 +126,15 @@ try {
     await page.locator('.agent-input').fill('acceptance idle probe')
     await wait(() => page.locator('.send-btn').isEnabled(), 60000)
     await page.locator('.agent-input').fill('')
+    if(entry.id==='location-inspection'){
+      const response=await page.locator('.agent-messages .msg-row.assistant').last().innerText()
+      const factIds=await page.evaluate(async()=>{const {getTaskWorkflowController}=await import('/src/platform/tasks/TaskWorkflowBridge.ts');const {assessTaskEvidence}=await import('/src/platform/tasks/TaskEvidenceAssessment.ts');const s=getTaskWorkflowController().getStatus();return assessTaskEvidence(s.taskId,s.lastCompletedStage.assembledResourceIds).facts.map(f=>f.id)})
+      const cited=response.match(/scene-[\w-]+:(?:location|step):\d+/g)??[]
+      if(!cited.length||cited.some(id=>!factIds.includes(id)))throw Error('核查摘要没有引用实际事实ID或引用了旧任务')
+      const audit=await fetch(`http://localhost:3000/api/ai-agent/task-runs/${taskIds.at(-1)}`).then(r=>r.json())
+      if(!audit.events?.some(e=>e.source==='agent'&&e.action==='inspect_task_scene'&&e.status==='completed'))throw Error('定位记录查询未调用实际场景自检')
+      report.cases.push({id:entry.id,response,taskId:taskIds.at(-1)})
+    }
     if (entry.reject && taskIds.length !== beforeTasks) throw new Error(`Rejected request created a task: ${entry.id}`)
     if (entry.reset) {
       await wait(() => page.locator('.agent-assembly-info').count().then(count => count === 0))
@@ -140,8 +155,21 @@ try {
         faces: getActiveFaceSlices().length, drills: getActiveDrillModels().filter(model => model.ready && model.show).length }
     }, lastRoots)
     if (runtime.leaked.length || runtime.faces !== (lastRoots.includes('rock.face-photos') ? 1 : 0) || runtime.drills !== (lastRoots.includes('rock.advance-drill') ? 2 : 0)) throw new Error(`Runtime mismatch ${entry.id}: ${JSON.stringify(runtime)}`)
-    if (runtime.solids !== (lastRoots.includes('rock.three-bench') ? 1 : 0)) throw new Error('三台阶任务模型未正确加载或释放')
+    if (runtime.solids !== (lastRoots.some(id=>id==='rock.three-bench'||id.startsWith('rock.three-bench-')) ? 1 : 0)) throw new Error('三台阶任务模型未正确加载或释放')
     if (runtime.testSupports !== (lastRoots.some(id => id === 'support.test-section' || id.startsWith('support.test-section-')) ? 1 : 0)) throw new Error('测试支护模型未正确加载或释放')
+    if (lastRoots.some(id => id.startsWith('rock.three-bench-'))) {
+      const phase = await page.evaluate(async roots => {
+        const {resourceRegistry} = await import('/src/platform/resources/ResourceRegistry.ts')
+        const {viewerService} = await import('/src/platform/viewer/ViewerService.ts')
+        const {inspectTaskSphereViewport} = await import('/src/platform/tasks/TaskViewport.ts')
+        const {getActiveThreeBenchModel} = await import('/src/modules/rock/three-bench-resource.ts')
+        const model = getActiveThreeBenchModel()
+        return {ready:model?.ready, framing:inspectTaskSphereViewport(viewerService.require(),model.boundingSphere), metadata:resourceRegistry.require(roots.find(id=>id.startsWith('rock.three-bench-'))).getEnhanceTargets()[0].metadata}
+      }, lastRoots)
+      const expected = lastRoots.includes('rock.three-bench-upper-first') ? [12,0,0] : [12,6,4]
+      if (!phase.ready || phase.framing.insideSafe !== 26 || JSON.stringify([phase.metadata.upperFront,phase.metadata.middleFront,phase.metadata.lowerFront]) !== JSON.stringify(expected)) throw Error(`Phase geometry or framing failed: ${JSON.stringify(phase)}`)
+      report.cases.at(-1).phaseEvidence=phase
+    }
     const currentEnvironment=await environment()
     if(process.env.VERIFY_FLOW_FRAMING==='1'&&lastRoots.some(id=>id==='ventilation.steady-cfd'||/^ventilation\.thermal-t\d+s$/.test(id))){
       const framing=await page.evaluate(async()=>{
@@ -615,6 +643,21 @@ try {
         await page.getByTestId('support-review-restore').click()
         const gap=await page.evaluate(async before=>{const {viewerService}=await import('/src/platform/viewer/ViewerService.ts');return window.Cesium.Cartesian3.distance(viewerService.require().camera.positionWC,window.Cesium.Cartesian3.fromArray(before))},entryCamera)
         if(gap>.001||!(await layoutState()).sameModels||taskIds.length!==count)throw Error('核对步骤未正确恢复视角或更换了模型/任务')
+        const progress=await page.evaluate(async()=>{const {getTaskWorkflowController}=await import('/src/platform/tasks/TaskWorkflowBridge.ts');const {inspectTaskEvidenceProgress,inspectTaskEvidenceJournal}=await import('/src/platform/tasks/TaskEvidenceJournal.ts');const id=getTaskWorkflowController().getStatus().taskId;return {progress:inspectTaskEvidenceProgress(id),locations:inspectTaskEvidenceJournal(id)}})
+        if(JSON.stringify(progress.progress.steps.map(step=>step.stepId))!==JSON.stringify(['interface','components','evidence','conclusion'])||progress.progress.questionsStatus!=='unanswered-requires-task-evidence'||!progress.locations.some(location=>location.offsetM===last&&location.reviewStep?.id==='interface'))throw Error('步骤访问或定位问题上下文不准确')
+        const panel=page.getByTestId('support-review-progress')
+        if((await panel.innerText()).split('已记录访问，仍待核查').length-1!==4)throw Error('页面核查进度没有即时更新')
+        const selector=page.getByTestId('support-layout-component'),oldRow=await selector.inputValue()
+        const options=await selector.locator('option').evaluateAll(nodes=>nodes.map(node=>node.value))
+        const otherRow=options.find(value=>value!==oldRow)
+        if(otherRow){
+          await selector.selectOption(otherRow)
+          if((await panel.innerText()).includes('已记录访问，仍待核查'))throw Error('其他构件行串用了原行步骤')
+          if(!(await page.getByTestId('support-evidence-assessment').innerText()).includes('本行尚无保留的交互事实'))throw Error('其他构件行串用了事实摘要')
+          await selector.selectOption(oldRow)
+          if((await panel.innerText()).split('已记录访问，仍待核查').length-1!==4)throw Error('切回原行丢失核查步骤')
+        }
+        report.cases.at(-1).reviewProgress=progress
         report.cases.at(-1).supportReview={passed:true,history,restoredPositionErrorM:gap}
         await page.screenshot({path:`${root}/${entry.id}-review.png`})
       }
@@ -622,11 +665,15 @@ try {
       await wait(async()=>(await layoutState()).markers.length===0)
       await detail.locator(':scope > summary').click()
       await wait(async()=>!!(await layoutState()).markers.length)
+      const evidence=await page.evaluate(async()=>{const {getTaskWorkflowController}=await import('/src/platform/tasks/TaskWorkflowBridge.ts');const {inspectTaskEvidenceJournal}=await import('/src/platform/tasks/TaskEvidenceJournal.ts');return inspectTaskEvidenceJournal(getTaskWorkflowController().getStatus().taskId)})
+      if(!evidence.some(e=>e.source==='2d'&&e.offsetM===row.offsetsM[1])||!evidence.some(e=>e.source==='3d'&&e.offsetM===screen.offset)||evidence.some(e=>e.engineeringAcceptance!=='not-verified'||!e.assetPaths.length))throw Error('Actual 2D/3D evidence missing or overstated')
+      report.cases.at(-1).locationEvidence=evidence
       report.cases.at(-1).supportLayout={passed:true,row,markers:initial.markers.length,picked2d:row.offsetsM[1],picked3d:screen.offset,sameModels:true,taskCountUnchanged:true}
     }
     if(process.env.VERIFY_SUPPORT_LAYOUT==='1'&&entry.reset){
       const remaining=await page.evaluate(async()=>{const {viewerService}=await import('/src/platform/viewer/ViewerService.ts'),C=window.Cesium;return viewerService.require().entities.values.filter(e=>e.properties?.taskSupportStation?.getValue(C.JulianDate.now())).length})
       if(remaining)throw Error('复位后纵向布置定位标记残留')
+      if(await page.evaluate(async()=>{const {taskLocationEvidence}=await import('/src/platform/tasks/TaskEvidenceJournal.ts');return taskLocationEvidence.value.length}))throw Error('复位后定位证据残留')
     }
     if (process.env.ACCEPTANCE_NO_SCREENSHOTS !== '1') await page.screenshot({ path: `${root}/${entry.id}.png`, timeout: 60000 })
     console.log(`PASS ${entry.id}`)

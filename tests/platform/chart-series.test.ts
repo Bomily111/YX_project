@@ -1,5 +1,10 @@
 import {expect,it} from 'vitest'
-import {validateChartSeries,defaultTransientTraces,summarizeSeriesWindow} from '@/modules/ventilation/chart-series'
+import {validateChartSeries,defaultTransientTraces,summarizeSeriesWindow,snapChartWindow} from '@/modules/ventilation/chart-series'
+it('keeps exact source endpoints when percentage zoom introduces roundoff',()=>{
+ expect(snapChartWindow([0,4.999999999999999],[0,5,10])).toEqual([0,5])
+ expect(summarizeSeriesWindow([[0,10],[5,2]],[0,4.999999999999999])?.sampleCount).toBe(2)
+ expect(snapChartWindow([0,4.99],[0,5])).toEqual([0,4.99])
+})
 it('preserves reverse flow and aligned samples without editing source arrays',()=>{
  const times=[0,5,10],values=[4,0,-2],s={name:'Right',values,color:'#fff'}
  const result=validateChartSeries(times,[s]);expect(result.series[0]!.values).toEqual(values)

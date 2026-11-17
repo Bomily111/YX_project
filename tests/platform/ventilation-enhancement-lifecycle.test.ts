@@ -12,7 +12,8 @@ const external = vi.hoisted(() => {
     model,
     chartInstances,
     echartsInit: vi.fn(() => {
-      const chart = { setOption: vi.fn(), resize: vi.fn(), dispose: vi.fn() }
+      let option:any={}
+      const chart = {setOption:vi.fn(value=>{option={...option,...value}}),getOption:()=>({...option,legend:[option.legend]}),getWidth:()=>480,getHeight:()=>200,on:vi.fn(),resize:vi.fn(),dispose:vi.fn()}
       chartInstances.push(chart)
       return chart
     }),

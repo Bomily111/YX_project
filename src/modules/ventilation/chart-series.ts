@@ -1,8 +1,13 @@
 export interface ChartSeries {name:string;values:number[];color:string}
+/** Correct only floating-point roundoff at an existing source sample. */
+export function snapChartWindow(range:readonly number[],times:readonly number[]){
+ return range.map(value=>times.find(time=>Math.abs(time-value)<=Number.EPSILON*Math.max(1,Math.abs(value),Math.abs(time))*16)??value)
+}
 /** Statistics use existing samples only; window endpoints are never interpolated. */
 export function summarizeSeriesWindow(points:readonly (readonly number[])[],range:readonly number[]){
  if(range.length!==2||!range.every(Number.isFinite)||range[0]!>range[1]!||points.some(p=>p.length!==2||!p.every(Number.isFinite)))throw Error('图表窗口或源采样无效')
- const sampled=points.filter(p=>p[0]!>=range[0]!&&p[0]!<=range[1]!)
+ const snapped=snapChartWindow(range,points.map(p=>p[0]!))
+ const sampled=points.filter(p=>p[0]!>=snapped[0]!&&p[0]!<=snapped[1]!)
  if(!sampled.length)return null
  const first=sampled[0]!,last=sampled.at(-1)!
  return {sampleCount:sampled.length,first:{time:first[0]!,value:first[1]!},last:{time:last[0]!,value:last[1]!},min:Math.min(...sampled.map(p=>p[1]!)),max:Math.max(...sampled.map(p=>p[1]!)),change:last[1]!-first[1]!,measurement:'discrete-source-samples-without-interpolation'}

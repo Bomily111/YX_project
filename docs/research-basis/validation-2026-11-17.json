@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "scope": "research-document-alignment-not-software-or-engineering-validation",
+  "checks": [
+    {
+      "check": "original-docx-fingerprint",
+      "passed": true
+    },
+    {
+      "check": "paragraph-locators",
+      "passed": true,
+      "referenced": 18
+    },
+    {
+      "check": "original-figure-image2.png",
+      "passed": true
+    },
+    {
+      "check": "original-figure-image4.png",
+      "passed": true
+    },
+    {
+      "check": "links-AGENTS.md",
+      "passed": true,
+      "missing": []
+    },
+    {
+      "check": "links-docs/thesis-development-constraints.md",
+      "passed": true,
+      "missing": []
+    },
+    {
+      "check": "links-docs/agent-assembly-enhancement-plan-2026-11-13.md",
+      "passed": true,
+      "missing": []
+    },
+    {
+      "check": "links-docs/handoff-2026-11-16.md",
+      "passed": true,
+      "missing": []
+    }
+  ]
+}

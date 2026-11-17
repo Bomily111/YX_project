@@ -39,6 +39,7 @@ try{
      const sourceWindow=data.times.map((t,i)=>[t/(c.id==='co'?60:1),sourceValues[i]]).filter(p=>p[0]>=after.visibleTimeRange[0]&&p[0]<=after.visibleTimeRange[1])
      const summary=after.series.find(s=>s.name===chosen).windowSummary
      if(!summary||summary.sampleCount!==sourceWindow.length||summary.min!==Math.min(...sourceWindow.map(p=>p[1]))||summary.max!==Math.max(...sourceWindow.map(p=>p[1])))throw Error('Window summary differs from source samples')
+     if(!host.querySelector('[data-chart-evidence]').textContent.includes('离散源采样'))throw Error('Window evidence is missing from the visible chart panel')
      const snapshot=JSON.stringify(after)
      try{setVentilationChartReview(c.resource,{visibleSeries:['missing-source-branch']});throw Error('Unknown branch accepted')}catch(e){if(!e.message.includes('不存在'))throw e}
      try{setVentilationChartReview(c.resource,{timeRange:[range[0],range[1]+1]});throw Error('Out-of-range time accepted')}catch(e){if(!e.message.includes('范围无效'))throw e}
@@ -48,6 +49,8 @@ try{
      return {series:state.series.length,samples:state.series[0].sampleCount,priority:c.priority,width:r.width,height:r.height,chartWidth:state.width,chartHeight:state.height,pointerEvents:getComputedStyle(host).pointerEvents,sourceNote:host.querySelector('small').textContent,sourceSamplesEqual:true,cameraUnchanged:true,invalidRequestPreservedState:true}
    },c)
    if(state.width<600||state.height<650||state.chartHeight<500||state.pointerEvents!=='auto')throw Error(`Primary chart layout invalid: ${JSON.stringify(state)}`)
+   await host.locator('[data-chart-evidence] > summary').click()
+   if(!await host.locator('[data-chart-evidence] > div').isVisible())throw Error('Window evidence cannot be expanded')
    await page.screenshot({path:`${root}/${c.id}.png`})
    await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(300)
    const resized=await host.evaluate(e=>({width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height}))

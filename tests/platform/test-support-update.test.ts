@@ -60,3 +60,11 @@ it('does not merge an older pending clarification into a live-task update',async
   expect(calls).toHaveLength(1)
   expect(calls[0].input.userRequest).toBe('把支护改成ZZ-IVb')
 })
+
+it.each(['upper-first', 'lower-follow'])('preserves excavation phase when updating support: %s', phase => {
+  const status = current()
+  status.lastCompletedStage!.assembledResourceIds = [`rock.three-bench-${phase}`, 'support.test-section']
+  const result = resolveTestSupportUpdate('长度改为8米', status)
+  expect(result.resourceIds).toEqual([`rock.three-bench-${phase}`, 'support.test-section'])
+  expect(result.request).toContain(phase === 'upper-first' ? '上台阶先行' : '下台阶跟进')
+})

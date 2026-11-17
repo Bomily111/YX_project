@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "scope": "synthetic-negative-inputs-not-page-tests",
+  "checks": [
+    {
+      "case": "wrong-task",
+      "rejected": true
+    },
+    {
+      "case": "off-station",
+      "rejected": true
+    },
+    {
+      "case": "false-acceptance",
+      "rejected": true
+    },
+    {
+      "case": "unknown-source",
+      "rejected": true
+    },
+    {
+      "case": "wrong-component",
+      "rejected": true
+    }
+  ]
+}

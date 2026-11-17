@@ -1,0 +1,573 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    {
+      "id": "assemble",
+      "request": "在论文测试工段YK2+244展示三台阶和后方5米ZZ-Va支护，不用其他资料。",
+      "answer": "🤖\n已定位 YK2+244，主场景装配完成：三台阶 · 论文测试工段、已有ZZ-Va支护 · 后方支护示意段 · 5米。整体构建后的增强已完成。\n选用三台阶 · 论文测试工段：展示三台阶开挖形态（上/中/下台阶，示意错距12/6/0米）\n选用已有ZZ-Va支护 · 后方支护示意段：在后方按5米长度布置ZZ-Va测试支护构件阵列论文测试工段：三台阶使用tunnel002源断面，台阶高度与错距为示意参数，不代表现场工法设计。\n按1064米支护区段示例复用已有构件，混凝土、钢架、锚杆和配筋分别沿用示例间距；默认显示主体和钢架/格栅。Z-PM在该示例为空范围，保留独立模型备选，不冒称其有完整示例布置。\nZZ-Va：钢架/格栅间距0.8米，7组；构件组成与显隐沿用1064米页面。\n👍\n👎"
+    },
+    {
+      "id": "plan-relation",
+      "request": "只规划当前任务视觉分析：分析三台阶与后方支护的整体空间关系，重点是三台阶，支护作为必要参照。提出待回答问题，不执行、不移动相机。",
+      "answer": "🤖\n已为当前任务 scene-1794886682506-h2p4e（YK2+244 测试工段）登记视觉分析计划，未执行、未移动相机。\n\n计划内容\n- 分析目的：spatial-relation（整体空间参照）\n- 重点资源：rock.three-bench（三台阶，重点）、support.test-section（ZZ-Va 后方 5 米支护，必要参照）\n- 候选视角：overview 整体视图，保留全部对象\n- 待回答问题（尚未回答，需执行后才有证据）：\n1. 三台阶（示意错距 12/6/0 米）与后方 5 米 ZZ-Va 支护是否呈现清晰的前后衔接，支护是否整体位于三台阶后方？\n2. 整体视角下台阶轮廓与支护构件阵列能否同时辨认，支护是否遮挡三台阶前缘？\n3. 两者是否共用同一中线基准、断面朝向一致，有无可见错位或悬空？\n\n当前快照事实与限制\n- 两个根资源均 loaded，26 点包围球采样全部落在安全取景框内（insideSafe 26/26），但这是包围球采样，不是可见像素，遮挡状态为 not-measured。\n- 三台阶为固定源工段示意模型，台阶高度与错距为示意参数；支护复用 1064 米示例构件轮廓，源断面与测试隧道尺寸存在差异，且后方支护仍按源零点布置、不随台阶前缘移动——第 1、3 问的“衔接/对齐”只能作为画面观察，不能当作设计贴合结论。\n- 工程验收状态 not-verified。\n\n如需执行，请明确指示，我将用该 taskId 应用一次该计划。\n👍\n👎"
+    },
+    {
+      "id": "apply-detail",
+      "request": "规划并执行当前任务视觉分析：改为支护构件细部辨识，重点仅为当前支护模型，三台阶保留作为场景参照。请先规划再应用受控视角，不改显隐、不重装。",
+      "answer": "🤖\n已按你的要求先规划、后应用一次受控视角，未改显隐、未重装、未改源数据。\n\n执行结果（任务 scene-1794886682506-h2p4e，YK2+244 测试工段）\n- 计划：component-detail，重点资源仅 support.test-section（5 米 ZZ-Va 支护阵列），rock.three-bench 登记为场景参照。\n- 应用视角：support（聚焦支护），已执行 1 次，本场景剩余 1 次预算。\n- 应用后反馈：支护 26/26 包围球采样在安全取景框内；三台阶由 26/26 降为 20/26，平台标记 framing-incomplete（仅采样取景，非可见像素或遮挡测量）。\n\n待回答问题仍未获证据（questionsStatus=unanswered-requires-task-evidence）：钢架纵向间距能否逐一辨认、构件断面轮廓是否清晰、支护与三台阶前后关系是否可区分。包围球采样入镜不等于画面可辨，模型间深度遮挡未测量。\n\n限制与下一步\n- 支护复用 1064 米示例构件轮廓，源断面与测试隧道尺寸有差异；后方支护按源零点布置，不随台阶前缘移动，因此“支护位于三台阶后方”只能作画面观察，不能作设计贴合结论。\n- 若需三台阶参照也完整入镜，可再申请一次视角调整（本场景仅剩 1 次）；若需构件级间距/贴合核查，需补充设计正文或实测资料，本轮未读取。\n👍\n👎",
+      "evidence": {
+        "plan": {
+          "sceneKey": "[\"scene-1794886682506-h2p4e\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.three-bench\",\"support.test-section\"]]",
+          "taskId": "scene-1794886682506-h2p4e",
+          "objective": "component-detail",
+          "userRequest": "规划并执行当前任务视觉分析：改为支护构件细部辨识，重点仅为当前支护模型，三台阶保留作为场景参照。请先规划再应用受控视角，不改显隐、不重装。",
+          "focusResourceIds": [
+            "support.test-section"
+          ],
+          "referenceResourceIds": [
+            "rock.three-bench"
+          ],
+          "questions": [
+            "当前 5 米 ZZ-Va 支护阵列中，钢架等构件沿纵向的间距与重复布置能否在画面中逐一辨认？",
+            "支护构件的断面轮廓（拱架形态、构件相对位置）是否清晰可辨，是否存在构件相互遮挡或与三台阶参照模型重叠导致的辨识困难？",
+            "支护构件与三台阶参照在画面中的相对位置是否可区分，能否确认支护位于三台阶后方而非穿插其中？"
+          ],
+          "candidate": {
+            "type": "camera-view",
+            "view": "support",
+            "reason": "聚焦已声明的当前重点对象；其他资源仍保留但不保证同屏可辨"
+          },
+          "completionConditions": [
+            "执行前后任务与资源保持一致",
+            "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+            "画面取景与工程依据分开，待回答问题不作为已证实结论"
+          ],
+          "evidence": {
+            "capturedAt": "2026-11-17T03:38:14.816Z",
+            "taskId": "scene-1794886682506-h2p4e",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "locationEvidence": [],
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "engineeringAcceptance": "not-verified"
+        },
+        "phase": "applied",
+        "attempts": 1,
+        "remaining": 1,
+        "feedback": {
+          "before": {
+            "capturedAt": "2026-11-17T03:38:16.034Z",
+            "taskId": "scene-1794886682506-h2p4e",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "locationEvidence": [],
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "after": {
+            "capturedAt": "2026-11-17T03:38:16.036Z",
+            "taskId": "scene-1794886682506-h2p4e",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 20,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "locationEvidence": [],
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "issues": [
+              {
+                "resourceId": "rock.three-bench",
+                "code": "framing-incomplete",
+                "detail": "20/26包围球采样位于可用画面；不是可见像素或遮挡测量"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "取景不完整时可按用户目标选择已有视角工具；本次未移动相机",
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "resourceId": "support.test-section",
+            "runtime": "loaded",
+            "framing": "26-samples-inside",
+            "modelCoverage": "declared-targets-only"
+          }
+        ],
+        "questionsStatus": "unanswered-requires-task-evidence",
+        "engineeringAcceptance": "not-verified"
+      }
+    },
+    {
+      "id": "apply-relation",
+      "request": "规划并执行当前任务视觉分析：现在分析三台阶和后方支护的整体空间关系，两者同屏作必要参照，先规划再应用整体视角。",
+      "answer": "🤖\n已先规划、再应用一次整体视角（overview），未改显隐、未重装、未改源数据。\n\n执行结果（任务 scene-1794886682506-h2p4e，YK2+244 测试工段）\n- 计划：spatial-relation，重点资源 rock.three-bench 与 support.test-section，两者同屏作必要参照。\n- 应用前后对比：三台阶由 20/26 提升为 26/26 包围球采样入镜；支护保持 26/26；应用后 issues 为空，framing-incomplete 已消除。\n- 预算：本场景 2 次应用已用尽（remaining=0），不再重复调整。\n\n证据限制\n- 26 点包围球采样入镜只说明目标中心区域投影在安全取景框内，不等于可见像素、标签无重叠或模型间无遮挡；遮挡状态仍为 not-measured。\n- 三个待回答问题（同屏可辨与前后衔接、中线基准与朝向一致性、支护纵向起点相对三台阶后缘位置）状态仍为 unanswered-requires-task-evidence，需你实际观察画面确认，本轮不代作结论。\n- 三台阶为固定源工段示意模型（错距 12/6/0 米为示意参数）；支护复用 1064 米示例构件轮廓，源断面与测试隧道尺寸有差异，且后方支护按源零点布置、不随台阶前缘移动，因此“支护位于三台阶后方”只能作画面观察，不能作为设计贴合或验收依据。工程验收状态 not-verified。\n\n下一步建议：若需构件间距、断面贴合或支护跟进距离的定量结论，需补充适用设计正文与实测资料（本轮未读取）；若画面仍有遮挡，可考虑后续显隐或剖切表达，但本轮预算已用尽，需新任务或明确指示。\n👍\n👎"
+    },
+    {
+      "id": "restore",
+      "request": "恢复分析前视角",
+      "answer": "🤖\n已恢复当前任务（scene-1794886682506-h2p4e，YK2+244 测试工段）第一次视觉分析调整之前的相机与取景目标，phase=restored。\n\n- 已装配对象与显隐未变：rock.three-bench、support.test-section 仍为 loaded，依赖 common.tunnel 保留。\n- 恢复后取景：三台阶与支护均为 26/26 包围球采样入镜，issues 为空。这是采样取景，不是可见像素或遮挡测量。\n- 调整预算不因恢复重置：本场景 2 次应用已用尽（remaining=0）。\n- 三个待回答问题仍为 unanswered-requires-task-evidence；工程验收 not-verified。三台阶错距与支护构件轮廓均为示意/复用示例，不作设计贴合或验收结论。\n👍\n👎"
+    },
+    {
+      "id": "budget-limit",
+      "request": "规划并执行当前任务视觉分析：再以支护为重点查看构件细部，先规划再执行。如果预算不足就说明，不要重装。",
+      "answer": "🤖\n本轮视觉分析请求未完成：当前场景视觉调整已达2次上限；重新规划或恢复不会重置预算。不能把历史计划或口头说明当作本次执行；当前实际显示以工具状态为准。\n👍\n👎"
+    },
+    {
+      "id": "switch-chart",
+      "request": "YK4+000只展示右线风机故障停机的一维风网曲线，不要稳态CFD。",
+      "answer": "🤖\n已定位 YK4+000，主场景装配完成：瞬态风网 · 右线风机故障停机。整体构建后的增强已完成。\n选用瞬态风网 · 右线风机故障停机：展示右线风机故障停机工况的一维瞬态风网流量—时间分析曲线瞬态风网为现有一维网络分析工况的流量—时间曲线，不是该工况的三维CFD，也不代表目标工点实时监测。\n👍\n👎"
+    },
+    {
+      "id": "source-only",
+      "request": "只规划当前任务视觉分析：核查这一维风网曲线的来源和局限，分析目的为来源核查，不执行、不移动相机。",
+      "answer": "🤖\n已为当前任务 scene-1794886714989-5g8rm（YK4+000）登记来源核查计划，未执行、未移动相机。\n\n计划内容\n- 分析目的：source-review（只读来源核查，无相机动作，候选视角为 null）\n- 重点资源：ventilation.transient-fan-shutdown（唯一根资源）\n- 待回答问题（尚未回答）：\n1. 数据来源 /data/ventilation/transient_fan_shutdown.json 对应的工况、计算模型与生成方式是否有可读说明，是否属于目标工点实测？\n2. 曲线的时间单位、支路/测点名称与时间范围是什么，是否与“右线风机故障停机”一致，有无与其他工况混用风险？\n3. 该一维网络结果能支持与不能支持哪些结论（三维风场、现场通风达标、安全验收）？\n\n当前快照事实与限制\n- 根资源 loaded，但未提供可观察的 Cesium 模型目标（readyModelCount=0，framing 不可用），平台标记 observation-incomplete；这不代表模型不存在，只说明本轮无法用取景核对。\n- 任务说明已明确：这是一维瞬态风网工况分析，非该工况三维 CFD，非目标工点实时监测；工程验收 not-verified。\n- 另检测到任务外已加载资源 common.tunnel，可能由其他页面持有，不认定为泄漏，本轮不处理。\n\n下一步：source-review 只登记只读问题，没有可应用的视角动作；要回答上述问题需另行读取曲线实际支路、测点、时间范围与单位（inspect_task_chart_review），本轮未调用，故未给出任何数值或来源正文结论。\n👍\n👎"
+    },
+    {
+      "id": "reset",
+      "request": "复位当前任务场景",
+      "answer": "🤖\n当前任务场景已复位，任务模型已释放并恢复主场景。\n👍\n👎"
+    }
+  ],
+  "modelRequests": 19,
+  "visualAudit": [
+    {
+      "action": "plan_task_visual_review",
+      "status": "completed",
+      "result": {}
+    },
+    {
+      "action": "plan_task_visual_review",
+      "status": "completed",
+      "result": {}
+    },
+    {
+      "action": "apply_task_visual_review",
+      "status": "completed",
+      "result": {}
+    },
+    {
+      "action": "plan_task_visual_review",
+      "status": "completed",
+      "result": {}
+    },
+    {
+      "action": "apply_task_visual_review",
+      "status": "completed",
+      "result": {}
+    },
+    {
+      "action": "restore_task_visual_review",
+      "status": "completed",
+      "result": {}
+    },
+    {
+      "action": "plan_task_visual_review",
+      "status": "completed",
+      "result": {}
+    }
+  ]
+}

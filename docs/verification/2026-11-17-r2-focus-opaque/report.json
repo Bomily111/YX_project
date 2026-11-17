@@ -1,0 +1,16 @@
+{
+  "passed": false,
+  "modelRequests": 0,
+  "errors": [],
+  "cases": [],
+  "diagnostics": [],
+  "configRequests": [
+    "/src/assets/data/centerline_mileage.json",
+    "/src/assets/data/centerLine.json",
+    "/data/tsp_actual/hardness.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json"
+  ],
+  "failure": "page.evaluate: DeveloperError"
+}

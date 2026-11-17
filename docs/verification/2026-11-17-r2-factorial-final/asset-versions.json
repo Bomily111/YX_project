@@ -1,0 +1,92 @@
+{
+  "passed": true,
+  "input": "docs/verification/2026-11-17-r2-factorial-final/report.json",
+  "inputDigest": "db28904171ea95b79f1b4ffd5487ba2de743966ed01467ecb4b78669d6660ce3",
+  "scope": "actual-completed-task-versions-not-design-acceptance",
+  "tasks": [
+    {
+      "caseId": "hardness-support-combined-local-context",
+      "taskId": "scene-1794897067338-0b92u",
+      "conditions": [
+        "full-plain",
+        "full-focus",
+        "cut-plain",
+        "cut-focus"
+      ],
+      "versions": [
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T06:31:12.648Z"
+        },
+        {
+          "digest": "a5690b2f9f9489960ce22b76de470263c9658aa20c7c259f0948acc6b2702369",
+          "locator": "/data/tsp_actual/hardness.json",
+          "sourceId": "asset:/data/tsp_actual/hardness.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T06:31:12.648Z"
+        },
+        {
+          "digest": "4bbaefecbeb255b17ca45ff7ab7a64a579dc67df84b929a88ac855039e32ddd2",
+          "locator": "/data/tsp_actual/hardness_volume.png",
+          "sourceId": "asset:/data/tsp_actual/hardness_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T06:31:12.648Z"
+        },
+        {
+          "digest": "960b0328e1e2b34457177133512a8c12821f63fda44d734fdddf038ee32edd48",
+          "locator": "/data/tunnel/tunnel000.glb",
+          "sourceId": "asset:/data/tunnel/tunnel000.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T06:31:12.648Z"
+        }
+      ],
+      "sameSupportObject": true,
+      "sameSupportTransform": true
+    },
+    {
+      "caseId": "integrity-support-combined-local-context",
+      "taskId": "scene-1794897083821-cptdj",
+      "conditions": [
+        "full-plain",
+        "full-focus",
+        "cut-plain",
+        "cut-focus"
+      ],
+      "versions": [
+        {
+          "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22",
+          "locator": "/data/tsp_actual/integrity.json",
+          "sourceId": "asset:/data/tsp_actual/integrity.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T06:31:25.102Z"
+        },
+        {
+          "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca",
+          "locator": "/data/tsp_actual/integrity_volume.png",
+          "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T06:31:25.102Z"
+        },
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T06:31:25.102Z"
+        },
+        {
+          "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d",
+          "locator": "/data/tunnel/tunnel002.glb",
+          "sourceId": "asset:/data/tunnel/tunnel002.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T06:31:25.102Z"
+        }
+      ],
+      "sameSupportObject": true,
+      "sameSupportTransform": true
+    }
+  ]
+}

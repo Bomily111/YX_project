@@ -1,0 +1,148 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    {
+      "id": "location-evidence-goal-binding",
+      "evidence": [
+        {
+          "taskId": "scene-1794885451581-kn472",
+          "resourceId": "support.test-section",
+          "rowId": "support.test-section:steel_arch",
+          "component": "steel_arch",
+          "offsetM": -4.7,
+          "source": "2d",
+          "assetPaths": [
+            "/support-modeler/outputs/centerline/task-reference-1064.glb",
+            "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+            "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+            "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+          ],
+          "visualObjective": "component-detail",
+          "questions": [
+            "站位与本次装配记录是否对应？"
+          ],
+          "sequence": 1,
+          "recordedAt": "2026-11-17T03:17:35.247Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        }
+      ]
+    },
+    {
+      "id": "source-envelope-diagram-and-chat",
+      "svg": {
+        "width": 243,
+        "height": 212.625,
+        "inside": true,
+        "rectangles": 2
+      },
+      "answer": "🤖\n当前支护：ZZ-Va，长度5米。\n初支混凝土：显示；布置间距1米，5个布置站位。\n初支钢筋网：隐藏；布置间距1米，5个布置站位。\n二次衬砌：显示；布置间距1米，5个布置站位。\n二衬钢筋 N3：隐藏；布置间距1米，5个布置站位。\n二衬钢筋 N4：隐藏；布置间距1米，5个布置站位。\n钢拱架：显示；布置间距0.8米，7个布置站位。\n系统锚杆：隐藏；布置间距0.8米，7个布置站位。\n锁脚锚杆：隐藏；布置间距0.8米，7个布置站位。\n二衬钢筋 N1：隐藏；布置间距0.25米，20个布置站位。\n二衬钢筋 N2：隐藏；布置间距0.25米，20个布置站位。\n按1064米示例装配；布置站位数不等于单根杆件数量，示例参数不代表现场设计。\n隧道源法向断面宽约11.00米，高约7.60米。\n初支混凝土源包围范围宽12.72米、高9.29米；总宽差1.72米、总高差1.69米。\n二次衬砌源包围范围宽12.00米、高10.30米；总宽差1.00米、总高差2.70米。\n隧道为源法向轮廓，支护为源构件包围范围；宽高差不是壁厚、净空侵限或现场偏差。\n记录核查：当前站位记录一致，工程验收未核验。\n补充本工段设计版本、适用里程与章节或页码，再比对构件间距与布置。\n补充同一基准的实测记录，缺失时不计算设计实测偏差。\n核验源断面适用性、标高与三台阶交界接缝；站位一致不能代替几何检查。\n当前只读记录核查结束；补齐资料或几何检查后再判断，重复取景和显隐不能补齐证据。\n👍\n👎"
+    },
+    {
+      "id": "support-framing-1280",
+      "framing": {
+        "available": true,
+        "projected": 26,
+        "insideSafe": 26,
+        "behind": 0,
+        "safe": {
+          "left": 316,
+          "right": 884,
+          "top": 76,
+          "bottom": 838
+        },
+        "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+        "occlusion": "not-measured"
+      }
+    },
+    {
+      "id": "support-framing-1400",
+      "framing": {
+        "available": true,
+        "projected": 26,
+        "insideSafe": 26,
+        "behind": 0,
+        "safe": {
+          "left": 316,
+          "right": 1004,
+          "top": 76,
+          "bottom": 838
+        },
+        "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+        "occlusion": "not-measured"
+      }
+    },
+    {
+      "id": "design-primary-1280",
+      "bounds": {
+        "left": 316,
+        "right": 880,
+        "width": 564,
+        "height": 756,
+        "svgHeight": 420,
+        "scroll": false
+      }
+    },
+    {
+      "id": "design-primary-1400",
+      "bounds": {
+        "left": 316,
+        "right": 1000,
+        "width": 684,
+        "height": 756,
+        "svgHeight": 420,
+        "scroll": false
+      }
+    },
+    {
+      "id": "local-flow-panel-and-fresh-budget",
+      "feedback": {
+        "radiusM": 25.980607198605,
+        "localSamples": 888,
+        "totalSamples": 3340,
+        "velocityMin": 0.0337599478662014,
+        "velocityMax": 1.3721190690994263,
+        "strategy": "blast-airflow-local-review",
+        "occlusion": "not-measured",
+        "mode": "context",
+        "scope": "full-cfd-samples",
+        "sampled": 239,
+        "inside": 239,
+        "panelCovered": 0,
+        "behind": 0,
+        "targetDiameterPxApprox": 49.70194208219084,
+        "targetInSafeViewport": true,
+        "safeViewport": {
+          "left": 316,
+          "right": 1004,
+          "top": 76,
+          "bottom": 838
+        },
+        "viewport": {
+          "width": 1400,
+          "height": 900
+        },
+        "measurement": "screen-projection-and-panel-rectangles",
+        "note": "投影范围和屏幕面板覆盖的采样近似；未测模型间深度遮挡，不代表通风或安全结论。"
+      },
+      "evaluation": {
+        "policy": {
+          "version": "2026-11-16-screen-review-v1",
+          "maxAdjustments": 2,
+          "minInsideFraction": 0.85,
+          "maxPanelCoveredFraction": 0.1,
+          "minFocusDiameterPx": 120
+        },
+        "issues": [],
+        "remainingAdjustments": 2,
+        "status": "screen-criteria-met",
+        "candidates": [],
+        "stopReason": "当前屏幕采样条件满足；结束调整，深度遮挡和工程结论仍未核验。",
+        "engineeringAcceptance": "not-verified",
+        "depthOcclusion": "not-measured"
+      }
+    }
+  ],
+  "modelRequests": 0
+}

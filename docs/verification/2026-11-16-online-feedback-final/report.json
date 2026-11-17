@@ -1,0 +1,1407 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    {
+      "id": "assemble-shutdown",
+      "request": "YK4+000 右线风机停机复核，请调出对应一维风网曲线，不要稳态CFD。",
+      "answer": "🤖\n已定位 YK4+000，主场景装配完成：瞬态风网 · 右线风机故障停机。整体构建后的增强已完成。\n选用瞬态风网 · 右线风机故障停机：用户要求复核右线风机故障停机工况，需一维瞬态风网流量—时间曲线瞬态风网为现有一维网络分析工况的流量—时间曲线，不是该工况的三维CFD，也不代表目标工点实时监测。\n👍\n👎"
+    },
+    {
+      "id": "inspect-chart",
+      "request": "只读读取当前曲线的实际支路、时间单位和离散采样摘要，不改变任何显示。",
+      "answer": "🤖\n本轮只读核查结果（未改变任何显示）：\n\n图表：瞬态通风 · 右线风机故障停机（owner：ventilation.transient-fan-shutdown）\n- 时间单位：秒（s），值单位 Q / m³·s⁻¹；源时间范围 0～600 s，显示窗口同为 0～600 s；缩放窗口 0～100。\n- 共 21 条源支路，每条 121 个离散源采样；摘要为源采样首末值、极值和差值，未做插值。\n- 当前可见 5 条：Duct_Right 84.27→0（−84.27）、Ret_Right_0_2300 47.83→0（−47.83）、Exit_Right 47.83→0（−47.83）、Duct_Left 恒为 55.66、Duct_DDK 恒为 15.24。\n- 当前隐藏的支路中，变化较明显的是 Ret_Left_0_2300 45.94→72.63（+26.69）、Exit_Left 同幅上升、CP_2300_Left_Right −36.44→0、Ret_DDK_0_2300 45.43→35.68；其余多为恒定值。\n- 源说明：右线风机在 t=10 s 故障停机，左线与 DDK 风机维持 100%。\n\n限制：这是一维风网流量—时间分析，不是三维 CFD 风场，也不是 YK4+000 工点实时监测；曲线只反映该模拟工况的支路流量变化，不能据此判断现场通风达标或安全验收（engineeringAcceptance 为 not-verified）。若需核对停机后右线风量衰减的具体时刻，可再按源采样点读取，但本轮未做插值，不给阈值穿越时刻。\n👍\n👎"
+    },
+    {
+      "id": "select-window",
+      "request": "保持当前任务，只显示Duct_Right和Duct_Left，把图表时间窗口设为0到30秒，并根据窗口源采样说明变化；不要重新装配，不改三维视角。",
+      "answer": "🤖\n已按你的要求调整（同一任务 scene-1794817925914-veeo1，未重新装配、未改三维视角）：\n\n显示设置：仅 Duct_Right、Duct_Left 可见，其余 19 条支路隐藏；时间窗口 0～30 s（源范围仍为 0～600 s，缩放 0～5）。\n\n窗口内源采样（0～30 s，各 7 个离散采样点，无插值）\n- Duct_Right：84.27 → 0 m³/s，窗口内最大 84.27、最小 0，变化 −84.27；与源说明“t=10 s 右线风机故障停机”一致，即停机后该支路风量在窗口内降至 0。\n- Duct_Left：55.66 → 55.66 m³/s，窗口内恒定，变化 0；与“左线风机维持 100%”一致。\n\n限制：这是一维瞬态风网模拟的支路流量曲线，不是三维 CFD，也不是 YK4+000 工点实时监测；窗口摘要只给首末值与极值，未做插值，因此不给出停机后风量衰减的具体时刻或阈值穿越时间，也不能据此判定现场通风达标或验收通过。\n👍\n👎"
+    },
+    {
+      "id": "invalid-window",
+      "request": "保持当前任务，请把当前图表时间窗口设为0到999999秒。范围无效就说明，不要改显示或新装配。",
+      "answer": "🤖\n时间窗口 0～999999 s 无效，平台已拒绝，未做任何改动。\n\n原因：该图表时间单位为秒，源数据范围仅 0～600 s，请求上限远超源范围。当前显示仍为上一轮状态：仅 Duct_Right、Duct_Left 可见，窗口 0～30 s，三维视角未变。若需看全段，可改为 0～600 s。\n👍\n👎"
+    },
+    {
+      "id": "assemble-co",
+      "request": "YK4+000只展示现有CO模拟浓度时间曲线，不要稳态CFD。",
+      "answer": "🤖\n已定位 YK4+000，主场景装配完成：CO 扩散分析。整体构建后的增强已完成。\n选用CO 扩散分析：用户要求查看现有 CO 模拟浓度随时间变化曲线，对应 CO 扩散分析图表资源\n👍\n👎"
+    },
+    {
+      "id": "inspect-co",
+      "request": "只读读取当前CO图表的时间单位、源数据范围和采样依据，不改显示。",
+      "answer": "🤖\n本轮只读结果（未改显示）：\n\n图表：CO 爆破扩散 · 浓度—时间（owner：ventilation.co-analysis，任务 scene-1794817942962-wugs6）\n- 时间单位：分钟（min）；浓度单位 ppm。源时间范围 0～60 min，显示窗口同为 0～60 min。\n- 采样依据：5 个测点各 3601 个离散源采样点（约每 1 s 一点，覆盖 60 min），摘要为首末值、极值与差值，未做插值。\n- 各测点窗口摘要：\n- 掌子面：1129.69 → ≈0 ppm，峰值 1129.69，全程下降；\n- 200m：0 → ≈0，峰值 123.62；\n- 500m：0 → ≈0，峰值 67.76；\n- 1000m：0 → ≈0.00017，峰值 45.48；\n- 洞口：0 → 5.47 ppm，峰值 29.51，窗口末仍为正值。\n\n限制：这是已有爆后扩散模拟工况的一维浓度—时间曲线，非 YK4+000 工点实时监测，不能单独证明通风达标（engineeringAcceptance 为 not-verified）。注意与上一任务的瞬态风网曲线时间单位不同（秒 vs 分钟），两者不可混用时间窗口。\n👍\n👎"
+    },
+    {
+      "id": "co-seconds-to-minutes",
+      "request": "保持当前任务，只显示掌子面和洞口，把图表窗口设为0到300秒；请按图表实际时间单位换算后执行，不重装、不改三维视角。",
+      "answer": "🤖\n已按图表实际单位换算执行（同一任务 scene-1794817942962-wugs6，未重装、未改三维视角）：\n\n换算与设置：图表时间单位为分钟，300 s = 5 min，故窗口设为 0～5 min（源范围 0～60 min，缩放约 0～8.33）。仅“掌子面”“洞口”可见，200m、500m、1000m 已隐藏。\n\n窗口内源采样（0～5 min，各 301 个离散点，无插值）\n- 掌子面：1129.69 → 1.17 ppm，窗口内最大 1129.69、最小 1.17，变化 −1128.53，5 min 内已大幅衰减。\n- 洞口：0 → ≈0 ppm（末值约 4.7e−53），窗口内最大约 4.7e−53，即该时段洞口基本未受影响。\n\n限制：这是已有爆后扩散模拟工况的一维浓度—时间曲线，非 YK4+000 工点实时监测；摘要仅给首末值与极值，未插值，因此不给具体达标时刻，也不能据此判定通风达标或验收通过。\n👍\n👎"
+    },
+    {
+      "id": "assemble-vs",
+      "request": "YK2+244 展示现有TSP横波速度Vs解释体，不要其他资料。",
+      "answer": "🤖\n已定位 YK2+244，主场景装配完成：TSP 横波速度 Vs · 示意锚定。整体构建后的增强已完成。\n选用TSP 横波速度 Vs · 示意锚定：用户要求查看 TSP 横波速度 Vs 解释体，用于观察波速分布物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。\n👍\n👎"
+    },
+    {
+      "id": "inspect-volume",
+      "request": "只读核对当前解释体的实际渲染采样范围、局部轴长和当前裁剪参数。说明它是否能证明地质边界，不改变视角或模型。",
+      "answer": "🤖\n本轮只读结果（未改视角、未改模型）：\n\n当前解释体：rock.tsp-vs（TSP 横波速度 Vs），任务 scene-1794817950703-2ebo3，源锚点 YK2+244，按目标中线示意重定位。\n\n实际渲染采样盒\n- 局部轴长 dimensionsM：X ≈ 49.0 m、Y ≈ 98.0 m、Z ≈ 49.0 m。\n- 归一化裁剪范围 ranges：三轴均为 [0.01, 0.99]，即当前处于近全范围显示、仅边缘各裁去约 1%。\n- 采样盒角点坐标已返回（8 个角点，属平台局部/世界坐标），未据此换算里程或深度。\n- scope 明确为 rendered-sampling-domain-not-geological-boundary；depthOcclusion 为 not-measured，engineeringAcceptance 为 not-verified。\n\n能否证明地质边界：不能。该盒只是渲染采样域，可能包含无数据区，既不代表有效体素轮廓，也不代表地质界面、测量边界或深度无遮挡；本轮也未做遮挡测量。因此不能据此给出围岩分级、异常体边界或工程验收结论。若需判断有效数据轮廓，需另行核查体素有效性与遮挡，本轮未核验。\n👍\n👎"
+    },
+    {
+      "id": "reset",
+      "request": "复位当前任务场景",
+      "answer": "🤖\n当前任务场景已复位，任务模型已释放并恢复主场景。\n👍\n👎"
+    }
+  ],
+  "modelRequests": 15,
+  "chartAudit": [
+    {
+      "action": "inspect_task_chart_review",
+      "status": "completed",
+      "result": {
+        "chartFeedback": [
+          {
+            "zoom": {
+              "end": 100,
+              "start": 0
+            },
+            "owner": "ventilation.transient-fan-shutdown",
+            "title": "瞬态通风 · 右线风机故障停机",
+            "width": 658,
+            "height": 643,
+            "series": [
+              {
+                "name": "Duct_Right",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 84.2653,
+                  "min": 0,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 84.2653
+                  },
+                  "change": -84.2653,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_Right_0_2300",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 47.8297,
+                  "min": 0,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 47.8297
+                  },
+                  "change": -47.8297,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Duct_Left",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 600,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Duct_DDK",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 600,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Exit_Right",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 47.8297,
+                  "min": 0,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 47.8297
+                  },
+                  "change": -47.8297,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_DDK_4000_7200",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 600,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_DDK_2300_4000",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 28.6508,
+                  "min": 28.6508,
+                  "last": {
+                    "time": 600,
+                    "value": 28.6508
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 28.6508
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_DDK_0_2300",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 45.4328,
+                  "min": 35.6843,
+                  "last": {
+                    "time": 600,
+                    "value": 35.6843
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.4328
+                  },
+                  "change": -9.7485,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_Left_4000_4600",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 600,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_Left_2300_4000",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 26.2882,
+                  "min": 26.2882,
+                  "last": {
+                    "time": 600,
+                    "value": 26.2882
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 26.2882
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_Left_0_2300",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 72.629,
+                  "min": 45.9418,
+                  "last": {
+                    "time": 600,
+                    "value": 72.629
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.9418
+                  },
+                  "change": 26.687200000000004,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "CP_2300_DDK_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -16.782,
+                  "min": -26.5304,
+                  "last": {
+                    "time": 600,
+                    "value": -26.5304
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -16.782
+                  },
+                  "change": -9.7484,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "CP_2300_Left_Right",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 0,
+                  "min": -36.4356,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -36.4356
+                  },
+                  "change": 36.4356,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "CP_4000_DDK_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -13.4122,
+                  "min": -13.4122,
+                  "last": {
+                    "time": 600,
+                    "value": -13.4122
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -13.4122
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Dump_DDK",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 600,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Dump_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 600,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Dump_Right",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 84.2653,
+                  "min": 0,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 84.2653
+                  },
+                  "change": -84.2653,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Exit_DDK",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 45.4328,
+                  "min": 35.6843,
+                  "last": {
+                    "time": 600,
+                    "value": 35.6843
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.4328
+                  },
+                  "change": -9.7485,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Exit_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 72.629,
+                  "min": 45.9418,
+                  "last": {
+                    "time": 600,
+                    "value": 72.629
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.9418
+                  },
+                  "change": 26.687200000000004,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Shaft",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -15.9568,
+                  "min": -15.9568,
+                  "last": {
+                    "time": 600,
+                    "value": -15.9568
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -15.9568
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Shaft_exit",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.9568,
+                  "min": 15.9568,
+                  "last": {
+                    "time": 600,
+                    "value": 15.9568
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.9568
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              }
+            ],
+            "timeUnit": "时间 / s",
+            "timeRange": [
+              0,
+              600
+            ],
+            "valueUnit": "Q / m³·s⁻¹",
+            "sourceNote": "右线风机在t=10s故障停机，左线和DDK风机维持100%。一维风网模拟，非三维CFD或本工点实时监测；保留21条源支路，可点击图例比较。",
+            "visibleTimeRange": [
+              0,
+              600
+            ],
+            "engineeringAcceptance": "not-verified"
+          }
+        ]
+      }
+    },
+    {
+      "action": "set_task_chart_review",
+      "status": "completed",
+      "result": {
+        "chartReview": {
+          "after": {
+            "zoom": {
+              "end": 5,
+              "start": 0
+            },
+            "owner": "ventilation.transient-fan-shutdown",
+            "title": "瞬态通风 · 右线风机故障停机",
+            "width": 658,
+            "height": 643,
+            "series": [
+              {
+                "name": "Duct_Right",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 84.2653,
+                  "min": 0,
+                  "last": {
+                    "time": 30,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 84.2653
+                  },
+                  "change": -84.2653,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Ret_Right_0_2300",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 47.8297,
+                  "min": 0,
+                  "last": {
+                    "time": 30,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 47.8297
+                  },
+                  "change": -47.8297,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Duct_Left",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 30,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Duct_DDK",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 30,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Exit_Right",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 47.8297,
+                  "min": 0,
+                  "last": {
+                    "time": 30,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 47.8297
+                  },
+                  "change": -47.8297,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Ret_DDK_4000_7200",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 30,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Ret_DDK_2300_4000",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 28.6508,
+                  "min": 28.6508,
+                  "last": {
+                    "time": 30,
+                    "value": 28.6508
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 28.6508
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Ret_DDK_0_2300",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 45.4328,
+                  "min": 35.6843,
+                  "last": {
+                    "time": 30,
+                    "value": 35.6843
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.4328
+                  },
+                  "change": -9.7485,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Ret_Left_4000_4600",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 30,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Ret_Left_2300_4000",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 26.2882,
+                  "min": 26.2882,
+                  "last": {
+                    "time": 30,
+                    "value": 26.2882
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 26.2882
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Ret_Left_0_2300",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 72.629,
+                  "min": 45.9418,
+                  "last": {
+                    "time": 30,
+                    "value": 72.629
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.9418
+                  },
+                  "change": 26.687200000000004,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "CP_2300_DDK_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -16.782,
+                  "min": -26.5304,
+                  "last": {
+                    "time": 30,
+                    "value": -26.5304
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -16.782
+                  },
+                  "change": -9.7484,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "CP_2300_Left_Right",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 0,
+                  "min": -36.4356,
+                  "last": {
+                    "time": 30,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -36.4356
+                  },
+                  "change": 36.4356,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "CP_4000_DDK_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -13.4122,
+                  "min": -13.4122,
+                  "last": {
+                    "time": 30,
+                    "value": -13.4122
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -13.4122
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Dump_DDK",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 30,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Dump_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 30,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Dump_Right",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 84.2653,
+                  "min": 0,
+                  "last": {
+                    "time": 30,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 84.2653
+                  },
+                  "change": -84.2653,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Exit_DDK",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 45.4328,
+                  "min": 35.6843,
+                  "last": {
+                    "time": 30,
+                    "value": 35.6843
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.4328
+                  },
+                  "change": -9.7485,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Exit_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 72.629,
+                  "min": 45.9418,
+                  "last": {
+                    "time": 30,
+                    "value": 72.629
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.9418
+                  },
+                  "change": 26.687200000000004,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Shaft",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -15.9568,
+                  "min": -15.9568,
+                  "last": {
+                    "time": 30,
+                    "value": -15.9568
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -15.9568
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              },
+              {
+                "name": "Shaft_exit",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.9568,
+                  "min": 15.9568,
+                  "last": {
+                    "time": 30,
+                    "value": 15.9568
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.9568
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 7
+                }
+              }
+            ],
+            "timeUnit": "时间 / s",
+            "timeRange": [
+              0,
+              600
+            ],
+            "valueUnit": "Q / m³·s⁻¹",
+            "sourceNote": "右线风机在t=10s故障停机，左线和DDK风机维持100%。一维风网模拟，非三维CFD或本工点实时监测；保留21条源支路，可点击图例比较。",
+            "visibleTimeRange": [
+              0,
+              30
+            ],
+            "engineeringAcceptance": "not-verified"
+          },
+          "before": {
+            "zoom": {
+              "end": 100,
+              "start": 0
+            },
+            "owner": "ventilation.transient-fan-shutdown",
+            "title": "瞬态通风 · 右线风机故障停机",
+            "width": 658,
+            "height": 643,
+            "series": [
+              {
+                "name": "Duct_Right",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 84.2653,
+                  "min": 0,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 84.2653
+                  },
+                  "change": -84.2653,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_Right_0_2300",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 47.8297,
+                  "min": 0,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 47.8297
+                  },
+                  "change": -47.8297,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Duct_Left",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 600,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Duct_DDK",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 600,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Exit_Right",
+                "visible": true,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 47.8297,
+                  "min": 0,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 47.8297
+                  },
+                  "change": -47.8297,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_DDK_4000_7200",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 600,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_DDK_2300_4000",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 28.6508,
+                  "min": 28.6508,
+                  "last": {
+                    "time": 600,
+                    "value": 28.6508
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 28.6508
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_DDK_0_2300",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 45.4328,
+                  "min": 35.6843,
+                  "last": {
+                    "time": 600,
+                    "value": 35.6843
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.4328
+                  },
+                  "change": -9.7485,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_Left_4000_4600",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 600,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_Left_2300_4000",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 26.2882,
+                  "min": 26.2882,
+                  "last": {
+                    "time": 600,
+                    "value": 26.2882
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 26.2882
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Ret_Left_0_2300",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 72.629,
+                  "min": 45.9418,
+                  "last": {
+                    "time": 600,
+                    "value": 72.629
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.9418
+                  },
+                  "change": 26.687200000000004,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "CP_2300_DDK_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -16.782,
+                  "min": -26.5304,
+                  "last": {
+                    "time": 600,
+                    "value": -26.5304
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -16.782
+                  },
+                  "change": -9.7484,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "CP_2300_Left_Right",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 0,
+                  "min": -36.4356,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -36.4356
+                  },
+                  "change": 36.4356,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "CP_4000_DDK_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -13.4122,
+                  "min": -13.4122,
+                  "last": {
+                    "time": 600,
+                    "value": -13.4122
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -13.4122
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Dump_DDK",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.2386,
+                  "min": 15.2386,
+                  "last": {
+                    "time": 600,
+                    "value": 15.2386
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.2386
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Dump_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 55.6572,
+                  "min": 55.6572,
+                  "last": {
+                    "time": 600,
+                    "value": 55.6572
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 55.6572
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Dump_Right",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 84.2653,
+                  "min": 0,
+                  "last": {
+                    "time": 600,
+                    "value": 0
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 84.2653
+                  },
+                  "change": -84.2653,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Exit_DDK",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 45.4328,
+                  "min": 35.6843,
+                  "last": {
+                    "time": 600,
+                    "value": 35.6843
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.4328
+                  },
+                  "change": -9.7485,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Exit_Left",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 72.629,
+                  "min": 45.9418,
+                  "last": {
+                    "time": 600,
+                    "value": 72.629
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 45.9418
+                  },
+                  "change": 26.687200000000004,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Shaft",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": -15.9568,
+                  "min": -15.9568,
+                  "last": {
+                    "time": 600,
+                    "value": -15.9568
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": -15.9568
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              },
+              {
+                "name": "Shaft_exit",
+                "visible": false,
+                "sampleCount": 121,
+                "windowSummary": {
+                  "max": 15.9568,
+                  "min": 15.9568,
+                  "last": {
+                    "time": 600,
+                    "value": 15.9568
+                  },
+                  "first": {
+                    "time": 0,
+                    "value": 15.9568
+                  },
+                  "change": 0,
+                  "measurement": "discrete-source-samples-without-interpolation",
+                  "sampleCount": 121
+                }
+              }
+            ],
+            "timeUnit": "时间 / s",
+            "timeRange": [
+              0,
+              600
+            ],
+            "valueUnit": "Q / m³·s⁻¹",
+            "sourceNote": "右线风机在t=10s故障停机，左线和DDK风机维持100%。一维风网模拟，非三维CFD或本工点实时监测；保留21条源支路，可点击图例比较。",
+            "visibleTimeRange": [
+              0,
+              600
+            ],
+            "engineeringAcceptance": "not-verified"
+          }
+        }
+      }
+    }
+  ]
+}

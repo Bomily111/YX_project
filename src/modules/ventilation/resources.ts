@@ -1,6 +1,6 @@
 import * as Cesium from 'cesium'
 import * as echarts from 'echarts'
-import {validateChartSeries,defaultTransientTraces,summarizeSeriesWindow} from './chart-series'
+import {validateChartSeries,defaultTransientTraces,summarizeSeriesWindow,snapChartWindow} from './chart-series'
 import type { SceneResource } from '@/platform/resources/types'
 import type { TaskContext } from '@/platform/context/TaskContext'
 import type { SceneModuleManifest } from '@/platform/modules/types'
@@ -79,16 +79,16 @@ type EnhancementDisposer = () => void
 
 const chartColors = ['#00eaff', '#ff9e52', '#68e09b', '#c58af9', '#ef5350']
 const enhancementDisposers = new Map<string, Set<EnhancementDisposer>>()
-const activeCharts=new Set<{owner:string;title:string;host:HTMLElement;chart:ReturnType<typeof echarts.init>;x:number[];xName:string;yName:string}>()
+const activeCharts=new Set<{owner:string;title:string;host:HTMLElement;chart:ReturnType<typeof echarts.init>;x:number[];xName:string;yName:string;sourceNote:string;refreshSummary:()=>void}>()
 export function inspectVentilationCharts(includeSamples=false){
  return [...activeCharts].map(item=>{
    const option=item.chart.getOption() as any,selected=option.legend?.[0]?.selected??{}
    const zoom={start:option.dataZoom?.[0]?.start??0,end:option.dataZoom?.[0]?.end??100},span=item.x.at(-1)!-item.x[0]!
-   const visibleTimeRange=[item.x[0]!+span*zoom.start/100,item.x[0]!+span*zoom.end/100]
+   const visibleTimeRange=snapChartWindow([item.x[0]!+span*zoom.start/100,item.x[0]!+span*zoom.end/100],item.x)
    return {owner:item.owner,title:item.title,timeUnit:item.xName,valueUnit:item.yName,timeRange:[item.x[0]!,item.x.at(-1)!],
      visibleTimeRange,series:(option.series??[]).map((s:any)=>({name:s.name,visible:selected[s.name]!==false,sampleCount:s.data.length,windowSummary:summarizeSeriesWindow(s.data,visibleTimeRange),...(includeSamples?{samples:s.data.map((p:number[])=>[...p])}:{})})),
      zoom,
-     width:item.chart.getWidth(),height:item.chart.getHeight(),sourceNote:item.host.querySelector('small')?.textContent,engineeringAcceptance:'not-verified'}
+     width:item.chart.getWidth(),height:item.chart.getHeight(),sourceNote:item.sourceNote,engineeringAcceptance:'not-verified'}
  })
 }
 export function setVentilationChartReview(owner:string,input:{visibleSeries?:string[];timeRange?:number[]}){
@@ -101,7 +101,7 @@ export function setVentilationChartReview(owner:string,input:{visibleSeries?:str
  const patch:any={}
  if(input.visibleSeries!==undefined)patch.legend={selected:Object.fromEntries(names.map((n:string)=>[n,input.visibleSeries!.includes(n)]))}
  if(range){const length=item.x.at(-1)!-item.x[0]!,start=(range[0]!-item.x[0]!)/length*100,end=(range[1]!-item.x[0]!)/length*100;patch.dataZoom=[{start,end},{start,end}]}
- try{item.chart.setOption(patch)}catch(error){item.chart.setOption({legend:option.legend,dataZoom:option.dataZoom});throw error}
+ try{item.chart.setOption(patch);item.refreshSummary()}catch(error){item.chart.setOption({legend:option.legend,dataZoom:option.dataZoom});item.refreshSummary();throw error}
  return {before,after:inspectVentilationCharts().find(c=>c.owner===owner)!}
 }
 
@@ -173,7 +173,11 @@ function createChartOverlay(
   const note=document.createElement('small')
   note.textContent=options.note??'现有分析数据，非目标工点实时监测。'
   Object.assign(note.style,{color:'#91aac0',font:'11px Microsoft YaHei',lineHeight:'1.5',paddingTop:'6px',maxHeight:'64px',overflow:'auto'})
-  host.append(heading, canvas,note)
+  const evidence=document.createElement('details'),evidenceHeading=document.createElement('summary'),evidenceBody=document.createElement('div')
+  evidence.dataset.chartEvidence=owner;evidenceHeading.textContent='当前窗口的源采样说明'
+  Object.assign(evidence.style,{color:'#a7bfd0',font:'11px Microsoft YaHei',lineHeight:'1.6',maxHeight:'130px',overflow:'auto',paddingTop:'6px'})
+  evidenceHeading.style.cursor='pointer';evidence.append(evidenceHeading,evidenceBody)
+  host.append(heading, canvas,evidence,note)
   viewer.container.appendChild(host)
 
   let chart: ReturnType<typeof echarts.init> | undefined
@@ -211,7 +215,22 @@ function createChartOverlay(
     resize = () => chart?.resize()
     window.addEventListener('resize', resize)
     if(typeof ResizeObserver!=='undefined'){observer=new ResizeObserver(()=>chart?.resize());observer.observe(host)}
-    record={owner,title,host,chart,x:[...x],xName,yName};activeCharts.add(record)
+    const refreshSummary=()=>{
+      const current=inspectVentilationCharts().find(c=>c.owner===owner);if(!current)return
+      const format=(v:number)=>Number(v.toPrecision(5)).toString()
+      const visible=current.series.filter((s:any)=>s.visible)
+      const lines=[`显示窗口 ${current.visibleTimeRange.map(format).join('～')}（${xName}）；数值单位：${yName}。`]
+      for(const series of visible.slice(0,3)){
+        const s=series.windowSummary
+        lines.push(!s?`${series.name}：窗口内无源采样，不补值。`:s.sampleCount===1?`${series.name}：仅1个源采样，不能判断窗口内变化。`:`${series.name}：${s.sampleCount}个源采样；首值${format(s.first.value)}（t=${format(s.first.time)}），末值${format(s.last.value)}（t=${format(s.last.time)}），采样差${format(s.change)}。`)
+      }
+      if(!visible.length)lines.push('当前未选择显示序列。')
+      if(visible.length>3)lines.push(`另有${visible.length-3}条已选序列，可缩小选择范围后查看。`)
+      lines.push('仅汇总窗口内离散源采样，不插值、不推算阈值穿越时刻，不作现场验收结论。')
+      evidenceBody.textContent=lines.join('\n');evidenceBody.style.whiteSpace='pre-line'
+    }
+    record={owner,title,host,chart,x:[...x],xName,yName,sourceNote:note.textContent,refreshSummary};activeCharts.add(record)
+    chart.on('datazoom',refreshSummary);chart.on('legendselectchanged',refreshSummary);refreshSummary()
   } catch (error) {
     observer?.disconnect()
     if (resize) window.removeEventListener('resize', resize)

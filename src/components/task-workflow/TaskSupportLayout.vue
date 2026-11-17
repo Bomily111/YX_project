@@ -6,6 +6,11 @@
       <nav class="review-steps" aria-label="支护核对步骤"><button v-for="(step,i) in steps" :key="step.id" :data-testid="`support-review-${step.id}`" :aria-pressed="stepIndex===i" @click="goStep(i)">{{ i+1 }} {{ step.title }}</button></nav>
       <section v-if="steps[stepIndex]" data-testid="support-review-question"><strong>{{ steps[stepIndex]!.question }}</strong><small>{{ steps[stepIndex]!.boundary }}</small></section>
       <small v-if="visited.length" data-testid="support-review-history">本任务已定位：{{ visited.map(v=>v.toFixed(2)+'m').join('、') }}（访问记录，非验收通过）</small>
+      <section data-testid="support-review-progress">
+        <strong>本行步骤访问 · 不代表问题已回答</strong>
+        <ul><li v-for="item in stepProgress" :key="item.id">{{ item.title }}：{{ item.visited?'已记录访问，仍待核查':'未记录步骤点击' }}</li></ul>
+        <small v-if="progress.stepRecords.omitted || progress.locationRecords.omitted">本任务历史已省略{{ progress.stepRecords.omitted }}条步骤、{{ progress.locationRecords.omitted }}条定位记录；当前显示不是完整历史。</small>
+      </section>
       <button v-if="entryCamera" data-testid="support-review-restore" @click="restoreView">恢复进入时视角</button>
       <svg viewBox="0 0 240 90" aria-label="支护纵向基准站位图" data-testid="support-layout-svg">
         <text x="20" y="13">后方支护 → 测试断面</text>
@@ -28,6 +33,14 @@
         <small>工段设计与实测未提供，工程验收尚未核验。</small>
       </section>
       <small>0m为测试源断面；站位来自本次装配记录，不等同构件中心或实测里程。三维标记仅用于定位，不是新增支护构件。</small>
+      <section data-testid="support-evidence-assessment">
+        <strong>本行交互事实与待核查问题</strong>
+        <small v-if="assessment.factWindow.omitted">任务摘要窗口另外省略{{ assessment.factWindow.omitted }}项事实；不代表这些交互未发生。</small>
+        <p>{{ rowFacts.length?`已保留${rowFacts.length}项交互事实；不代表问题已回答。`:'本行尚无保留的交互事实。' }}</p>
+        <ul><li v-for="fact in rowFacts.slice(-5)" :key="fact.id">{{ fact.text }}</li></ul>
+        <small v-if="rowFacts.length>5">页面仅显示最近5项；任务记录保留范围见步骤历史说明。</small>
+        <p v-for="gap in assessment.gaps" :key="gap.id">{{ gap.question }} {{ gap.nextCheck }}</p>
+      </section>
       <section data-testid="support-evidence-gaps">
         <strong>证据缺口与后续核查</strong>
         <p v-for="gap in reviewEvidence.evidenceGaps" :key="gap.id">{{ gap.nextAction }}</p>
@@ -43,6 +56,9 @@
   </details>
 </template>
 <script setup lang="ts">
+import {recordTaskLocationEvidence,recordTaskReviewStep,taskEvidenceRevision,inspectTaskEvidenceProgress,taskEvidenceScopeMatches} from '@/platform/tasks/TaskEvidenceJournal'
+import {assessTaskEvidence} from '@/platform/tasks/TaskEvidenceAssessment'
+import {taskVisualReview} from '@/platform/tasks/TaskVisualReview'
 import {computed,onBeforeUnmount,ref,watch} from 'vue'
 import * as C from 'cesium'
 import {getTestSectionSupportSummaries,testSupportStationWorld,testSectionSupportResources} from '@/modules/support/test-section-resource'
@@ -59,6 +75,10 @@ const rowId=ref(''),selected=ref<number|null>(null),open=ref(false),error=ref(''
 const row=computed(()=>rows.value.find(r=>r.id===rowId.value))
 const reviewEvidence=computed(()=>supportReviewEvidence(rows.value))
 const steps=computed(()=>row.value?supportReviewSteps(row.value):[]),stepIndex=ref(0),visited=ref<number[]>([]),sourceDetails=ref<HTMLDetailsElement>()
+const progress=computed(()=>{void taskEvidenceRevision.value;return inspectTaskEvidenceProgress(props.taskId)})
+const stepProgress=computed(()=>steps.value.map(step=>({id:step.id,title:step.title,visited:progress.value.steps.some(entry=>entry.rowId===rowId.value&&entry.resourceId===row.value?.resourceId&&entry.stepId===step.id)})))
+const assessment=computed(()=>{void taskEvidenceRevision.value;return assessTaskEvidence(props.taskId,props.resourceIds)})
+const rowFacts=computed(()=>assessment.value.facts.filter(fact=>fact.rowId===rowId.value&&fact.resourceId===row.value?.resourceId))
 const entryCamera=ref<{position:C.Cartesian3;direction:C.Cartesian3;up:C.Cartesian3}>()
 const finding=computed(()=>row.value?supportLayoutFinding(row.value):undefined)
 const sources=computed(()=>row.value?testSectionSupportResources.find(r=>r.id===row.value!.resourceId)?.getActiveAssetPaths?.()??[]:[])
@@ -96,9 +116,12 @@ function rebuild(){
     viewer.scene.requestRender()
   }catch(e){release();error.value=e instanceof Error?e.message:String(e)}
 }
-function select(offset:number,from:'2d'|'3d'){
+function select(offset:number,from:'2d'|'3d',reviewStep=steps.value[stepIndex.value]){
   if(!row.value||!owner||owner.isDestroyed())return
-  if(!hasTaskWorkflowController()||getTaskWorkflowController().getStatus().taskId!==props.taskId){error.value='任务已切换，请等待当前装配完成后重新定位。';return}
+  if(!currentTask()||!row.value.offsetsM.includes(offset)){error.value='任务已切换，请等待当前装配完成后重新定位。';return}
+  const review=taskVisualReview.value
+  recordTaskLocationEvidence({taskId:props.taskId,resourceId:row.value.resourceId,rowId:row.value.id,component:row.value.component,offsetM:offset,source:from,reviewStep:reviewStep?{id:reviewStep.id,question:reviewStep.question,boundary:reviewStep.boundary}:undefined,assetPaths:[...sources.value],
+    ...(review?.plan.taskId===props.taskId&&review.plan.focusResourceIds.includes(row.value.resourceId)?{visualObjective:review.plan.objective,questions:[...review.plan.questions]}:{})})
   selected.value=offset
   if(!visited.value.includes(offset))visited.value.push(offset)
   const time=C.JulianDate.now()
@@ -110,15 +133,16 @@ function select(offset:number,from:'2d'|'3d'){
   owner.scene.requestRender()
 }
 function clearSelection(){rebuild()}
-function currentTask(){return hasTaskWorkflowController()&&getTaskWorkflowController().getStatus().taskId===props.taskId}
+function currentTask(){return !!row.value&&hasTaskWorkflowController()&&taskEvidenceScopeMatches(getTaskWorkflowController().getStatus(),props.taskId,row.value.resourceId)}
 function goStep(index:number){
   if(!row.value||!owner||!currentTask())return
   try{
     const step=steps.value[index];if(!step)return
     if(step.id==='overview'||step.id==='conclusion')focusTaskCamera(owner,props.resourceIds,2244,'overview')
-    if(step.id==='interface'&&row.value.offsetsM.length)select(row.value.offsetsM.at(-1)!,'2d')
-    if(step.id==='components'&&selected.value===null&&row.value.offsetsM.length)select(row.value.offsetsM[0]!,'2d')
+    if(step.id==='interface'&&row.value.offsetsM.length)select(row.value.offsetsM.at(-1)!,'2d',step)
+    if(step.id==='components'&&selected.value===null&&row.value.offsetsM.length)select(row.value.offsetsM[0]!,'2d',step)
     if(step.id==='evidence'&&sourceDetails.value)sourceDetails.value.open=true
+    recordTaskReviewStep({taskId:props.taskId,resourceId:row.value.resourceId,rowId:row.value.id,stepId:step.id,question:step.question,boundary:step.boundary,assetPaths:[...sources.value]})
     stepIndex.value=index;error.value=''
   }catch(e){error.value=e instanceof Error?e.message:String(e)}
 }

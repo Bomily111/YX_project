@@ -1,3 +1,7 @@
+import {planTaskVisualReview,applyTaskVisualReview,restoreTaskVisualReview} from '@/platform/tasks/TaskVisualReview'
+import {visualObjectives} from '@/platform/tasks/TaskVisualGoal'
+import { inspectTaskScene } from '@/platform/tasks/TaskSceneInspection'
+import { resourceRegistry } from '@/platform/resources/ResourceRegistry'
 import type { ToolRegistration } from '../types'
 import {resolveSupportLayers} from '../SupportLayerIntent'
 import {planSupportDisplayContinuity} from '../SupportDisplayContinuity'
@@ -125,6 +129,12 @@ export function normalizeAgentTaskInput(input: Record<string, any>): AgentTaskWo
 }
 
 export const workflowTools: ToolRegistration[] = [
+ {module:'common',tool:{name:'plan_task_visual_review',description:'为当前已完成场景规划视觉分析目标：依据本轮用户原话指定分析目的、实际重点资源和1至3个待回答问题。平台读取本轮场景快照并生成有限候选及完成条件。只更新分析计划显示，不改相机、模型、源数据，不新建任务。source-review没有相机动作。',input_schema:{type:'object',properties:{objective:{type:'string',enum:[...visualObjectives]},emphasis:{type:'string',enum:['source','material-focus'],description:'可选支护重点着色，默认source；暖色仅表示当前重点，不是风险分级。不改地质语义色标。'},referenceScope:{type:'string',enum:['full','near-support'],description:'未指定时保留当前裁剪范围。full在TSP任务恢复原显示范围再整体取景；仅TSP解释体与支护空间关系可选near-support，组合近端剖切和局部取景；不表示全体范围入镜。'},focusResourceIds:{type:'array',minItems:1,items:{type:'string'}},questions:{type:'array',minItems:1,maxItems:3,items:{type:'string'}}},required:['objective','focusResourceIds','questions']}},executor:async input=>JSON.stringify({ok:true,action:'plan_task_visual_review',taskId:getTaskWorkflowController().getStatus().taskId,review:planTaskVisualReview(input as any)})},
+ {module:'common',tool:{name:'apply_task_visual_review',description:'执行当前已校验视觉分析计划的唯一候选视角；先规划，校验任务未变和对象就绪。每场景最多2次，重新规划/恢复不重置预算。普通候选只改相机；near-support组合候选同时改变展示剖切，恢复时还原两者。保留模型/图表/显隐，返回前后实际反馈，不宣称工程验收。',input_schema:{type:'object',properties:{taskId:{type:'string'}},required:['taskId']}},executor:async input=>JSON.stringify({ok:true,action:'apply_task_visual_review',taskId:input.taskId,review:applyTaskVisualReview(String(input.taskId))})},
+ {module:'common',tool:{name:'restore_task_visual_review',description:'恢复当前任务第一次视觉分析调整之前的相机及取景目标，保留已装配对象与显隐。任务变化后拒绝旧计划；恢复不重置调整预算。',input_schema:{type:'object',properties:{taskId:{type:'string'}},required:['taskId']}},executor:async input=>JSON.stringify({ok:true,action:'restore_task_visual_review',taskId:input.taskId,review:restoreTaskVisualReview(String(input.taskId))})},
+
+  { module:'common', tool:{name:'inspect_task_scene',description:'只读自检当前任务实际场景：任务根资源及依赖的运行状态、当前资产路径、已声明Cesium模型就绪/显隐及26点包围球屏幕取景、观察覆盖不足、任务外加载资源及待核查项。不加载、不复位、不改相机/显隐；非模型对象不猜测就绪。无已完成场景时不使用旧阶段。不能证明深度遮挡、几何贴合或工程验收，不读取设计正文。',input_schema:{type:'object',properties:{}}},executor:async()=>{const status=getTaskWorkflowController().getStatus();return JSON.stringify({ok:true,action:'inspect_task_scene',taskId:status.taskId,scene:inspectTaskScene(status,resourceRegistry,resourceManager.listStates(),viewerService.current)})}},
+
   {module:'common',tool:{name:'inspect_task_chart_review',description:'只读读取当前任务实际图表的源支路/测点、显示选择、时间单位、显示时间窗口，以及窗口内离散源采样的首末值、极值和差值。没有插值；无源采样时摘要为null，不造零值或阈值穿越时刻。不把一维风网或模拟曲线当作三维CFD、现场实测或安全验收。',input_schema:{type:'object',properties:{}}},executor:async()=>{
     const status=getTaskWorkflowController().getStatus(),ids=status.lastCompletedStage?.assembledResourceIds??[]
     if(status.status!=='completed')throw Error('当前任务尚未完成')
@@ -196,13 +206,13 @@ export const workflowTools: ToolRegistration[] = [
   },
   {
     module: 'common',
-    tool: { name: 'set_task_volume_cut', description: '开启或关闭当前任务TSP坚硬度/完整度解释体的展示剖切。enabled=false恢复该体原始显示范围，true使用支护观察剖切；不改原始数据、位置或相机，不创建任务。',
-      input_schema: { type: 'object', properties: { enabled: { type: 'boolean' } }, required: ['enabled'] } },
+    tool: { name: 'set_task_volume_cut', description: '开启或关闭当前任务TSP坚硬度/完整度解释体的展示剖切。enabled=false恢复该体原始显示范围，true时preset选择structure-window显露近端支护，或geology-section保留原纵向范围并剖开横向一侧供地质参照；不改原始数据、位置或相机，不创建任务。',
+      input_schema: { type: 'object', properties: { enabled: { type: 'boolean' },preset:{type:'string',enum:['structure-window','geology-section']} }, required: ['enabled'] } },
     executor: async input => {
       const status = getTaskWorkflowController().getStatus()
       const ids = status.lastCompletedStage?.assembledResourceIds ?? []
       if (status.status !== 'completed' || !ids.some(id => ['rock.tsp-hardness', 'rock.tsp-integrity'].includes(id) && resourceManager.getState(id).status === 'loaded')) throw new Error('当前任务没有可剖切的TSP坚硬度或完整度解释体')
-      return JSON.stringify({ ok: true, action: 'set_task_volume_cut', taskId: status.taskId, cut: setTaskVolumeCut(input.enabled) })
+      return JSON.stringify({ ok: true, action: 'set_task_volume_cut', taskId: status.taskId, cut: {...setTaskVolumeCut(input.enabled,input.preset),preset:input.enabled?(input.preset??'structure-window'):'full'} })
     },
   },
   {

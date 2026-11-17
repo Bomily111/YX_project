@@ -1,3 +1,4 @@
+import {clearTaskVisualReview} from './TaskVisualReview'
 import * as C from 'cesium'
 import { getActiveFaceSlices } from '@/modules/face-sketch/resources'
 import { faceSliceSphere } from '@/modules/face-sketch/task-face-section'
@@ -9,7 +10,7 @@ import { chainageService } from '@/platform/coordinates/ChainageService'
 import { applyTaskVolumeCut,getTaskVolumeDomain } from './TaskVolumeCut'
 import {installTaskVolumeDomain} from './TaskVolumeDomain'
 import {applyTaskChartLayout} from './TaskChartLayout'
-import { THREE_BENCH_ID, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
+import { isThreeBenchResourceId, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
 import { isTestSupportId, getTestSectionSupportModels } from '@/modules/support/test-section-resource'
 import {applyTaskTerrainContext} from './TaskTerrainContext'
 import {getFlowBoundingSphere} from '@/views/ventilation-module/cesiumVentilation'
@@ -23,16 +24,18 @@ export const taskPresentationProfile = (ids: readonly string[],goal='') => ({
   reviewInitialMode:ids.includes('blast.effect')&&ids.includes('ventilation.steady-cfd')?flowReviewInitialMode(goal):undefined,
   volumeCut: ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.')) ? { xmax: 0.5, ymin: 0.2 } : undefined,
   view: ids.some(id => /^rock\.(tsp-|tem-|geophysical-grade)/.test(id)) ? 'geophysical-context' : ids.some(id=>id==='ventilation.steady-cfd'||/^ventilation\.thermal-t\d+s$/.test(id)) ? 'airflow-context' : 'component-detail',
-  tunnelOpacity: ids.includes(THREE_BENCH_ID) || ids.some(isTestSupportId) ? 0.035 : ids.includes('support.modeler-z-pm') || ids.includes('rock.face-photos') || ids.some(id => id.startsWith('support.modeler-continuous-')) ? 0.06 : ids.includes('rock.advance-drill') || ids.includes('blast.effect') ||
+  tunnelOpacity: ids.some(isThreeBenchResourceId) || ids.some(isTestSupportId) ? 0.035 : ids.includes('support.modeler-z-pm') || ids.includes('rock.face-photos') || ids.some(id => id.startsWith('support.modeler-continuous-')) ? 0.06 : ids.includes('rock.advance-drill') || ids.includes('blast.effect') ||
     (ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.'))) ? 0.12 : ids.some(id=>/^rock\.(tsp-|tem-|geophysical-grade)/.test(id)) ? 0.08 : undefined,
 })
 export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chainage: number,goal=''): () => void {
+  clearTaskVisualReview()
   clearTaskViewportTarget(viewer)
   const station = chainageService.positionWithHeadingAt(chainage)
   if (!station) throw new Error('最终场景目标不在YK中线内')
   const previous = { position: C.Cartesian3.clone(viewer.camera.positionWC), direction: C.Cartesian3.clone(viewer.camera.directionWC), up: C.Cartesian3.clone(viewer.camera.upWC) }
   const undo: Array<() => void> = []
   const restore = () => {
+    clearTaskVisualReview()
     clearTaskViewportTarget(viewer)
     if (viewer.isDestroyed()) return
     for (const action of undo.reverse()) action()
@@ -69,7 +72,7 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
       }
     }
     const spheres: C.BoundingSphere[] = drills.map(model => model.boundingSphere)
-    const excavation = ids.includes(THREE_BENCH_ID) ? getActiveThreeBenchModel() : undefined
+    const excavation = ids.some(isThreeBenchResourceId) ? getActiveThreeBenchModel() : undefined
     if (excavation?.ready) spheres.push(excavation.boundingSphere)
     const testSupports = getTestSectionSupportModels(ids)
     spheres.push(...testSupports.filter(model => model.ready).map(model => model.boundingSphere))

@@ -4,6 +4,21 @@ export interface RoutedToolCall {
   input: Record<string, any>
   routed: boolean
 }
+export function taskVisualReviewIntent(message:string):'plan'|'apply'|'restore'|undefined {
+ if(/恢复.{0,10}(?:分析前视角|视觉分析|视觉增强)/.test(message))return 'restore'
+ if(!/当前|现在|这次|已装配/.test(message)||!/视觉目标|视觉分析|任务视觉|分析目的/.test(message))return undefined
+ if(/只读|只规划|仅规划|不执行|不要执行|不.{0,4}移动相机/.test(message))return 'plan'
+ return /执行|应用|实施/.test(message)?'apply':'plan'
+}
+export function readOnlyTaskReviewTool(message:string):string|undefined {
+  if(!/当前|现在|这次/.test(message)||!/只读|仅查询|只查询/.test(message))return undefined
+  if(/核查摘要|核查结论|证据缺口|定位记录|定位证据|访问记录/.test(message))return 'inspect_task_scene'
+  if(/场景自检|场景状态|装配自检|场景.*(?:对象|资源|就绪|来源|待核查)|已装配/.test(message))return 'inspect_task_scene'
+  if(/曲线|图表/.test(message))return 'inspect_task_chart_review'
+  if(/解释体|采样盒|采样范围/.test(message))return 'inspect_task_volume_review'
+  if(!wantsReadOnlyFlowEvaluation(message) && /场景|装配|模型/.test(message))return 'inspect_task_scene'
+  return undefined
+}
 export function wantsTaskReset(message:string):boolean {
   if(/只咨询|只读|如何|怎么|能否|是否|不执行|计划/.test(message)||/(?:不要|不必|无需|请勿).{0,6}(?:复位|重置|清空|释放)/.test(message))return false
   return /(?:复位|重置|清空)(?:当前|本次)?任务(?:场景)?|释放(?:当前|本次)任务模型/.test(message)
@@ -46,6 +61,8 @@ export function wantsBlastLayerControl(message: string): boolean {
 
 /** Ordinary scene requests use one platform assembly call; explicit step-debug tasks retain the older tools. */
 export function wantsDirectSceneAssembly(message: string): boolean {
+  if(taskVisualReviewIntent(message))return false
+  if(readOnlyTaskReviewTool(message))return false
   if(wantsReadOnlyFlowEvaluation(message))return false
   if(wantsSupportLayerControl(message)||wantsSupportInspection(message))return false
   if (wantsTestSupportUpdate(message)) return false

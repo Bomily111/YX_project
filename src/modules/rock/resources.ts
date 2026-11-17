@@ -1,7 +1,7 @@
 import * as Cesium from 'cesium'
 import {sourceInterpretationLegend} from './interpretation-legend'
 import { facePhotoResource } from '@/modules/face-sketch/resources'
-import { threeBenchResource } from './three-bench-resource'
+import { threeBenchResource, threeBenchPhaseResources } from './three-bench-resource'
 import { gprResources } from './gpr-resources'
 import { advanceDrillResource } from './drill-resource'
 import { chainageService } from '@/platform/coordinates/ChainageService'
@@ -229,7 +229,7 @@ export const rockInterpretationResources: SceneResource[] = interpretedRockLayer
   getActiveAssetPaths() { return getActiveGeoModelKey() === layer.key ? [layer.asset, layer.texture,...(layer.id==='rock.tem-resistivity'?['/data/geophysical_tem/metadata.json']:[]),...(activeTspLegends.has(layer.key)?['/data/tsp_actual/metadata.json']:[])] : [] },
 }))
 
-export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources, facePhotoResource, threeBenchResource, ...gprResources, advanceDrillResource] as const
+export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources, facePhotoResource, threeBenchResource, ...threeBenchPhaseResources, ...gprResources, advanceDrillResource] as const
 
 export const rockModuleManifest: SceneModuleManifest = {
   id: 'rock',

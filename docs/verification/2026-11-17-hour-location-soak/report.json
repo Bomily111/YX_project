@@ -1,0 +1,1264 @@
+{
+  "startedAt": "2026-11-17T02:45:13.200Z",
+  "rounds": [
+    {
+      "round": 1,
+      "code": 0,
+      "elapsedMs": 29838,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-1/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 2,
+      "code": 0,
+      "elapsedMs": 25614,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-2/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 3,
+      "code": 0,
+      "elapsedMs": 23808,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-3/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 4,
+      "code": 0,
+      "elapsedMs": 24906,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-4/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 5,
+      "code": 0,
+      "elapsedMs": 21682,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-5/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 6,
+      "code": 0,
+      "elapsedMs": 20770,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-6/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 7,
+      "code": 0,
+      "elapsedMs": 20438,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-7/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 8,
+      "code": 0,
+      "elapsedMs": 21151,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-8/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 9,
+      "code": 0,
+      "elapsedMs": 19189,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-9/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 10,
+      "code": 0,
+      "elapsedMs": 19267,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-10/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 11,
+      "code": 0,
+      "elapsedMs": 18570,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-11/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 12,
+      "code": 0,
+      "elapsedMs": 18993,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-12/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 13,
+      "code": 0,
+      "elapsedMs": 18864,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-13/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 14,
+      "code": 0,
+      "elapsedMs": 19113,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-14/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 15,
+      "code": 0,
+      "elapsedMs": 19051,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-15/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 16,
+      "code": 0,
+      "elapsedMs": 18826,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-16/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 17,
+      "code": 0,
+      "elapsedMs": 18688,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-17/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 18,
+      "code": 0,
+      "elapsedMs": 19157,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-18/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 19,
+      "code": 0,
+      "elapsedMs": 18687,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-19/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 20,
+      "code": 0,
+      "elapsedMs": 18784,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-20/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 21,
+      "code": 0,
+      "elapsedMs": 18840,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-21/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 22,
+      "code": 0,
+      "elapsedMs": 18679,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-22/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 23,
+      "code": 0,
+      "elapsedMs": 18867,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-23/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 24,
+      "code": 0,
+      "elapsedMs": 18529,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-24/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 25,
+      "code": 0,
+      "elapsedMs": 19115,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-25/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 26,
+      "code": 0,
+      "elapsedMs": 18716,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-26/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 27,
+      "code": 0,
+      "elapsedMs": 19256,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-27/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 28,
+      "code": 0,
+      "elapsedMs": 18884,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-28/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 29,
+      "code": 0,
+      "elapsedMs": 18868,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-29/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 30,
+      "code": 0,
+      "elapsedMs": 18626,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-30/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 31,
+      "code": 0,
+      "elapsedMs": 19031,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-31/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 32,
+      "code": 0,
+      "elapsedMs": 19248,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-32/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 33,
+      "code": 0,
+      "elapsedMs": 18943,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-33/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 34,
+      "code": 0,
+      "elapsedMs": 19923,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-34/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 35,
+      "code": 0,
+      "elapsedMs": 20516,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-35/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 36,
+      "code": 0,
+      "elapsedMs": 20342,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-36/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 37,
+      "code": 0,
+      "elapsedMs": 21641,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-37/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 38,
+      "code": 0,
+      "elapsedMs": 19849,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-38/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 39,
+      "code": 0,
+      "elapsedMs": 19561,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-39/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 40,
+      "code": 0,
+      "elapsedMs": 19594,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-40/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 41,
+      "code": 0,
+      "elapsedMs": 19754,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-41/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 42,
+      "code": 0,
+      "elapsedMs": 20099,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-42/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 43,
+      "code": 0,
+      "elapsedMs": 19617,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-43/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 44,
+      "code": 0,
+      "elapsedMs": 19647,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-44/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 45,
+      "code": 0,
+      "elapsedMs": 19828,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-45/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 46,
+      "code": 0,
+      "elapsedMs": 19525,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-46/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 47,
+      "code": 0,
+      "elapsedMs": 19128,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-47/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 48,
+      "code": 0,
+      "elapsedMs": 19552,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-48/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 49,
+      "code": 0,
+      "elapsedMs": 19563,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-49/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 50,
+      "code": 0,
+      "elapsedMs": 20074,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-50/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 51,
+      "code": 0,
+      "elapsedMs": 19685,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-51/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 52,
+      "code": 0,
+      "elapsedMs": 19935,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-52/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 53,
+      "code": 0,
+      "elapsedMs": 19900,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-53/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 54,
+      "code": 0,
+      "elapsedMs": 19814,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-54/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 55,
+      "code": 0,
+      "elapsedMs": 19183,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-55/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 56,
+      "code": 0,
+      "elapsedMs": 20124,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-56/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 57,
+      "code": 0,
+      "elapsedMs": 19131,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-57/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 58,
+      "code": 0,
+      "elapsedMs": 19936,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-58/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 59,
+      "code": 0,
+      "elapsedMs": 19585,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-59/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 60,
+      "code": 0,
+      "elapsedMs": 19705,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-60/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 61,
+      "code": 0,
+      "elapsedMs": 19706,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-61/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 62,
+      "code": 0,
+      "elapsedMs": 19559,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-62/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 63,
+      "code": 0,
+      "elapsedMs": 19419,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-63/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 64,
+      "code": 0,
+      "elapsedMs": 19868,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-64/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 65,
+      "code": 0,
+      "elapsedMs": 19738,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-65/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 66,
+      "code": 0,
+      "elapsedMs": 19768,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-66/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 67,
+      "code": 0,
+      "elapsedMs": 19406,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-67/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 68,
+      "code": 0,
+      "elapsedMs": 19433,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-68/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 69,
+      "code": 0,
+      "elapsedMs": 19694,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-69/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 70,
+      "code": 0,
+      "elapsedMs": 19714,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-70/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 71,
+      "code": 0,
+      "elapsedMs": 20129,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-71/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 72,
+      "code": 0,
+      "elapsedMs": 19868,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-72/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 73,
+      "code": 0,
+      "elapsedMs": 19527,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-73/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 74,
+      "code": 0,
+      "elapsedMs": 19656,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-74/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 75,
+      "code": 0,
+      "elapsedMs": 20010,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-75/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 76,
+      "code": 0,
+      "elapsedMs": 19882,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-76/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 77,
+      "code": 0,
+      "elapsedMs": 19322,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-77/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 78,
+      "code": 0,
+      "elapsedMs": 19319,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-78/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 79,
+      "code": 0,
+      "elapsedMs": 19811,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-79/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 80,
+      "code": 0,
+      "elapsedMs": 19700,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-80/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 81,
+      "code": 0,
+      "elapsedMs": 19788,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-81/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 82,
+      "code": 0,
+      "elapsedMs": 20152,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-82/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 83,
+      "code": 0,
+      "elapsedMs": 20058,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-83/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 84,
+      "code": 0,
+      "elapsedMs": 19429,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-84/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 85,
+      "code": 0,
+      "elapsedMs": 20196,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-85/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 86,
+      "code": 0,
+      "elapsedMs": 20258,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-86/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 87,
+      "code": 0,
+      "elapsedMs": 20373,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-87/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 88,
+      "code": 0,
+      "elapsedMs": 19976,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-88/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 89,
+      "code": 0,
+      "elapsedMs": 20302,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-89/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 90,
+      "code": 0,
+      "elapsedMs": 20168,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-90/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 91,
+      "code": 0,
+      "elapsedMs": 20478,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-91/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 92,
+      "code": 0,
+      "elapsedMs": 20135,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-92/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 93,
+      "code": 0,
+      "elapsedMs": 19906,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-93/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 94,
+      "code": 0,
+      "elapsedMs": 20093,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-94/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 95,
+      "code": 0,
+      "elapsedMs": 19929,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-95/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 96,
+      "code": 0,
+      "elapsedMs": 19915,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-96/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 97,
+      "code": 0,
+      "elapsedMs": 19579,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-97/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 98,
+      "code": 0,
+      "elapsedMs": 19888,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-98/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 99,
+      "code": 0,
+      "elapsedMs": 20278,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-99/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 100,
+      "code": 0,
+      "elapsedMs": 20225,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-100/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 101,
+      "code": 0,
+      "elapsedMs": 19821,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-101/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 102,
+      "code": 0,
+      "elapsedMs": 20213,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-102/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 103,
+      "code": 0,
+      "elapsedMs": 20245,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-103/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 104,
+      "code": 0,
+      "elapsedMs": 19562,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-104/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 105,
+      "code": 0,
+      "elapsedMs": 19977,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-105/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 106,
+      "code": 0,
+      "elapsedMs": 20019,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-106/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 107,
+      "code": 0,
+      "elapsedMs": 20147,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-107/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 108,
+      "code": 0,
+      "elapsedMs": 20052,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-108/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 109,
+      "code": 0,
+      "elapsedMs": 19910,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-109/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 110,
+      "code": 0,
+      "elapsedMs": 20137,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-110/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 111,
+      "code": 0,
+      "elapsedMs": 19962,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-111/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 112,
+      "code": 0,
+      "elapsedMs": 20490,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-112/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 113,
+      "code": 0,
+      "elapsedMs": 20217,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-113/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 114,
+      "code": 0,
+      "elapsedMs": 19643,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-114/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 115,
+      "code": 0,
+      "elapsedMs": 20307,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-115/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 116,
+      "code": 0,
+      "elapsedMs": 22281,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-116/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 117,
+      "code": 0,
+      "elapsedMs": 20696,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-117/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 118,
+      "code": 0,
+      "elapsedMs": 20229,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-118/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 119,
+      "code": 0,
+      "elapsedMs": 20342,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-119/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 120,
+      "code": 0,
+      "elapsedMs": 19806,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-120/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 121,
+      "code": 0,
+      "elapsedMs": 20014,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-121/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 122,
+      "code": 0,
+      "elapsedMs": 20145,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-122/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 123,
+      "code": 0,
+      "elapsedMs": 20467,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-123/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 124,
+      "code": 0,
+      "elapsedMs": 20513,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-124/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 125,
+      "code": 0,
+      "elapsedMs": 20360,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-125/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 126,
+      "code": 0,
+      "elapsedMs": 20365,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-126/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 127,
+      "code": 0,
+      "elapsedMs": 19933,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-127/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 128,
+      "code": 0,
+      "elapsedMs": 20017,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-128/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 129,
+      "code": 0,
+      "elapsedMs": 20265,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-129/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 130,
+      "code": 0,
+      "elapsedMs": 20009,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-130/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 131,
+      "code": 0,
+      "elapsedMs": 20190,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-131/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 132,
+      "code": 0,
+      "elapsedMs": 21494,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-132/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 133,
+      "code": 0,
+      "elapsedMs": 18730,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-133/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 134,
+      "code": 0,
+      "elapsedMs": 18940,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-134/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 135,
+      "code": 0,
+      "elapsedMs": 18620,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-135/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 136,
+      "code": 0,
+      "elapsedMs": 18816,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-136/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 137,
+      "code": 0,
+      "elapsedMs": 18913,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-137/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 138,
+      "code": 0,
+      "elapsedMs": 18611,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-138/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 139,
+      "code": 0,
+      "elapsedMs": 18834,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-139/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 140,
+      "code": 0,
+      "elapsedMs": 18864,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-140/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 141,
+      "code": 0,
+      "elapsedMs": 18927,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-141/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 142,
+      "code": 0,
+      "elapsedMs": 18609,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-142/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 143,
+      "code": 0,
+      "elapsedMs": 18667,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-143/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 144,
+      "code": 0,
+      "elapsedMs": 18535,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-144/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 145,
+      "code": 0,
+      "elapsedMs": 18254,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-145/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 146,
+      "code": 0,
+      "elapsedMs": 18293,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-146/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 147,
+      "code": 0,
+      "elapsedMs": 18156,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-147/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 148,
+      "code": 0,
+      "elapsedMs": 18907,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-148/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 149,
+      "code": 0,
+      "elapsedMs": 18759,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-149/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 150,
+      "code": 0,
+      "elapsedMs": 18777,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-150/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 151,
+      "code": 0,
+      "elapsedMs": 19026,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-151/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 152,
+      "code": 0,
+      "elapsedMs": 19153,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-152/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 153,
+      "code": 0,
+      "elapsedMs": 19279,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-153/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 154,
+      "code": 0,
+      "elapsedMs": 18526,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-154/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 155,
+      "code": 0,
+      "elapsedMs": 18904,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-155/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 156,
+      "code": 0,
+      "elapsedMs": 19121,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-156/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    },
+    {
+      "round": 157,
+      "code": 0,
+      "elapsedMs": 18696,
+      "report": "docs/verification/2026-11-17-hour-location-soak/round-157/report.json",
+      "checks": 7,
+      "modelRequests": 0
+    }
+  ],
+  "passed": true,
+  "scope": "real-form-assembly-and-local-tools-no-model-service",
+  "finishedAt": "2026-11-17T03:37:01.027Z"
+}

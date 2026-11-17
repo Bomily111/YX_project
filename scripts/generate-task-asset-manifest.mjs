@@ -28,6 +28,7 @@ const paths = [
     `/data/tunnel/tunnel${String(index).padStart(3, '0')}.glb`),
   '/data/blast/blast_effect.glb',
   '/data/tunnel/三台阶.glb',
+  ...['上台阶先行', '下台阶跟进'].flatMap(phase => [`/data/tunnel/三台阶-${phase}.glb`, `/data/tunnel/三台阶-${phase}.metadata.json`]),
   '/data/blast/blast-design.json',
   '/data/ahd/ahd1/2320835.glb', '/data/ahd/ahd2/2336197.glb',
   '/data/GPR_new/output/radargram_line1.json', '/data/GPR_new/output/radargram_line2.json',

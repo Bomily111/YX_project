@@ -38,6 +38,15 @@ try{
  }
  await createScene(['rock.three-bench','support.test-section'],'YK2+244','三台阶和后方5米ZZ-Va支护示意核对')
  await wait(async()=>await page.getByTestId('support-source-baseline').count()>0)
+ await page.evaluate(async()=>{const {planTaskVisualReview}=await import('/src/platform/tasks/TaskVisualReview.ts');planTaskVisualReview({objective:'component-detail',focusResourceIds:['support.test-section'],questions:['站位与本次装配记录是否对应？'],userRequest:'持续测试：核对当前支护站位'})})
+ await page.getByTestId('support-layout').locator(':scope > summary').click()
+ await page.getByTestId('support-station-1').click()
+ const locationEvidence=await page.evaluate(async()=>{const {getTaskWorkflowController}=await import('/src/platform/tasks/TaskWorkflowBridge.ts');const {inspectTaskEvidenceJournal}=await import('/src/platform/tasks/TaskEvidenceJournal.ts');return inspectTaskEvidenceJournal(getTaskWorkflowController().getStatus().taskId)})
+ if(!locationEvidence.some(e=>e.source==='2d'&&e.visualObjective==='component-detail'&&e.questions?.length===1&&e.assetPaths.length&&e.engineeringAcceptance==='not-verified'))throw Error('定位证据未关联实际任务视觉问题')
+ report.checks.push({id:'location-evidence-goal-binding',evidence:locationEvidence})
+ await page.getByTestId('support-layout').locator(':scope > summary').click()
+ await page.getByTestId('task-view-overview').click()
+
  const baseline=page.getByTestId('support-source-baseline'),comparison=page.getByTestId('support-section-comparison')
  await baseline.locator(':scope > summary').click();await comparison.locator('summary').click()
  await comparison.locator('svg').scrollIntoViewIfNeeded()

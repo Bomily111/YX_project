@@ -1,5 +1,5 @@
 """Blender 4.5: editable demonstration geometry, not a surveyed excavation."""
-import bpy, json, math, random
+import bpy, json, math, random, sys
 from pathlib import Path
 from mathutils import Vector
 from mathutils.geometry import tessellate_polygon
@@ -7,6 +7,9 @@ from mathutils.geometry import tessellate_polygon
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'public/data/tunnel'
 OUT.mkdir(parents=True, exist_ok=True)
+phase = sys.argv[sys.argv.index('--')+1] if '--' in sys.argv else 'original'
+variants = {'original': ('三台阶', 0, 6), 'upper-first': ('三台阶-上台阶先行', 0, 0), 'lower-follow': ('三台阶-下台阶跟进', 4, 6)}
+asset_name, lower_front, middle_front = variants[phase]
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 profile = json.loads((ROOT/'src/modules/face-sketch/tunnel-normal-sections.json').read_text())
@@ -84,13 +87,13 @@ def solid(name, low, high, front, end):
     return obj
 
 bottom=min(p[1] for s in profile['sections'] for p in s['outline']); top=max(p[1] for s in profile['sections'] for p in s['outline'])
-objects=[solid('Lower bench remaining rock',bottom,0,0,22),solid('Middle bench remaining rock',0,2.8,6,22),solid('Upper bench remaining rock',2.8,top,12,22)]
+objects=[solid('Lower bench remaining rock',bottom,0,lower_front,22),solid('Middle bench remaining rock',0,2.8,middle_front,22),solid('Upper bench remaining rock',2.8,top,12,22)]
 for obj in objects: obj.select_set(True)
-bpy.ops.export_scene.gltf(filepath=str(OUT/'三台阶.glb'),export_format='GLB',use_selection=True,export_extras=True)
+bpy.ops.export_scene.gltf(filepath=str(OUT/(asset_name+'.glb')),export_format='GLB',use_selection=True,export_extras=True)
 
-metadata={'demonstration':True,'profileSource':profile['source'],'profileMethod':profile['method'],'sourceGltfOrigin':source_origin,'advanceAxis':'source-centerline arc-length; asset coordinates retain source basis','units':'m','upperFront':12,'middleFront':6,'lowerFront':0,'end':22,'elevations':[bottom,0,2.8,top],'stationCount':len(profile['sections']),'stationSpacingM':1,'centerlineFitResidualM':profile['centerlineFitResidualM'],'note':'Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.'}
-(OUT/'三台阶.metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
-(ROOT/'src/modules/rock/three-bench.metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+metadata={'demonstration':True,'profileSource':profile['source'],'profileMethod':profile['method'],'sourceGltfOrigin':source_origin,'advanceAxis':'source-centerline arc-length; asset coordinates retain source basis','units':'m','upperFront':12,'middleFront':middle_front,'lowerFront':lower_front,'phase':phase,'end':22,'elevations':[bottom,0,2.8,top],'stationCount':len(profile['sections']),'stationSpacingM':1,'centerlineFitResidualM':profile['centerlineFitResidualM'],'note':'Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.'}
+(OUT/(asset_name+'.metadata.json')).write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+(ROOT/('src/modules/rock/three-bench.metadata.json' if phase == 'original' else 'src/modules/rock/three-bench-'+phase+'.metadata.json')).write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
 
 world=bpy.context.scene.world or bpy.data.worlds.new('Studio');bpy.context.scene.world=world;world.use_nodes=True
 world.node_tree.nodes['Background'].inputs[0].default_value=(.055,.075,.10,1)
@@ -101,6 +104,6 @@ for location,energy,size in [((5,-12,25),3500,15),((-15,8,14),2200,12),((8,24,18
     bpy.ops.object.light_add(type='AREA',location=location);light=bpy.context.object;light.data.energy=energy;light.data.shape='DISK';light.data.size=size;aim(light,(0,8,0))
 scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=32
 scene.render.resolution_x=1400;scene.render.resolution_y=1000;scene.render.resolution_percentage=100
-scene.render.filepath=str(OUT/'三台阶.png')
-bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'三台阶.blend'))
+scene.render.filepath=str(OUT/(asset_name+'.png'))
+bpy.ops.wm.save_as_mainfile(filepath=str(OUT/(asset_name+'.blend')))
 bpy.ops.render.render(write_still=True)

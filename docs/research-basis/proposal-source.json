@@ -1,0 +1,13 @@
+{
+  "source": "D:/研/硕士研究生选题报告.docx",
+  "sha256": "b9593d969061faeefc294f808275637067e1e56885c1042586b225c6a8cc28fe",
+  "readOn": "2026-11-17",
+  "title": "AI智能体驱动的装配式隧道工程数字孪生场景增强可视化方法",
+  "textExtract": "../proposal-source-extract-2026-11-17.txt",
+  "paragraphScheme": "P编号按word/document.xml全部w:p节点从1计数，包含表格内段落及空段落，不是Word页码",
+  "figures": {
+    "image2.png": "图1 研究内容及其关系",
+    "image4.png": "图2 总体研究技术路线"
+  },
+  "scope": "研究依据提取；未改写原Word；未核验参考文献真实性"
+}

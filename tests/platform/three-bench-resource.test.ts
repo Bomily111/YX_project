@@ -29,3 +29,23 @@ it('uses the named asset beside the other tunnel models and preserves metadata',
   expect(readFileSync(`public${THREE_BENCH_PATH}`).subarray(0,4).toString()).toBe('glTF')
   expect(JSON.parse(readFileSync('public/data/tunnel/三台阶.metadata.json','utf8'))).toEqual(metadata)
 })
+
+it('retains phase metadata and prevents overlaying mutually exclusive excavation states', async () => {
+  const { threeBenchPhaseResources, threeBenchResource } = await import('@/modules/rock/three-bench-resource')
+  const { resolveAssemblyStages, validateSceneSequence } = await import('@/platform/tasks/samples/SceneExplorationWorkflow')
+  const { ResourceRegistry } = await import('@/platform/resources/ResourceRegistry')
+  const registry = new ResourceRegistry()
+  const support = { ...threeBenchResource, id: 'support.test-section' }
+  for (const resource of [threeBenchResource, ...threeBenchPhaseResources, support]) registry.register(resource)
+  for (const resource of threeBenchPhaseResources) {
+    expect(validateSceneSequence([resource.id], registry)).toHaveLength(1)
+    expect(resolveAssemblyStages([resource, support], ['replace', 'auto'])[1]!.map(item => item.id)).toEqual([resource.id, support.id])
+    expect(() => resolveAssemblyStages([threeBenchResource, resource], ['replace', 'retain'])).toThrow('不允许同屏')
+    const name = resource.id.endsWith('upper-first') ? '上台阶先行' : '下台阶跟进'
+    const metadata = JSON.parse(readFileSync(`public/data/tunnel/三台阶-${name}.metadata.json`, 'utf8'))
+    expect(metadata.demonstration).toBe(true)
+    expect(metadata.sourceGltfOrigin).toEqual([ ...JSON.parse(readFileSync('public/data/tunnel/三台阶.metadata.json', 'utf8')).sourceGltfOrigin ])
+    expect(metadata.upperFront).toBe(12)
+    expect([metadata.middleFront, metadata.lowerFront]).toEqual(name === '上台阶先行' ? [0, 0] : [6, 4])
+  }
+})

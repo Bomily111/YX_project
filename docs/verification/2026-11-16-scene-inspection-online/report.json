@@ -1,0 +1,342 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    {
+      "id": "empty-scene",
+      "request": "只读检查当前场景状态、已装配对象和来源，不要装配或修改显示。",
+      "answer": "🤖\n本轮只读自检结果：\n\n- 当前没有已完成场景：taskId 为空，workflowStatus 为 unprepared，completedSceneAvailable=false，因此没有可核查的装配对象、里程范围或资源来源。\n- 已装配资源：无（resourceIds 为空），也没有发现任务外加载的资源。\n- 阶段与来源：phase 与 taskSourceNote 均为空，不能沿用历史对话或前一阶段的结论。\n\n限制：即使后续有装配，模型加载与屏幕取景也不代表工程适用性或质量验收；本轮未测深度遮挡、净空侵限与现场配准误差，也未读取任何设计正文。\n\n下一步：如需核查，请先明确目标 YK 里程与要观察的对象（如某类支护断面、TSP 完整性、爆破设计等），我再按需装配；工程结论需另行补充适用设计与实测资料。\n👍\n👎"
+    },
+    {
+      "id": "assemble-support",
+      "request": "在论文测试工段YK2+244展示三台阶和后方5米ZZ-Va支护，不用其他资料。",
+      "answer": "🤖\n已定位 YK2+244，主场景装配完成：三台阶 · 论文测试工段、已有ZZ-Va支护 · 后方支护示意段 · 5米。整体构建后的增强已完成。\n选用三台阶 · 论文测试工段：展示三台阶开挖形态（上/中/下前缘错距12/6/0米示意）\n选用已有ZZ-Va支护 · 后方支护示意段：展示后方5米ZZ-Va测试支护阵列，按源构件间距布置论文测试工段：三台阶使用tunnel002源断面，台阶高度与错距为示意参数，不代表现场工法设计。\n按1064米支护区段示例复用已有构件，混凝土、钢架、锚杆和配筋分别沿用示例间距；默认显示主体和钢架/格栅。Z-PM在该示例为空范围，保留独立模型备选，不冒称其有完整示例布置。\nZZ-Va：钢架/格栅间距0.8米，7组；构件组成与显隐沿用1064米页面。\n👍\n👎"
+    },
+    {
+      "id": "inspect-support",
+      "request": "只读核查当前场景状态：实际装配资源、模型就绪和显隐、资产来源、观察不足及下一步待核查项。不重新装配、不移动相机、不修改任何显示。",
+      "answer": "🤖\n本轮只读自检（taskId scene-1794820583545-ww38q，未做任何装配、相机或显隐改动）：\n\n任务与范围\n- 状态 completed，completedSceneAvailable=true，phase=constructed-then-enhanced（仅表示平台展示阶段已执行，不等于增强方法验收）。\n- 里程范围 YK2+244（2244～2244），支护长度 5 米，与你的要求一致。\n\n实际装配资源与来源\n- rock.three-bench（任务根，loaded）：/data/tunnel/三台阶.glb\n- support.test-section（任务根，loaded）：/support-modeler/outputs/centerline/task-reference-1064.glb 及同名 capture.json、real_YK1+098_YK2+162_support.metadata.json、real_centerline_0_1064m.json\n- common.tunnel（依赖，loaded）：/data/tunnel/tunnel002.glb\n- 任务外加载资源：无。\n\n模型就绪与显隐\n- 三台阶与支护各 1 个目标，均 ready、0 隐藏、0 待加载；依赖隧道载体未声明模型目标（targetCount=0），故其就绪状态本轮未核验。\n- 取景：两者 26 点包围球采样全部投影在安全框内（insideSafe 26/26，behind 0）。这只是包围球采样入镜，不是可见像素测量，遮挡未测。\n\n观察不足与限制\n- 未测模型间深度遮挡、净空侵限、现场配准误差；三台阶错距 12/6/0 米与台阶高为示意参数，后方支护按源零点布置、不随台阶前缘移动。\n- 资产路径仅为资源报告来源，本轮未读取设计正文，无章节页码依据；工程验收状态 not-verified。\n\n下一步待核查\n- 若需工程结论，须补充适用设计与实测资料；如需确认支护与台阶的空间关系，可另行做遮挡/净空核查（本轮未执行）。\n👍\n👎",
+      "evidence": {
+        "scene": {
+          "taskId": "scene-1794820583545-ww38q",
+          "workflowStatus": "completed",
+          "completedSceneAvailable": true,
+          "chainageRange": {
+            "start": 2244,
+            "end": 2244
+          },
+          "phase": "constructed-then-enhanced",
+          "resourceIds": [
+            "rock.three-bench",
+            "support.test-section"
+          ],
+          "resources": [
+            {
+              "id": "common.tunnel",
+              "role": "dependency",
+              "module": "common",
+              "runtimeState": "loaded",
+              "references": 3,
+              "assetPaths": [
+                "/data/tunnel/tunnel002.glb"
+              ],
+              "observation": {
+                "targetCount": 0,
+                "readyModelCount": 0,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "incomplete",
+                "framing": {
+                  "available": false
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            },
+            {
+              "id": "rock.three-bench",
+              "role": "task-root",
+              "module": "rock",
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/data/tunnel/三台阶.glb"
+              ],
+              "observation": {
+                "targetCount": 1,
+                "readyModelCount": 1,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "declared-targets-only",
+                "framing": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 838
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            },
+            {
+              "id": "support.test-section",
+              "role": "task-root",
+              "module": "support",
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+              ],
+              "observation": {
+                "targetCount": 1,
+                "readyModelCount": 1,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "declared-targets-only",
+                "framing": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 838
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            }
+          ],
+          "loadedOutsideCurrentScene": [],
+          "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+          "issues": [],
+          "engineeringAcceptance": "not-verified",
+          "limitations": [
+            "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+            "未测模型间深度遮挡、净空侵限或现场配准误差",
+            "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+          ],
+          "nextChecks": [
+            "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+          ]
+        },
+        "audit": [
+          {
+            "action": "inspect_task_scene",
+            "status": "completed",
+            "result": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "assemble-chart",
+      "request": "YK4+000只展示右线风机故障停机的一维风网曲线，不要稳态CFD。",
+      "answer": "🤖\n已定位 YK4+000，主场景装配完成：瞬态风网 · 右线风机故障停机。整体构建后的增强已完成。\n选用瞬态风网 · 右线风机故障停机：展示右线风机故障停机工况的一维网络流量—时间分析曲线，不加载稳态CFD风场瞬态风网为现有一维网络分析工况的流量—时间曲线，不是该工况的三维CFD，也不代表目标工点实时监测。\n👍\n👎"
+    },
+    {
+      "id": "inspect-chart",
+      "request": "只读核查当前场景状态：实际装配资源、模型就绪和显隐、资产来源、观察不足及下一步待核查项。不重新装配、不移动相机、不修改任何显示。",
+      "answer": "🤖\n本轮只读自检（taskId scene-1794820595458-ii269，未装配、未移动相机、未改显隐）：\n\n任务与范围\n- 状态 completed，completedSceneAvailable=true，phase=constructed-then-enhanced（仅表示展示阶段已执行）。\n- 里程 YK4+000（4000～4000）。\n\n实际装配资源与来源\n- ventilation.transient-fan-shutdown（任务根，loaded）：/data/ventilation/transient_fan_shutdown.json —— 右线风机故障停机工况的一维瞬态风网曲线，未加载稳态 CFD，符合你的排除要求。\n- ventilation.scene（依赖，loaded）：无资产路径报告。\n- 任务外已加载：common.tunnel（可能由其他页面持有，不能据此认定泄漏或自动释放）。\n\n模型就绪与显隐\n- 两个资源均未提供可观察的 Cesium 模型目标（targetCount=1 但 readyModelCount=0、unobservedTargetCount=1，framing 不可用）。这是图表类资源，本轮无法核查模型就绪/显隐/取景，也不能据此推断模型不存在。\n\n观察不足与限制\n- 曲线本身的实际支路、测点、时间范围与单位本轮未读取，需另行调用曲线复核工具才能说明；不能从一维曲线推断三维风场、现场实时监测或通风安全达标。\n- 未测深度遮挡与配准误差；资产路径不代表已读取设计正文，无章节页码依据；工程验收 not-verified。\n\n下一步待核查\n- 如需核对曲线内容（支路、测点、时间范围、单位），我可再做一次曲线只读复核；工程结论须补充适用设计与实测资料。\n👍\n👎",
+      "evidence": {
+        "scene": {
+          "taskId": "scene-1794820595458-ii269",
+          "workflowStatus": "completed",
+          "completedSceneAvailable": true,
+          "chainageRange": {
+            "start": 4000,
+            "end": 4000
+          },
+          "phase": "constructed-then-enhanced",
+          "resourceIds": [
+            "ventilation.transient-fan-shutdown"
+          ],
+          "resources": [
+            {
+              "id": "ventilation.scene",
+              "role": "dependency",
+              "module": "ventilation",
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [],
+              "observation": {
+                "targetCount": 1,
+                "readyModelCount": 0,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 1,
+                "modelCoverage": "incomplete",
+                "framing": {
+                  "available": false
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            },
+            {
+              "id": "ventilation.transient-fan-shutdown",
+              "role": "task-root",
+              "module": "ventilation",
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/data/ventilation/transient_fan_shutdown.json"
+              ],
+              "observation": {
+                "targetCount": 1,
+                "readyModelCount": 0,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 1,
+                "modelCoverage": "incomplete",
+                "framing": {
+                  "available": false
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            }
+          ],
+          "loadedOutsideCurrentScene": [
+            "common.tunnel"
+          ],
+          "taskSourceNote": "现有一维瞬态风网工况分析，非该工况三维CFD，非目标工点实时监测",
+          "issues": [
+            {
+              "resourceId": "ventilation.transient-fan-shutdown",
+              "code": "observation-incomplete",
+              "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+            },
+            {
+              "code": "loaded-outside-current-scene",
+              "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+            }
+          ],
+          "engineeringAcceptance": "not-verified",
+          "limitations": [
+            "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+            "未测模型间深度遮挡、净空侵限或现场配准误差",
+            "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+          ],
+          "nextChecks": [
+            "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+          ]
+        },
+        "audit": [
+          {
+            "action": "inspect_task_scene",
+            "status": "completed",
+            "result": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "assemble-volume",
+      "request": "YK2+244只展示TSP横波速度Vs解释体，不要其他资料。",
+      "answer": "🤖\n已定位 YK2+244，主场景装配完成：TSP 横波速度 Vs · 示意锚定。整体构建后的增强已完成。\n选用TSP 横波速度 Vs · 示意锚定：展示TSP横波速度Vs解释体，用于观察横波速度分布；不加载其他物探层或支护物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。\n👍\n👎"
+    },
+    {
+      "id": "inspect-volume",
+      "request": "只读核查当前场景状态：实际装配资源、模型就绪和显隐、资产来源、观察不足及下一步待核查项。不重新装配、不移动相机、不修改任何显示。",
+      "answer": "🤖\n本轮只读自检（taskId scene-1794820602203-idyl0，未装配、未移动相机、未改显隐）：\n\n任务与范围\n- 状态 completed，completedSceneAvailable=true，phase=constructed-then-enhanced（仅表示展示阶段已执行）。\n- 里程 YK2+244（2244～2244），仅装配 rock.tsp-vs，未加载其他物探层或支护，符合你的排除要求。\n\n资产来源\n- /data/tsp_actual/vs.json、/data/tsp_actual/vs_volume.png、/data/tsp_actual/metadata.json\n- 任务外已加载：common.tunnel（可能由其他页面持有，不能据此认定泄漏或自动释放）。\n\n模型就绪与显隐\n- 该资源未提供可观察的 Cesium 模型目标（targetCount=0，framing 不可用），因此模型就绪、显隐与取景本轮无法核查；这不等于模型不存在，属观察信息不完整。\n\n观察不足与限制\n- 体渲染采样盒的实际尺寸与裁剪范围本轮未读取，不能按声明里程或默认 100 米推测；采样盒含无数据区，不代表有效体素轮廓或地质界面。\n- 源锚点为 YK2+244，当前按目标中线示意重定位，不能视作目标工点实测；未测深度遮挡与配准误差；资产路径不代表已读取报告正文，无章节页码依据；工程验收 not-verified。\n\n下一步待核查\n- 如需确认解释体实际渲染范围或剖切影响，可再做一次体范围只读复核；工程结论须补充适用设计与实测资料。\n👍\n👎",
+      "evidence": {
+        "scene": {
+          "taskId": "scene-1794820602203-idyl0",
+          "workflowStatus": "completed",
+          "completedSceneAvailable": true,
+          "chainageRange": {
+            "start": 2244,
+            "end": 2244
+          },
+          "phase": "constructed-then-enhanced",
+          "resourceIds": [
+            "rock.tsp-vs"
+          ],
+          "resources": [
+            {
+              "id": "rock.tsp-vs",
+              "role": "task-root",
+              "module": "rock",
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/data/tsp_actual/vs.json",
+                "/data/tsp_actual/vs_volume.png",
+                "/data/tsp_actual/metadata.json"
+              ],
+              "observation": {
+                "targetCount": 0,
+                "readyModelCount": 0,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "incomplete",
+                "framing": {
+                  "available": false
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            }
+          ],
+          "loadedOutsideCurrentScene": [
+            "common.tunnel"
+          ],
+          "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；不能视作目标工点实测结论",
+          "issues": [
+            {
+              "resourceId": "rock.tsp-vs",
+              "code": "observation-incomplete",
+              "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+            },
+            {
+              "code": "loaded-outside-current-scene",
+              "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+            }
+          ],
+          "engineeringAcceptance": "not-verified",
+          "limitations": [
+            "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+            "未测模型间深度遮挡、净空侵限或现场配准误差",
+            "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+          ],
+          "nextChecks": [
+            "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+          ]
+        },
+        "audit": [
+          {
+            "action": "inspect_task_scene",
+            "status": "completed",
+            "result": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "reset",
+      "request": "复位当前任务场景",
+      "answer": "🤖\n当前任务场景已复位，任务模型已释放并恢复主场景。\n👍\n👎"
+    },
+    {
+      "id": "after-reset",
+      "request": "只读检查当前场景状态和已装配模型；没有任务就说明，不要沿用上一任务。",
+      "answer": "🤖\n本轮只读自检结果：\n\n- 当前没有已完成场景：completedSceneAvailable=false，workflowStatus=ready（复位后待执行），phase 与里程范围均为空。\n- 已装配模型：无（resourceIds 为空），也没有任务外加载资源；上一任务的 TSP Vs 解释体已随复位清理，不沿用其结论。\n- 工程验收状态 not-verified；模型加载与取景不代表工程适用性，本轮未读取任何设计正文。\n\n如需继续，请给出目标 YK 里程和要观察的对象，我再按需装配。\n👍\n👎"
+    }
+  ],
+  "modelRequests": 13
+}

@@ -1,9 +1,10 @@
 import fs from 'node:fs'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { Vector3 } from 'three'
-const root='public/data/tunnel/',meta=JSON.parse(fs.readFileSync(root+'三台阶.metadata.json'))
+const name=process.argv[2]||'三台阶',output=process.argv[3]||'docs/verification/2026-11-11-normal-section-geometry.json'
+const root='public/data/tunnel/',meta=JSON.parse(fs.readFileSync(root+name+'.metadata.json'))
 const profile=JSON.parse(fs.readFileSync('src/modules/face-sketch/tunnel-normal-sections.json'))
-const b=fs.readFileSync(root+'三台阶.glb'),gltf=await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'')
+const b=fs.readFileSync(root+name+'.glb'),gltf=await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'')
 const report={meshes:[],maxBoundaryErrorM:0,maxStationPlaneErrorM:0,oldFixedPlaneObliquityDeg:profile.oldFixedPlaneObliquityDeg,passed:false}
 gltf.scene.updateMatrixWorld(true)
 gltf.scene.traverse(mesh=>{
@@ -31,5 +32,5 @@ gltf.scene.traverse(mesh=>{
 })
 if(report.meshes.length!==3||report.maxBoundaryErrorM>.003||report.maxStationPlaneErrorM>.00001)throw Error(JSON.stringify(report))
 report.passed=true
-fs.writeFileSync('docs/verification/2026-11-11-normal-section-geometry.json',JSON.stringify(report,null,2)+'\n')
+fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n')
 console.log(JSON.stringify(report))

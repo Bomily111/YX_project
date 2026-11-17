@@ -2,6 +2,7 @@ import * as C from 'cesium'
 
 export interface ScreenRect {left:number;top:number;right:number;bottom:number}
 const targets=new WeakMap<C.Viewer,C.BoundingSphere>()
+export function captureTaskViewportTarget(viewer:C.Viewer){const target=targets.get(viewer);const saved=target?C.BoundingSphere.clone(target):undefined;return ()=>{if(saved)targets.set(viewer,C.BoundingSphere.clone(saved));else targets.delete(viewer)}}
 export function clearTaskViewportTarget(viewer:C.Viewer){targets.delete(viewer)}
 export function refitTaskViewport(viewer:C.Viewer){const target=targets.get(viewer);return target?fitTaskCameraToViewport(viewer,target):undefined}
 const area=(r:ScreenRect)=>Math.max(0,r.right-r.left)*Math.max(0,r.bottom-r.top)

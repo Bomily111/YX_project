@@ -1,0 +1,91 @@
+{
+  "passed": true,
+  "modelRequests": 0,
+  "errors": [],
+  "cases": [
+    {
+      "id": "fan-shutdown",
+      "state": {
+        "series": 21,
+        "samples": 121,
+        "priority": "Duct_Right",
+        "width": 684,
+        "height": 756,
+        "chartWidth": 658,
+        "chartHeight": 643,
+        "pointerEvents": "auto",
+        "sourceNote": "右线风机在t=10s故障停机，左线和DDK风机维持100%。一维风网模拟，非三维CFD或本工点实时监测；保留21条源支路，可点击图例比较。",
+        "sourceSamplesEqual": true,
+        "cameraUnchanged": true,
+        "invalidRequestPreservedState": true
+      },
+      "resized": {
+        "width": 564,
+        "height": 756
+      }
+    },
+    {
+      "id": "damper-close",
+      "state": {
+        "series": 21,
+        "samples": 61,
+        "priority": "CP_2300_Left_Right",
+        "width": 684,
+        "height": 756,
+        "chartWidth": 658,
+        "chartHeight": 643,
+        "pointerEvents": "auto",
+        "sourceNote": "关闭K2+300横通道（CP_2300_Left_Right），模拟风门关闭。一维风网模拟，非三维CFD或本工点实时监测；保留21条源支路，可点击图例比较。",
+        "sourceSamplesEqual": true,
+        "cameraUnchanged": true,
+        "invalidRequestPreservedState": true
+      },
+      "resized": {
+        "width": 564,
+        "height": 756
+      }
+    },
+    {
+      "id": "combined",
+      "state": {
+        "series": 21,
+        "samples": 181,
+        "priority": "Duct_Right",
+        "width": 684,
+        "height": 756,
+        "chartWidth": 658,
+        "chartHeight": 643,
+        "pointerEvents": "auto",
+        "sourceNote": "组合场景：风机爬升 + t=600s关闭横通道 + t=900s右线风机降速到60%。一维风网模拟，非三维CFD或本工点实时监测；保留21条源支路，可点击图例比较。",
+        "sourceSamplesEqual": true,
+        "cameraUnchanged": true,
+        "invalidRequestPreservedState": true
+      },
+      "resized": {
+        "width": 564,
+        "height": 756
+      }
+    },
+    {
+      "id": "co",
+      "state": {
+        "series": 5,
+        "samples": 3601,
+        "width": 684,
+        "height": 756,
+        "chartWidth": 658,
+        "chartHeight": 660,
+        "pointerEvents": "auto",
+        "sourceNote": "已有爆后扩散模拟工况，非本工点实时监测；曲线不能单独证明通风达标。",
+        "sourceSamplesEqual": true,
+        "cameraUnchanged": true,
+        "invalidRequestPreservedState": true
+      },
+      "resized": {
+        "width": 564,
+        "height": 756
+      }
+    }
+  ],
+  "allChartsReleased": true
+}
