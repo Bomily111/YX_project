@@ -1,0 +1,2692 @@
+{
+  "passed": true,
+  "scope": "entry-feasibility-not-participant-experiment",
+  "errors": [],
+  "cases": [
+    {
+      "task": {
+        "id": "hardness",
+        "resource": "rock.tsp-hardness",
+        "name": "TSP坚硬度解释体",
+        "mileage": "YK1+346"
+      },
+      "condition": "form-input",
+      "assembly": {
+        "taskId": "scene-1794903075282-w6e9m",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -474311.05406835227,
+            5536180.22162435,
+            3126934.2763122446
+          ],
+          [
+            -474314.4539184228,
+            5536222.738741405,
+            3126958.395511585
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474315.98170263047,
+            5536191.764014523,
+            3126913.234885261
+          ],
+          [
+            -474319.38155270106,
+            5536234.281131579,
+            3126937.354084601
+          ],
+          [
+            -474393.1729628207,
+            5536179.235339017,
+            3126924.439421856
+          ],
+          [
+            -474396.5728128913,
+            5536221.752456072,
+            3126948.558621196
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "prepared": {
+        "taskId": "scene-1794903075282-w6e9m",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "domain": [
+          [
+            -474292.4890817242,
+            5536183.234850105,
+            3126931.5815502787
+          ],
+          [
+            -474295.8889317948,
+            5536225.75196716,
+            3126955.700749619
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474302.3443502807,
+            5536206.319630451,
+            3126889.4986963114
+          ],
+          [
+            -474305.7442003513,
+            5536248.836747506,
+            3126913.617895651
+          ],
+          [
+            -474398.10059709894,
+            5536190.777729189,
+            3126903.3979948717
+          ],
+          [
+            -474401.50044716947,
+            5536233.294846245,
+            3126927.517194212
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      }
+    },
+    {
+      "task": {
+        "id": "hardness",
+        "resource": "rock.tsp-hardness",
+        "name": "TSP坚硬度解释体",
+        "mileage": "YK1+346"
+      },
+      "condition": "agent-assembly",
+      "assembly": {
+        "taskId": "scene-1794903083869-nsi2b",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -474311.05406835227,
+            5536180.22162435,
+            3126934.2763122446
+          ],
+          [
+            -474314.4539184228,
+            5536222.738741405,
+            3126958.395511585
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474315.98170263047,
+            5536191.764014523,
+            3126913.234885261
+          ],
+          [
+            -474319.38155270106,
+            5536234.281131579,
+            3126937.354084601
+          ],
+          [
+            -474393.1729628207,
+            5536179.235339017,
+            3126924.439421856
+          ],
+          [
+            -474396.5728128913,
+            5536221.752456072,
+            3126948.558621196
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "prepared": {
+        "taskId": "scene-1794903083869-nsi2b",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "domain": [
+          [
+            -474292.4890817242,
+            5536183.234850105,
+            3126931.5815502787
+          ],
+          [
+            -474295.8889317948,
+            5536225.75196716,
+            3126955.700749619
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474302.3443502807,
+            5536206.319630451,
+            3126889.4986963114
+          ],
+          [
+            -474305.7442003513,
+            5536248.836747506,
+            3126913.617895651
+          ],
+          [
+            -474398.10059709894,
+            5536190.777729189,
+            3126903.3979948717
+          ],
+          [
+            -474401.50044716947,
+            5536233.294846245,
+            3126927.517194212
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "answer": "🤖\n已定位 YK1+346，主场景装配完成：新支护模块 ZZ-Va · 1 m 断面、TSP 岩体坚硬度 · 示意锚定。整体构建后的增强已完成。\n选用TSP 岩体坚硬度 · 示意锚定：提供TSP坚硬度解释体，作为围岩属性参照\n选用新支护模块 ZZ-Va · 1 m 断面：提供ZZ-Va单断面支护组合，用于观察与围岩解释体的空间关系当前为解释体剖切展示：隐藏部分横向区域及近端区域以显露支护；原始体数据未修改，不能把裁剪边界当作地质边界。\n新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。\n物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。\nTSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。\n👍\n👎"
+    },
+    {
+      "task": {
+        "id": "hardness",
+        "resource": "rock.tsp-hardness",
+        "name": "TSP坚硬度解释体",
+        "mileage": "YK1+346"
+      },
+      "condition": "agent-with-review",
+      "assembly": {
+        "taskId": "scene-1794903090283-82hdy",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -474311.05406835227,
+            5536180.22162435,
+            3126934.2763122446
+          ],
+          [
+            -474314.4539184228,
+            5536222.738741405,
+            3126958.395511585
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474315.98170263047,
+            5536191.764014523,
+            3126913.234885261
+          ],
+          [
+            -474319.38155270106,
+            5536234.281131579,
+            3126937.354084601
+          ],
+          [
+            -474393.1729628207,
+            5536179.235339017,
+            3126924.439421856
+          ],
+          [
+            -474396.5728128913,
+            5536221.752456072,
+            3126948.558621196
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "prepared": {
+        "taskId": "scene-1794903090283-82hdy",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "domain": [
+          [
+            -474292.4890817242,
+            5536183.234850105,
+            3126931.5815502787
+          ],
+          [
+            -474295.8889317948,
+            5536225.75196716,
+            3126955.700749619
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474302.3443502807,
+            5536206.319630451,
+            3126889.4986963114
+          ],
+          [
+            -474305.7442003513,
+            5536248.836747506,
+            3126913.617895651
+          ],
+          [
+            -474398.10059709894,
+            5536190.777729189,
+            3126903.3979948717
+          ],
+          [
+            -474401.50044716947,
+            5536233.294846245,
+            3126927.517194212
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "answer": "🤖\n已定位 YK1+346，主场景装配完成：新支护模块 ZZ-Va · 1 m 断面、TSP 岩体坚硬度 · 示意锚定。整体构建后的增强已完成。\n选用TSP 岩体坚硬度 · 示意锚定：提供TSP坚硬度解释体，作为围岩属性参照\n选用新支护模块 ZZ-Va · 1 m 断面：提供ZZ-Va单断面支护组合，用于观察与围岩的空间关系当前为解释体剖切展示：隐藏部分横向区域及近端区域以显露支护；原始体数据未修改，不能把裁剪边界当作地质边界。\n新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。\n物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。\nTSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。\n👍\n👎",
+      "enhanced": {
+        "taskId": "scene-1794903090283-82hdy",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -474311.05406835227,
+            5536180.22162435,
+            3126934.2763122446
+          ],
+          [
+            -474314.4539184228,
+            5536222.738741405,
+            3126958.395511585
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474315.98170263047,
+            5536191.764014523,
+            3126913.234885261
+          ],
+          [
+            -474319.38155270106,
+            5536234.281131579,
+            3126937.354084601
+          ],
+          [
+            -474393.1729628207,
+            5536179.235339017,
+            3126924.439421856
+          ],
+          [
+            -474396.5728128913,
+            5536221.752456072,
+            3126948.558621196
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": {
+          "plan": {
+            "sceneKey": "[\"scene-1794903090283-82hdy\",\"scene-3\",{\"start\":1346,\"end\":1346},[\"rock.tsp-hardness\",\"support.modeler-zz-va\"]]",
+            "taskId": "scene-1794903090283-82hdy",
+            "objective": "spatial-relation",
+            "userRequest": "规划并执行当前任务视觉分析：以支护为重点，围岩只保留邻近采样参照，不看全段；近端剖切并局部取景，支护重点暖色混合，不改源色标和几何。",
+            "emphasis": "material-focus",
+            "referenceScope": "near-support",
+            "focusResourceIds": [
+              "support.modeler-zz-va"
+            ],
+            "referenceResourceIds": [
+              "rock.tsp-hardness"
+            ],
+            "questions": [
+              "近端剖切后，ZZ-Va 支护断面与邻近坚硬度采样参照的相对位置是否可辨？",
+              "暖色混合下支护构件轮廓能否与围岩背景区分？",
+              "当前局部取景是否遗漏了需要观察的支护构件？"
+            ],
+            "candidate": {
+              "type": "camera-view",
+              "view": "support-context",
+              "reason": "近端剖切与局部取景组合；仅保留支护及邻近采样参照，不表示全体范围入镜"
+            },
+            "completionConditions": [
+              "执行前后任务与资源保持一致",
+              "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+              "画面取景与工程依据分开，待回答问题不作为已证实结论"
+            ],
+            "evidence": {
+              "capturedAt": "2026-11-17T08:11:36.657Z",
+              "taskId": "scene-1794903090283-82hdy",
+              "workflowStatus": "completed",
+              "completedSceneAvailable": true,
+              "chainageRange": {
+                "start": 1346,
+                "end": 1346
+              },
+              "phase": "constructed-then-enhanced",
+              "resourceIds": [
+                "support.modeler-zz-va",
+                "rock.tsp-hardness"
+              ],
+              "resources": [
+                {
+                  "id": "support.modeler-zz-va",
+                  "role": "task-root",
+                  "module": "support",
+                  "sourceHints": [
+                    {
+                      "componentScope": "source-model-components",
+                      "supportType": "ZZ-Va"
+                    }
+                  ],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                  ],
+                  "observation": {
+                    "targetCount": 1,
+                    "readyModelCount": 1,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "declared-targets-only",
+                    "framing": {
+                      "available": true,
+                      "projected": 26,
+                      "insideSafe": 26,
+                      "behind": 0,
+                      "safe": {
+                        "left": 316,
+                        "right": 1004,
+                        "top": 76,
+                        "bottom": 691
+                      },
+                      "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                      "occlusion": "not-measured"
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                },
+                {
+                  "id": "rock.tsp-hardness",
+                  "role": "task-root",
+                  "module": "rock",
+                  "sourceHints": [],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/data/tsp_actual/hardness.json",
+                    "/data/tsp_actual/hardness_volume.png"
+                  ],
+                  "observation": {
+                    "targetCount": 0,
+                    "readyModelCount": 0,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "incomplete",
+                    "framing": {
+                      "available": false
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                }
+              ],
+              "evidenceAssessment": {
+                "taskId": "scene-1794903090283-82hdy",
+                "resourceIds": [
+                  "support.modeler-zz-va",
+                  "rock.tsp-hardness"
+                ],
+                "facts": [],
+                "gaps": [
+                  {
+                    "id": "task-design",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "源模型与本工段设计是否对应？",
+                    "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                  },
+                  {
+                    "id": "field-data",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "是否具备同一基准的实测对比？",
+                    "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                  },
+                  {
+                    "id": "geometry",
+                    "status": "not-measured-by-this-assessment",
+                    "question": "接缝、净空或断面贴合是否成立？",
+                    "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                  }
+                ],
+                "factWindow": {
+                  "availableInRetainedJournal": 0,
+                  "retained": 0,
+                  "omitted": 0,
+                  "scope": "within-retained-journal-not-full-history"
+                },
+                "historyWindow": {
+                  "locations": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "steps": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "scope": "whole-task-window-before-resource-filter"
+                },
+                "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+                "questionStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified",
+                "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+              },
+              "locationEvidence": [],
+              "evidenceProgress": {
+                "scope": "interaction-history-not-question-completion",
+                "locationRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "stepRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": [],
+                "questionsStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified"
+              },
+              "loadedOutsideCurrentScene": [
+                "common.tunnel"
+              ],
+              "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+              "supportContext": {
+                "available": true,
+                "scope": "local-sampling-reference-not-geological-feature",
+                "resourceId": "rock.tsp-hardness",
+                "cut": {
+                  "xmax": 0.99,
+                  "ymin": 0.01
+                },
+                "focusFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "focusDisplay": [
+                  {
+                    "colorRgba": null,
+                    "colorBlendMode": 0,
+                    "colorBlendAmount": 0.5
+                  }
+                ],
+                "reference": {
+                  "insideSafe": 6,
+                  "total": 6,
+                  "behind": 0,
+                  "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+                },
+                "renderedDomainFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "screenFraming": "focus-and-local-reference-in-safe-area",
+                "informationSufficiency": "not-verified",
+                "depthOcclusion": "not-measured",
+                "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+              },
+              "issues": [
+                {
+                  "resourceId": "rock.tsp-hardness",
+                  "code": "observation-incomplete",
+                  "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+                },
+                {
+                  "code": "loaded-outside-current-scene",
+                  "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+                }
+              ],
+              "engineeringAcceptance": "not-verified",
+              "limitations": [
+                "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+                "未测模型间深度遮挡、净空侵限或现场配准误差",
+                "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+                "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+              ],
+              "nextChecks": [
+                "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+              ]
+            },
+            "engineeringAcceptance": "not-verified"
+          },
+          "phase": "applied",
+          "attempts": 1,
+          "remaining": 1,
+          "feedback": {
+            "before": {
+              "capturedAt": "2026-11-17T08:11:37.569Z",
+              "taskId": "scene-1794903090283-82hdy",
+              "workflowStatus": "completed",
+              "completedSceneAvailable": true,
+              "chainageRange": {
+                "start": 1346,
+                "end": 1346
+              },
+              "phase": "constructed-then-enhanced",
+              "resourceIds": [
+                "support.modeler-zz-va",
+                "rock.tsp-hardness"
+              ],
+              "resources": [
+                {
+                  "id": "support.modeler-zz-va",
+                  "role": "task-root",
+                  "module": "support",
+                  "sourceHints": [
+                    {
+                      "componentScope": "source-model-components",
+                      "supportType": "ZZ-Va"
+                    }
+                  ],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                  ],
+                  "observation": {
+                    "targetCount": 1,
+                    "readyModelCount": 1,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "declared-targets-only",
+                    "framing": {
+                      "available": true,
+                      "projected": 26,
+                      "insideSafe": 26,
+                      "behind": 0,
+                      "safe": {
+                        "left": 316,
+                        "right": 1004,
+                        "top": 76,
+                        "bottom": 691
+                      },
+                      "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                      "occlusion": "not-measured"
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                },
+                {
+                  "id": "rock.tsp-hardness",
+                  "role": "task-root",
+                  "module": "rock",
+                  "sourceHints": [],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/data/tsp_actual/hardness.json",
+                    "/data/tsp_actual/hardness_volume.png"
+                  ],
+                  "observation": {
+                    "targetCount": 0,
+                    "readyModelCount": 0,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "incomplete",
+                    "framing": {
+                      "available": false
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                }
+              ],
+              "evidenceAssessment": {
+                "taskId": "scene-1794903090283-82hdy",
+                "resourceIds": [
+                  "support.modeler-zz-va",
+                  "rock.tsp-hardness"
+                ],
+                "facts": [],
+                "gaps": [
+                  {
+                    "id": "task-design",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "源模型与本工段设计是否对应？",
+                    "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                  },
+                  {
+                    "id": "field-data",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "是否具备同一基准的实测对比？",
+                    "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                  },
+                  {
+                    "id": "geometry",
+                    "status": "not-measured-by-this-assessment",
+                    "question": "接缝、净空或断面贴合是否成立？",
+                    "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                  }
+                ],
+                "factWindow": {
+                  "availableInRetainedJournal": 0,
+                  "retained": 0,
+                  "omitted": 0,
+                  "scope": "within-retained-journal-not-full-history"
+                },
+                "historyWindow": {
+                  "locations": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "steps": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "scope": "whole-task-window-before-resource-filter"
+                },
+                "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+                "questionStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified",
+                "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+              },
+              "locationEvidence": [],
+              "evidenceProgress": {
+                "scope": "interaction-history-not-question-completion",
+                "locationRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "stepRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": [],
+                "questionsStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified"
+              },
+              "loadedOutsideCurrentScene": [
+                "common.tunnel"
+              ],
+              "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+              "supportContext": {
+                "available": true,
+                "scope": "local-sampling-reference-not-geological-feature",
+                "resourceId": "rock.tsp-hardness",
+                "cut": {
+                  "xmax": 0.99,
+                  "ymin": 0.01
+                },
+                "focusFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "focusDisplay": [
+                  {
+                    "colorRgba": null,
+                    "colorBlendMode": 0,
+                    "colorBlendAmount": 0.5
+                  }
+                ],
+                "reference": {
+                  "insideSafe": 6,
+                  "total": 6,
+                  "behind": 0,
+                  "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+                },
+                "renderedDomainFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "screenFraming": "focus-and-local-reference-in-safe-area",
+                "informationSufficiency": "not-verified",
+                "depthOcclusion": "not-measured",
+                "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+              },
+              "issues": [
+                {
+                  "resourceId": "rock.tsp-hardness",
+                  "code": "observation-incomplete",
+                  "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+                },
+                {
+                  "code": "loaded-outside-current-scene",
+                  "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+                }
+              ],
+              "engineeringAcceptance": "not-verified",
+              "limitations": [
+                "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+                "未测模型间深度遮挡、净空侵限或现场配准误差",
+                "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+                "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+              ],
+              "nextChecks": [
+                "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+              ]
+            },
+            "after": {
+              "capturedAt": "2026-11-17T08:11:37.572Z",
+              "taskId": "scene-1794903090283-82hdy",
+              "workflowStatus": "completed",
+              "completedSceneAvailable": true,
+              "chainageRange": {
+                "start": 1346,
+                "end": 1346
+              },
+              "phase": "constructed-then-enhanced",
+              "resourceIds": [
+                "support.modeler-zz-va",
+                "rock.tsp-hardness"
+              ],
+              "resources": [
+                {
+                  "id": "support.modeler-zz-va",
+                  "role": "task-root",
+                  "module": "support",
+                  "sourceHints": [
+                    {
+                      "componentScope": "source-model-components",
+                      "supportType": "ZZ-Va"
+                    }
+                  ],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                  ],
+                  "observation": {
+                    "targetCount": 1,
+                    "readyModelCount": 1,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "declared-targets-only",
+                    "framing": {
+                      "available": true,
+                      "projected": 26,
+                      "insideSafe": 26,
+                      "behind": 0,
+                      "safe": {
+                        "left": 316,
+                        "right": 1004,
+                        "top": 76,
+                        "bottom": 691
+                      },
+                      "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                      "occlusion": "not-measured"
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                },
+                {
+                  "id": "rock.tsp-hardness",
+                  "role": "task-root",
+                  "module": "rock",
+                  "sourceHints": [],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/data/tsp_actual/hardness.json",
+                    "/data/tsp_actual/hardness_volume.png"
+                  ],
+                  "observation": {
+                    "targetCount": 0,
+                    "readyModelCount": 0,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "incomplete",
+                    "framing": {
+                      "available": false
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                }
+              ],
+              "evidenceAssessment": {
+                "taskId": "scene-1794903090283-82hdy",
+                "resourceIds": [
+                  "support.modeler-zz-va",
+                  "rock.tsp-hardness"
+                ],
+                "facts": [],
+                "gaps": [
+                  {
+                    "id": "task-design",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "源模型与本工段设计是否对应？",
+                    "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                  },
+                  {
+                    "id": "field-data",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "是否具备同一基准的实测对比？",
+                    "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                  },
+                  {
+                    "id": "geometry",
+                    "status": "not-measured-by-this-assessment",
+                    "question": "接缝、净空或断面贴合是否成立？",
+                    "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                  }
+                ],
+                "factWindow": {
+                  "availableInRetainedJournal": 0,
+                  "retained": 0,
+                  "omitted": 0,
+                  "scope": "within-retained-journal-not-full-history"
+                },
+                "historyWindow": {
+                  "locations": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "steps": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "scope": "whole-task-window-before-resource-filter"
+                },
+                "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+                "questionStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified",
+                "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+              },
+              "locationEvidence": [],
+              "evidenceProgress": {
+                "scope": "interaction-history-not-question-completion",
+                "locationRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "stepRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": [],
+                "questionsStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified"
+              },
+              "loadedOutsideCurrentScene": [
+                "common.tunnel"
+              ],
+              "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+              "supportContext": {
+                "available": true,
+                "scope": "local-sampling-reference-not-geological-feature",
+                "resourceId": "rock.tsp-hardness",
+                "cut": {
+                  "xmax": 0.5,
+                  "ymin": 0.2
+                },
+                "focusFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "focusDisplay": [
+                  {
+                    "colorRgba": [
+                      1,
+                      0.9411764705882353,
+                      0.7490196078431373,
+                      1
+                    ],
+                    "colorBlendMode": 2,
+                    "colorBlendAmount": 0.45
+                  }
+                ],
+                "reference": {
+                  "insideSafe": 6,
+                  "total": 6,
+                  "behind": 0,
+                  "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+                },
+                "renderedDomainFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 8,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "screenFraming": "focus-and-local-reference-in-safe-area",
+                "informationSufficiency": "not-verified",
+                "depthOcclusion": "not-measured",
+                "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+              },
+              "issues": [
+                {
+                  "resourceId": "rock.tsp-hardness",
+                  "code": "observation-incomplete",
+                  "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+                },
+                {
+                  "code": "loaded-outside-current-scene",
+                  "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+                }
+              ],
+              "engineeringAcceptance": "not-verified",
+              "limitations": [
+                "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+                "未测模型间深度遮挡、净空侵限或现场配准误差",
+                "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+                "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+              ],
+              "nextChecks": [
+                "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "resourceId": "support.modeler-zz-va",
+              "runtime": "loaded",
+              "framing": "26-samples-inside",
+              "modelCoverage": "declared-targets-only"
+            }
+          ],
+          "questionsStatus": "unanswered-requires-task-evidence",
+          "engineeringAcceptance": "not-verified"
+        }
+      },
+      "reviewAnswer": "🤖\n已按你的要求规划并执行一次视觉分析（任务 scene-1794903090283-82hdy，YK1+346，资源：support.modeler-zz-va + rock.tsp-hardness）。\n\n实际执行结果\n- 首次规划因把围岩解释体也列为重点着色对象被拒（重点着色仅支持已装配支护，不改地质语义色标），改为仅对 ZZ-Va 支护做暖色混合后成功。\n- 执行后：支护重点显示为暖色混合（RGBA 1/0.94/0.75，混合模式 2，强度 0.45）；围岩解释体采样盒裁剪由 xmax 0.99、ymin 0.01 收紧为 xmax 0.5、ymin 0.2，即近端剖切、只保留邻近采样参照，未改体素、色标与支护几何。\n- 取景：支护 26 点包围球采样 26/26 入安全区；邻近采样参照探针 6/6 入区；整个渲染采样盒入区数由 26 降为 8，符合“不看全段”的局部取景。相机与剖切已共同保存，可用恢复功能还原。\n\n未解决与限制\n- 暖色只代表本次重点，不是风险或工程分级；构件是否真正可辨、标签是否重叠未核验。\n- 深度遮挡未测，informationSufficiency 为 not-verified；探针入区不等于可辨地质特征。\n- rock.tsp-hardness 未提供完整可观察模型目标（observation-incomplete），围岩侧只能部分核查。\n- 本任务尚无交互事实记录（facts 为空），设计对应、实测对比、断面贴合三项缺口仍未补齐；以上均为表达操作，不构成工程验收结论。\n\n下一步建议：如需确认支护构件与围岩相对位置是否可辨，需另行核查源断面适用性与深度遮挡；需要全范围对照时可恢复原显示范围再看。\n👍\n👎"
+    },
+    {
+      "task": {
+        "id": "integrity",
+        "resource": "rock.tsp-integrity",
+        "name": "TSP完整度解释体",
+        "mileage": "YK2+244"
+      },
+      "condition": "form-input",
+      "assembly": {
+        "taskId": "scene-1794903104748-j0xsv",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -475209.0750584551,
+            5536112.127189011,
+            3126927.70405606
+          ],
+          [
+            -475212.4799970846,
+            5536154.599654785,
+            3126951.9010815797
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475205.0800661547,
+            5536124.33369843,
+            3126906.8404234825
+          ],
+          [
+            -475208.4850047842,
+            5536166.806164204,
+            3126931.0374490027
+          ],
+          [
+            -475282.8291707763,
+            5536126.020142269,
+            3126892.9396091998
+          ],
+          [
+            -475286.2341094058,
+            5536168.492608042,
+            3126917.1366347196
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "prepared": {
+        "taskId": "scene-1794903104748-j0xsv",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "domain": [
+          [
+            -475190.3759067107,
+            5536111.721588594,
+            3126931.0472898744
+          ],
+          [
+            -475193.78084534017,
+            5536154.194054368,
+            3126955.2443153947
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475182.38592210994,
+            5536136.134607432,
+            3126889.32002472
+          ],
+          [
+            -475185.7908607394,
+            5536178.607073206,
+            3126913.51705024
+          ],
+          [
+            -475278.8341784759,
+            5536138.226651688,
+            3126872.0759766223
+          ],
+          [
+            -475282.2391171054,
+            5536180.699117462,
+            3126896.2730021426
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      }
+    },
+    {
+      "task": {
+        "id": "integrity",
+        "resource": "rock.tsp-integrity",
+        "name": "TSP完整度解释体",
+        "mileage": "YK2+244"
+      },
+      "condition": "agent-assembly",
+      "assembly": {
+        "taskId": "scene-1794903111859-pdtur",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -475209.0750584551,
+            5536112.127189011,
+            3126927.70405606
+          ],
+          [
+            -475212.4799970846,
+            5536154.599654785,
+            3126951.9010815797
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475205.0800661547,
+            5536124.33369843,
+            3126906.8404234825
+          ],
+          [
+            -475208.4850047842,
+            5536166.806164204,
+            3126931.0374490027
+          ],
+          [
+            -475282.8291707763,
+            5536126.020142269,
+            3126892.9396091998
+          ],
+          [
+            -475286.2341094058,
+            5536168.492608042,
+            3126917.1366347196
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "prepared": {
+        "taskId": "scene-1794903111859-pdtur",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "domain": [
+          [
+            -475190.3759067107,
+            5536111.721588594,
+            3126931.0472898744
+          ],
+          [
+            -475193.78084534017,
+            5536154.194054368,
+            3126955.2443153947
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475182.38592210994,
+            5536136.134607432,
+            3126889.32002472
+          ],
+          [
+            -475185.7908607394,
+            5536178.607073206,
+            3126913.51705024
+          ],
+          [
+            -475278.8341784759,
+            5536138.226651688,
+            3126872.0759766223
+          ],
+          [
+            -475282.2391171054,
+            5536180.699117462,
+            3126896.2730021426
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "answer": "🤖\n已定位 YK2+244，主场景装配完成：TSP 岩体完整度 · 示意锚定、新支护模块 ZZ-Va · 1 m 断面。整体构建后的增强已完成。\n选用TSP 岩体完整度 · 示意锚定：提供前方岩体完整性解释体，作为围岩背景\n选用新支护模块 ZZ-Va · 1 m 断面：提供ZZ-Va单断面支护组合，用于观察与围岩的空间关系当前为解释体剖切展示：隐藏部分横向区域及近端区域以显露支护；原始体数据未修改，不能把裁剪边界当作地质边界。\n新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。\n物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。\nTSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。\n👍\n👎"
+    },
+    {
+      "task": {
+        "id": "integrity",
+        "resource": "rock.tsp-integrity",
+        "name": "TSP完整度解释体",
+        "mileage": "YK2+244"
+      },
+      "condition": "agent-with-review",
+      "assembly": {
+        "taskId": "scene-1794903118618-eu33h",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -475209.0750584551,
+            5536112.127189011,
+            3126927.70405606
+          ],
+          [
+            -475212.4799970846,
+            5536154.599654785,
+            3126951.9010815797
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475205.0800661547,
+            5536124.33369843,
+            3126906.8404234825
+          ],
+          [
+            -475208.4850047842,
+            5536166.806164204,
+            3126931.0374490027
+          ],
+          [
+            -475282.8291707763,
+            5536126.020142269,
+            3126892.9396091998
+          ],
+          [
+            -475286.2341094058,
+            5536168.492608042,
+            3126917.1366347196
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "prepared": {
+        "taskId": "scene-1794903118618-eu33h",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "domain": [
+          [
+            -475190.3759067107,
+            5536111.721588594,
+            3126931.0472898744
+          ],
+          [
+            -475193.78084534017,
+            5536154.194054368,
+            3126955.2443153947
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475182.38592210994,
+            5536136.134607432,
+            3126889.32002472
+          ],
+          [
+            -475185.7908607394,
+            5536178.607073206,
+            3126913.51705024
+          ],
+          [
+            -475278.8341784759,
+            5536138.226651688,
+            3126872.0759766223
+          ],
+          [
+            -475282.2391171054,
+            5536180.699117462,
+            3126896.2730021426
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": null
+      },
+      "answer": "🤖\n已定位 YK2+244，主场景装配完成：TSP 岩体完整度 · 示意锚定、新支护模块 ZZ-Va · 1 m 断面。整体构建后的增强已完成。\n选用TSP 岩体完整度 · 示意锚定：提供 TSP 解释的岩体完整度体数据，作为围岩一侧的空间参照\n选用新支护模块 ZZ-Va · 1 m 断面：提供 ZZ-Va 单断面支护组合，用于观察其与围岩解释体的空间关系当前为解释体剖切展示：隐藏部分横向区域及近端区域以显露支护；原始体数据未修改，不能把裁剪边界当作地质边界。\n新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。\n物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。\nTSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。\n👍\n👎",
+      "enhanced": {
+        "taskId": "scene-1794903118618-eu33h",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -475209.0750584551,
+            5536112.127189011,
+            3126927.70405606
+          ],
+          [
+            -475212.4799970846,
+            5536154.599654785,
+            3126951.9010815797
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475205.0800661547,
+            5536124.33369843,
+            3126906.8404234825
+          ],
+          [
+            -475208.4850047842,
+            5536166.806164204,
+            3126931.0374490027
+          ],
+          [
+            -475282.8291707763,
+            5536126.020142269,
+            3126892.9396091998
+          ],
+          [
+            -475286.2341094058,
+            5536168.492608042,
+            3126917.1366347196
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "review": {
+          "plan": {
+            "sceneKey": "[\"scene-1794903118618-eu33h\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.tsp-integrity\",\"support.modeler-zz-va\"]]",
+            "taskId": "scene-1794903118618-eu33h",
+            "objective": "spatial-relation",
+            "userRequest": "规划并执行当前任务视觉分析：以支护为重点，围岩只保留邻近采样参照，不看全段；近端剖切并局部取景，支护重点暖色混合，不改源色标和几何。",
+            "emphasis": "material-focus",
+            "referenceScope": "near-support",
+            "focusResourceIds": [
+              "support.modeler-zz-va"
+            ],
+            "referenceResourceIds": [
+              "rock.tsp-integrity"
+            ],
+            "questions": [
+              "近端剖切后，ZZ-Va 支护断面与邻近围岩采样参照的空间相对位置是否可辨认？",
+              "支护暖色重点显示与围岩原色标是否仍能区分，且不改变几何？",
+              "局部取景下哪些围岩信息仍不可见（仅邻近采样参照，非完整解释体）？"
+            ],
+            "candidate": {
+              "type": "camera-view",
+              "view": "support-context",
+              "reason": "近端剖切与局部取景组合；仅保留支护及邻近采样参照，不表示全体范围入镜"
+            },
+            "completionConditions": [
+              "执行前后任务与资源保持一致",
+              "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+              "画面取景与工程依据分开，待回答问题不作为已证实结论"
+            ],
+            "evidence": {
+              "capturedAt": "2026-11-17T08:12:03.663Z",
+              "taskId": "scene-1794903118618-eu33h",
+              "workflowStatus": "completed",
+              "completedSceneAvailable": true,
+              "chainageRange": {
+                "start": 2244,
+                "end": 2244
+              },
+              "phase": "constructed-then-enhanced",
+              "resourceIds": [
+                "rock.tsp-integrity",
+                "support.modeler-zz-va"
+              ],
+              "resources": [
+                {
+                  "id": "rock.tsp-integrity",
+                  "role": "task-root",
+                  "module": "rock",
+                  "sourceHints": [],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/data/tsp_actual/integrity.json",
+                    "/data/tsp_actual/integrity_volume.png"
+                  ],
+                  "observation": {
+                    "targetCount": 0,
+                    "readyModelCount": 0,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "incomplete",
+                    "framing": {
+                      "available": false
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                },
+                {
+                  "id": "support.modeler-zz-va",
+                  "role": "task-root",
+                  "module": "support",
+                  "sourceHints": [
+                    {
+                      "componentScope": "source-model-components",
+                      "supportType": "ZZ-Va"
+                    }
+                  ],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                  ],
+                  "observation": {
+                    "targetCount": 1,
+                    "readyModelCount": 1,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "declared-targets-only",
+                    "framing": {
+                      "available": true,
+                      "projected": 26,
+                      "insideSafe": 26,
+                      "behind": 0,
+                      "safe": {
+                        "left": 316,
+                        "right": 1004,
+                        "top": 76,
+                        "bottom": 691
+                      },
+                      "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                      "occlusion": "not-measured"
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                }
+              ],
+              "evidenceAssessment": {
+                "taskId": "scene-1794903118618-eu33h",
+                "resourceIds": [
+                  "rock.tsp-integrity",
+                  "support.modeler-zz-va"
+                ],
+                "facts": [],
+                "gaps": [
+                  {
+                    "id": "task-design",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "源模型与本工段设计是否对应？",
+                    "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                  },
+                  {
+                    "id": "field-data",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "是否具备同一基准的实测对比？",
+                    "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                  },
+                  {
+                    "id": "geometry",
+                    "status": "not-measured-by-this-assessment",
+                    "question": "接缝、净空或断面贴合是否成立？",
+                    "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                  }
+                ],
+                "factWindow": {
+                  "availableInRetainedJournal": 0,
+                  "retained": 0,
+                  "omitted": 0,
+                  "scope": "within-retained-journal-not-full-history"
+                },
+                "historyWindow": {
+                  "locations": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "steps": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "scope": "whole-task-window-before-resource-filter"
+                },
+                "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+                "questionStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified",
+                "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+              },
+              "locationEvidence": [],
+              "evidenceProgress": {
+                "scope": "interaction-history-not-question-completion",
+                "locationRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "stepRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": [],
+                "questionsStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified"
+              },
+              "loadedOutsideCurrentScene": [
+                "common.tunnel"
+              ],
+              "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+              "supportContext": {
+                "available": true,
+                "scope": "local-sampling-reference-not-geological-feature",
+                "resourceId": "rock.tsp-integrity",
+                "cut": {
+                  "xmax": 0.99,
+                  "ymin": 0.01
+                },
+                "focusFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "focusDisplay": [
+                  {
+                    "colorRgba": null,
+                    "colorBlendMode": 0,
+                    "colorBlendAmount": 0.5
+                  }
+                ],
+                "reference": {
+                  "insideSafe": 6,
+                  "total": 6,
+                  "behind": 0,
+                  "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+                },
+                "renderedDomainFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "screenFraming": "focus-and-local-reference-in-safe-area",
+                "informationSufficiency": "not-verified",
+                "depthOcclusion": "not-measured",
+                "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+              },
+              "issues": [
+                {
+                  "resourceId": "rock.tsp-integrity",
+                  "code": "observation-incomplete",
+                  "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+                },
+                {
+                  "code": "loaded-outside-current-scene",
+                  "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+                }
+              ],
+              "engineeringAcceptance": "not-verified",
+              "limitations": [
+                "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+                "未测模型间深度遮挡、净空侵限或现场配准误差",
+                "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+                "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+              ],
+              "nextChecks": [
+                "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+              ]
+            },
+            "engineeringAcceptance": "not-verified"
+          },
+          "phase": "applied",
+          "attempts": 1,
+          "remaining": 1,
+          "feedback": {
+            "before": {
+              "capturedAt": "2026-11-17T08:12:04.509Z",
+              "taskId": "scene-1794903118618-eu33h",
+              "workflowStatus": "completed",
+              "completedSceneAvailable": true,
+              "chainageRange": {
+                "start": 2244,
+                "end": 2244
+              },
+              "phase": "constructed-then-enhanced",
+              "resourceIds": [
+                "rock.tsp-integrity",
+                "support.modeler-zz-va"
+              ],
+              "resources": [
+                {
+                  "id": "rock.tsp-integrity",
+                  "role": "task-root",
+                  "module": "rock",
+                  "sourceHints": [],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/data/tsp_actual/integrity.json",
+                    "/data/tsp_actual/integrity_volume.png"
+                  ],
+                  "observation": {
+                    "targetCount": 0,
+                    "readyModelCount": 0,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "incomplete",
+                    "framing": {
+                      "available": false
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                },
+                {
+                  "id": "support.modeler-zz-va",
+                  "role": "task-root",
+                  "module": "support",
+                  "sourceHints": [
+                    {
+                      "componentScope": "source-model-components",
+                      "supportType": "ZZ-Va"
+                    }
+                  ],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                  ],
+                  "observation": {
+                    "targetCount": 1,
+                    "readyModelCount": 1,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "declared-targets-only",
+                    "framing": {
+                      "available": true,
+                      "projected": 26,
+                      "insideSafe": 26,
+                      "behind": 0,
+                      "safe": {
+                        "left": 316,
+                        "right": 1004,
+                        "top": 76,
+                        "bottom": 691
+                      },
+                      "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                      "occlusion": "not-measured"
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                }
+              ],
+              "evidenceAssessment": {
+                "taskId": "scene-1794903118618-eu33h",
+                "resourceIds": [
+                  "rock.tsp-integrity",
+                  "support.modeler-zz-va"
+                ],
+                "facts": [],
+                "gaps": [
+                  {
+                    "id": "task-design",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "源模型与本工段设计是否对应？",
+                    "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                  },
+                  {
+                    "id": "field-data",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "是否具备同一基准的实测对比？",
+                    "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                  },
+                  {
+                    "id": "geometry",
+                    "status": "not-measured-by-this-assessment",
+                    "question": "接缝、净空或断面贴合是否成立？",
+                    "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                  }
+                ],
+                "factWindow": {
+                  "availableInRetainedJournal": 0,
+                  "retained": 0,
+                  "omitted": 0,
+                  "scope": "within-retained-journal-not-full-history"
+                },
+                "historyWindow": {
+                  "locations": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "steps": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "scope": "whole-task-window-before-resource-filter"
+                },
+                "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+                "questionStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified",
+                "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+              },
+              "locationEvidence": [],
+              "evidenceProgress": {
+                "scope": "interaction-history-not-question-completion",
+                "locationRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "stepRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": [],
+                "questionsStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified"
+              },
+              "loadedOutsideCurrentScene": [
+                "common.tunnel"
+              ],
+              "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+              "supportContext": {
+                "available": true,
+                "scope": "local-sampling-reference-not-geological-feature",
+                "resourceId": "rock.tsp-integrity",
+                "cut": {
+                  "xmax": 0.99,
+                  "ymin": 0.01
+                },
+                "focusFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "focusDisplay": [
+                  {
+                    "colorRgba": null,
+                    "colorBlendMode": 0,
+                    "colorBlendAmount": 0.5
+                  }
+                ],
+                "reference": {
+                  "insideSafe": 6,
+                  "total": 6,
+                  "behind": 0,
+                  "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+                },
+                "renderedDomainFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "screenFraming": "focus-and-local-reference-in-safe-area",
+                "informationSufficiency": "not-verified",
+                "depthOcclusion": "not-measured",
+                "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+              },
+              "issues": [
+                {
+                  "resourceId": "rock.tsp-integrity",
+                  "code": "observation-incomplete",
+                  "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+                },
+                {
+                  "code": "loaded-outside-current-scene",
+                  "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+                }
+              ],
+              "engineeringAcceptance": "not-verified",
+              "limitations": [
+                "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+                "未测模型间深度遮挡、净空侵限或现场配准误差",
+                "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+                "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+              ],
+              "nextChecks": [
+                "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+              ]
+            },
+            "after": {
+              "capturedAt": "2026-11-17T08:12:04.512Z",
+              "taskId": "scene-1794903118618-eu33h",
+              "workflowStatus": "completed",
+              "completedSceneAvailable": true,
+              "chainageRange": {
+                "start": 2244,
+                "end": 2244
+              },
+              "phase": "constructed-then-enhanced",
+              "resourceIds": [
+                "rock.tsp-integrity",
+                "support.modeler-zz-va"
+              ],
+              "resources": [
+                {
+                  "id": "rock.tsp-integrity",
+                  "role": "task-root",
+                  "module": "rock",
+                  "sourceHints": [],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/data/tsp_actual/integrity.json",
+                    "/data/tsp_actual/integrity_volume.png"
+                  ],
+                  "observation": {
+                    "targetCount": 0,
+                    "readyModelCount": 0,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "incomplete",
+                    "framing": {
+                      "available": false
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                },
+                {
+                  "id": "support.modeler-zz-va",
+                  "role": "task-root",
+                  "module": "support",
+                  "sourceHints": [
+                    {
+                      "componentScope": "source-model-components",
+                      "supportType": "ZZ-Va"
+                    }
+                  ],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                  ],
+                  "observation": {
+                    "targetCount": 1,
+                    "readyModelCount": 1,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "declared-targets-only",
+                    "framing": {
+                      "available": true,
+                      "projected": 26,
+                      "insideSafe": 26,
+                      "behind": 0,
+                      "safe": {
+                        "left": 316,
+                        "right": 1004,
+                        "top": 76,
+                        "bottom": 691
+                      },
+                      "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                      "occlusion": "not-measured"
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                }
+              ],
+              "evidenceAssessment": {
+                "taskId": "scene-1794903118618-eu33h",
+                "resourceIds": [
+                  "rock.tsp-integrity",
+                  "support.modeler-zz-va"
+                ],
+                "facts": [],
+                "gaps": [
+                  {
+                    "id": "task-design",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "源模型与本工段设计是否对应？",
+                    "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                  },
+                  {
+                    "id": "field-data",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "是否具备同一基准的实测对比？",
+                    "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                  },
+                  {
+                    "id": "geometry",
+                    "status": "not-measured-by-this-assessment",
+                    "question": "接缝、净空或断面贴合是否成立？",
+                    "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                  }
+                ],
+                "factWindow": {
+                  "availableInRetainedJournal": 0,
+                  "retained": 0,
+                  "omitted": 0,
+                  "scope": "within-retained-journal-not-full-history"
+                },
+                "historyWindow": {
+                  "locations": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "steps": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "scope": "whole-task-window-before-resource-filter"
+                },
+                "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+                "questionStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified",
+                "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+              },
+              "locationEvidence": [],
+              "evidenceProgress": {
+                "scope": "interaction-history-not-question-completion",
+                "locationRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "stepRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": [],
+                "questionsStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified"
+              },
+              "loadedOutsideCurrentScene": [
+                "common.tunnel"
+              ],
+              "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+              "supportContext": {
+                "available": true,
+                "scope": "local-sampling-reference-not-geological-feature",
+                "resourceId": "rock.tsp-integrity",
+                "cut": {
+                  "xmax": 0.5,
+                  "ymin": 0.2
+                },
+                "focusFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "focusDisplay": [
+                  {
+                    "colorRgba": [
+                      1,
+                      0.9411764705882353,
+                      0.7490196078431373,
+                      1
+                    ],
+                    "colorBlendMode": 2,
+                    "colorBlendAmount": 0.45
+                  }
+                ],
+                "reference": {
+                  "insideSafe": 6,
+                  "total": 6,
+                  "behind": 0,
+                  "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+                },
+                "renderedDomainFraming": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 7,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                },
+                "screenFraming": "focus-and-local-reference-in-safe-area",
+                "informationSufficiency": "not-verified",
+                "depthOcclusion": "not-measured",
+                "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+              },
+              "issues": [
+                {
+                  "resourceId": "rock.tsp-integrity",
+                  "code": "observation-incomplete",
+                  "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+                },
+                {
+                  "code": "loaded-outside-current-scene",
+                  "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+                }
+              ],
+              "engineeringAcceptance": "not-verified",
+              "limitations": [
+                "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+                "未测模型间深度遮挡、净空侵限或现场配准误差",
+                "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+                "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+              ],
+              "nextChecks": [
+                "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+              ]
+            }
+          },
+          "conditions": [
+            {
+              "resourceId": "support.modeler-zz-va",
+              "runtime": "loaded",
+              "framing": "26-samples-inside",
+              "modelCoverage": "declared-targets-only"
+            }
+          ],
+          "questionsStatus": "unanswered-requires-task-evidence",
+          "engineeringAcceptance": "not-verified"
+        }
+      },
+      "reviewAnswer": "🤖\n已按你的要求完成一次视觉分析执行（任务 scene-1794903118618-eu33h，YK2+244，资源 rock.tsp-integrity + support.modeler-zz-va）。\n\n实际执行结果\n- 规划：objective=spatial-relation，referenceScope=near-support，emphasis=material-focus，重点资源仅 support.modeler-zz-va（围岩作为邻近采样参照）。首次规划因把围岩也列为重点着色对象被拒，改为只对支护着色后通过。\n- 执行后：支护 26 点包围球采样全部入安全区（insideSafe 26/26，behind 0）；局部采样参照探针 6/6 入区；近端剖切范围由 xmax 0.99/ymin 0.01 收窄为 xmax 0.5/ymin 0.2；支护显示混合为暖色（RGBA 1,0.94,0.75，混合量 0.45），地质色标与几何未改。\n- 整个渲染采样盒取景的 26 点中仅 7 点入安全区，说明当前是局部视图，不是全段视图。\n\n证据与限制\n- 这只是“重点与局部参照投影入区”，informationSufficiency 未核验、depthOcclusion 未测，不能声称支护与围岩无遮挡、可辨或贴合。\n- rock.tsp-integrity 未提供完整可观察的 Cesium 模型目标（modelCoverage=incomplete），围岩侧只能算邻近采样参照，不代表有效体素轮廓或地质界面；剖切面不是地质边界。\n- 暖色仅表示本次重点，不是风险或工程分级。TSP 来源报告为 X1DK2+937、体素源锚点 YK2+244 为示意重定位；支护为已导出 1 m 断面模板，均非目标工点实测，不作验收结论。\n- 本任务尚无交互事实记录（facts 为空），设计对应、实测对比、断面贴合三项缺口仍未补齐。\n\n下一步：若需整体对照，可恢复原显示范围再看全段；要判断围岩与支护是否真正可辨，需另行核查源断面适用性、设计版本与实测资料，单靠取景无法补齐。\n👍\n👎"
+    }
+  ],
+  "modelRequests": 14
+}

@@ -21,7 +21,7 @@ it.each([false, true])('restores task-specific transparency on undo or presentat
   state.tunnel = { color: C.Color.WHITE.clone(), colorBlendMode: C.ColorBlendMode.HIGHLIGHT, colorBlendAmount: 0.5 }
   const viewer = { camera: { positionWC: position, directionWC: C.Cartesian3.UNIT_X, upWC: C.Cartesian3.UNIT_Z,
     viewBoundingSphere: vi.fn(() => { if (fail) throw new Error('camera failure') }), lookAtTransform: vi.fn(), moveRight: vi.fn(), setView: vi.fn() },
-    scene: { requestRender: vi.fn(), backgroundColor: C.Color.CORNFLOWERBLUE.clone(), globe: { show: true }, skyBox: { show: true }, skyAtmosphere: { show: true }, sun: { show: true }, moon: { show: true }, fog: { enabled: true } }, container: { closest: () => true }, isDestroyed: () => false } as any
+    scene: { requestRender: vi.fn(), backgroundColor: C.Color.CORNFLOWERBLUE.clone(), globe: { show: true, translucency:new C.GlobeTranslucency() }, skyBox: { show: true }, skyAtmosphere: { show: true }, sun: { show: true }, moon: { show: true }, fog: { enabled: true } }, container: { closest: () => true }, isDestroyed: () => false } as any
   const environment=()=>JSON.stringify({background:viewer.scene.backgroundColor,globe:viewer.scene.globe,skyBox:viewer.scene.skyBox,skyAtmosphere:viewer.scene.skyAtmosphere,sun:viewer.scene.sun,moon:viewer.scene.moon,fog:viewer.scene.fog})
   const beforeEnvironment=environment()
   const imagery={brightness:.8,saturation:.6}
@@ -29,8 +29,8 @@ it.each([false, true])('restores task-specific transparency on undo or presentat
   if (fail) expect(() => presentTaskScene(viewer, ['rock.face-photos', 'rock.advance-drill'], 2244)).toThrow('camera failure')
   else {
     const undo = presentTaskScene(viewer, ['rock.face-photos', 'rock.advance-drill'], 2244)
-    expect(imagery.brightness).toBeCloseTo(.8*.22)
-    expect(imagery.saturation).toBeCloseTo(.6*.18)
+    expect(imagery.brightness).toBe(.8)
+    expect(imagery.saturation).toBe(.6)
     expect(state.tunnel.color.alpha).toBe(0.06)
     expect(environment()).toBe(beforeEnvironment)
     expect((face.wall!.material as C.ImageMaterialProperty).color!.getValue(C.JulianDate.now()).alpha).toBe(1)

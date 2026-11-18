@@ -1,0 +1,162 @@
+{
+  "passed": true,
+  "modelRequests": 0,
+  "errors": [],
+  "cases": [
+    {
+      "id": "hardness",
+      "before": {
+        "imagery": [
+          {
+            "brightness": 1,
+            "saturation": 1,
+            "show": true
+          }
+        ],
+        "terrain": {
+          "enabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": [
+            400,
+            0.9,
+            800,
+            0.9
+          ],
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ]
+        }
+      },
+      "after": {
+        "imagery": [
+          {
+            "brightness": 1,
+            "saturation": 1,
+            "show": true
+          }
+        ],
+        "terrain": {
+          "enabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": [
+            400,
+            0.9,
+            800,
+            0.9
+          ],
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ]
+        }
+      },
+      "positioning": {
+        "anchor": [
+          -474298.13953647827,
+          5536216.194389634,
+          3126922.4578933874
+        ],
+        "designPoint": [
+          -474298.13953647827,
+          5536216.194389634,
+          3126922.4578933874
+        ],
+        "errorM": 0,
+        "centerlineShown": false
+      }
+    },
+    {
+      "id": "integrity",
+      "before": {
+        "imagery": [
+          {
+            "brightness": 1,
+            "saturation": 1,
+            "show": true
+          }
+        ],
+        "terrain": {
+          "enabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": [
+            400,
+            0.9,
+            800,
+            0.9
+          ],
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ]
+        }
+      },
+      "after": {
+        "imagery": [
+          {
+            "brightness": 1,
+            "saturation": 1,
+            "show": true
+          }
+        ],
+        "terrain": {
+          "enabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": [
+            400,
+            0.9,
+            800,
+            0.9
+          ],
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ]
+        }
+      },
+      "positioning": {
+        "anchor": [
+          -475187.09921784373,
+          5536145.14298351,
+          3126922.458129732
+        ],
+        "designPoint": [
+          -475187.09921784373,
+          5536145.14298351,
+          3126922.458129732
+        ],
+        "errorM": 0,
+        "centerlineShown": true
+      }
+    }
+  ],
+  "diagnostics": [],
+  "configRequests": [
+    "/src/assets/data/centerline_mileage.json",
+    "/src/assets/data/centerLine.json",
+    "/data/task-asset-manifest.json",
+    "/data/tsp_actual/hardness.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/tsp_actual/integrity.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json"
+  ]
+}

@@ -374,6 +374,7 @@ export class AgentEngine {
           signal,
         )
 
+        roundText = roundText.trim()
         if (requireSceneRead && !hadToolUse && !sceneReadEvidence) {
           if (missingSceneReadNudges < 1 && round < maxToolRounds) {
             missingSceneReadNudges++
@@ -432,6 +433,16 @@ export class AgentEngine {
       }
       if (requireSceneRead && !completedText) {
         completedText = sceneReadEvidence ? '已读取本轮场景运行快照，但模型未生成解释。未修改任务或显示；运行快照不能代表工程验收。' : '本轮未取得场景自检结果，无法核实当前状态；只读核查不允许修改场景，也不能引用历史完成状态。'
+        this.addMessage('assistant', completedText)
+        callbacks.onText(completedText)
+      }
+      if (!completedText.trim()) {
+        let failure = ''
+        const last = this.messages.at(-1)
+        if (last?.role === 'tool') {
+          try { const result = JSON.parse(last.content); if (result.ok === false && typeof result.reason === 'string') failure = `${result.reason.slice(0,300)}。` } catch { /* No structured tool failure. */ }
+        }
+        completedText = `${failure}本轮模型未生成可用的文字说明，请核对本轮工具返回状态；不能据此认定任务完成或工程验收通过。`
         this.addMessage('assistant', completedText)
         callbacks.onText(completedText)
       }

@@ -167,7 +167,7 @@
       <TaskSupportLayers :key="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource => resource.id)" />
       <TaskSupportLayout :key="agentAssembly.taskId" :task-id="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource=>resource.id)" />
       <TaskFlowReview :key="agentAssembly.taskId" />
-      <TaskVisualReview :key="agentAssembly.taskId" />
+      <TaskVisualReview :key="agentAssembly.taskId" :resource-labels="Object.fromEntries(agentAssembly.resources.map(resource=>[resource.id,resource.label]))" />
       <div class="task-view-controls" aria-label="任务场景视角">
         <small>最近选择：{{ taskViewLabels[taskCameraSelection] }}</small>
         <div class="task-view-buttons">
@@ -431,7 +431,7 @@ watch(agentAssembly,async scene=>{
 })
 const blastCloudVisible = computed({ get: () => blastLayerVisibility.pointcloud, set: visible => setBlastLayerVisible('pointcloud', visible) });
 const taskViewError = ref('');
-const taskViewLabels = { auto: '自动取景', 'support-context':'支护与邻近围岩', overview: '整体布置', face: '掌子面', support: '支护', excavation: '三台阶', drill: '水平钻', blast: '爆破断面' };
+const taskViewLabels = { auto: '自动取景', station:'站位近景', geographic:'中线与地形', 'support-context':'支护与邻近围岩', overview: '整体布置', face: '掌子面', support: '支护', excavation: '三台阶', drill: '水平钻', blast: '爆破断面' };
 const availableTaskViews = computed<TaskView[]>(() => {
   const ids = agentAssembly.value?.resources.map(resource => resource.id) ?? [];
   return availableTaskCameraViews(ids);

@@ -1,0 +1,4325 @@
+{
+  "passed": true,
+  "modelRequests": 0,
+  "errors": [],
+  "cases": [
+    {
+      "id": "hardness-support-factorial",
+      "taskId": "scene-1794901792409-k0rwd",
+      "conditions": [
+        {
+          "condition": "full-plain",
+          "identity": {
+            "taskId": "scene-1794901792409-k0rwd",
+            "camera": [
+              -474225.8567656268,
+              5536218.04312172,
+              3126991.1818777937,
+              -0.749259082865704,
+              -0.028862206232281754,
+              -0.6616477913472164,
+              -0.3095150530560503,
+              0.8984928651522265,
+              0.31130532151290524
+            ],
+            "supportMatrix": [
+              0.22005896564401384,
+              -0.4678649882647748,
+              0.8559651887756233,
+              0,
+              -0.07426833592922809,
+              0.8668926353023134,
+              0.49293140814611675,
+              0,
+              -0.9726552657123642,
+              -0.1720450859937948,
+              0.15601994253106774,
+              0,
+              -474298.2954999837,
+              5536218.014864168,
+              3126923.4930493445,
+              1
+            ],
+            "sameSupport": true
+          },
+          "style": {
+            "color": null,
+            "mode": 0,
+            "amount": 0.5
+          },
+          "sample": {
+            "cut": {
+              "xmax": 0.99,
+              "ymin": 0.01
+            },
+            "projectedSphereDiameterPx": 319.1243945802624,
+            "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+          },
+          "legend": "坚硬程度（Rc / MPa）\n极软岩\n≤ 5\n软岩\n(5, 15]\n较软岩\n(15, 30]\n硬岩\n(30, 60]\n极硬岩\n> 60\n源工点资料 · 示意重定位\n单位：MPa"
+        },
+        {
+          "condition": "full-focus",
+          "identity": {
+            "taskId": "scene-1794901792409-k0rwd",
+            "camera": [
+              -474225.8567656268,
+              5536218.04312172,
+              3126991.1818777937,
+              -0.749259082865704,
+              -0.028862206232281754,
+              -0.6616477913472164,
+              -0.3095150530560503,
+              0.8984928651522265,
+              0.31130532151290524
+            ],
+            "supportMatrix": [
+              0.22005896564401384,
+              -0.4678649882647748,
+              0.8559651887756233,
+              0,
+              -0.07426833592922809,
+              0.8668926353023134,
+              0.49293140814611675,
+              0,
+              -0.9726552657123642,
+              -0.1720450859937948,
+              0.15601994253106774,
+              0,
+              -474298.2954999837,
+              5536218.014864168,
+              3126923.4930493445,
+              1
+            ],
+            "sameSupport": true
+          },
+          "style": {
+            "color": [
+              1,
+              0.9411764705882353,
+              0.7490196078431373,
+              1
+            ],
+            "mode": 2,
+            "amount": 0.45
+          },
+          "sample": {
+            "cut": {
+              "xmax": 0.99,
+              "ymin": 0.01
+            },
+            "projectedSphereDiameterPx": 319.1243945802624,
+            "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+          },
+          "legend": "坚硬程度（Rc / MPa）\n极软岩\n≤ 5\n软岩\n(5, 15]\n较软岩\n(15, 30]\n硬岩\n(30, 60]\n极硬岩\n> 60\n源工点资料 · 示意重定位\n单位：MPa"
+        },
+        {
+          "condition": "cut-plain",
+          "identity": {
+            "taskId": "scene-1794901792409-k0rwd",
+            "camera": [
+              -474225.8567656268,
+              5536218.04312172,
+              3126991.1818777937,
+              -0.749259082865704,
+              -0.028862206232281754,
+              -0.6616477913472164,
+              -0.3095150530560503,
+              0.8984928651522265,
+              0.31130532151290524
+            ],
+            "supportMatrix": [
+              0.22005896564401384,
+              -0.4678649882647748,
+              0.8559651887756233,
+              0,
+              -0.07426833592922809,
+              0.8668926353023134,
+              0.49293140814611675,
+              0,
+              -0.9726552657123642,
+              -0.1720450859937948,
+              0.15601994253106774,
+              0,
+              -474298.2954999837,
+              5536218.014864168,
+              3126923.4930493445,
+              1
+            ],
+            "sameSupport": true
+          },
+          "style": {
+            "color": null,
+            "mode": 0,
+            "amount": 0.5
+          },
+          "sample": {
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "projectedSphereDiameterPx": 319.1243945802624,
+            "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+          },
+          "legend": "坚硬程度（Rc / MPa）\n极软岩\n≤ 5\n软岩\n(5, 15]\n较软岩\n(15, 30]\n硬岩\n(30, 60]\n极硬岩\n> 60\n源工点资料 · 示意重定位\n单位：MPa"
+        },
+        {
+          "condition": "cut-focus",
+          "identity": {
+            "taskId": "scene-1794901792409-k0rwd",
+            "camera": [
+              -474225.8567656268,
+              5536218.04312172,
+              3126991.1818777937,
+              -0.749259082865704,
+              -0.028862206232281754,
+              -0.6616477913472164,
+              -0.3095150530560503,
+              0.8984928651522265,
+              0.31130532151290524
+            ],
+            "supportMatrix": [
+              0.22005896564401384,
+              -0.4678649882647748,
+              0.8559651887756233,
+              0,
+              -0.07426833592922809,
+              0.8668926353023134,
+              0.49293140814611675,
+              0,
+              -0.9726552657123642,
+              -0.1720450859937948,
+              0.15601994253106774,
+              0,
+              -474298.2954999837,
+              5536218.014864168,
+              3126923.4930493445,
+              1
+            ],
+            "sameSupport": true
+          },
+          "style": {
+            "color": [
+              1,
+              0.9411764705882353,
+              0.7490196078431373,
+              1
+            ],
+            "mode": 2,
+            "amount": 0.45
+          },
+          "sample": {
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "projectedSphereDiameterPx": 319.1243945802624,
+            "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+          },
+          "legend": "坚硬程度（Rc / MPa）\n极软岩\n≤ 5\n软岩\n(5, 15]\n较软岩\n(15, 30]\n硬岩\n(30, 60]\n极硬岩\n> 60\n源工点资料 · 示意重定位\n单位：MPa"
+        }
+      ]
+    },
+    {
+      "id": "hardness-support-restored-feedback",
+      "review": {
+        "plan": {
+          "sceneKey": "[\"scene-1794901792409-k0rwd\",\"scene-3\",{\"start\":1346,\"end\":1346},[\"rock.tsp-hardness\",\"support.modeler-zz-va\"]]",
+          "taskId": "scene-1794901792409-k0rwd",
+          "objective": "spatial-relation",
+          "userRequest": "查看支护与邻近围岩的局部空间关系",
+          "emphasis": "source",
+          "referenceScope": "near-support",
+          "focusResourceIds": [
+            "support.modeler-zz-va"
+          ],
+          "referenceResourceIds": [
+            "rock.tsp-hardness"
+          ],
+          "questions": [
+            "支护及邻近围岩是否可辨，哪些全段参照未进入局部视图？"
+          ],
+          "candidate": {
+            "type": "camera-view",
+            "view": "support-context",
+            "reason": "近端剖切与局部取景组合；仅保留支护及邻近采样参照，不表示全体范围入镜"
+          },
+          "completionConditions": [
+            "执行前后任务与资源保持一致",
+            "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+            "画面取景与工程依据分开，待回答问题不作为已证实结论"
+          ],
+          "evidence": {
+            "capturedAt": "2026-11-17T07:50:00.524Z",
+            "taskId": "scene-1794901792409-k0rwd",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 1346,
+              "end": 1346
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "support.modeler-zz-va",
+              "rock.tsp-hardness"
+            ],
+            "resources": [
+              {
+                "id": "support.modeler-zz-va",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va"
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 691
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.tsp-hardness",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tsp_actual/hardness.json",
+                  "/data/tsp_actual/hardness_volume.png"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794901792409-k0rwd",
+              "resourceIds": [
+                "support.modeler-zz-va",
+                "rock.tsp-hardness"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [
+              "common.tunnel"
+            ],
+            "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+            "supportContext": {
+              "available": true,
+              "scope": "local-sampling-reference-not-geological-feature",
+              "resourceId": "rock.tsp-hardness",
+              "cut": {
+                "xmax": 0.99,
+                "ymin": 0.01
+              },
+              "focusFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "focusDisplay": [
+                {
+                  "colorRgba": null,
+                  "colorBlendMode": 0,
+                  "colorBlendAmount": 0.5
+                }
+              ],
+              "reference": {
+                "insideSafe": 6,
+                "total": 6,
+                "behind": 0,
+                "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+              },
+              "renderedDomainFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "screenFraming": "focus-and-local-reference-in-safe-area",
+              "informationSufficiency": "not-verified",
+              "depthOcclusion": "not-measured",
+              "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.tsp-hardness",
+                "code": "observation-incomplete",
+                "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+              },
+              {
+                "code": "loaded-outside-current-scene",
+                "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "engineeringAcceptance": "not-verified"
+        },
+        "phase": "restored",
+        "attempts": 1,
+        "remaining": 1,
+        "feedback": {
+          "before": {
+            "capturedAt": "2026-11-17T07:50:00.528Z",
+            "taskId": "scene-1794901792409-k0rwd",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 1346,
+              "end": 1346
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "support.modeler-zz-va",
+              "rock.tsp-hardness"
+            ],
+            "resources": [
+              {
+                "id": "support.modeler-zz-va",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va"
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 691
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.tsp-hardness",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tsp_actual/hardness.json",
+                  "/data/tsp_actual/hardness_volume.png"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794901792409-k0rwd",
+              "resourceIds": [
+                "support.modeler-zz-va",
+                "rock.tsp-hardness"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [
+              "common.tunnel"
+            ],
+            "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+            "supportContext": {
+              "available": true,
+              "scope": "local-sampling-reference-not-geological-feature",
+              "resourceId": "rock.tsp-hardness",
+              "cut": {
+                "xmax": 0.99,
+                "ymin": 0.01
+              },
+              "focusFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "focusDisplay": [
+                {
+                  "colorRgba": null,
+                  "colorBlendMode": 0,
+                  "colorBlendAmount": 0.5
+                }
+              ],
+              "reference": {
+                "insideSafe": 6,
+                "total": 6,
+                "behind": 0,
+                "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+              },
+              "renderedDomainFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "screenFraming": "focus-and-local-reference-in-safe-area",
+              "informationSufficiency": "not-verified",
+              "depthOcclusion": "not-measured",
+              "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.tsp-hardness",
+                "code": "observation-incomplete",
+                "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+              },
+              {
+                "code": "loaded-outside-current-scene",
+                "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "after": {
+            "capturedAt": "2026-11-17T07:50:00.533Z",
+            "taskId": "scene-1794901792409-k0rwd",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 1346,
+              "end": 1346
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "support.modeler-zz-va",
+              "rock.tsp-hardness"
+            ],
+            "resources": [
+              {
+                "id": "support.modeler-zz-va",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va"
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 691
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.tsp-hardness",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tsp_actual/hardness.json",
+                  "/data/tsp_actual/hardness_volume.png"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794901792409-k0rwd",
+              "resourceIds": [
+                "support.modeler-zz-va",
+                "rock.tsp-hardness"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [
+              "common.tunnel"
+            ],
+            "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+            "supportContext": {
+              "available": true,
+              "scope": "local-sampling-reference-not-geological-feature",
+              "resourceId": "rock.tsp-hardness",
+              "cut": {
+                "xmax": 0.5,
+                "ymin": 0.2
+              },
+              "focusFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "focusDisplay": [
+                {
+                  "colorRgba": null,
+                  "colorBlendMode": 0,
+                  "colorBlendAmount": 0.5
+                }
+              ],
+              "reference": {
+                "insideSafe": 6,
+                "total": 6,
+                "behind": 0,
+                "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+              },
+              "renderedDomainFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 8,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "screenFraming": "focus-and-local-reference-in-safe-area",
+              "informationSufficiency": "not-verified",
+              "depthOcclusion": "not-measured",
+              "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.tsp-hardness",
+                "code": "observation-incomplete",
+                "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+              },
+              {
+                "code": "loaded-outside-current-scene",
+                "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          }
+        },
+        "restoredFeedback": {
+          "capturedAt": "2026-11-17T07:50:04.389Z",
+          "taskId": "scene-1794901792409-k0rwd",
+          "workflowStatus": "completed",
+          "completedSceneAvailable": true,
+          "chainageRange": {
+            "start": 1346,
+            "end": 1346
+          },
+          "phase": "constructed-then-enhanced",
+          "resourceIds": [
+            "support.modeler-zz-va",
+            "rock.tsp-hardness"
+          ],
+          "resources": [
+            {
+              "id": "support.modeler-zz-va",
+              "role": "task-root",
+              "module": "support",
+              "sourceHints": [
+                {
+                  "componentScope": "source-model-components",
+                  "supportType": "ZZ-Va"
+                }
+              ],
+              "sourceHintsTruncated": false,
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+              ],
+              "observation": {
+                "targetCount": 1,
+                "readyModelCount": 1,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "declared-targets-only",
+                "framing": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            },
+            {
+              "id": "rock.tsp-hardness",
+              "role": "task-root",
+              "module": "rock",
+              "sourceHints": [],
+              "sourceHintsTruncated": false,
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/data/tsp_actual/hardness.json",
+                "/data/tsp_actual/hardness_volume.png"
+              ],
+              "observation": {
+                "targetCount": 0,
+                "readyModelCount": 0,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "incomplete",
+                "framing": {
+                  "available": false
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            }
+          ],
+          "evidenceAssessment": {
+            "taskId": "scene-1794901792409-k0rwd",
+            "resourceIds": [
+              "support.modeler-zz-va",
+              "rock.tsp-hardness"
+            ],
+            "facts": [],
+            "gaps": [
+              {
+                "id": "task-design",
+                "status": "not-provided-to-this-assessment",
+                "question": "源模型与本工段设计是否对应？",
+                "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+              },
+              {
+                "id": "field-data",
+                "status": "not-provided-to-this-assessment",
+                "question": "是否具备同一基准的实测对比？",
+                "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+              },
+              {
+                "id": "geometry",
+                "status": "not-measured-by-this-assessment",
+                "question": "接缝、净空或断面贴合是否成立？",
+                "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+              }
+            ],
+            "factWindow": {
+              "availableInRetainedJournal": 0,
+              "retained": 0,
+              "omitted": 0,
+              "scope": "within-retained-journal-not-full-history"
+            },
+            "historyWindow": {
+              "locations": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "scope": "whole-task-window-before-resource-filter"
+            },
+            "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+            "questionStatus": "unanswered-requires-task-evidence",
+            "engineeringAcceptance": "not-verified",
+            "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+          },
+          "locationEvidence": [],
+          "evidenceProgress": {
+            "scope": "interaction-history-not-question-completion",
+            "locationRecords": {
+              "total": 0,
+              "retained": 0,
+              "omitted": 0
+            },
+            "stepRecords": {
+              "total": 0,
+              "retained": 0,
+              "omitted": 0
+            },
+            "steps": [],
+            "questionsStatus": "unanswered-requires-task-evidence",
+            "engineeringAcceptance": "not-verified"
+          },
+          "loadedOutsideCurrentScene": [
+            "common.tunnel"
+          ],
+          "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+          "supportContext": {
+            "available": true,
+            "scope": "local-sampling-reference-not-geological-feature",
+            "resourceId": "rock.tsp-hardness",
+            "cut": {
+              "xmax": 0.99,
+              "ymin": 0.01
+            },
+            "focusFraming": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "focusDisplay": [
+              {
+                "colorRgba": null,
+                "colorBlendMode": 0,
+                "colorBlendAmount": 0.5
+              }
+            ],
+            "reference": {
+              "insideSafe": 6,
+              "total": 6,
+              "behind": 0,
+              "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+            },
+            "renderedDomainFraming": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "screenFraming": "focus-and-local-reference-in-safe-area",
+            "informationSufficiency": "not-verified",
+            "depthOcclusion": "not-measured",
+            "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+          },
+          "issues": [
+            {
+              "resourceId": "rock.tsp-hardness",
+              "code": "observation-incomplete",
+              "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+            },
+            {
+              "code": "loaded-outside-current-scene",
+              "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+            }
+          ],
+          "engineeringAcceptance": "not-verified",
+          "limitations": [
+            "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+            "未测模型间深度遮挡、净空侵限或现场配准误差",
+            "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+            "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+          ],
+          "nextChecks": [
+            "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+          ]
+        },
+        "conditions": [
+          {
+            "resourceId": "support.modeler-zz-va",
+            "runtime": "loaded",
+            "framing": "26-samples-inside",
+            "modelCoverage": "declared-targets-only"
+          }
+        ],
+        "questionsStatus": "unanswered-requires-task-evidence",
+        "engineeringAcceptance": "not-verified"
+      }
+    },
+    {
+      "id": "hardness-support-combined-local-context",
+      "before": {
+        "identity": {
+          "taskId": "scene-1794901792409-k0rwd",
+          "camera": [
+            -474133.83754324977,
+            5536241.436179014,
+            3127126.5881272554,
+            -0.6945914698170469,
+            -0.16280992383813897,
+            -0.700739337241184,
+            -0.41801299218330434,
+            0.8840874762996662,
+            0.20893652772085541
+          ],
+          "supportMatrix": [
+            0.22005896564401384,
+            -0.4678649882647748,
+            0.8559651887756233,
+            0,
+            -0.07426833592922809,
+            0.8668926353023134,
+            0.49293140814611675,
+            0,
+            -0.9726552657123642,
+            -0.1720450859937948,
+            0.15601994253106774,
+            0,
+            -474298.2954999837,
+            5536218.014864168,
+            3126923.4930493445,
+            1
+          ],
+          "sameSupport": true
+        },
+        "measure": {
+          "cut": {
+            "xmax": 0.99,
+            "ymin": 0.01
+          },
+          "projectedSphereDiameterPx": 120.47835696004397,
+          "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+        }
+      },
+      "after": {
+        "identity": {
+          "taskId": "scene-1794901792409-k0rwd",
+          "camera": [
+            -474225.8567656268,
+            5536218.04312172,
+            3126991.1818777937,
+            -0.749259082865704,
+            -0.028862206232281754,
+            -0.6616477913472164,
+            -0.3095150530560503,
+            0.8984928651522265,
+            0.31130532151290524
+          ],
+          "supportMatrix": [
+            0.22005896564401384,
+            -0.4678649882647748,
+            0.8559651887756233,
+            0,
+            -0.07426833592922809,
+            0.8668926353023134,
+            0.49293140814611675,
+            0,
+            -0.9726552657123642,
+            -0.1720450859937948,
+            0.15601994253106774,
+            0,
+            -474298.2954999837,
+            5536218.014864168,
+            3126923.4930493445,
+            1
+          ],
+          "sameSupport": true
+        },
+        "measure": {
+          "cut": {
+            "xmax": 0.5,
+            "ymin": 0.2
+          },
+          "projectedSphereDiameterPx": 319.1243945802624,
+          "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+        }
+      },
+      "restored": {
+        "identity": {
+          "taskId": "scene-1794901792409-k0rwd",
+          "camera": [
+            -474133.83754324977,
+            5536241.436179014,
+            3127126.5881272554,
+            -0.6945914698170469,
+            -0.16280992383813908,
+            -0.7007393372411841,
+            -0.4180129921832803,
+            0.884087476299672,
+            0.20893652772087934
+          ],
+          "supportMatrix": [
+            0.22005896564401384,
+            -0.4678649882647748,
+            0.8559651887756233,
+            0,
+            -0.07426833592922809,
+            0.8668926353023134,
+            0.49293140814611675,
+            0,
+            -0.9726552657123642,
+            -0.1720450859937948,
+            0.15601994253106774,
+            0,
+            -474298.2954999837,
+            5536218.014864168,
+            3126923.4930493445,
+            1
+          ],
+          "sameSupport": true
+        },
+        "measure": {
+          "cut": {
+            "xmax": 0.99,
+            "ymin": 0.01
+          },
+          "projectedSphereDiameterPx": 120.47835696004397,
+          "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+        }
+      }
+    },
+    {
+      "id": "hardness-support-explicit-full-reference",
+      "actual": {
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "projectedSphereDiameterPx": 122.28983948242039,
+        "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+      }
+    },
+    {
+      "id": "hardness-support-fixed-camera-strategies",
+      "modes": [
+        {
+          "name": "full",
+          "actual": {
+            "key": "tsp_hardness",
+            "domain": {
+              "dimensionsM": [
+                48.99999999999999,
+                97.99999999999997,
+                49.000000000000014
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -474292.4890817242,
+                  5536183.234850105,
+                  3126931.5815502787
+                ],
+                [
+                  -474295.8889317948,
+                  5536225.75196716,
+                  3126955.700749619
+                ],
+                [
+                  -474388.2453285424,
+                  5536167.692948843,
+                  3126945.4808488395
+                ],
+                [
+                  -474391.645178613,
+                  5536210.2100658985,
+                  3126969.6000481797
+                ],
+                [
+                  -474302.3443502807,
+                  5536206.319630451,
+                  3126889.4986963114
+                ],
+                [
+                  -474305.7442003513,
+                  5536248.836747506,
+                  3126913.617895651
+                ],
+                [
+                  -474398.10059709894,
+                  5536190.777729189,
+                  3126903.3979948717
+                ],
+                [
+                  -474401.50044716947,
+                  5536233.294846245,
+                  3126927.517194212
+                ]
+              ]
+            },
+            "cut": {
+              "xmax": 0.99,
+              "ymin": 0.01
+            },
+            "edges": 12,
+            "framing": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "tool": {
+              "ok": true,
+              "action": "inspect_task_volume_review",
+              "taskId": "scene-1794901792409-k0rwd",
+              "resourceId": "rock.tsp-hardness",
+              "scope": "rendered-sampling-domain-not-geological-boundary",
+              "dimensionsM": [
+                48.99999999999999,
+                97.99999999999997,
+                49.000000000000014
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -474292.4890817242,
+                  5536183.234850105,
+                  3126931.5815502787
+                ],
+                [
+                  -474295.8889317948,
+                  5536225.75196716,
+                  3126955.700749619
+                ],
+                [
+                  -474388.2453285424,
+                  5536167.692948843,
+                  3126945.4808488395
+                ],
+                [
+                  -474391.645178613,
+                  5536210.2100658985,
+                  3126969.6000481797
+                ],
+                [
+                  -474302.3443502807,
+                  5536206.319630451,
+                  3126889.4986963114
+                ],
+                [
+                  -474305.7442003513,
+                  5536248.836747506,
+                  3126913.617895651
+                ],
+                [
+                  -474398.10059709894,
+                  5536190.777729189,
+                  3126903.3979948717
+                ],
+                [
+                  -474401.50044716947,
+                  5536233.294846245,
+                  3126927.517194212
+                ]
+              ],
+              "engineeringAcceptance": "not-verified",
+              "depthOcclusion": "not-measured"
+            }
+          }
+        },
+        {
+          "name": "geology",
+          "actual": {
+            "key": "tsp_hardness",
+            "domain": {
+              "dimensionsM": [
+                24.499999999999996,
+                97.99999999999997,
+                49.000000000000014
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.5
+                ],
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -474292.4890817242,
+                  5536183.234850105,
+                  3126931.5815502787
+                ],
+                [
+                  -474295.8889317948,
+                  5536225.75196716,
+                  3126955.700749619
+                ],
+                [
+                  -474388.2453285424,
+                  5536167.692948843,
+                  3126945.4808488395
+                ],
+                [
+                  -474391.645178613,
+                  5536210.2100658985,
+                  3126969.6000481797
+                ],
+                [
+                  -474297.41671600245,
+                  5536194.777240277,
+                  3126910.540123295
+                ],
+                [
+                  -474300.81656607304,
+                  5536237.294357333,
+                  3126934.6593226353
+                ],
+                [
+                  -474393.1729628207,
+                  5536179.235339017,
+                  3126924.439421856
+                ],
+                [
+                  -474396.5728128913,
+                  5536221.752456072,
+                  3126948.558621196
+                ]
+              ]
+            },
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.01
+            },
+            "edges": 12,
+            "framing": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "tool": {
+              "ok": true,
+              "action": "inspect_task_volume_review",
+              "taskId": "scene-1794901792409-k0rwd",
+              "resourceId": "rock.tsp-hardness",
+              "scope": "rendered-sampling-domain-not-geological-boundary",
+              "dimensionsM": [
+                24.499999999999996,
+                97.99999999999997,
+                49.000000000000014
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.5
+                ],
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -474292.4890817242,
+                  5536183.234850105,
+                  3126931.5815502787
+                ],
+                [
+                  -474295.8889317948,
+                  5536225.75196716,
+                  3126955.700749619
+                ],
+                [
+                  -474388.2453285424,
+                  5536167.692948843,
+                  3126945.4808488395
+                ],
+                [
+                  -474391.645178613,
+                  5536210.2100658985,
+                  3126969.6000481797
+                ],
+                [
+                  -474297.41671600245,
+                  5536194.777240277,
+                  3126910.540123295
+                ],
+                [
+                  -474300.81656607304,
+                  5536237.294357333,
+                  3126934.6593226353
+                ],
+                [
+                  -474393.1729628207,
+                  5536179.235339017,
+                  3126924.439421856
+                ],
+                [
+                  -474396.5728128913,
+                  5536221.752456072,
+                  3126948.558621196
+                ]
+              ],
+              "engineeringAcceptance": "not-verified",
+              "depthOcclusion": "not-measured"
+            }
+          }
+        },
+        {
+          "name": "structure",
+          "actual": {
+            "key": "tsp_hardness",
+            "domain": {
+              "dimensionsM": [
+                24.499999999999996,
+                78.99999999999999,
+                49.000000000000014
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.5
+                ],
+                [
+                  0.2,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -474311.05406835227,
+                  5536180.22162435,
+                  3126934.2763122446
+                ],
+                [
+                  -474314.4539184228,
+                  5536222.738741405,
+                  3126958.395511585
+                ],
+                [
+                  -474388.2453285424,
+                  5536167.692948843,
+                  3126945.4808488395
+                ],
+                [
+                  -474391.645178613,
+                  5536210.2100658985,
+                  3126969.6000481797
+                ],
+                [
+                  -474315.98170263047,
+                  5536191.764014523,
+                  3126913.234885261
+                ],
+                [
+                  -474319.38155270106,
+                  5536234.281131579,
+                  3126937.354084601
+                ],
+                [
+                  -474393.1729628207,
+                  5536179.235339017,
+                  3126924.439421856
+                ],
+                [
+                  -474396.5728128913,
+                  5536221.752456072,
+                  3126948.558621196
+                ]
+              ]
+            },
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "edges": 12,
+            "framing": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "tool": {
+              "ok": true,
+              "action": "inspect_task_volume_review",
+              "taskId": "scene-1794901792409-k0rwd",
+              "resourceId": "rock.tsp-hardness",
+              "scope": "rendered-sampling-domain-not-geological-boundary",
+              "dimensionsM": [
+                24.499999999999996,
+                78.99999999999999,
+                49.000000000000014
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.5
+                ],
+                [
+                  0.2,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -474311.05406835227,
+                  5536180.22162435,
+                  3126934.2763122446
+                ],
+                [
+                  -474314.4539184228,
+                  5536222.738741405,
+                  3126958.395511585
+                ],
+                [
+                  -474388.2453285424,
+                  5536167.692948843,
+                  3126945.4808488395
+                ],
+                [
+                  -474391.645178613,
+                  5536210.2100658985,
+                  3126969.6000481797
+                ],
+                [
+                  -474315.98170263047,
+                  5536191.764014523,
+                  3126913.234885261
+                ],
+                [
+                  -474319.38155270106,
+                  5536234.281131579,
+                  3126937.354084601
+                ],
+                [
+                  -474393.1729628207,
+                  5536179.235339017,
+                  3126924.439421856
+                ],
+                [
+                  -474396.5728128913,
+                  5536221.752456072,
+                  3126948.558621196
+                ]
+              ],
+              "engineeringAcceptance": "not-verified",
+              "depthOcclusion": "not-measured"
+            }
+          }
+        }
+      ],
+      "stable": {
+        "taskId": "scene-1794901792409-k0rwd",
+        "camera": [
+          -474133.83754324977,
+          5536241.436179014,
+          3127126.5881272554,
+          -0.694591469817017,
+          -0.16280992383814502,
+          -0.7007393372412124,
+          -0.4180129921833037,
+          0.8840874762996666,
+          0.2089365277208562
+        ],
+        "supportMatrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "sameSupport": true
+      },
+      "scope": "display-clipping-not-geological-interface-or-occlusion-measurement"
+    },
+    {
+      "id": "hardness-support",
+      "initial": {
+        "key": "tsp_hardness",
+        "domain": {
+          "dimensionsM": [
+            24.499999999999996,
+            78.99999999999999,
+            49.000000000000014
+          ],
+          "ranges": [
+            [
+              0.01,
+              0.5
+            ],
+            [
+              0.2,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ]
+          ],
+          "corners": [
+            [
+              -474311.05406835227,
+              5536180.22162435,
+              3126934.2763122446
+            ],
+            [
+              -474314.4539184228,
+              5536222.738741405,
+              3126958.395511585
+            ],
+            [
+              -474388.2453285424,
+              5536167.692948843,
+              3126945.4808488395
+            ],
+            [
+              -474391.645178613,
+              5536210.2100658985,
+              3126969.6000481797
+            ],
+            [
+              -474315.98170263047,
+              5536191.764014523,
+              3126913.234885261
+            ],
+            [
+              -474319.38155270106,
+              5536234.281131579,
+              3126937.354084601
+            ],
+            [
+              -474393.1729628207,
+              5536179.235339017,
+              3126924.439421856
+            ],
+            [
+              -474396.5728128913,
+              5536221.752456072,
+              3126948.558621196
+            ]
+          ]
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "edges": 12,
+        "framing": {
+          "available": true,
+          "projected": 26,
+          "insideSafe": 26,
+          "behind": 0,
+          "safe": {
+            "left": 316,
+            "right": 1004,
+            "top": 76,
+            "bottom": 691
+          },
+          "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+          "occlusion": "not-measured"
+        },
+        "tool": {
+          "ok": true,
+          "action": "inspect_task_volume_review",
+          "taskId": "scene-1794901792409-k0rwd",
+          "resourceId": "rock.tsp-hardness",
+          "scope": "rendered-sampling-domain-not-geological-boundary",
+          "dimensionsM": [
+            24.499999999999996,
+            78.99999999999999,
+            49.000000000000014
+          ],
+          "ranges": [
+            [
+              0.01,
+              0.5
+            ],
+            [
+              0.2,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ]
+          ],
+          "corners": [
+            [
+              -474311.05406835227,
+              5536180.22162435,
+              3126934.2763122446
+            ],
+            [
+              -474314.4539184228,
+              5536222.738741405,
+              3126958.395511585
+            ],
+            [
+              -474388.2453285424,
+              5536167.692948843,
+              3126945.4808488395
+            ],
+            [
+              -474391.645178613,
+              5536210.2100658985,
+              3126969.6000481797
+            ],
+            [
+              -474315.98170263047,
+              5536191.764014523,
+              3126913.234885261
+            ],
+            [
+              -474319.38155270106,
+              5536234.281131579,
+              3126937.354084601
+            ],
+            [
+              -474393.1729628207,
+              5536179.235339017,
+              3126924.439421856
+            ],
+            [
+              -474396.5728128913,
+              5536221.752456072,
+              3126948.558621196
+            ]
+          ],
+          "engineeringAcceptance": "not-verified",
+          "depthOcclusion": "not-measured"
+        }
+      },
+      "full": {
+        "key": "tsp_hardness",
+        "domain": {
+          "dimensionsM": [
+            48.99999999999999,
+            97.99999999999997,
+            49.000000000000014
+          ],
+          "ranges": [
+            [
+              0.01,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ]
+          ],
+          "corners": [
+            [
+              -474292.4890817242,
+              5536183.234850105,
+              3126931.5815502787
+            ],
+            [
+              -474295.8889317948,
+              5536225.75196716,
+              3126955.700749619
+            ],
+            [
+              -474388.2453285424,
+              5536167.692948843,
+              3126945.4808488395
+            ],
+            [
+              -474391.645178613,
+              5536210.2100658985,
+              3126969.6000481797
+            ],
+            [
+              -474302.3443502807,
+              5536206.319630451,
+              3126889.4986963114
+            ],
+            [
+              -474305.7442003513,
+              5536248.836747506,
+              3126913.617895651
+            ],
+            [
+              -474398.10059709894,
+              5536190.777729189,
+              3126903.3979948717
+            ],
+            [
+              -474401.50044716947,
+              5536233.294846245,
+              3126927.517194212
+            ]
+          ]
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "edges": 12,
+        "framing": {
+          "available": true,
+          "projected": 26,
+          "insideSafe": 26,
+          "behind": 0,
+          "safe": {
+            "left": 316,
+            "right": 1004,
+            "top": 76,
+            "bottom": 691
+          },
+          "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+          "occlusion": "not-measured"
+        },
+        "tool": {
+          "ok": true,
+          "action": "inspect_task_volume_review",
+          "taskId": "scene-1794901792409-k0rwd",
+          "resourceId": "rock.tsp-hardness",
+          "scope": "rendered-sampling-domain-not-geological-boundary",
+          "dimensionsM": [
+            48.99999999999999,
+            97.99999999999997,
+            49.000000000000014
+          ],
+          "ranges": [
+            [
+              0.01,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ]
+          ],
+          "corners": [
+            [
+              -474292.4890817242,
+              5536183.234850105,
+              3126931.5815502787
+            ],
+            [
+              -474295.8889317948,
+              5536225.75196716,
+              3126955.700749619
+            ],
+            [
+              -474388.2453285424,
+              5536167.692948843,
+              3126945.4808488395
+            ],
+            [
+              -474391.645178613,
+              5536210.2100658985,
+              3126969.6000481797
+            ],
+            [
+              -474302.3443502807,
+              5536206.319630451,
+              3126889.4986963114
+            ],
+            [
+              -474305.7442003513,
+              5536248.836747506,
+              3126913.617895651
+            ],
+            [
+              -474398.10059709894,
+              5536190.777729189,
+              3126903.3979948717
+            ],
+            [
+              -474401.50044716947,
+              5536233.294846245,
+              3126927.517194212
+            ]
+          ],
+          "engineeringAcceptance": "not-verified",
+          "depthOcclusion": "not-measured"
+        }
+      }
+    },
+    {
+      "id": "integrity-support-factorial",
+      "taskId": "scene-1794901806656-9bzj0",
+      "conditions": [
+        {
+          "condition": "full-plain",
+          "identity": {
+            "taskId": "scene-1794901806656-9bzj0",
+            "camera": [
+              -475140.86037521815,
+              5536133.986081385,
+              3127010.1433381974,
+              -0.49688862401023376,
+              0.10620131731352196,
+              -0.8612914579456186,
+              -0.23159338519661515,
+              0.9402609139065584,
+              0.24954742577870012
+            ],
+            "supportMatrix": [
+              -0.14392406605675112,
+              -0.4984613341146822,
+              0.8548813728245007,
+              0,
+              -0.07440748204530571,
+              0.8668809001860285,
+              0.492931061618497,
+              0,
+              -0.9867874086272936,
+              0.007335072274499671,
+              -0.1618542767101272,
+              0,
+              -475187.255473556,
+              5536146.963433401,
+              3126923.493284961,
+              1
+            ],
+            "sameSupport": true
+          },
+          "style": {
+            "color": null,
+            "mode": 0,
+            "amount": 0.5
+          },
+          "sample": {
+            "cut": {
+              "xmax": 0.99,
+              "ymin": 0.01
+            },
+            "projectedSphereDiameterPx": 319.1243944318974,
+            "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+          },
+          "legend": "完整程度指示 I\n极破碎\nI < 0.2\n破碎\n[0.2, 0.4)\n较破碎\n[0.4, 0.6)\n较完整\n[0.6, 0.8)\n完整\nI ≥ 0.8\n源工点资料 · 示意重定位"
+        },
+        {
+          "condition": "full-focus",
+          "identity": {
+            "taskId": "scene-1794901806656-9bzj0",
+            "camera": [
+              -475140.86037521815,
+              5536133.986081385,
+              3127010.1433381974,
+              -0.49688862401023376,
+              0.10620131731352196,
+              -0.8612914579456186,
+              -0.23159338519661515,
+              0.9402609139065584,
+              0.24954742577870012
+            ],
+            "supportMatrix": [
+              -0.14392406605675112,
+              -0.4984613341146822,
+              0.8548813728245007,
+              0,
+              -0.07440748204530571,
+              0.8668809001860285,
+              0.492931061618497,
+              0,
+              -0.9867874086272936,
+              0.007335072274499671,
+              -0.1618542767101272,
+              0,
+              -475187.255473556,
+              5536146.963433401,
+              3126923.493284961,
+              1
+            ],
+            "sameSupport": true
+          },
+          "style": {
+            "color": [
+              1,
+              0.9411764705882353,
+              0.7490196078431373,
+              1
+            ],
+            "mode": 2,
+            "amount": 0.45
+          },
+          "sample": {
+            "cut": {
+              "xmax": 0.99,
+              "ymin": 0.01
+            },
+            "projectedSphereDiameterPx": 319.1243944318974,
+            "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+          },
+          "legend": "完整程度指示 I\n极破碎\nI < 0.2\n破碎\n[0.2, 0.4)\n较破碎\n[0.4, 0.6)\n较完整\n[0.6, 0.8)\n完整\nI ≥ 0.8\n源工点资料 · 示意重定位"
+        },
+        {
+          "condition": "cut-plain",
+          "identity": {
+            "taskId": "scene-1794901806656-9bzj0",
+            "camera": [
+              -475140.86037521815,
+              5536133.986081385,
+              3127010.1433381974,
+              -0.49688862401023376,
+              0.10620131731352196,
+              -0.8612914579456186,
+              -0.23159338519661515,
+              0.9402609139065584,
+              0.24954742577870012
+            ],
+            "supportMatrix": [
+              -0.14392406605675112,
+              -0.4984613341146822,
+              0.8548813728245007,
+              0,
+              -0.07440748204530571,
+              0.8668809001860285,
+              0.492931061618497,
+              0,
+              -0.9867874086272936,
+              0.007335072274499671,
+              -0.1618542767101272,
+              0,
+              -475187.255473556,
+              5536146.963433401,
+              3126923.493284961,
+              1
+            ],
+            "sameSupport": true
+          },
+          "style": {
+            "color": null,
+            "mode": 0,
+            "amount": 0.5
+          },
+          "sample": {
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "projectedSphereDiameterPx": 319.1243944318974,
+            "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+          },
+          "legend": "完整程度指示 I\n极破碎\nI < 0.2\n破碎\n[0.2, 0.4)\n较破碎\n[0.4, 0.6)\n较完整\n[0.6, 0.8)\n完整\nI ≥ 0.8\n源工点资料 · 示意重定位"
+        },
+        {
+          "condition": "cut-focus",
+          "identity": {
+            "taskId": "scene-1794901806656-9bzj0",
+            "camera": [
+              -475140.86037521815,
+              5536133.986081385,
+              3127010.1433381974,
+              -0.49688862401023376,
+              0.10620131731352196,
+              -0.8612914579456186,
+              -0.23159338519661515,
+              0.9402609139065584,
+              0.24954742577870012
+            ],
+            "supportMatrix": [
+              -0.14392406605675112,
+              -0.4984613341146822,
+              0.8548813728245007,
+              0,
+              -0.07440748204530571,
+              0.8668809001860285,
+              0.492931061618497,
+              0,
+              -0.9867874086272936,
+              0.007335072274499671,
+              -0.1618542767101272,
+              0,
+              -475187.255473556,
+              5536146.963433401,
+              3126923.493284961,
+              1
+            ],
+            "sameSupport": true
+          },
+          "style": {
+            "color": [
+              1,
+              0.9411764705882353,
+              0.7490196078431373,
+              1
+            ],
+            "mode": 2,
+            "amount": 0.45
+          },
+          "sample": {
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "projectedSphereDiameterPx": 319.1243944318974,
+            "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+          },
+          "legend": "完整程度指示 I\n极破碎\nI < 0.2\n破碎\n[0.2, 0.4)\n较破碎\n[0.4, 0.6)\n较完整\n[0.6, 0.8)\n完整\nI ≥ 0.8\n源工点资料 · 示意重定位"
+        }
+      ]
+    },
+    {
+      "id": "integrity-support-restored-feedback",
+      "review": {
+        "plan": {
+          "sceneKey": "[\"scene-1794901806656-9bzj0\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.tsp-integrity\",\"support.modeler-zz-va\"]]",
+          "taskId": "scene-1794901806656-9bzj0",
+          "objective": "spatial-relation",
+          "userRequest": "查看支护与邻近围岩的局部空间关系",
+          "emphasis": "source",
+          "referenceScope": "near-support",
+          "focusResourceIds": [
+            "support.modeler-zz-va"
+          ],
+          "referenceResourceIds": [
+            "rock.tsp-integrity"
+          ],
+          "questions": [
+            "支护及邻近围岩是否可辨，哪些全段参照未进入局部视图？"
+          ],
+          "candidate": {
+            "type": "camera-view",
+            "view": "support-context",
+            "reason": "近端剖切与局部取景组合；仅保留支护及邻近采样参照，不表示全体范围入镜"
+          },
+          "completionConditions": [
+            "执行前后任务与资源保持一致",
+            "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+            "画面取景与工程依据分开，待回答问题不作为已证实结论"
+          ],
+          "evidence": {
+            "capturedAt": "2026-11-17T07:50:11.861Z",
+            "taskId": "scene-1794901806656-9bzj0",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.tsp-integrity",
+              "support.modeler-zz-va"
+            ],
+            "resources": [
+              {
+                "id": "rock.tsp-integrity",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tsp_actual/integrity.json",
+                  "/data/tsp_actual/integrity_volume.png"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.modeler-zz-va",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va"
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 691
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794901806656-9bzj0",
+              "resourceIds": [
+                "rock.tsp-integrity",
+                "support.modeler-zz-va"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [
+              "common.tunnel"
+            ],
+            "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+            "supportContext": {
+              "available": true,
+              "scope": "local-sampling-reference-not-geological-feature",
+              "resourceId": "rock.tsp-integrity",
+              "cut": {
+                "xmax": 0.99,
+                "ymin": 0.01
+              },
+              "focusFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "focusDisplay": [
+                {
+                  "colorRgba": null,
+                  "colorBlendMode": 0,
+                  "colorBlendAmount": 0.5
+                }
+              ],
+              "reference": {
+                "insideSafe": 6,
+                "total": 6,
+                "behind": 0,
+                "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+              },
+              "renderedDomainFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "screenFraming": "focus-and-local-reference-in-safe-area",
+              "informationSufficiency": "not-verified",
+              "depthOcclusion": "not-measured",
+              "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.tsp-integrity",
+                "code": "observation-incomplete",
+                "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+              },
+              {
+                "code": "loaded-outside-current-scene",
+                "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "engineeringAcceptance": "not-verified"
+        },
+        "phase": "restored",
+        "attempts": 1,
+        "remaining": 1,
+        "feedback": {
+          "before": {
+            "capturedAt": "2026-11-17T07:50:11.865Z",
+            "taskId": "scene-1794901806656-9bzj0",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.tsp-integrity",
+              "support.modeler-zz-va"
+            ],
+            "resources": [
+              {
+                "id": "rock.tsp-integrity",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tsp_actual/integrity.json",
+                  "/data/tsp_actual/integrity_volume.png"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.modeler-zz-va",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va"
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 691
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794901806656-9bzj0",
+              "resourceIds": [
+                "rock.tsp-integrity",
+                "support.modeler-zz-va"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [
+              "common.tunnel"
+            ],
+            "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+            "supportContext": {
+              "available": true,
+              "scope": "local-sampling-reference-not-geological-feature",
+              "resourceId": "rock.tsp-integrity",
+              "cut": {
+                "xmax": 0.99,
+                "ymin": 0.01
+              },
+              "focusFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "focusDisplay": [
+                {
+                  "colorRgba": null,
+                  "colorBlendMode": 0,
+                  "colorBlendAmount": 0.5
+                }
+              ],
+              "reference": {
+                "insideSafe": 6,
+                "total": 6,
+                "behind": 0,
+                "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+              },
+              "renderedDomainFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "screenFraming": "focus-and-local-reference-in-safe-area",
+              "informationSufficiency": "not-verified",
+              "depthOcclusion": "not-measured",
+              "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.tsp-integrity",
+                "code": "observation-incomplete",
+                "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+              },
+              {
+                "code": "loaded-outside-current-scene",
+                "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "after": {
+            "capturedAt": "2026-11-17T07:50:11.869Z",
+            "taskId": "scene-1794901806656-9bzj0",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.tsp-integrity",
+              "support.modeler-zz-va"
+            ],
+            "resources": [
+              {
+                "id": "rock.tsp-integrity",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tsp_actual/integrity.json",
+                  "/data/tsp_actual/integrity_volume.png"
+                ],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.modeler-zz-va",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va"
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 691
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794901806656-9bzj0",
+              "resourceIds": [
+                "rock.tsp-integrity",
+                "support.modeler-zz-va"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [
+              "common.tunnel"
+            ],
+            "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+            "supportContext": {
+              "available": true,
+              "scope": "local-sampling-reference-not-geological-feature",
+              "resourceId": "rock.tsp-integrity",
+              "cut": {
+                "xmax": 0.5,
+                "ymin": 0.2
+              },
+              "focusFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 26,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "focusDisplay": [
+                {
+                  "colorRgba": null,
+                  "colorBlendMode": 0,
+                  "colorBlendAmount": 0.5
+                }
+              ],
+              "reference": {
+                "insideSafe": 6,
+                "total": 6,
+                "behind": 0,
+                "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+              },
+              "renderedDomainFraming": {
+                "available": true,
+                "projected": 26,
+                "insideSafe": 7,
+                "behind": 0,
+                "safe": {
+                  "left": 316,
+                  "right": 1004,
+                  "top": 76,
+                  "bottom": 691
+                },
+                "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                "occlusion": "not-measured"
+              },
+              "screenFraming": "focus-and-local-reference-in-safe-area",
+              "informationSufficiency": "not-verified",
+              "depthOcclusion": "not-measured",
+              "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.tsp-integrity",
+                "code": "observation-incomplete",
+                "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+              },
+              {
+                "code": "loaded-outside-current-scene",
+                "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          }
+        },
+        "restoredFeedback": {
+          "capturedAt": "2026-11-17T07:50:15.838Z",
+          "taskId": "scene-1794901806656-9bzj0",
+          "workflowStatus": "completed",
+          "completedSceneAvailable": true,
+          "chainageRange": {
+            "start": 2244,
+            "end": 2244
+          },
+          "phase": "constructed-then-enhanced",
+          "resourceIds": [
+            "rock.tsp-integrity",
+            "support.modeler-zz-va"
+          ],
+          "resources": [
+            {
+              "id": "rock.tsp-integrity",
+              "role": "task-root",
+              "module": "rock",
+              "sourceHints": [],
+              "sourceHintsTruncated": false,
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/data/tsp_actual/integrity.json",
+                "/data/tsp_actual/integrity_volume.png"
+              ],
+              "observation": {
+                "targetCount": 0,
+                "readyModelCount": 0,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "incomplete",
+                "framing": {
+                  "available": false
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            },
+            {
+              "id": "support.modeler-zz-va",
+              "role": "task-root",
+              "module": "support",
+              "sourceHints": [
+                {
+                  "componentScope": "source-model-components",
+                  "supportType": "ZZ-Va"
+                }
+              ],
+              "sourceHintsTruncated": false,
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+              ],
+              "observation": {
+                "targetCount": 1,
+                "readyModelCount": 1,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "declared-targets-only",
+                "framing": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 691
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            }
+          ],
+          "evidenceAssessment": {
+            "taskId": "scene-1794901806656-9bzj0",
+            "resourceIds": [
+              "rock.tsp-integrity",
+              "support.modeler-zz-va"
+            ],
+            "facts": [],
+            "gaps": [
+              {
+                "id": "task-design",
+                "status": "not-provided-to-this-assessment",
+                "question": "源模型与本工段设计是否对应？",
+                "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+              },
+              {
+                "id": "field-data",
+                "status": "not-provided-to-this-assessment",
+                "question": "是否具备同一基准的实测对比？",
+                "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+              },
+              {
+                "id": "geometry",
+                "status": "not-measured-by-this-assessment",
+                "question": "接缝、净空或断面贴合是否成立？",
+                "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+              }
+            ],
+            "factWindow": {
+              "availableInRetainedJournal": 0,
+              "retained": 0,
+              "omitted": 0,
+              "scope": "within-retained-journal-not-full-history"
+            },
+            "historyWindow": {
+              "locations": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "scope": "whole-task-window-before-resource-filter"
+            },
+            "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+            "questionStatus": "unanswered-requires-task-evidence",
+            "engineeringAcceptance": "not-verified",
+            "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+          },
+          "locationEvidence": [],
+          "evidenceProgress": {
+            "scope": "interaction-history-not-question-completion",
+            "locationRecords": {
+              "total": 0,
+              "retained": 0,
+              "omitted": 0
+            },
+            "stepRecords": {
+              "total": 0,
+              "retained": 0,
+              "omitted": 0
+            },
+            "steps": [],
+            "questionsStatus": "unanswered-requires-task-evidence",
+            "engineeringAcceptance": "not-verified"
+          },
+          "loadedOutsideCurrentScene": [
+            "common.tunnel"
+          ],
+          "taskSourceNote": "围岩物探解释体素源锚点为 YK2+244，当前按目标中线示意重定位；TSP 来源报告为 X1DK2+937，不能视作目标工点实测结论；新支护模块导出的 1 m 断面模板按平台 YK 中线装配；当前使用已导出模型，非按本任务参数重新生成，不代表目标里程实测支护或质量结论",
+          "supportContext": {
+            "available": true,
+            "scope": "local-sampling-reference-not-geological-feature",
+            "resourceId": "rock.tsp-integrity",
+            "cut": {
+              "xmax": 0.99,
+              "ymin": 0.01
+            },
+            "focusFraming": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "focusDisplay": [
+              {
+                "colorRgba": null,
+                "colorBlendMode": 0,
+                "colorBlendAmount": 0.5
+              }
+            ],
+            "reference": {
+              "insideSafe": 6,
+              "total": 6,
+              "behind": 0,
+              "scope": "nearest-point-and-axis-probes-within-current-sampling-box"
+            },
+            "renderedDomainFraming": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "screenFraming": "focus-and-local-reference-in-safe-area",
+            "informationSufficiency": "not-verified",
+            "depthOcclusion": "not-measured",
+            "nextCheck": "重点及局部采样参照投影入区；停止仅为入镜的重复取景，仍需核查数据与构件是否可辨。"
+          },
+          "issues": [
+            {
+              "resourceId": "rock.tsp-integrity",
+              "code": "observation-incomplete",
+              "detail": "当前资源未完整提供可观察的Cesium模型目标，模型就绪/显示范围只能部分核查，不能推断模型不存在"
+            },
+            {
+              "code": "loaded-outside-current-scene",
+              "detail": "存在当前任务依赖以外的已加载资源；可能由其他页面持有，不能直接认定泄漏或自动释放"
+            }
+          ],
+          "engineeringAcceptance": "not-verified",
+          "limitations": [
+            "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+            "未测模型间深度遮挡、净空侵限或现场配准误差",
+            "显隐仅观察Cesium.Model.show，不统计模型内部节点或构件的显隐；ready不能证明画面有可辨像素",
+            "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+          ],
+          "nextChecks": [
+            "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+          ]
+        },
+        "conditions": [
+          {
+            "resourceId": "support.modeler-zz-va",
+            "runtime": "loaded",
+            "framing": "26-samples-inside",
+            "modelCoverage": "declared-targets-only"
+          }
+        ],
+        "questionsStatus": "unanswered-requires-task-evidence",
+        "engineeringAcceptance": "not-verified"
+      }
+    },
+    {
+      "id": "integrity-support-combined-local-context",
+      "before": {
+        "identity": {
+          "taskId": "scene-1794901806656-9bzj0",
+          "camera": [
+            -475093.4026117889,
+            5536140.5599162225,
+            3127168.428414217,
+            -0.4566999923518556,
+            -0.0355049649282021,
+            -0.8889119835232633,
+            -0.3032535106838595,
+            0.9455711855311533,
+            0.1180357630175006
+          ],
+          "supportMatrix": [
+            -0.14392406605675112,
+            -0.4984613341146822,
+            0.8548813728245007,
+            0,
+            -0.07440748204530571,
+            0.8668809001860285,
+            0.492931061618497,
+            0,
+            -0.9867874086272936,
+            0.007335072274499671,
+            -0.1618542767101272,
+            0,
+            -475187.255473556,
+            5536146.963433401,
+            3126923.493284961,
+            1
+          ],
+          "sameSupport": true
+        },
+        "measure": {
+          "cut": {
+            "xmax": 0.99,
+            "ymin": 0.01
+          },
+          "projectedSphereDiameterPx": 120.47836216569988,
+          "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+        }
+      },
+      "after": {
+        "identity": {
+          "taskId": "scene-1794901806656-9bzj0",
+          "camera": [
+            -475140.86037521815,
+            5536133.986081385,
+            3127010.1433381974,
+            -0.49688862401023376,
+            0.10620131731352196,
+            -0.8612914579456186,
+            -0.23159338519661515,
+            0.9402609139065584,
+            0.24954742577870012
+          ],
+          "supportMatrix": [
+            -0.14392406605675112,
+            -0.4984613341146822,
+            0.8548813728245007,
+            0,
+            -0.07440748204530571,
+            0.8668809001860285,
+            0.492931061618497,
+            0,
+            -0.9867874086272936,
+            0.007335072274499671,
+            -0.1618542767101272,
+            0,
+            -475187.255473556,
+            5536146.963433401,
+            3126923.493284961,
+            1
+          ],
+          "sameSupport": true
+        },
+        "measure": {
+          "cut": {
+            "xmax": 0.5,
+            "ymin": 0.2
+          },
+          "projectedSphereDiameterPx": 319.1243944318974,
+          "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+        }
+      },
+      "restored": {
+        "identity": {
+          "taskId": "scene-1794901806656-9bzj0",
+          "camera": [
+            -475093.4026117889,
+            5536140.5599162225,
+            3127168.428414217,
+            -0.4566999923518489,
+            -0.035504964928193654,
+            -0.8889119835232671,
+            -0.3032535106838504,
+            0.945571185531155,
+            0.11803576301751031
+          ],
+          "supportMatrix": [
+            -0.14392406605675112,
+            -0.4984613341146822,
+            0.8548813728245007,
+            0,
+            -0.07440748204530571,
+            0.8668809001860285,
+            0.492931061618497,
+            0,
+            -0.9867874086272936,
+            0.007335072274499671,
+            -0.1618542767101272,
+            0,
+            -475187.255473556,
+            5536146.963433401,
+            3126923.493284961,
+            1
+          ],
+          "sameSupport": true
+        },
+        "measure": {
+          "cut": {
+            "xmax": 0.99,
+            "ymin": 0.01
+          },
+          "projectedSphereDiameterPx": 120.47836216569988,
+          "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+        }
+      }
+    },
+    {
+      "id": "integrity-support-explicit-full-reference",
+      "actual": {
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "projectedSphereDiameterPx": 122.28983886108357,
+        "measurement": "sphere-center-plane-approximation-not-visible-pixels"
+      }
+    },
+    {
+      "id": "integrity-support-fixed-camera-strategies",
+      "modes": [
+        {
+          "name": "full",
+          "actual": {
+            "key": "tsp_integrity",
+            "domain": {
+              "dimensionsM": [
+                48.99999999999999,
+                97.99999999999999,
+                49
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -475190.3759067107,
+                  5536111.721588594,
+                  3126931.0472898744
+                ],
+                [
+                  -475193.78084534017,
+                  5536154.194054368,
+                  3126955.2443153947
+                ],
+                [
+                  -475286.82416307664,
+                  5536113.81363285,
+                  3126913.803241777
+                ],
+                [
+                  -475290.2291017061,
+                  5536156.286098624,
+                  3126938.000267297
+                ],
+                [
+                  -475182.38592210994,
+                  5536136.134607432,
+                  3126889.32002472
+                ],
+                [
+                  -475185.7908607394,
+                  5536178.607073206,
+                  3126913.51705024
+                ],
+                [
+                  -475278.8341784759,
+                  5536138.226651688,
+                  3126872.0759766223
+                ],
+                [
+                  -475282.2391171054,
+                  5536180.699117462,
+                  3126896.2730021426
+                ]
+              ]
+            },
+            "cut": {
+              "xmax": 0.99,
+              "ymin": 0.01
+            },
+            "edges": 12,
+            "framing": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "tool": {
+              "ok": true,
+              "action": "inspect_task_volume_review",
+              "taskId": "scene-1794901806656-9bzj0",
+              "resourceId": "rock.tsp-integrity",
+              "scope": "rendered-sampling-domain-not-geological-boundary",
+              "dimensionsM": [
+                48.99999999999999,
+                97.99999999999999,
+                49
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -475190.3759067107,
+                  5536111.721588594,
+                  3126931.0472898744
+                ],
+                [
+                  -475193.78084534017,
+                  5536154.194054368,
+                  3126955.2443153947
+                ],
+                [
+                  -475286.82416307664,
+                  5536113.81363285,
+                  3126913.803241777
+                ],
+                [
+                  -475290.2291017061,
+                  5536156.286098624,
+                  3126938.000267297
+                ],
+                [
+                  -475182.38592210994,
+                  5536136.134607432,
+                  3126889.32002472
+                ],
+                [
+                  -475185.7908607394,
+                  5536178.607073206,
+                  3126913.51705024
+                ],
+                [
+                  -475278.8341784759,
+                  5536138.226651688,
+                  3126872.0759766223
+                ],
+                [
+                  -475282.2391171054,
+                  5536180.699117462,
+                  3126896.2730021426
+                ]
+              ],
+              "engineeringAcceptance": "not-verified",
+              "depthOcclusion": "not-measured"
+            }
+          }
+        },
+        {
+          "name": "geology",
+          "actual": {
+            "key": "tsp_integrity",
+            "domain": {
+              "dimensionsM": [
+                24.499999999999996,
+                97.99999999999999,
+                49
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.5
+                ],
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -475190.3759067107,
+                  5536111.721588594,
+                  3126931.0472898744
+                ],
+                [
+                  -475193.78084534017,
+                  5536154.194054368,
+                  3126955.2443153947
+                ],
+                [
+                  -475286.82416307664,
+                  5536113.81363285,
+                  3126913.803241777
+                ],
+                [
+                  -475290.2291017061,
+                  5536156.286098624,
+                  3126938.000267297
+                ],
+                [
+                  -475186.3809144103,
+                  5536123.928098014,
+                  3126910.1836572974
+                ],
+                [
+                  -475189.78585303976,
+                  5536166.400563788,
+                  3126934.380682817
+                ],
+                [
+                  -475282.8291707763,
+                  5536126.020142269,
+                  3126892.9396091998
+                ],
+                [
+                  -475286.2341094058,
+                  5536168.492608042,
+                  3126917.1366347196
+                ]
+              ]
+            },
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.01
+            },
+            "edges": 12,
+            "framing": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "tool": {
+              "ok": true,
+              "action": "inspect_task_volume_review",
+              "taskId": "scene-1794901806656-9bzj0",
+              "resourceId": "rock.tsp-integrity",
+              "scope": "rendered-sampling-domain-not-geological-boundary",
+              "dimensionsM": [
+                24.499999999999996,
+                97.99999999999999,
+                49
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.5
+                ],
+                [
+                  0.01,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -475190.3759067107,
+                  5536111.721588594,
+                  3126931.0472898744
+                ],
+                [
+                  -475193.78084534017,
+                  5536154.194054368,
+                  3126955.2443153947
+                ],
+                [
+                  -475286.82416307664,
+                  5536113.81363285,
+                  3126913.803241777
+                ],
+                [
+                  -475290.2291017061,
+                  5536156.286098624,
+                  3126938.000267297
+                ],
+                [
+                  -475186.3809144103,
+                  5536123.928098014,
+                  3126910.1836572974
+                ],
+                [
+                  -475189.78585303976,
+                  5536166.400563788,
+                  3126934.380682817
+                ],
+                [
+                  -475282.8291707763,
+                  5536126.020142269,
+                  3126892.9396091998
+                ],
+                [
+                  -475286.2341094058,
+                  5536168.492608042,
+                  3126917.1366347196
+                ]
+              ],
+              "engineeringAcceptance": "not-verified",
+              "depthOcclusion": "not-measured"
+            }
+          }
+        },
+        {
+          "name": "structure",
+          "actual": {
+            "key": "tsp_integrity",
+            "domain": {
+              "dimensionsM": [
+                24.499999999999996,
+                78.99999999999999,
+                49
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.5
+                ],
+                [
+                  0.2,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -475209.0750584551,
+                  5536112.127189011,
+                  3126927.70405606
+                ],
+                [
+                  -475212.4799970846,
+                  5536154.599654785,
+                  3126951.9010815797
+                ],
+                [
+                  -475286.82416307664,
+                  5536113.81363285,
+                  3126913.803241777
+                ],
+                [
+                  -475290.2291017061,
+                  5536156.286098624,
+                  3126938.000267297
+                ],
+                [
+                  -475205.0800661547,
+                  5536124.33369843,
+                  3126906.8404234825
+                ],
+                [
+                  -475208.4850047842,
+                  5536166.806164204,
+                  3126931.0374490027
+                ],
+                [
+                  -475282.8291707763,
+                  5536126.020142269,
+                  3126892.9396091998
+                ],
+                [
+                  -475286.2341094058,
+                  5536168.492608042,
+                  3126917.1366347196
+                ]
+              ]
+            },
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "edges": 12,
+            "framing": {
+              "available": true,
+              "projected": 26,
+              "insideSafe": 26,
+              "behind": 0,
+              "safe": {
+                "left": 316,
+                "right": 1004,
+                "top": 76,
+                "bottom": 691
+              },
+              "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+              "occlusion": "not-measured"
+            },
+            "tool": {
+              "ok": true,
+              "action": "inspect_task_volume_review",
+              "taskId": "scene-1794901806656-9bzj0",
+              "resourceId": "rock.tsp-integrity",
+              "scope": "rendered-sampling-domain-not-geological-boundary",
+              "dimensionsM": [
+                24.499999999999996,
+                78.99999999999999,
+                49
+              ],
+              "ranges": [
+                [
+                  0.01,
+                  0.5
+                ],
+                [
+                  0.2,
+                  0.99
+                ],
+                [
+                  0.01,
+                  0.99
+                ]
+              ],
+              "corners": [
+                [
+                  -475209.0750584551,
+                  5536112.127189011,
+                  3126927.70405606
+                ],
+                [
+                  -475212.4799970846,
+                  5536154.599654785,
+                  3126951.9010815797
+                ],
+                [
+                  -475286.82416307664,
+                  5536113.81363285,
+                  3126913.803241777
+                ],
+                [
+                  -475290.2291017061,
+                  5536156.286098624,
+                  3126938.000267297
+                ],
+                [
+                  -475205.0800661547,
+                  5536124.33369843,
+                  3126906.8404234825
+                ],
+                [
+                  -475208.4850047842,
+                  5536166.806164204,
+                  3126931.0374490027
+                ],
+                [
+                  -475282.8291707763,
+                  5536126.020142269,
+                  3126892.9396091998
+                ],
+                [
+                  -475286.2341094058,
+                  5536168.492608042,
+                  3126917.1366347196
+                ]
+              ],
+              "engineeringAcceptance": "not-verified",
+              "depthOcclusion": "not-measured"
+            }
+          }
+        }
+      ],
+      "stable": {
+        "taskId": "scene-1794901806656-9bzj0",
+        "camera": [
+          -475093.4026117889,
+          5536140.5599162225,
+          3127168.428414217,
+          -0.4566999923518567,
+          -0.035504964928203986,
+          -0.8889119835232626,
+          -0.3032535106838597,
+          0.9455711855311525,
+          0.11803576301750768
+        ],
+        "supportMatrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "sameSupport": true
+      },
+      "scope": "display-clipping-not-geological-interface-or-occlusion-measurement"
+    },
+    {
+      "id": "integrity-support",
+      "initial": {
+        "key": "tsp_integrity",
+        "domain": {
+          "dimensionsM": [
+            24.499999999999996,
+            78.99999999999999,
+            49
+          ],
+          "ranges": [
+            [
+              0.01,
+              0.5
+            ],
+            [
+              0.2,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ]
+          ],
+          "corners": [
+            [
+              -475209.0750584551,
+              5536112.127189011,
+              3126927.70405606
+            ],
+            [
+              -475212.4799970846,
+              5536154.599654785,
+              3126951.9010815797
+            ],
+            [
+              -475286.82416307664,
+              5536113.81363285,
+              3126913.803241777
+            ],
+            [
+              -475290.2291017061,
+              5536156.286098624,
+              3126938.000267297
+            ],
+            [
+              -475205.0800661547,
+              5536124.33369843,
+              3126906.8404234825
+            ],
+            [
+              -475208.4850047842,
+              5536166.806164204,
+              3126931.0374490027
+            ],
+            [
+              -475282.8291707763,
+              5536126.020142269,
+              3126892.9396091998
+            ],
+            [
+              -475286.2341094058,
+              5536168.492608042,
+              3126917.1366347196
+            ]
+          ]
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "edges": 12,
+        "framing": {
+          "available": true,
+          "projected": 26,
+          "insideSafe": 26,
+          "behind": 0,
+          "safe": {
+            "left": 316,
+            "right": 1004,
+            "top": 76,
+            "bottom": 691
+          },
+          "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+          "occlusion": "not-measured"
+        },
+        "tool": {
+          "ok": true,
+          "action": "inspect_task_volume_review",
+          "taskId": "scene-1794901806656-9bzj0",
+          "resourceId": "rock.tsp-integrity",
+          "scope": "rendered-sampling-domain-not-geological-boundary",
+          "dimensionsM": [
+            24.499999999999996,
+            78.99999999999999,
+            49
+          ],
+          "ranges": [
+            [
+              0.01,
+              0.5
+            ],
+            [
+              0.2,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ]
+          ],
+          "corners": [
+            [
+              -475209.0750584551,
+              5536112.127189011,
+              3126927.70405606
+            ],
+            [
+              -475212.4799970846,
+              5536154.599654785,
+              3126951.9010815797
+            ],
+            [
+              -475286.82416307664,
+              5536113.81363285,
+              3126913.803241777
+            ],
+            [
+              -475290.2291017061,
+              5536156.286098624,
+              3126938.000267297
+            ],
+            [
+              -475205.0800661547,
+              5536124.33369843,
+              3126906.8404234825
+            ],
+            [
+              -475208.4850047842,
+              5536166.806164204,
+              3126931.0374490027
+            ],
+            [
+              -475282.8291707763,
+              5536126.020142269,
+              3126892.9396091998
+            ],
+            [
+              -475286.2341094058,
+              5536168.492608042,
+              3126917.1366347196
+            ]
+          ],
+          "engineeringAcceptance": "not-verified",
+          "depthOcclusion": "not-measured"
+        }
+      },
+      "full": {
+        "key": "tsp_integrity",
+        "domain": {
+          "dimensionsM": [
+            48.99999999999999,
+            97.99999999999999,
+            49
+          ],
+          "ranges": [
+            [
+              0.01,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ]
+          ],
+          "corners": [
+            [
+              -475190.3759067107,
+              5536111.721588594,
+              3126931.0472898744
+            ],
+            [
+              -475193.78084534017,
+              5536154.194054368,
+              3126955.2443153947
+            ],
+            [
+              -475286.82416307664,
+              5536113.81363285,
+              3126913.803241777
+            ],
+            [
+              -475290.2291017061,
+              5536156.286098624,
+              3126938.000267297
+            ],
+            [
+              -475182.38592210994,
+              5536136.134607432,
+              3126889.32002472
+            ],
+            [
+              -475185.7908607394,
+              5536178.607073206,
+              3126913.51705024
+            ],
+            [
+              -475278.8341784759,
+              5536138.226651688,
+              3126872.0759766223
+            ],
+            [
+              -475282.2391171054,
+              5536180.699117462,
+              3126896.2730021426
+            ]
+          ]
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "edges": 12,
+        "framing": {
+          "available": true,
+          "projected": 26,
+          "insideSafe": 26,
+          "behind": 0,
+          "safe": {
+            "left": 316,
+            "right": 1004,
+            "top": 76,
+            "bottom": 691
+          },
+          "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+          "occlusion": "not-measured"
+        },
+        "tool": {
+          "ok": true,
+          "action": "inspect_task_volume_review",
+          "taskId": "scene-1794901806656-9bzj0",
+          "resourceId": "rock.tsp-integrity",
+          "scope": "rendered-sampling-domain-not-geological-boundary",
+          "dimensionsM": [
+            48.99999999999999,
+            97.99999999999999,
+            49
+          ],
+          "ranges": [
+            [
+              0.01,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ],
+            [
+              0.01,
+              0.99
+            ]
+          ],
+          "corners": [
+            [
+              -475190.3759067107,
+              5536111.721588594,
+              3126931.0472898744
+            ],
+            [
+              -475193.78084534017,
+              5536154.194054368,
+              3126955.2443153947
+            ],
+            [
+              -475286.82416307664,
+              5536113.81363285,
+              3126913.803241777
+            ],
+            [
+              -475290.2291017061,
+              5536156.286098624,
+              3126938.000267297
+            ],
+            [
+              -475182.38592210994,
+              5536136.134607432,
+              3126889.32002472
+            ],
+            [
+              -475185.7908607394,
+              5536178.607073206,
+              3126913.51705024
+            ],
+            [
+              -475278.8341784759,
+              5536138.226651688,
+              3126872.0759766223
+            ],
+            [
+              -475282.2391171054,
+              5536180.699117462,
+              3126896.2730021426
+            ]
+          ],
+          "engineeringAcceptance": "not-verified",
+          "depthOcclusion": "not-measured"
+        }
+      }
+    }
+  ],
+  "diagnostics": [],
+  "configRequests": [
+    "/src/assets/data/centerLine.json",
+    "/src/assets/data/centerline_mileage.json",
+    "/data/task-asset-manifest.json",
+    "/data/tsp_actual/hardness.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/tsp_actual/integrity.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json"
+  ],
+  "released": {
+    "domain": false,
+    "edges": 0
+  }
+}

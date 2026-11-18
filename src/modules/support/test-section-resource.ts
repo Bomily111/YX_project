@@ -16,6 +16,7 @@ import {supportComponentLabel} from './component-labels'
 import {supportLongitudinalRows,supportLayoutFinding} from './longitudinal-layout'
 import {supportReviewEvidence} from './review-evidence'
 import {supportSectionComparison} from './section-comparison'
+import {validGeneratedBounds,generatedBoundsWorldPoints} from './generated-bounds'
 export const supportLayerRevision=ref(0)
 export const TEST_SUPPORT_ID = 'support.test-section'
 export const TEST_SUPPORT_PATH = '/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb'
@@ -27,6 +28,13 @@ const activeModels = new Map<string, C.Model[]>()
 const activeSummaries = new Map<string, any>()
 export const getTestSectionSupportSummaries = (ids?:readonly string[]) => [...activeSummaries].filter(([id])=>!ids||ids.includes(id)).map(([id,value])=>({id,...value}))
 export const getTestSectionSupportModels = (ids?: readonly string[]) => [...activeModels].filter(([id]) => !ids || ids.includes(id)).flatMap(([, models]) => models)
+export function getTestSupportComponentSphere(id:string,component:string):C.BoundingSphere|undefined {
+ const summary=activeSummaries.get(id),models=activeModels.get(id),groups=summary?.groups?.filter((g:any)=>g.component===component)
+ if(summary?.layout!=='1064m-component-example'||!models?.length||models.some(m=>!m.ready)||!groups?.length||groups.some((g:any)=>!validGeneratedBounds(g.generatedBounds)))return undefined
+ const points:C.Cartesian3[]=[]
+ for(const model of models)for(const group of groups)points.push(...generatedBoundsWorldPoints(group.generatedBounds,model.modelMatrix))
+ return C.BoundingSphere.fromPoints(points)
+}
 export const getTestSectionSupport = () => getTestSectionSupportModels()[0]
 export function getTaskSupportLayers(ids: readonly string[]) {
   return getTestSectionSupportSummaries(ids).flatMap(summary => {
@@ -68,6 +76,33 @@ export function setTaskSupportLayer(id:string,component:string,visible:boolean|'
   nodes.forEach((node:any,index:number)=>{node.show=visible==='default'?groups[index%groups.length].visible:visible})
   supportLayerRevision.value++
   viewerService.current?.scene.requestRender()
+}
+export type TaskSupportNodeRestore = (()=>void)&{isCurrent:()=>boolean}
+/** Preserve each node's state, including partially visible component groups. */
+export function captureTaskSupportNodes(id:string):TaskSupportNodeRestore {
+  const models=activeModels.get(id),summary=activeSummaries.get(id)
+  if(!summary?.groups?.length)return Object.assign(()=>{},{isCurrent:()=>true})
+  if(!models?.length||models.some(model=>!model.ready))throw Error('当前构件尚不可观察')
+  const nodes=models.flatMap(model=>summary.groups.map((group:any)=>model.getNode(group.name)))
+  if(nodes.some(node=>!node))throw Error('当前构件节点不完整，未改变显示')
+  const saved=nodes.map(node=>({node:node!,show:node!.show}))
+  const restore=()=>{
+    if(activeModels.get(id)!==models||models.some(model=>model.isDestroyed()))return
+    saved.forEach(item=>{item.node.show=item.show});supportLayerRevision.value++;viewerService.current?.scene.requestRender()
+  }
+  return Object.assign(restore,{isCurrent:()=>activeModels.get(id)===models&&!models.some(model=>model.isDestroyed())&&saved.every(item=>item.node.show===item.show)})
+}
+export function revealTaskSupportComponent(id:string,component:string):TaskSupportNodeRestore {
+  const summary=activeSummaries.get(id)
+  if(activeModels.get(id)?.some(model=>model.show===false))throw Error('支护模型整体隐藏，未修改构件；请先核对整体显隐')
+  if(!summary?.groups?.some((group:any)=>group.component===component))throw Error('当前构件尚不可观察')
+  const restore=captureTaskSupportNodes(id)
+  try{
+    setTaskSupportLayer(id,component,true)
+    for(const shell of ['primary_concrete','secondary_lining'])if(shell!==component&&summary.groups.some((group:any)=>group.component===shell))setTaskSupportLayer(id,shell,false)
+    const expected=captureTaskSupportNodes(id)
+    return Object.assign(()=>restore(),{isCurrent:()=>expected.isCurrent()})
+  }catch(error){restore();throw error}
 }
 export function validateTestSupportRequest(ids: readonly string[], request: string) {
   const selected = testSupportCatalog.filter(asset => ids.includes(asset.id))

@@ -8,23 +8,28 @@ import { getActiveDrillModels } from '@/modules/rock/drill-resource'
 import { getActiveModelerSupportModel } from '@/modules/support/modeler-resources'
 import { getBlastModel, blastViewOffset } from '@/views/tunnel-module/blast'
 import { isThreeBenchResourceId, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
-import { getTestSectionSupportModels } from '@/modules/support/test-section-resource'
+import { getTestSectionSupportModels,getTestSupportComponentSphere } from '@/modules/support/test-section-resource'
 import {getFlowBoundingSphere} from '@/views/ventilation-module/cesiumVentilation'
-import {fitTaskCameraToViewport} from './TaskViewport'
+import {fitTaskCameraToViewport,clearTaskViewportTarget} from './TaskViewport'
 import {getTaskVolumeDomain} from './TaskVolumeCut'
-export const taskViews = ['overview', 'support-context', 'face', 'support', 'excavation', 'drill', 'blast'] as const
+export const taskViews = ['overview', 'geographic', 'support-context', 'face', 'support', 'excavation', 'drill', 'blast'] as const
 export type TaskView = typeof taskViews[number]
 export function availableTaskCameraViews(ids:readonly string[]):TaskView[]{
- return ['overview',...(ids.some(id=>['rock.tsp-hardness','rock.tsp-integrity'].includes(id))&&ids.some(id=>id.startsWith('support.modeler-'))?['support-context' as const]:[]),...(ids.includes('rock.face-photos')?['face' as const]:[]),...(ids.some(id=>id.startsWith('support.modeler-')||id==='support.test-section'||id.startsWith('support.test-section-'))?['support' as const]:[]),...(ids.some(isThreeBenchResourceId)?['excavation' as const]:[]),...(ids.includes('rock.advance-drill')?['drill' as const]:[]),...(ids.includes('blast.effect')?['blast' as const]:[])]
+ return ['overview',...(ids.length?['geographic' as const]:[]),...(ids.some(id=>['rock.tsp-hardness','rock.tsp-integrity'].includes(id))&&ids.some(id=>id.startsWith('support.modeler-'))?['support-context' as const]:[]),...(ids.includes('rock.face-photos')?['face' as const]:[]),...(ids.some(id=>id.startsWith('support.modeler-')||id==='support.test-section'||id.startsWith('support.test-section-'))?['support' as const]:[]),...(ids.some(isThreeBenchResourceId)?['excavation' as const]:[]),...(ids.includes('rock.advance-drill')?['drill' as const]:[]),...(ids.includes('blast.effect')?['blast' as const]:[])]
 }
-const selection = ref<TaskView | 'auto'>('auto')
+const selection = ref<TaskView | 'auto' | 'station'>('auto')
 export const taskCameraSelection = readonly(selection)
-export function restoreTaskCameraSelection(value:TaskView|'auto'){selection.value=value}
+export function restoreTaskCameraSelection(value:TaskView|'auto'|'station'){selection.value=value}
+export function markTaskStationCamera(viewer:C.Viewer){clearTaskViewportTarget(viewer);selection.value='station'}
 export function resetTaskCameraSelection() { selection.value = 'auto' }
-export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chainage: number, view: TaskView): void {
+export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chainage: number, view: TaskView,componentFocus?:{resourceId:string;component:string}): void {
   const station = chainageService.positionWithHeadingAt(chainage)
   if (!station) throw new Error('当前任务里程不在中线范围内')
+  if(view==='geographic'){
+    viewer.camera.cancelFlight();viewer.camera.lookAt(chainageService.worldPositionAt(chainage)!,new C.HeadingPitchRange(station.heading,-.85,2200));viewer.camera.lookAtTransform(C.Matrix4.IDENTITY);clearTaskViewportTarget(viewer);selection.value=view;viewer.scene.requestRender();return
+  }
   const spheres: C.BoundingSphere[] = []
+  let componentSphere:C.BoundingSphere|undefined
   const face = ids.includes('rock.face-photos') ? getActiveFaceSlices()[0] : undefined
   const drills = ids.includes('rock.advance-drill') ? getActiveDrillModels().filter(model => model.ready) : []
   const supports = ids.map(getActiveModelerSupportModel).filter((model): model is C.Model => !!model?.ready)
@@ -37,7 +42,11 @@ export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chaina
     if(!availableTaskCameraViews(ids).includes('support-context')||!domain||!supports.length)throw Error('当前没有可用的围岩与支护参照；未修改视角')
     spheres.push(supportContextSphere(C.BoundingSphere.fromBoundingSpheres(supports.map(model=>model.boundingSphere)),domain.corners))
   }
-  if (view === 'support') spheres.push(...supports.map(model => model.boundingSphere))
+  if (view === 'support') {
+    componentSphere=componentFocus&&ids.includes(componentFocus.resourceId)?getTestSupportComponentSphere(componentFocus.resourceId,componentFocus.component):undefined
+    if(componentSphere)spheres.push(componentSphere)
+    else spheres.push(...supports.map(model => model.boundingSphere))
+  }
   if (view === 'drill') spheres.push(...drills.map(model => model.boundingSphere))
   if (view === 'blast' && blast?.ready) spheres.push(blast.boundingSphere)
   if(view==='excavation'){
@@ -66,7 +75,7 @@ export function focusTaskCamera(viewer: C.Viewer, ids: readonly string[], chaina
   const sphere = C.BoundingSphere.fromBoundingSpheres(spheres)
   const offset = view === 'blast' ? blastViewOffset('persp') : new C.HeadingPitchRange(
     station.heading + (view === 'face' || view === 'drill' ? Math.PI - 0.3 : view==='excavation'?-.65:0.85), view==='excavation'?-.45:-0.3,
-    Math.max(view === 'overview' ? 65 : view === 'face' ? 24 : 42, sphere.radius * 3))
+    Math.max(view === 'overview' ? 65 : view === 'face' ? 24 : componentSphere ? 18 : 42, sphere.radius * 3))
   viewer.camera.cancelFlight()
   viewer.camera.viewBoundingSphere(sphere, offset)
   viewer.camera.lookAtTransform(C.Matrix4.IDENTITY)

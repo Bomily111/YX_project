@@ -102,9 +102,10 @@ it('keeps multiple tool calls in one assistant turn with linked results', async 
   }, 1)
 
   const transcript = engine.getMessages()
-  expect(transcript.map(message => message.role)).toEqual(['user', 'assistant', 'tool', 'tool'])
+  expect(transcript.map(message => message.role)).toEqual(['user', 'assistant', 'tool', 'tool', 'assistant'])
   expect(transcript[1].tool_calls?.map(call => call.id)).toEqual(['call-1', 'call-2'])
-  expect(transcript.slice(2).map(message => message.tool_call_id)).toEqual(['call-1', 'call-2'])
+  expect(transcript.slice(2,4).map(message => message.tool_call_id)).toEqual(['call-1', 'call-2'])
+  expect(transcript[4].content).toContain('本轮模型未生成可用的文字说明')
 })
 
 it('exposes only the assembly tool and rejects a second assembly in one scene request', async () => {

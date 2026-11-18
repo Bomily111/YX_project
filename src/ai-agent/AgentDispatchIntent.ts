@@ -12,6 +12,7 @@ export function taskVisualReviewIntent(message:string):'plan'|'apply'|'restore'|
 }
 export function readOnlyTaskReviewTool(message:string):string|undefined {
   if(!/当前|现在|这次/.test(message)||!/只读|仅查询|只查询/.test(message))return undefined
+  if(/地理位置|中线与地形|地形位置/.test(message))return 'inspect_task_scene'
   if(/核查摘要|核查结论|证据缺口|定位记录|定位证据|访问记录/.test(message))return 'inspect_task_scene'
   if(/场景自检|场景状态|装配自检|场景.*(?:对象|资源|就绪|来源|待核查)|已装配/.test(message))return 'inspect_task_scene'
   if(/曲线|图表/.test(message))return 'inspect_task_chart_review'
@@ -43,6 +44,10 @@ export function resolveClarifiedSceneRequest(message: string, pending?: string):
   return `${pending}\n用户补充：${message}`
 }
 export function wantsTaskViewControl(message: string): boolean {
+  if(/中线与地形|地理位置|地形位置/.test(message)){
+    return !/[DY]K\s*\d|构建|装配|加载|计划|如何|怎么|只读|只查询|仅查询|不要|不切换|不改/i.test(message)
+      && /切换|切到|回到|查看|看看|定位|显示/.test(message)
+  }
   return !/[DY]K\s*\d|构建|装配|加载|计划|如何|怎么/i.test(message)
     && /整体布置|整体视角|全景|近景|拉近|聚焦|放大.*(?:掌子面|支护|钻孔|爆破)|视角.*(?:掌子面|支护|钻孔|爆破)/.test(message)
 }

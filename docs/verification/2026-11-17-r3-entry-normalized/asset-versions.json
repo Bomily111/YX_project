@@ -1,0 +1,218 @@
+{
+  "passed": true,
+  "input": "docs/verification/2026-11-17-r3-entry-normalized/report.json",
+  "inputDigest": "ac540cc35e7d386855e9d36760aad6c5eb4bb296fcf00b027bacff365e2f9aa3",
+  "scope": "completed-task-snapshots-not-current-file-hashes",
+  "tasks": [
+    {
+      "task": "hardness",
+      "condition": "form-input",
+      "taskId": "scene-1794903075282-w6e9m",
+      "versions": [
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:17.482Z"
+        },
+        {
+          "digest": "a5690b2f9f9489960ce22b76de470263c9658aa20c7c259f0948acc6b2702369",
+          "locator": "/data/tsp_actual/hardness.json",
+          "sourceId": "asset:/data/tsp_actual/hardness.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:17.482Z"
+        },
+        {
+          "digest": "4bbaefecbeb255b17ca45ff7ab7a64a579dc67df84b929a88ac855039e32ddd2",
+          "locator": "/data/tsp_actual/hardness_volume.png",
+          "sourceId": "asset:/data/tsp_actual/hardness_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:17.482Z"
+        },
+        {
+          "digest": "960b0328e1e2b34457177133512a8c12821f63fda44d734fdddf038ee32edd48",
+          "locator": "/data/tunnel/tunnel000.glb",
+          "sourceId": "asset:/data/tunnel/tunnel000.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:17.482Z"
+        }
+      ]
+    },
+    {
+      "task": "hardness",
+      "condition": "agent-assembly",
+      "taskId": "scene-1794903083869-nsi2b",
+      "versions": [
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:24.608Z"
+        },
+        {
+          "digest": "a5690b2f9f9489960ce22b76de470263c9658aa20c7c259f0948acc6b2702369",
+          "locator": "/data/tsp_actual/hardness.json",
+          "sourceId": "asset:/data/tsp_actual/hardness.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:24.608Z"
+        },
+        {
+          "digest": "4bbaefecbeb255b17ca45ff7ab7a64a579dc67df84b929a88ac855039e32ddd2",
+          "locator": "/data/tsp_actual/hardness_volume.png",
+          "sourceId": "asset:/data/tsp_actual/hardness_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:24.608Z"
+        },
+        {
+          "digest": "960b0328e1e2b34457177133512a8c12821f63fda44d734fdddf038ee32edd48",
+          "locator": "/data/tunnel/tunnel000.glb",
+          "sourceId": "asset:/data/tunnel/tunnel000.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:24.608Z"
+        }
+      ]
+    },
+    {
+      "task": "hardness",
+      "condition": "agent-with-review",
+      "taskId": "scene-1794903090283-82hdy",
+      "versions": [
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:31.851Z"
+        },
+        {
+          "digest": "a5690b2f9f9489960ce22b76de470263c9658aa20c7c259f0948acc6b2702369",
+          "locator": "/data/tsp_actual/hardness.json",
+          "sourceId": "asset:/data/tsp_actual/hardness.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:31.851Z"
+        },
+        {
+          "digest": "4bbaefecbeb255b17ca45ff7ab7a64a579dc67df84b929a88ac855039e32ddd2",
+          "locator": "/data/tsp_actual/hardness_volume.png",
+          "sourceId": "asset:/data/tsp_actual/hardness_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:31.851Z"
+        },
+        {
+          "digest": "960b0328e1e2b34457177133512a8c12821f63fda44d734fdddf038ee32edd48",
+          "locator": "/data/tunnel/tunnel000.glb",
+          "sourceId": "asset:/data/tunnel/tunnel000.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:31.851Z"
+        }
+      ]
+    },
+    {
+      "task": "integrity",
+      "condition": "form-input",
+      "taskId": "scene-1794903104748-j0xsv",
+      "versions": [
+        {
+          "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22",
+          "locator": "/data/tsp_actual/integrity.json",
+          "sourceId": "asset:/data/tsp_actual/integrity.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:46.780Z"
+        },
+        {
+          "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca",
+          "locator": "/data/tsp_actual/integrity_volume.png",
+          "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:46.780Z"
+        },
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:46.780Z"
+        },
+        {
+          "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d",
+          "locator": "/data/tunnel/tunnel002.glb",
+          "sourceId": "asset:/data/tunnel/tunnel002.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:46.780Z"
+        }
+      ]
+    },
+    {
+      "task": "integrity",
+      "condition": "agent-assembly",
+      "taskId": "scene-1794903111859-pdtur",
+      "versions": [
+        {
+          "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22",
+          "locator": "/data/tsp_actual/integrity.json",
+          "sourceId": "asset:/data/tsp_actual/integrity.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:53.177Z"
+        },
+        {
+          "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca",
+          "locator": "/data/tsp_actual/integrity_volume.png",
+          "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:53.177Z"
+        },
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:53.177Z"
+        },
+        {
+          "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d",
+          "locator": "/data/tunnel/tunnel002.glb",
+          "sourceId": "asset:/data/tunnel/tunnel002.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:53.177Z"
+        }
+      ]
+    },
+    {
+      "task": "integrity",
+      "condition": "agent-with-review",
+      "taskId": "scene-1794903118618-eu33h",
+      "versions": [
+        {
+          "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22",
+          "locator": "/data/tsp_actual/integrity.json",
+          "sourceId": "asset:/data/tsp_actual/integrity.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:59.140Z"
+        },
+        {
+          "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca",
+          "locator": "/data/tsp_actual/integrity_volume.png",
+          "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:59.140Z"
+        },
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:59.140Z"
+        },
+        {
+          "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d",
+          "locator": "/data/tunnel/tunnel002.glb",
+          "sourceId": "asset:/data/tunnel/tunnel002.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-17T08:11:59.140Z"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1839 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    {
+      "id": "partial-node-write-rollback-and-retry",
+      "before": {
+        "scene": {
+          "taskId": "scene-1794973330674-diil1",
+          "selection": "auto",
+          "camera": [
+            -475132.3946276984,
+            5536206.585110376,
+            3126908.3370606042,
+            -0.7534240386103807,
+            -0.6434373223938671,
+            0.13542758284276712,
+            -0.4465809889823079,
+            0.6519071046734444,
+            0.6128478988753007
+          ]
+        },
+        "state": {
+          "matrix": [
+            -0.04214446023312385,
+            0.4911288563875297,
+            -0.8700668312808713,
+            0,
+            -0.07438828223370382,
+            0.866881003576301,
+            0.4929337776059418,
+            0,
+            0.9963384103496048,
+            0.08549720499538294,
+            -1.6301015716329842e-16,
+            0,
+            -475193.07950184203,
+            5536147.263124687,
+            3126922.556426498,
+            1
+          ],
+          "nodes": [
+            {
+              "component": "primary_concrete",
+              "name": "task_example_0_primary_concrete",
+              "show": true
+            },
+            {
+              "component": "primary_mesh",
+              "name": "task_example_1_primary_mesh",
+              "show": false
+            },
+            {
+              "component": "primary_mesh",
+              "name": "task_example_2_primary_mesh",
+              "show": false
+            },
+            {
+              "component": "secondary_lining",
+              "name": "task_example_3_secondary_lining",
+              "show": true
+            },
+            {
+              "component": "secondary_rebar_N3",
+              "name": "task_example_4_secondary_rebar_N3",
+              "show": false
+            },
+            {
+              "component": "secondary_rebar_N4",
+              "name": "task_example_5_secondary_rebar_N4",
+              "show": false
+            },
+            {
+              "component": "steel_arch",
+              "name": "task_example_6_steel_arch",
+              "show": false
+            },
+            {
+              "component": "system_anchor",
+              "name": "task_example_7_system_anchor",
+              "show": false
+            },
+            {
+              "component": "lock_foot_anchor",
+              "name": "task_example_8_lock_foot_anchor",
+              "show": false
+            },
+            {
+              "component": "secondary_rebar_N1",
+              "name": "task_example_9_secondary_rebar_N1",
+              "show": false
+            },
+            {
+              "component": "secondary_rebar_N2",
+              "name": "task_example_10_secondary_rebar_N2",
+              "show": false
+            }
+          ]
+        }
+      },
+      "failed": {
+        "message": "Error: acceptance-injected-node-write-failure",
+        "review": {
+          "plan": {
+            "sceneKey": "[\"scene-1794973330674-diil1\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.three-bench\",\"support.test-section\"]]",
+            "taskId": "scene-1794973330674-diil1",
+            "objective": "component-detail",
+            "userRequest": "检查钢架布置并暂避外壳",
+            "emphasis": "source",
+            "focusComponent": "steel_arch",
+            "focusResourceIds": [
+              "support.test-section"
+            ],
+            "referenceResourceIds": [
+              "rock.three-bench"
+            ],
+            "questions": [
+              "故障后是否恢复？"
+            ],
+            "candidate": {
+              "type": "camera-view",
+              "view": "support",
+              "reason": "显露当前重点构件，暂避其他混凝土外壳，其余结构保留原显隐；聚焦已声明的当前重点对象；其他资源仍保留但不保证同屏可辨"
+            },
+            "completionConditions": [
+              "执行前后任务与资源保持一致",
+              "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+              "画面取景与工程依据分开，待回答问题不作为已证实结论"
+            ],
+            "evidence": {
+              "capturedAt": "2026-11-18T03:42:13.841Z",
+              "taskId": "scene-1794973330674-diil1",
+              "workflowStatus": "completed",
+              "completedSceneAvailable": true,
+              "chainageRange": {
+                "start": 2244,
+                "end": 2244
+              },
+              "phase": "constructed-then-enhanced",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "resources": [
+                {
+                  "id": "common.tunnel",
+                  "role": "dependency",
+                  "module": "common",
+                  "sourceHints": [],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 3,
+                  "assetPaths": [
+                    "/data/tunnel/tunnel002.glb"
+                  ],
+                  "componentDisplay": [],
+                  "observation": {
+                    "targetCount": 0,
+                    "readyModelCount": 0,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "incomplete",
+                    "framing": {
+                      "available": false
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                },
+                {
+                  "id": "rock.three-bench",
+                  "role": "task-root",
+                  "module": "rock",
+                  "sourceHints": [
+                    {
+                      "displayName": "三台阶",
+                      "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                      "placement": "fixed-source-demonstration",
+                      "demonstration": true
+                    }
+                  ],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/data/tunnel/三台阶.glb"
+                  ],
+                  "componentDisplay": [],
+                  "observation": {
+                    "targetCount": 1,
+                    "readyModelCount": 1,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "declared-targets-only",
+                    "framing": {
+                      "available": true,
+                      "projected": 26,
+                      "insideSafe": 26,
+                      "behind": 0,
+                      "safe": {
+                        "left": 316,
+                        "right": 1004,
+                        "top": 76,
+                        "bottom": 838
+                      },
+                      "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                      "occlusion": "not-measured"
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                },
+                {
+                  "id": "support.test-section",
+                  "role": "task-root",
+                  "module": "support",
+                  "sourceHints": [
+                    {
+                      "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                      "placement": "reference-components-centerline-normal",
+                      "componentScope": "source-model-components",
+                      "supportType": "ZZ-Va",
+                      "sourceGeometryReused": true,
+                      "originalGeometry": false
+                    }
+                  ],
+                  "sourceHintsTruncated": false,
+                  "runtimeState": "loaded",
+                  "references": 1,
+                  "assetPaths": [
+                    "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                    "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                    "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                    "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                  ],
+                  "componentDisplay": [
+                    {
+                      "component": "primary_concrete",
+                      "visibleNodes": 1,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          1
+                        ],
+                        "baseStationCount": 5,
+                        "offsetRangeM": [
+                          -5.5,
+                          -1.5
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "primary_mesh",
+                      "visibleNodes": 0,
+                      "totalNodes": 2,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          1
+                        ],
+                        "baseStationCount": 5,
+                        "offsetRangeM": [
+                          -5.5,
+                          -1.5
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "secondary_lining",
+                      "visibleNodes": 1,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          1
+                        ],
+                        "baseStationCount": 5,
+                        "offsetRangeM": [
+                          -5.5,
+                          -1.5
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "secondary_rebar_N3",
+                      "visibleNodes": 0,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          1
+                        ],
+                        "baseStationCount": 5,
+                        "offsetRangeM": [
+                          -5.5,
+                          -1.5
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "secondary_rebar_N4",
+                      "visibleNodes": 0,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          1
+                        ],
+                        "baseStationCount": 5,
+                        "offsetRangeM": [
+                          -5.5,
+                          -1.5
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "steel_arch",
+                      "visibleNodes": 0,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          0.8
+                        ],
+                        "baseStationCount": 7,
+                        "offsetRangeM": [
+                          -5.5,
+                          -0.7000000000000002
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "system_anchor",
+                      "visibleNodes": 0,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          0.8
+                        ],
+                        "baseStationCount": 7,
+                        "offsetRangeM": [
+                          -5.5,
+                          -0.7000000000000002
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "lock_foot_anchor",
+                      "visibleNodes": 0,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          0.8
+                        ],
+                        "baseStationCount": 7,
+                        "offsetRangeM": [
+                          -5.5,
+                          -0.7000000000000002
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "secondary_rebar_N1",
+                      "visibleNodes": 0,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          0.25
+                        ],
+                        "baseStationCount": 20,
+                        "offsetRangeM": [
+                          -5.5,
+                          -0.75
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    },
+                    {
+                      "component": "secondary_rebar_N2",
+                      "visibleNodes": 0,
+                      "totalNodes": 1,
+                      "sourceAssembly": {
+                        "scope": "recorded-source-example-not-design-or-measurement",
+                        "spacingM": [
+                          0.25
+                        ],
+                        "baseStationCount": 20,
+                        "offsetRangeM": [
+                          -5.5,
+                          -0.75
+                        ],
+                        "sourceSegments": [
+                          19
+                        ]
+                      }
+                    }
+                  ],
+                  "observation": {
+                    "targetCount": 1,
+                    "readyModelCount": 1,
+                    "hiddenModelCount": 0,
+                    "pendingModelCount": 0,
+                    "unobservedTargetCount": 0,
+                    "modelCoverage": "declared-targets-only",
+                    "framing": {
+                      "available": true,
+                      "projected": 26,
+                      "insideSafe": 26,
+                      "behind": 0,
+                      "safe": {
+                        "left": 316,
+                        "right": 1004,
+                        "top": 76,
+                        "bottom": 838
+                      },
+                      "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                      "occlusion": "not-measured"
+                    }
+                  },
+                  "evidenceStatus": "runtime-only-not-engineering-acceptance"
+                }
+              ],
+              "evidenceAssessment": {
+                "taskId": "scene-1794973330674-diil1",
+                "resourceIds": [
+                  "rock.three-bench",
+                  "support.test-section"
+                ],
+                "facts": [],
+                "gaps": [
+                  {
+                    "id": "task-design",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "源模型与本工段设计是否对应？",
+                    "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                  },
+                  {
+                    "id": "field-data",
+                    "status": "not-provided-to-this-assessment",
+                    "question": "是否具备同一基准的实测对比？",
+                    "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                  },
+                  {
+                    "id": "geometry",
+                    "status": "not-measured-by-this-assessment",
+                    "question": "接缝、净空或断面贴合是否成立？",
+                    "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                  }
+                ],
+                "factWindow": {
+                  "availableInRetainedJournal": 0,
+                  "retained": 0,
+                  "omitted": 0,
+                  "scope": "within-retained-journal-not-full-history"
+                },
+                "historyWindow": {
+                  "locations": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "steps": {
+                    "total": 0,
+                    "retained": 0,
+                    "omitted": 0
+                  },
+                  "scope": "whole-task-window-before-resource-filter"
+                },
+                "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+                "questionStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified",
+                "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+              },
+              "locationEvidence": [],
+              "evidenceProgress": {
+                "scope": "interaction-history-not-question-completion",
+                "locationRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "stepRecords": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": [],
+                "questionsStatus": "unanswered-requires-task-evidence",
+                "engineeringAcceptance": "not-verified"
+              },
+              "loadedOutsideCurrentScene": [],
+              "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+              "supportContext": {
+                "available": false,
+                "reason": "当前缺少匹配的围岩与可观察支护"
+              },
+              "issues": [],
+              "engineeringAcceptance": "not-verified",
+              "limitations": [
+                "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+                "未测模型间深度遮挡、净空侵限或现场配准误差",
+                "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+                "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+              ],
+              "nextChecks": [
+                "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+              ]
+            },
+            "engineeringAcceptance": "not-verified"
+          },
+          "phase": "failed",
+          "attempts": 1,
+          "remaining": 1,
+          "recoveryStatus": "restored",
+          "conditions": [
+            {
+              "resourceId": "support.test-section",
+              "runtime": "not-evaluated",
+              "framing": "unknown",
+              "modelCoverage": "unknown"
+            }
+          ],
+          "questionsStatus": "unanswered-requires-task-evidence",
+          "engineeringAcceptance": "not-verified"
+        }
+      },
+      "retried": {
+        "plan": {
+          "sceneKey": "[\"scene-1794973330674-diil1\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.three-bench\",\"support.test-section\"]]",
+          "taskId": "scene-1794973330674-diil1",
+          "objective": "component-detail",
+          "userRequest": "检查钢架布置并暂避外壳",
+          "emphasis": "source",
+          "focusComponent": "steel_arch",
+          "focusResourceIds": [
+            "support.test-section"
+          ],
+          "referenceResourceIds": [
+            "rock.three-bench"
+          ],
+          "questions": [
+            "故障后是否恢复？"
+          ],
+          "candidate": {
+            "type": "camera-view",
+            "view": "support",
+            "reason": "显露当前重点构件，暂避其他混凝土外壳，其余结构保留原显隐；聚焦已声明的当前重点对象；其他资源仍保留但不保证同屏可辨"
+          },
+          "completionConditions": [
+            "执行前后任务与资源保持一致",
+            "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+            "画面取景与工程依据分开，待回答问题不作为已证实结论"
+          ],
+          "evidence": {
+            "capturedAt": "2026-11-18T03:42:13.841Z",
+            "taskId": "scene-1794973330674-diil1",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 1,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 1,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.25
+                      ],
+                      "baseStationCount": 20,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.75
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.25
+                      ],
+                      "baseStationCount": 20,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.75
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794973330674-diil1",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "engineeringAcceptance": "not-verified"
+        },
+        "phase": "applied",
+        "attempts": 2,
+        "remaining": 0,
+        "feedback": {
+          "before": {
+            "capturedAt": "2026-11-18T03:42:14.008Z",
+            "taskId": "scene-1794973330674-diil1",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 1,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 1,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.25
+                      ],
+                      "baseStationCount": 20,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.75
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.25
+                      ],
+                      "baseStationCount": 20,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.75
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794973330674-diil1",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "after": {
+            "capturedAt": "2026-11-18T03:42:14.010Z",
+            "taskId": "scene-1794973330674-diil1",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 20,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        1
+                      ],
+                      "baseStationCount": 5,
+                      "offsetRangeM": [
+                        -5.5,
+                        -1.5
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 1,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.8
+                      ],
+                      "baseStationCount": 7,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.7000000000000002
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.25
+                      ],
+                      "baseStationCount": 20,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.75
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1,
+                    "sourceAssembly": {
+                      "scope": "recorded-source-example-not-design-or-measurement",
+                      "spacingM": [
+                        0.25
+                      ],
+                      "baseStationCount": 20,
+                      "offsetRangeM": [
+                        -5.5,
+                        -0.75
+                      ],
+                      "sourceSegments": [
+                        19
+                      ]
+                    }
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794973330674-diil1",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.three-bench",
+                "code": "framing-incomplete",
+                "detail": "20/26包围球采样位于可用画面；不是可见像素或遮挡测量"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "取景不完整时可按用户目标选择已有视角工具；本次未移动相机",
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "resourceId": "support.test-section",
+            "runtime": "loaded",
+            "framing": "26-samples-inside",
+            "modelCoverage": "declared-targets-only"
+          }
+        ],
+        "questionsStatus": "unanswered-requires-task-evidence",
+        "engineeringAcceptance": "not-verified"
+      }
+    }
+  ],
+  "modelRequests": 0
+}

@@ -1,5 +1,6 @@
 import * as C from 'cesium'
-import { expect, it } from 'vitest'
+import { expect, it, vi } from 'vitest'
+import * as viewport from '@/platform/tasks/TaskViewport'
 import { inspectTaskScene } from '@/platform/tasks/TaskSceneInspection'
 import { ResourceRegistry } from '@/platform/resources/ResourceRegistry'
 import type { AgentTaskWorkflowStatus } from '@/platform/tasks/TaskWorkflowBridge'
@@ -12,6 +13,38 @@ const setup = () => {
  registry.register({...common,id:'rock.demo',module:'rock',dependencies:['common.tunnel'],getActiveAssetPaths:()=>['/data/demo.glb']})
  return registry
 }
+it('separates generated component framing from whole-resource framing and never fabricates missing geometry',()=>{
+ const registry=setup(),model=Object.create(C.Model.prototype)
+ Object.defineProperties(model,{isDestroyed:{value:()=>false},ready:{value:true},show:{value:true},modelMatrix:{value:C.Matrix4.fromTranslation(new C.Cartesian3(20,30,40))},boundingSphere:{value:new C.BoundingSphere(new C.Cartesian3(20,30,40),15)},getNode:{value:()=>({show:true})}})
+ registry.register({id:'support.test-section',module:'support',type:'test',processes:[],states:[],async load(){},async unload(){},getEnhanceTargets:()=>[{id:'one',type:'support',object:model,metadata:{layout:'1064m-component-example',groups:[
+  {component:'steel_arch',name:'a',generatedBounds:{min:[-1,-1,-1],max:[1,1,1]}},
+  {component:'unknown-range',name:'b'},
+ ]}}]})
+ const projection=vi.spyOn(viewport,'inspectTaskSphereViewport').mockImplementation((_viewer,sphere)=>({available:true,insideSafe:sphere.radius<5?26:14,projected:26,behind:0,safe:{left:0,top:0,right:100,bottom:100},measurement:'26-bounding-sphere-samples-not-visible-model-pixels',occlusion:'not-measured'}))
+ try{
+  const s=status();s.lastCompletedStage!.assembledResourceIds=['support.test-section']
+  const r=inspectTaskScene(s,registry,[{id:'support.test-section',status:'loaded',references:1}],{isDestroyed:()=>false} as C.Viewer).resources[0]!
+  expect(r.observation.framing).toMatchObject({insideSafe:14})
+  expect(r.componentDisplay.find(c=>c.component==='steel_arch')?.framing).toMatchObject({insideSafe:26})
+  expect(r.componentDisplay.find(c=>c.component==='unknown-range')?.framing).toEqual({available:false})
+  expect(projection.mock.calls[1]?.[1].center).toEqual(new C.Cartesian3(20,30,40))
+ }finally{projection.mockRestore()}
+})
+it('deduplicates recorded component bases and leaves unprovided spacing unknown',()=>{
+ const registry=setup(),model=Object.create(C.Model.prototype)
+ Object.defineProperties(model,{isDestroyed:{value:()=>false},ready:{value:true},show:{value:true},color:{value:C.Color.RED},colorBlendMode:{value:C.ColorBlendMode.MIX},colorBlendAmount:{value:.45},boundingSphere:{value:new C.BoundingSphere(C.Cartesian3.ZERO,3)},getNode:{value:()=>({show:true})}})
+ registry.register({id:'support.test-section',module:'support',type:'test',processes:[],states:[],async load(){},async unload(){},getEnhanceTargets:()=>[{id:'one',type:'support',object:model,metadata:{sourceSegment:19,sourceStatus:'PARTIAL',groups:[
+  {component:'steel_arch',name:'a',spacingM:.8,stationOffsetsM:[-5.5,-4.7]},
+  {component:'steel_arch',name:'b',spacingM:.8,stationOffsetsM:[-4.7,-3.9]},
+  {component:'secondary_rebar_N3',name:'n3'},
+ ]}}]})
+ const s=status();s.lastCompletedStage!.assembledResourceIds=['support.test-section']
+ const r=inspectTaskScene(s,registry,[{id:'support.test-section',status:'loaded',references:1}])
+ expect(r.resources[0]?.sourceHints).toContainEqual({sourceStatus:'PARTIAL'})
+ expect(r.resources[0]?.observation.displayStyles).toEqual([{targetId:'one',show:true,colorRgba:[1,0,0,1],colorBlendMode:C.ColorBlendMode.MIX,colorBlendAmount:.45}])
+ expect(r.resources[0]?.componentDisplay.find(c=>c.component==='steel_arch')).toMatchObject({totalNodes:2,sourceAssembly:{spacingM:[.8],baseStationCount:3,offsetRangeM:[-5.5,-3.9],sourceSegments:[19]}})
+ expect(r.resources[0]?.componentDisplay.find(c=>c.component==='secondary_rebar_N3')?.sourceAssembly).toMatchObject({spacingM:[],baseStationCount:null,offsetRangeM:null})
+})
 it('reports resource dependencies and observation gaps without treating missing targets as absence',()=>{
  const registry=setup(),s=status(),before=JSON.stringify(s)
  const r=inspectTaskScene(s,registry,[{id:'rock.demo',status:'loaded',references:1}])

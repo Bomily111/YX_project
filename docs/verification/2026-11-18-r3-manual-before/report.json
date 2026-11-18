@@ -1,0 +1,167 @@
+{
+  "passed": false,
+  "scope": "entry-feasibility-not-participant-experiment",
+  "errors": [],
+  "cases": [],
+  "modelRequests": 0,
+  "failedState": {
+    "task": {
+      "id": "hardness",
+      "resource": "rock.tsp-hardness",
+      "name": "TSP坚硬度解释体",
+      "mileage": "YK1+346"
+    },
+    "condition": "manual-stepwise",
+    "assembly": {
+      "taskId": "scene-1794983982649-mdq1q",
+      "status": "completed",
+      "ids": [
+        "rock.tsp-hardness",
+        "support.modeler-zz-va"
+      ],
+      "chainage": {
+        "start": 1346,
+        "end": 1346
+      },
+      "cut": {
+        "xmax": 0.5,
+        "ymin": 0.2
+      },
+      "domain": [
+        [
+          -474311.05406835227,
+          5536180.22162435,
+          3126934.2763122446
+        ],
+        [
+          -474314.4539184228,
+          5536222.738741405,
+          3126958.395511585
+        ],
+        [
+          -474388.2453285424,
+          5536167.692948843,
+          3126945.4808488395
+        ],
+        [
+          -474391.645178613,
+          5536210.2100658985,
+          3126969.6000481797
+        ],
+        [
+          -474315.98170263047,
+          5536191.764014523,
+          3126913.234885261
+        ],
+        [
+          -474319.38155270106,
+          5536234.281131579,
+          3126937.354084601
+        ],
+        [
+          -474393.1729628207,
+          5536179.235339017,
+          3126924.439421856
+        ],
+        [
+          -474396.5728128913,
+          5536221.752456072,
+          3126948.558621196
+        ]
+      ],
+      "matrix": [
+        0.22005896564401384,
+        -0.4678649882647748,
+        0.8559651887756233,
+        0,
+        -0.07426833592922809,
+        0.8668926353023134,
+        0.49293140814611675,
+        0,
+        -0.9726552657123642,
+        -0.1720450859937948,
+        0.15601994253106774,
+        0,
+        -474298.2954999837,
+        5536218.014864168,
+        3126923.4930493445,
+        1
+      ],
+      "style": {
+        "color": null,
+        "mode": 0,
+        "amount": 0.5
+      },
+      "paths": [
+        "/data/tsp_actual/hardness.json",
+        "/data/tsp_actual/hardness_volume.png",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "camera": [
+        -474160.2704904321,
+        5536259.162412047,
+        3127075.7145238183,
+        -0.6945914698170113,
+        -0.16280992383814671,
+        -0.7007393372412176,
+        -0.4180129921832984,
+        0.8840874762996684,
+        0.20893652772085863
+      ],
+      "environment": {
+        "terrainProvider": "CesiumTerrainProvider",
+        "tilesLoaded": false,
+        "globeShow": true,
+        "baseColor": [
+          0,
+          0,
+          0.5,
+          1
+        ],
+        "translucencyEnabled": true,
+        "front": 1,
+        "back": 1,
+        "frontDistance": {
+          "near": 400,
+          "nearValue": 0.9,
+          "far": 800,
+          "farValue": 0.9
+        },
+        "backDistance": null,
+        "rectangle": [
+          -3.141592653589793,
+          -1.5707963267948966,
+          3.141592653589793,
+          1.5707963267948966
+        ],
+        "imagery": [
+          {
+            "show": true,
+            "alpha": 1,
+            "brightness": 1,
+            "saturation": 1
+          }
+        ]
+      },
+      "review": null
+    },
+    "manualTrace": [
+      {
+        "completedBefore": 0,
+        "stepId": "scene-1",
+        "input": "existing-manual-step-button"
+      },
+      {
+        "completedBefore": 1,
+        "stepId": "scene-2",
+        "input": "existing-manual-step-button"
+      },
+      {
+        "completedBefore": 2,
+        "stepId": "scene-3",
+        "input": "existing-manual-step-button"
+      }
+    ]
+  },
+  "failure": "Manual execution completed without the shared scene information panel"
+}

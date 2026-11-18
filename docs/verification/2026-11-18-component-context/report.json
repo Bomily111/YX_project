@@ -1,0 +1,3376 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    {
+      "id": "unknown-and-hidden-plan-rejections",
+      "rejected": [
+        "Error: 构件显露需要一种已读取的当前测试支护构件及构件细部或空间关系目标",
+        "Error: 当前支护模型整体隐藏，请先核查整体显隐；未修改显示"
+      ]
+    },
+    {
+      "id": "whole-reference-with-component-focus",
+      "full": {
+        "plan": {
+          "sceneKey": "[\"scene-1794972191299-1q069\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.three-bench\",\"support.test-section\"]]",
+          "taskId": "scene-1794972191299-1q069",
+          "objective": "spatial-relation",
+          "userRequest": "规划并执行当前任务视觉分析：仍以测试支护钢拱架为重点并暂避混凝土外壳，但这次需要完整三台阶和整个5米支护作为总体空间参照，不要只聚焦支护细部。",
+          "emphasis": "source",
+          "focusComponent": "steel_arch",
+          "focusResourceIds": [
+            "support.test-section"
+          ],
+          "referenceResourceIds": [
+            "rock.three-bench"
+          ],
+          "questions": [
+            "在完整三台阶与整个5米支护同屏的总体取景下，钢拱架沿纵向的布置是否可辨认？",
+            "钢拱架与完整三台阶、其他支护构件的空间关系是否可观察？",
+            "总体取景下钢拱架是否因尺度变小或遮挡而难以辨认，需要进一步核查？"
+          ],
+          "candidate": {
+            "type": "camera-view",
+            "view": "overview",
+            "reason": "保留当前全部对象的整体空间参照"
+          },
+          "completionConditions": [
+            "执行前后任务与资源保持一致",
+            "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+            "画面取景与工程依据分开，待回答问题不作为已证实结论"
+          ],
+          "evidence": {
+            "capturedAt": "2026-11-18T03:23:28.193Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 20,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.three-bench",
+                "code": "framing-incomplete",
+                "detail": "20/26包围球采样位于可用画面；不是可见像素或遮挡测量"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "取景不完整时可按用户目标选择已有视角工具；本次未移动相机",
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "engineeringAcceptance": "not-verified"
+        },
+        "phase": "applied",
+        "attempts": 2,
+        "remaining": 0,
+        "feedback": {
+          "before": {
+            "capturedAt": "2026-11-18T03:23:29.250Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 20,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.three-bench",
+                "code": "framing-incomplete",
+                "detail": "20/26包围球采样位于可用画面；不是可见像素或遮挡测量"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "取景不完整时可按用户目标选择已有视角工具；本次未移动相机",
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "after": {
+            "capturedAt": "2026-11-18T03:23:29.252Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "resourceId": "support.test-section",
+            "runtime": "loaded",
+            "framing": "26-samples-inside",
+            "modelCoverage": "declared-targets-only"
+          }
+        ],
+        "questionsStatus": "unanswered-requires-task-evidence",
+        "engineeringAcceptance": "not-verified"
+      },
+      "fullAnswer": "🤖\n已按总体空间参照重新规划并执行（任务 scene-1794972191299-1q069，YK2+244 测试工段）。本次为第 2 次应用，该场景应用预算已用尽（剩余 0）。\n\n实际结果（前后对比）\n- 取景由 support 细部视角改为 overview 整体视角，三台阶 26 点包围球采样由 20/26 恢复到 26/26 入区，framing-incomplete 提示消失；支护 26/26 入区。\n- 显隐保持：steel_arch 仍为 1/1 可见，primary_concrete、secondary_lining 仍为 0/1（混凝土外壳继续暂避），其余构件与三台阶保持原显隐；未改地形、源几何或装配位置。\n\n未解决项\n- 26 点包围球只表示投影入区，未测深度遮挡与可见像素。整体取景下钢拱架沿纵向的布置是否可辨、与完整三台阶的空间关系是否可观察，本轮无像素级或遮挡测量支持，不能确认。\n- 该支护为复用 1064 米示例构件轮廓的 ZZ-Va 测试断面，源轮廓与测试隧道尺寸存在差异；设计对应、实测对比、几何贴合三项证据缺口仍未补齐，不构成验收结论。\n\n如需恢复原显示或换用其他视角，请告知；本场景的视觉分析应用预算已用尽，恢复操作不返还预算。\n👍\n👎"
+    },
+    {
+      "id": "agent-component-plan-apply-restore",
+      "before": {
+        "scene": {
+          "taskId": "scene-1794972191299-1q069",
+          "selection": "auto",
+          "camera": [
+            -475132.3946276988,
+            5536206.585110376,
+            3126908.3370606047,
+            -0.7534240386103797,
+            -0.6434373223938684,
+            0.1354275828427666,
+            -0.4465809889823077,
+            0.6519071046734444,
+            0.6128478988753009
+          ]
+        },
+        "state": {
+          "matrix": [
+            -0.04214446023312385,
+            0.4911288563875297,
+            -0.8700668312808713,
+            0,
+            -0.07438828223370382,
+            0.866881003576301,
+            0.4929337776059418,
+            0,
+            0.9963384103496048,
+            0.08549720499538294,
+            -1.6301015716329842e-16,
+            0,
+            -475193.07950184203,
+            5536147.263124687,
+            3126922.556426498,
+            1
+          ],
+          "nodes": [
+            {
+              "component": "primary_concrete",
+              "name": "task_example_0_primary_concrete",
+              "show": true
+            },
+            {
+              "component": "primary_mesh",
+              "name": "task_example_1_primary_mesh",
+              "show": false
+            },
+            {
+              "component": "primary_mesh",
+              "name": "task_example_2_primary_mesh",
+              "show": false
+            },
+            {
+              "component": "secondary_lining",
+              "name": "task_example_3_secondary_lining",
+              "show": true
+            },
+            {
+              "component": "secondary_rebar_N3",
+              "name": "task_example_4_secondary_rebar_N3",
+              "show": false
+            },
+            {
+              "component": "secondary_rebar_N4",
+              "name": "task_example_5_secondary_rebar_N4",
+              "show": false
+            },
+            {
+              "component": "steel_arch",
+              "name": "task_example_6_steel_arch",
+              "show": false
+            },
+            {
+              "component": "system_anchor",
+              "name": "task_example_7_system_anchor",
+              "show": false
+            },
+            {
+              "component": "lock_foot_anchor",
+              "name": "task_example_8_lock_foot_anchor",
+              "show": false
+            },
+            {
+              "component": "secondary_rebar_N1",
+              "name": "task_example_9_secondary_rebar_N1",
+              "show": false
+            },
+            {
+              "component": "secondary_rebar_N2",
+              "name": "task_example_10_secondary_rebar_N2",
+              "show": false
+            }
+          ]
+        }
+      },
+      "planned": {
+        "plan": {
+          "sceneKey": "[\"scene-1794972191299-1q069\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.three-bench\",\"support.test-section\"]]",
+          "taskId": "scene-1794972191299-1q069",
+          "objective": "component-detail",
+          "userRequest": "只规划当前任务视觉分析，观察钢拱架布置，需要暂避混凝土外壳，保留其他结构；先不要执行。",
+          "emphasis": "source",
+          "focusComponent": "steel_arch",
+          "focusResourceIds": [
+            "support.test-section"
+          ],
+          "referenceResourceIds": [
+            "rock.three-bench"
+          ],
+          "questions": [
+            "暂避初支/二衬混凝土外壳后，钢拱架在YK2+244测试断面上的布置形态是否可辨认？",
+            "钢拱架与保留的三台阶、其他支护构件之间的空间关系是否可观察？",
+            "当前取景下钢拱架是否存在遮挡或尺度不足，需要进一步核查？"
+          ],
+          "candidate": {
+            "type": "camera-view",
+            "view": "support",
+            "reason": "聚焦已声明的当前重点对象；其他资源仍保留但不保证同屏可辨"
+          },
+          "completionConditions": [
+            "执行前后任务与资源保持一致",
+            "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+            "画面取景与工程依据分开，待回答问题不作为已证实结论"
+          ],
+          "evidence": {
+            "capturedAt": "2026-11-18T03:23:17.755Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "engineeringAcceptance": "not-verified"
+        },
+        "phase": "planned",
+        "attempts": 0,
+        "remaining": 2,
+        "conditions": [
+          {
+            "resourceId": "support.test-section",
+            "runtime": "not-evaluated",
+            "framing": "unknown",
+            "modelCoverage": "unknown"
+          }
+        ],
+        "questionsStatus": "unanswered-requires-task-evidence",
+        "engineeringAcceptance": "not-verified"
+      },
+      "plannedAnswer": "🤖\n已生成视觉分析计划，尚未执行，相机和显隐都没有改动。\n\n当前任务：scene-1794972191299-1q069，YK2+244 测试工段，根资源为 rock.three-bench（三台阶）和 support.test-section（ZZ-Va 测试支护，复用 1064 米示例构件轮廓）。\n\n计划内容\n- 目的：component-detail（构件细部），重点资源仅 support.test-section，三台阶保留为参照。\n- 构件显露：steel_arch。按当前 componentDisplay，钢拱架节点存在但当前可见节点为 0；执行时会显示钢拱架并暂时隐藏初支/二衬混凝土外壳，其余结构保持原显隐，恢复时逐节点还原。\n- 待回答：①暂避混凝土外壳后钢拱架布置形态是否可辨认；②与三台阶及其他支护构件的空间关系是否可观察；③当前取景是否存在遮挡或尺度不足。\n- 候选动作：camera-view（support 视角），剩余应用次数 2。\n\n限制：26 点包围球仅表示投影入区，未测深度遮挡与可见像素；源断面与测试隧道尺寸存在差异，钢拱架布置可辨不等于断面贴合或设计符合。执行后需按实际前后反馈说明哪些条件可观察、哪些仍未知。需要执行时告诉我，我用该 taskId 应用一次。\n👍\n👎",
+      "applied": {
+        "plan": {
+          "sceneKey": "[\"scene-1794972191299-1q069\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.three-bench\",\"support.test-section\"]]",
+          "taskId": "scene-1794972191299-1q069",
+          "objective": "component-detail",
+          "userRequest": "规划并执行当前任务视觉分析：以当前测试支护的钢拱架为重点，显露钢拱架并暂避其他初支和二衬混凝土外壳，保留其他结构原显隐，不改地形、源几何或装配位置。",
+          "emphasis": "source",
+          "focusComponent": "steel_arch",
+          "focusResourceIds": [
+            "support.test-section"
+          ],
+          "referenceResourceIds": [
+            "rock.three-bench"
+          ],
+          "questions": [
+            "显露钢拱架并暂避初支/二衬混凝土外壳后，钢拱架在YK2+244测试断面上的布置形态是否可辨认？",
+            "钢拱架与保留的三台阶、其他支护构件之间的空间关系是否可观察？",
+            "当前取景下钢拱架是否存在遮挡或尺度不足，需要进一步核查？"
+          ],
+          "candidate": {
+            "type": "camera-view",
+            "view": "support",
+            "reason": "聚焦已声明的当前重点对象；其他资源仍保留但不保证同屏可辨"
+          },
+          "completionConditions": [
+            "执行前后任务与资源保持一致",
+            "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+            "画面取景与工程依据分开，待回答问题不作为已证实结论"
+          ],
+          "evidence": {
+            "capturedAt": "2026-11-18T03:23:22.472Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "engineeringAcceptance": "not-verified"
+        },
+        "phase": "applied",
+        "attempts": 1,
+        "remaining": 1,
+        "feedback": {
+          "before": {
+            "capturedAt": "2026-11-18T03:23:23.478Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "after": {
+            "capturedAt": "2026-11-18T03:23:23.480Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 20,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.three-bench",
+                "code": "framing-incomplete",
+                "detail": "20/26包围球采样位于可用画面；不是可见像素或遮挡测量"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "取景不完整时可按用户目标选择已有视角工具；本次未移动相机",
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          }
+        },
+        "conditions": [
+          {
+            "resourceId": "support.test-section",
+            "runtime": "loaded",
+            "framing": "26-samples-inside",
+            "modelCoverage": "declared-targets-only"
+          }
+        ],
+        "questionsStatus": "unanswered-requires-task-evidence",
+        "engineeringAcceptance": "not-verified"
+      },
+      "focused": {
+        "matrix": [
+          -0.04214446023312385,
+          0.4911288563875297,
+          -0.8700668312808713,
+          0,
+          -0.07438828223370382,
+          0.866881003576301,
+          0.4929337776059418,
+          0,
+          0.9963384103496048,
+          0.08549720499538294,
+          -1.6301015716329842e-16,
+          0,
+          -475193.07950184203,
+          5536147.263124687,
+          3126922.556426498,
+          1
+        ],
+        "nodes": [
+          {
+            "component": "primary_concrete",
+            "name": "task_example_0_primary_concrete",
+            "show": false
+          },
+          {
+            "component": "primary_mesh",
+            "name": "task_example_1_primary_mesh",
+            "show": false
+          },
+          {
+            "component": "primary_mesh",
+            "name": "task_example_2_primary_mesh",
+            "show": false
+          },
+          {
+            "component": "secondary_lining",
+            "name": "task_example_3_secondary_lining",
+            "show": false
+          },
+          {
+            "component": "secondary_rebar_N3",
+            "name": "task_example_4_secondary_rebar_N3",
+            "show": false
+          },
+          {
+            "component": "secondary_rebar_N4",
+            "name": "task_example_5_secondary_rebar_N4",
+            "show": false
+          },
+          {
+            "component": "steel_arch",
+            "name": "task_example_6_steel_arch",
+            "show": true
+          },
+          {
+            "component": "system_anchor",
+            "name": "task_example_7_system_anchor",
+            "show": false
+          },
+          {
+            "component": "lock_foot_anchor",
+            "name": "task_example_8_lock_foot_anchor",
+            "show": false
+          },
+          {
+            "component": "secondary_rebar_N1",
+            "name": "task_example_9_secondary_rebar_N1",
+            "show": false
+          },
+          {
+            "component": "secondary_rebar_N2",
+            "name": "task_example_10_secondary_rebar_N2",
+            "show": false
+          }
+        ]
+      },
+      "applyAnswer": "🤖\n已规划并执行一次（任务 scene-1794972191299-1q069，YK2+244 测试工段），剩余应用次数 1。\n\n实际执行结果（前后对比）\n- support.test-section：steel_arch 可见节点由 0/1 变为 1/1，已显露；primary_concrete 由 1/1 变为 0/1、secondary_lining 由 1/1 变为 0/1，初支与二衬混凝土外壳已暂时隐藏。其余构件（system_anchor、lock_foot_anchor、secondary_rebar_N1～N4、primary_mesh）保持原显隐（均为 0/1），三台阶 rock.three-bench 保留为参照，未改地形、源几何或装配位置。\n- 取景：支护 26 点包围球采样 26/26 在安全区内；三台阶由 26/26 降为 20/26，平台标记 framing-incomplete（仅为投影采样，不是可见像素或遮挡测量）。\n\n未解决项\n- 钢拱架布置形态是否可辨认、与三台阶及其他构件的空间关系是否可观察，本轮未做深度遮挡或像素级测量，不能确认；三台阶有 6 个采样点出画，若需完整台阶参照可再调整视角。\n- 该支护为复用 1064 米示例构件轮廓的 ZZ-Va 测试断面，源轮廓与测试隧道尺寸存在差异，钢拱架可见不等于断面贴合或设计符合；设计对应、实测对比、几何贴合三项证据缺口仍未补齐，不构成验收结论。\n\n需要恢复原显示或调整取景时告诉我。\n👍\n👎",
+      "restored": {
+        "plan": {
+          "sceneKey": "[\"scene-1794972191299-1q069\",\"scene-3\",{\"start\":2244,\"end\":2244},[\"rock.three-bench\",\"support.test-section\"]]",
+          "taskId": "scene-1794972191299-1q069",
+          "objective": "spatial-relation",
+          "userRequest": "规划并执行当前任务视觉分析：仍以测试支护钢拱架为重点并暂避混凝土外壳，但这次需要完整三台阶和整个5米支护作为总体空间参照，不要只聚焦支护细部。",
+          "emphasis": "source",
+          "focusComponent": "steel_arch",
+          "focusResourceIds": [
+            "support.test-section"
+          ],
+          "referenceResourceIds": [
+            "rock.three-bench"
+          ],
+          "questions": [
+            "在完整三台阶与整个5米支护同屏的总体取景下，钢拱架沿纵向的布置是否可辨认？",
+            "钢拱架与完整三台阶、其他支护构件的空间关系是否可观察？",
+            "总体取景下钢拱架是否因尺度变小或遮挡而难以辨认，需要进一步核查？"
+          ],
+          "candidate": {
+            "type": "camera-view",
+            "view": "overview",
+            "reason": "保留当前全部对象的整体空间参照"
+          },
+          "completionConditions": [
+            "执行前后任务与资源保持一致",
+            "核对重点对象实际运行状态和26点包围球取景；观察不足单列",
+            "画面取景与工程依据分开，待回答问题不作为已证实结论"
+          ],
+          "evidence": {
+            "capturedAt": "2026-11-18T03:23:28.193Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 20,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.three-bench",
+                "code": "framing-incomplete",
+                "detail": "20/26包围球采样位于可用画面；不是可见像素或遮挡测量"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "取景不完整时可按用户目标选择已有视角工具；本次未移动相机",
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "engineeringAcceptance": "not-verified"
+        },
+        "phase": "restored",
+        "attempts": 2,
+        "remaining": 0,
+        "feedback": {
+          "before": {
+            "capturedAt": "2026-11-18T03:23:29.250Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 20,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [
+              {
+                "resourceId": "rock.three-bench",
+                "code": "framing-incomplete",
+                "detail": "20/26包围球采样位于可用画面；不是可见像素或遮挡测量"
+              }
+            ],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "取景不完整时可按用户目标选择已有视角工具；本次未移动相机",
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          },
+          "after": {
+            "capturedAt": "2026-11-18T03:23:29.252Z",
+            "taskId": "scene-1794972191299-1q069",
+            "workflowStatus": "completed",
+            "completedSceneAvailable": true,
+            "chainageRange": {
+              "start": 2244,
+              "end": 2244
+            },
+            "phase": "constructed-then-enhanced",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "resources": [
+              {
+                "id": "common.tunnel",
+                "role": "dependency",
+                "module": "common",
+                "sourceHints": [],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 3,
+                "assetPaths": [
+                  "/data/tunnel/tunnel002.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 0,
+                  "readyModelCount": 0,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "incomplete",
+                  "framing": {
+                    "available": false
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "rock.three-bench",
+                "role": "task-root",
+                "module": "rock",
+                "sourceHints": [
+                  {
+                    "displayName": "三台阶",
+                    "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                    "placement": "fixed-source-demonstration",
+                    "demonstration": true
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/data/tunnel/三台阶.glb"
+                ],
+                "componentDisplay": [],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              },
+              {
+                "id": "support.test-section",
+                "role": "task-root",
+                "module": "support",
+                "sourceHints": [
+                  {
+                    "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                    "placement": "reference-components-centerline-normal",
+                    "componentScope": "source-model-components",
+                    "supportType": "ZZ-Va",
+                    "sourceGeometryReused": true,
+                    "originalGeometry": false
+                  }
+                ],
+                "sourceHintsTruncated": false,
+                "runtimeState": "loaded",
+                "references": 1,
+                "assetPaths": [
+                  "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                  "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                  "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                  "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+                ],
+                "componentDisplay": [
+                  {
+                    "component": "primary_concrete",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "primary_mesh",
+                    "visibleNodes": 0,
+                    "totalNodes": 2
+                  },
+                  {
+                    "component": "secondary_lining",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N3",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N4",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "steel_arch",
+                    "visibleNodes": 1,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "system_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "lock_foot_anchor",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N1",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  },
+                  {
+                    "component": "secondary_rebar_N2",
+                    "visibleNodes": 0,
+                    "totalNodes": 1
+                  }
+                ],
+                "observation": {
+                  "targetCount": 1,
+                  "readyModelCount": 1,
+                  "hiddenModelCount": 0,
+                  "pendingModelCount": 0,
+                  "unobservedTargetCount": 0,
+                  "modelCoverage": "declared-targets-only",
+                  "framing": {
+                    "available": true,
+                    "projected": 26,
+                    "insideSafe": 26,
+                    "behind": 0,
+                    "safe": {
+                      "left": 316,
+                      "right": 1004,
+                      "top": 76,
+                      "bottom": 838
+                    },
+                    "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                    "occlusion": "not-measured"
+                  }
+                },
+                "evidenceStatus": "runtime-only-not-engineering-acceptance"
+              }
+            ],
+            "evidenceAssessment": {
+              "taskId": "scene-1794972191299-1q069",
+              "resourceIds": [
+                "rock.three-bench",
+                "support.test-section"
+              ],
+              "facts": [],
+              "gaps": [
+                {
+                  "id": "task-design",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "源模型与本工段设计是否对应？",
+                  "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+                },
+                {
+                  "id": "field-data",
+                  "status": "not-provided-to-this-assessment",
+                  "question": "是否具备同一基准的实测对比？",
+                  "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+                },
+                {
+                  "id": "geometry",
+                  "status": "not-measured-by-this-assessment",
+                  "question": "接缝、净空或断面贴合是否成立？",
+                  "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+                }
+              ],
+              "factWindow": {
+                "availableInRetainedJournal": 0,
+                "retained": 0,
+                "omitted": 0,
+                "scope": "within-retained-journal-not-full-history"
+              },
+              "historyWindow": {
+                "locations": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "steps": {
+                  "total": 0,
+                  "retained": 0,
+                  "omitted": 0
+                },
+                "scope": "whole-task-window-before-resource-filter"
+              },
+              "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+              "questionStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified",
+              "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+            },
+            "locationEvidence": [],
+            "evidenceProgress": {
+              "scope": "interaction-history-not-question-completion",
+              "locationRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "stepRecords": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": [],
+              "questionsStatus": "unanswered-requires-task-evidence",
+              "engineeringAcceptance": "not-verified"
+            },
+            "loadedOutsideCurrentScene": [],
+            "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+            "supportContext": {
+              "available": false,
+              "reason": "当前缺少匹配的围岩与可观察支护"
+            },
+            "issues": [],
+            "engineeringAcceptance": "not-verified",
+            "limitations": [
+              "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+              "未测模型间深度遮挡、净空侵限或现场配准误差",
+              "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+              "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+            ],
+            "nextChecks": [
+              "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+            ]
+          }
+        },
+        "restoredFeedback": {
+          "capturedAt": "2026-11-18T03:23:33.117Z",
+          "taskId": "scene-1794972191299-1q069",
+          "workflowStatus": "completed",
+          "completedSceneAvailable": true,
+          "chainageRange": {
+            "start": 2244,
+            "end": 2244
+          },
+          "phase": "constructed-then-enhanced",
+          "resourceIds": [
+            "rock.three-bench",
+            "support.test-section"
+          ],
+          "resources": [
+            {
+              "id": "common.tunnel",
+              "role": "dependency",
+              "module": "common",
+              "sourceHints": [],
+              "sourceHintsTruncated": false,
+              "runtimeState": "loaded",
+              "references": 3,
+              "assetPaths": [
+                "/data/tunnel/tunnel002.glb"
+              ],
+              "componentDisplay": [],
+              "observation": {
+                "targetCount": 0,
+                "readyModelCount": 0,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "incomplete",
+                "framing": {
+                  "available": false
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            },
+            {
+              "id": "rock.three-bench",
+              "role": "task-root",
+              "module": "rock",
+              "sourceHints": [
+                {
+                  "displayName": "三台阶",
+                  "note": "Section planes follow the fitted source centerline normal. Not surveyed excavation. Illustrative bench heights and offsets; no invented surveyed relief.",
+                  "placement": "fixed-source-demonstration",
+                  "demonstration": true
+                }
+              ],
+              "sourceHintsTruncated": false,
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/data/tunnel/三台阶.glb"
+              ],
+              "componentDisplay": [],
+              "observation": {
+                "targetCount": 1,
+                "readyModelCount": 1,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "declared-targets-only",
+                "framing": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 838
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            },
+            {
+              "id": "support.test-section",
+              "role": "task-root",
+              "module": "support",
+              "sourceHints": [
+                {
+                  "note": "复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。",
+                  "placement": "reference-components-centerline-normal",
+                  "componentScope": "source-model-components",
+                  "supportType": "ZZ-Va",
+                  "sourceGeometryReused": true,
+                  "originalGeometry": false
+                }
+              ],
+              "sourceHintsTruncated": false,
+              "runtimeState": "loaded",
+              "references": 1,
+              "assetPaths": [
+                "/support-modeler/outputs/centerline/task-reference-1064.glb",
+                "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+                "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+                "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+              ],
+              "componentDisplay": [
+                {
+                  "component": "primary_concrete",
+                  "visibleNodes": 1,
+                  "totalNodes": 1
+                },
+                {
+                  "component": "primary_mesh",
+                  "visibleNodes": 0,
+                  "totalNodes": 2
+                },
+                {
+                  "component": "secondary_lining",
+                  "visibleNodes": 1,
+                  "totalNodes": 1
+                },
+                {
+                  "component": "secondary_rebar_N3",
+                  "visibleNodes": 0,
+                  "totalNodes": 1
+                },
+                {
+                  "component": "secondary_rebar_N4",
+                  "visibleNodes": 0,
+                  "totalNodes": 1
+                },
+                {
+                  "component": "steel_arch",
+                  "visibleNodes": 0,
+                  "totalNodes": 1
+                },
+                {
+                  "component": "system_anchor",
+                  "visibleNodes": 0,
+                  "totalNodes": 1
+                },
+                {
+                  "component": "lock_foot_anchor",
+                  "visibleNodes": 0,
+                  "totalNodes": 1
+                },
+                {
+                  "component": "secondary_rebar_N1",
+                  "visibleNodes": 0,
+                  "totalNodes": 1
+                },
+                {
+                  "component": "secondary_rebar_N2",
+                  "visibleNodes": 0,
+                  "totalNodes": 1
+                }
+              ],
+              "observation": {
+                "targetCount": 1,
+                "readyModelCount": 1,
+                "hiddenModelCount": 0,
+                "pendingModelCount": 0,
+                "unobservedTargetCount": 0,
+                "modelCoverage": "declared-targets-only",
+                "framing": {
+                  "available": true,
+                  "projected": 26,
+                  "insideSafe": 26,
+                  "behind": 0,
+                  "safe": {
+                    "left": 316,
+                    "right": 1004,
+                    "top": 76,
+                    "bottom": 838
+                  },
+                  "measurement": "26-bounding-sphere-samples-not-visible-model-pixels",
+                  "occlusion": "not-measured"
+                }
+              },
+              "evidenceStatus": "runtime-only-not-engineering-acceptance"
+            }
+          ],
+          "evidenceAssessment": {
+            "taskId": "scene-1794972191299-1q069",
+            "resourceIds": [
+              "rock.three-bench",
+              "support.test-section"
+            ],
+            "facts": [],
+            "gaps": [
+              {
+                "id": "task-design",
+                "status": "not-provided-to-this-assessment",
+                "question": "源模型与本工段设计是否对应？",
+                "nextCheck": "核对适用里程、设计版本和对应章节页码；访问路径不代表正文已读。"
+              },
+              {
+                "id": "field-data",
+                "status": "not-provided-to-this-assessment",
+                "question": "是否具备同一基准的实测对比？",
+                "nextCheck": "取得同一基准实测记录后再比较；当前不计算施工偏差。"
+              },
+              {
+                "id": "geometry",
+                "status": "not-measured-by-this-assessment",
+                "question": "接缝、净空或断面贴合是否成立？",
+                "nextCheck": "另行核验源断面适用性及几何关系；定位和取景不能证明贴合。"
+              }
+            ],
+            "factWindow": {
+              "availableInRetainedJournal": 0,
+              "retained": 0,
+              "omitted": 0,
+              "scope": "within-retained-journal-not-full-history"
+            },
+            "historyWindow": {
+              "locations": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "steps": {
+                "total": 0,
+                "retained": 0,
+                "omitted": 0
+              },
+              "scope": "whole-task-window-before-resource-filter"
+            },
+            "conclusion": "当前任务尚无这些资源的交互事实，不能沿用其他对象或旧任务的结论",
+            "questionStatus": "unanswered-requires-task-evidence",
+            "engineeringAcceptance": "not-verified",
+            "stopReason": "本次只汇总实际交互与证据缺口；重复定位或取景不能补齐设计、实测和几何依据"
+          },
+          "locationEvidence": [],
+          "evidenceProgress": {
+            "scope": "interaction-history-not-question-completion",
+            "locationRecords": {
+              "total": 0,
+              "retained": 0,
+              "omitted": 0
+            },
+            "stepRecords": {
+              "total": 0,
+              "retained": 0,
+              "omitted": 0
+            },
+            "steps": [],
+            "questionsStatus": "unanswered-requires-task-evidence",
+            "engineeringAcceptance": "not-verified"
+          },
+          "loadedOutsideCurrentScene": [],
+          "taskSourceNote": "三台阶：按tunnel002局部中线法向断面建模；仅在YK2+244测试工段示意展示，不代表目标实测。支护原模型沿同一中线基准定位，台阶高度与错距为示意参数；阶段模型的后方支护仍以源零点布置，不随台阶前缘移动。；同屏装配 rock.three-bench、support.test-section；示例设计不代表质量或风险结论",
+          "supportContext": {
+            "available": false,
+            "reason": "当前缺少匹配的围岩与可观察支护"
+          },
+          "issues": [],
+          "engineeringAcceptance": "not-verified",
+          "limitations": [
+            "模型加载、显示及屏幕取景不代表工程适用性或质量验收",
+            "未测模型间深度遮挡、净空侵限或现场配准误差",
+            "模型显隐默认观察Cesium.Model.show；仅componentDisplay统计已声明且实际存在的构件节点，未覆盖其他内部节点或像素，ready不能证明画面可辨",
+            "资产路径只是当前资源报告的来源，不代表已读取设计正文；缺少章节页码依据"
+          ],
+          "nextChecks": [
+            "工程结论须补充适用设计与实测资料；运行状态不能代替文字依据"
+          ]
+        },
+        "recoveryStatus": "restored",
+        "conditions": [
+          {
+            "resourceId": "support.test-section",
+            "runtime": "loaded",
+            "framing": "26-samples-inside",
+            "modelCoverage": "declared-targets-only"
+          }
+        ],
+        "questionsStatus": "unanswered-requires-task-evidence",
+        "engineeringAcceptance": "not-verified"
+      },
+      "restoreAnswer": "🤖\n已恢复到第一次视觉分析前的状态（任务 scene-1794972191299-1q069，recoveryStatus=restored）。\n\n恢复时的实际状态（restoredFeedback）\n- 相机与取景回到分析前：三台阶与支护 26 点包围球采样均为 26/26 入区，无 framing-incomplete 提示。\n- 支护显隐回到原状：primary_concrete 1/1、secondary_lining 1/1 恢复显示，steel_arch 回到 0/1（不再单独显露），其余构件保持原显隐；装配对象、里程与源几何未改动。\n\n说明与未解决项\n- 恢复只还原相机与已保存的裁剪/支护表达，不改变装配内容；应用预算仍为 0，恢复不返还。\n- 26 点采样仅为投影入区，未测深度遮挡与可见像素；钢拱架布置可辨性、与三台阶空间关系仍未核验，设计对应、实测对比、几何贴合三项证据缺口依旧存在，不构成验收结论。\n👍\n👎"
+    }
+  ],
+  "modelRequests": 12
+}

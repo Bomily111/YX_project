@@ -2,6 +2,7 @@ import * as T from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js'
 import { placeSourceShell, shellJointDistance } from './source-shell'
+import {generatedObjectBounds,type GeneratedBounds} from './generated-bounds'
 export const examplePaths = [
   '/support-modeler/outputs/centerline/task-reference-1064.glb',
   '/support-modeler/outputs/centerline/task-reference-1064.capture.json',
@@ -44,7 +45,7 @@ export async function buildExampleSupport(type:string,length:number,pose:(distan
   })
   if(!sourceFrame)throw new Error('源示例缺少可核实的初支断面坐标架')
   const inverse=sourceFrame.clone().invert()
-  const root=new T.Group(),groups:Array<{name:string;component:string;spacingM:number;stations:number;instances:number;visible:boolean;sourceAxialExtentM:number;repeatGapM:number;sourceWidthM:number;sourceHeightM:number;stationOffsetsM:number[];sourceBoundsXY:{minX:number;maxX:number;minY:number;maxY:number}}>=[]
+  const root=new T.Group(),groups:Array<{name:string;component:string;spacingM:number;stations:number;instances:number;visible:boolean;sourceAxialExtentM:number;repeatGapM:number;sourceWidthM:number;sourceHeightM:number;stationOffsetsM:number[];generatedBounds?:GeneratedBounds;sourceBoundsXY:{minX:number;maxX:number;minY:number;maxY:number}}>=[]
   data.scene.traverse(object=>{
     if(!(object instanceof T.InstancedMesh)||object.userData.support_type!==type||object.userData.centerline_start_distance!==start)return
     const component=String(object.userData.component),spacing=componentSpacing(component,segment.spacing_m,object.userData.parameters)
@@ -83,6 +84,8 @@ export async function buildExampleSupport(type:string,length:number,pose:(distan
     groups.push({name:mesh.name,component,spacingM:spacing,stations:stations.length,instances:stations.length*rows,sourceAxialExtentM,repeatGapM:spacing-sourceAxialExtentM,sourceWidthM:bounds.max.x-bounds.min.x,sourceHeightM:bounds.max.y-bounds.min.y,sourceBoundsXY:{minX:bounds.min.x,maxX:bounds.max.x,minY:bounds.min.y,maxY:bounds.max.y},stationOffsetsM:stations.map(station=>-length-.5+station),visible:['primary_concrete','secondary_lining','steel_arch','lattice_arch'].includes(component)})
   })
   if(!groups.length)throw new Error(`1064米示例未找到${type}构件`)
+  root.updateMatrixWorld(true)
+  for(const group of groups)group.generatedBounds=generatedObjectBounds(root.getObjectByName(group.name)!)
   const shellJoints=root.children.filter(child=>child instanceof T.Group).map(group=>{
     const distances=group.children.slice(1).map((child,i)=>shellJointDistance(
       (group.children[i] as T.Mesh).geometry.userData.endSections?.front??[],

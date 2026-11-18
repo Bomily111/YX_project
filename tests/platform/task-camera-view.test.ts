@@ -6,8 +6,8 @@ vi.mock('@/modules/support/modeler-resources', async importOriginal => ({ ...awa
 vi.mock('@/views/tunnel-module/blast', () => ({ getBlastModel: () => undefined, blastViewOffset: () => undefined }))
 import { focusTaskCamera, taskCameraSelection, resetTaskCameraSelection, availableTaskCameraViews } from '@/platform/tasks/TaskCameraView'
 it('offers support and excavation views for the actual test-section resource IDs',()=>{
- expect(availableTaskCameraViews(['rock.three-bench','support.test-section-z-pm'])).toEqual(['overview','support','excavation'])
- expect(availableTaskCameraViews(['support.test-section'])).toEqual(['overview','support'])
+ expect(availableTaskCameraViews(['rock.three-bench','support.test-section-z-pm'])).toEqual(['overview','geographic','support','excavation'])
+ expect(availableTaskCameraViews(['support.test-section'])).toEqual(['overview','geographic','support'])
  expect(availableTaskCameraViews([])).toEqual(['overview'])
 })
 it('rejects a missing focus model before changing the camera', () => {

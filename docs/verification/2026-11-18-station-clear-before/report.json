@@ -1,0 +1,199 @@
+{
+  "passed": false,
+  "errors": [],
+  "checks": [
+    {
+      "id": "clear-locator-preserves-component-review",
+      "beforeClear": {
+        "camera": {
+          "taskId": "scene-1794981802640-5esi7",
+          "selection": "station",
+          "camera": [
+            -475170.60045795905,
+            5536143.9874390755,
+            3126954.6632938897,
+            -0.49688848307923666,
+            0.10620229038357867,
+            -0.8612914192655685,
+            -0.2315919618103987,
+            0.9402611982789103,
+            0.2495476752765261
+          ]
+        },
+        "nodes": {
+          "matrix": [
+            -0.04214446023312385,
+            0.4911288563875297,
+            -0.8700668312808713,
+            0,
+            -0.07438828223370382,
+            0.866881003576301,
+            0.4929337776059418,
+            0,
+            0.9963384103496048,
+            0.08549720499538294,
+            -1.6301015716329842e-16,
+            0,
+            -475193.07950184203,
+            5536147.263124687,
+            3126922.556426498,
+            1
+          ],
+          "states": [
+            {
+              "name": "task_example_0_primary_concrete",
+              "component": "primary_concrete",
+              "show": false
+            },
+            {
+              "name": "task_example_1_primary_mesh",
+              "component": "primary_mesh",
+              "show": false
+            },
+            {
+              "name": "task_example_2_primary_mesh",
+              "component": "primary_mesh",
+              "show": false
+            },
+            {
+              "name": "task_example_3_secondary_lining",
+              "component": "secondary_lining",
+              "show": false
+            },
+            {
+              "name": "task_example_4_secondary_rebar_N3",
+              "component": "secondary_rebar_N3",
+              "show": false
+            },
+            {
+              "name": "task_example_5_secondary_rebar_N4",
+              "component": "secondary_rebar_N4",
+              "show": false
+            },
+            {
+              "name": "task_example_6_steel_arch",
+              "component": "steel_arch",
+              "show": true
+            },
+            {
+              "name": "task_example_7_system_anchor",
+              "component": "system_anchor",
+              "show": false
+            },
+            {
+              "name": "task_example_8_lock_foot_anchor",
+              "component": "lock_foot_anchor",
+              "show": false
+            },
+            {
+              "name": "task_example_9_secondary_rebar_N1",
+              "component": "secondary_rebar_N1",
+              "show": false
+            },
+            {
+              "name": "task_example_10_secondary_rebar_N2",
+              "component": "secondary_rebar_N2",
+              "show": false
+            }
+          ]
+        }
+      },
+      "afterClear": {
+        "camera": {
+          "taskId": "scene-1794981802640-5esi7",
+          "selection": "station",
+          "camera": [
+            -475170.60045795905,
+            5536143.9874390755,
+            3126954.6632938897,
+            -0.4968884830792371,
+            0.10620229038357755,
+            -0.8612914192655683,
+            -0.2315919618103987,
+            0.9402611982789103,
+            0.2495476752765261
+          ]
+        },
+        "nodes": {
+          "matrix": [
+            -0.04214446023312385,
+            0.4911288563875297,
+            -0.8700668312808713,
+            0,
+            -0.07438828223370382,
+            0.866881003576301,
+            0.4929337776059418,
+            0,
+            0.9963384103496048,
+            0.08549720499538294,
+            -1.6301015716329842e-16,
+            0,
+            -475193.07950184203,
+            5536147.263124687,
+            3126922.556426498,
+            1
+          ],
+          "states": [
+            {
+              "name": "task_example_0_primary_concrete",
+              "component": "primary_concrete",
+              "show": true
+            },
+            {
+              "name": "task_example_1_primary_mesh",
+              "component": "primary_mesh",
+              "show": false
+            },
+            {
+              "name": "task_example_2_primary_mesh",
+              "component": "primary_mesh",
+              "show": false
+            },
+            {
+              "name": "task_example_3_secondary_lining",
+              "component": "secondary_lining",
+              "show": true
+            },
+            {
+              "name": "task_example_4_secondary_rebar_N3",
+              "component": "secondary_rebar_N3",
+              "show": false
+            },
+            {
+              "name": "task_example_5_secondary_rebar_N4",
+              "component": "secondary_rebar_N4",
+              "show": false
+            },
+            {
+              "name": "task_example_6_steel_arch",
+              "component": "steel_arch",
+              "show": false
+            },
+            {
+              "name": "task_example_7_system_anchor",
+              "component": "system_anchor",
+              "show": false
+            },
+            {
+              "name": "task_example_8_lock_foot_anchor",
+              "component": "lock_foot_anchor",
+              "show": false
+            },
+            {
+              "name": "task_example_9_secondary_rebar_N1",
+              "component": "secondary_rebar_N1",
+              "show": false
+            },
+            {
+              "name": "task_example_10_secondary_rebar_N2",
+              "component": "secondary_rebar_N2",
+              "show": false
+            }
+          ]
+        },
+        "temporary": 0
+      }
+    }
+  ],
+  "failure": "Clearing station selection ended component review or changed camera"
+}

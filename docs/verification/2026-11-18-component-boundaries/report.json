@@ -1,0 +1,6 @@
+{
+  "passed": false,
+  "errors": [],
+  "checks": [],
+  "failure": "New task retained the old visual review"
+}

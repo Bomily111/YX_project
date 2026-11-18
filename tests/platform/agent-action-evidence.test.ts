@@ -6,6 +6,15 @@ afterEach(()=>{vi.unstubAllGlobals();unregisterModule('common')})
 const stream=(events:unknown[])=>new Response(events.map(e=>`data: ${JSON.stringify(e)}\n\n`).join('')+'data: [DONE]\n\n',{headers:{'Content-Type':'text/event-stream'}})
 const text=(value:string)=>[{type:'content_block_delta',delta:{type:'text_delta',text:value}}]
 const register=()=>registerTools('common',[{module:'common',tool:{name:'assemble_scene_at_mileage',description:'assemble',input_schema:{type:'object'}},executor:async()=>'{}'}])
+it.each(['', '  \n\t'])('reports an unavailable explanation instead of an empty assistant message (%j)',async answer=>{
+ let shown='',completed=''
+ vi.stubGlobal('fetch',vi.fn(async()=>stream(text(answer))))
+ const engine=new AgentEngine('test')
+ await engine.chat('介绍一下',{}, {onText:d=>shown+=d,onComplete:t=>{completed=t},onError:e=>{throw e}})
+ expect(completed).toContain('未生成可用的文字说明')
+ expect(shown).toContain('不能据此认定任务完成')
+ expect(engine.getMessages().at(-1)?.content).toBe(completed)
+})
 it.each(['只读查看当前通风图表，不要重新装配','只读查看当前解释体采样范围，不要重新装配','只读查看当前场景自检和已装配资源，不要重新装配'])('blocks mutating tools during %s',async request=>{
  register();const name=readOnlyTaskReviewTool(request)!;let calls=0
  registerTools('common',[{module:'common',tool:{name,description:'read',input_schema:{type:'object'}},executor:async()=>'{}'}])

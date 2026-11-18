@@ -3,6 +3,10 @@
     <summary>纵向布置与来源 · 示意装配</summary>
     <label>定位对象<select v-model="rowId" data-testid="support-layout-component"><option v-for="r in rows" :key="r.id" :value="r.id">{{ label(r) }}</option></select></label>
     <template v-if="row">
+      <button v-if="row.kind==='component-base'" data-testid="support-component-reveal" @click="revealComponent">显露当前构件</button>
+      <button v-if="componentReviewActive" data-testid="support-component-restore" @click="restoreComponent">恢复原显隐</button>
+      <small v-if="componentReviewActive" data-testid="support-component-review-note">已显示当前构件，并暂时隐藏其他初支/二衬外壳；其余结构保留原显隐。仅改变显示，不代表已解决全部遮挡或通过工程核验。</small>
+      <small v-if="componentReviewNotice" data-testid="support-component-manual-notice">{{ componentReviewNotice }}</small>
       <nav class="review-steps" aria-label="支护核对步骤"><button v-for="(step,i) in steps" :key="step.id" :data-testid="`support-review-${step.id}`" :aria-pressed="stepIndex===i" @click="goStep(i)">{{ i+1 }} {{ step.title }}</button></nav>
       <section v-if="steps[stepIndex]" data-testid="support-review-question"><strong>{{ steps[stepIndex]!.question }}</strong><small>{{ steps[stepIndex]!.boundary }}</small></section>
       <small v-if="visited.length" data-testid="support-review-history">本任务已定位：{{ visited.map(v=>v.toFixed(2)+'m').join('、') }}（访问记录，非验收通过）</small>
@@ -61,14 +65,15 @@ import {assessTaskEvidence} from '@/platform/tasks/TaskEvidenceAssessment'
 import {taskVisualReview} from '@/platform/tasks/TaskVisualReview'
 import {computed,onBeforeUnmount,ref,watch} from 'vue'
 import * as C from 'cesium'
-import {getTestSectionSupportSummaries,testSupportStationWorld,testSectionSupportResources} from '@/modules/support/test-section-resource'
+import {getTestSectionSupportSummaries,testSupportStationWorld,testSectionSupportResources,revealTaskSupportComponent,supportLayerRevision} from '@/modules/support/test-section-resource'
 import {supportLongitudinalRows,supportLayoutFinding,supportReviewSteps,type SupportLayoutRow} from '@/modules/support/longitudinal-layout'
 import {supportComponentLabel} from '@/modules/support/component-labels'
 import {supportReviewEvidence} from '@/modules/support/review-evidence'
 import {viewerService} from '@/platform/viewer/ViewerService'
 import {chainageService} from '@/platform/coordinates/ChainageService'
 import {getTaskWorkflowController,hasTaskWorkflowController} from '@/platform/tasks/TaskWorkflowBridge'
-import {focusTaskCamera} from '@/platform/tasks/TaskCameraView'
+import {focusTaskCamera,taskCameraSelection,restoreTaskCameraSelection,markTaskStationCamera} from '@/platform/tasks/TaskCameraView'
+import {captureTaskViewportTarget} from '@/platform/tasks/TaskViewport'
 const props=defineProps<{resourceIds:string[];taskId:string}>()
 const rows=computed(()=>supportLongitudinalRows(getTestSectionSupportSummaries(props.resourceIds)))
 const rowId=ref(''),selected=ref<number|null>(null),open=ref(false),error=ref('')
@@ -80,12 +85,30 @@ const stepProgress=computed(()=>steps.value.map(step=>({id:step.id,title:step.ti
 const assessment=computed(()=>{void taskEvidenceRevision.value;return assessTaskEvidence(props.taskId,props.resourceIds)})
 const rowFacts=computed(()=>assessment.value.facts.filter(fact=>fact.rowId===rowId.value&&fact.resourceId===row.value?.resourceId))
 const entryCamera=ref<{position:C.Cartesian3;direction:C.Cartesian3;up:C.Cartesian3}>()
+let restoreEntryContext:(()=>void)|undefined
+let restoreComponentState:ReturnType<typeof revealTaskSupportComponent>|undefined
+const componentReviewActive=ref(false)
+const componentReviewNotice=ref('')
+watch(supportLayerRevision,()=>{
+  if(componentReviewActive.value&&restoreComponentState&&!restoreComponentState.isCurrent()){
+    restoreComponentState=undefined;componentReviewActive.value=false
+    componentReviewNotice.value='后续显隐设置已接管，临时显露已结束；切换构件不会自动覆盖你的新设置。'
+  }
+})
+function restoreComponent(){restoreComponentState?.();restoreComponentState=undefined;componentReviewActive.value=false}
+function revealComponent(){
+  if(!currentTask()||!row.value)return
+  try{restoreComponent();restoreComponentState=revealTaskSupportComponent(row.value.resourceId,row.value.component);componentReviewActive.value=true;componentReviewNotice.value='';error.value=''}
+  catch(e){error.value=e instanceof Error?e.message:String(e)}
+}
 const finding=computed(()=>row.value?supportLayoutFinding(row.value):undefined)
 const sources=computed(()=>row.value?testSectionSupportResources.find(r=>r.id===row.value!.resourceId)?.getActiveAssetPaths?.()??[]:[])
 const label=(r:SupportLayoutRow)=>r.kind==='unit-base'?'单元基准（非配筋间距）':supportComponentLabel(r.component)
 const x=(offset:number)=>20+(offset+(row.value?.lengthM??0)+.5)/((row.value?.lengthM??0)+.5)*200
 let entities:C.Entity[]=[],handler:C.ScreenSpaceEventHandler|undefined,owner:C.Viewer|undefined
 function release(){
+  restoreComponent()
+  componentReviewNotice.value=''
   handler?.destroy();handler=undefined
   if(owner&&!owner.isDestroyed()){
     if(entities.includes(owner.selectedEntity!))owner.selectedEntity=undefined
@@ -125,14 +148,23 @@ function select(offset:number,from:'2d'|'3d',reviewStep=steps.value[stepIndex.va
   selected.value=offset
   if(!visited.value.includes(offset))visited.value.push(offset)
   const time=C.JulianDate.now()
-  entities.forEach((entity,i)=>{const chosen=row.value!.offsetsM[i]===offset;entity.point!.color=new C.ConstantProperty(chosen?C.Color.fromCssColorString('#fff1a8'):C.Color.CYAN);entity.point!.pixelSize=new C.ConstantProperty(chosen?12:8);entity.label!.show=new C.ConstantProperty(chosen)})
+  paintSelection()
   if(from==='2d'){
     const entity=entities[row.value.offsetsM.indexOf(offset)]!,center=entity.position!.getValue(time)!,station=chainageService.positionWithHeadingAt(2244)!
     owner.camera.cancelFlight();owner.camera.viewBoundingSphere(new C.BoundingSphere(center,8),new C.HeadingPitchRange(station.heading+.85,-.3,36));owner.camera.lookAtTransform(C.Matrix4.IDENTITY)
+    markTaskStationCamera(owner)
   }
   owner.scene.requestRender()
 }
-function clearSelection(){rebuild()}
+function paintSelection(){
+  entities.forEach((entity,i)=>{const chosen=selected.value!==null&&row.value?.offsetsM[i]===selected.value;entity.point!.color=new C.ConstantProperty(chosen?C.Color.fromCssColorString('#fff1a8'):C.Color.CYAN);entity.point!.pixelSize=new C.ConstantProperty(chosen?12:8);entity.label!.show=new C.ConstantProperty(chosen)})
+}
+function clearSelection(){
+  if(!owner||owner.isDestroyed()||!currentTask())return
+  selected.value=null
+  if(entities.includes(owner.selectedEntity!))owner.selectedEntity=undefined
+  paintSelection();owner.scene.requestRender()
+}
 function currentTask(){return !!row.value&&hasTaskWorkflowController()&&taskEvidenceScopeMatches(getTaskWorkflowController().getStatus(),props.taskId,row.value.resourceId)}
 function goStep(index:number){
   if(!row.value||!owner||!currentTask())return
@@ -148,13 +180,13 @@ function goStep(index:number){
 }
 function restoreView(){
   if(!owner||!entryCamera.value||!currentTask())return
-  const saved=entryCamera.value;owner.camera.cancelFlight();owner.camera.setView({destination:saved.position,orientation:{direction:saved.direction,up:saved.up}});owner.scene.requestRender()
+  const saved=entryCamera.value;owner.camera.cancelFlight();owner.camera.setView({destination:saved.position,orientation:{direction:saved.direction,up:saved.up}});restoreEntryContext?.();owner.scene.requestRender()
 }
 function toggle(event:Event){
   if(event.target!==event.currentTarget)return
   open.value=(event.target as HTMLDetailsElement).open
-  if(open.value){const camera=viewerService.current?.camera;if(camera)entryCamera.value={position:C.Cartesian3.clone(camera.positionWC),direction:C.Cartesian3.clone(camera.directionWC),up:C.Cartesian3.clone(camera.upWC)}}
-  else entryCamera.value=undefined
+  if(open.value){const viewer=viewerService.current,camera=viewer?.camera;if(viewer&&camera){entryCamera.value={position:C.Cartesian3.clone(camera.positionWC),direction:C.Cartesian3.clone(camera.directionWC),up:C.Cartesian3.clone(camera.upWC)};const selection=taskCameraSelection.value,restoreTarget=captureTaskViewportTarget(viewer);restoreEntryContext=()=>{restoreTarget();restoreTaskCameraSelection(selection)}}}
+  else {entryCamera.value=undefined;restoreEntryContext=undefined}
   rebuild()
 }
 watch(rows,values=>{rowId.value=values.find(r=>r.component==='steel_arch'||r.component==='lattice_arch')?.id??values[0]?.id??''},{immediate:true})

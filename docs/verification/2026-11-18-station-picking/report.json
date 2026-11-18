@@ -1,0 +1,222 @@
+{
+  "passed": true,
+  "errors": [],
+  "checks": [
+    {
+      "id": "actual-3d-pick-and-component-isolation",
+      "pick": {
+        "x": 605.5236537669675,
+        "y": 424.8032400035844,
+        "offset": -0.7000000000000002,
+        "count": 7
+      },
+      "beforePick": {
+        "taskId": "scene-1794971212898-iv9j9",
+        "selection": "station",
+        "camera": [
+          -475170.60045795905,
+          5536143.9874390755,
+          3126954.6632938897,
+          -0.49688848307923683,
+          0.10620229038357779,
+          -0.8612914192655685,
+          -0.2315919618103987,
+          0.9402611982789103,
+          0.2495476752765261
+        ]
+      },
+      "afterPick": {
+        "taskId": "scene-1794971212898-iv9j9",
+        "selection": "station",
+        "camera": [
+          -475170.60045795905,
+          5536143.9874390755,
+          3126954.6632938897,
+          -0.4968884830792371,
+          0.10620229038357755,
+          -0.8612914192655683,
+          -0.2315919618103987,
+          0.9402611982789103,
+          0.2495476752765261
+        ]
+      },
+      "evidence": [
+        {
+          "taskId": "scene-1794971212898-iv9j9",
+          "resourceId": "support.test-section",
+          "rowId": "support.test-section:steel_arch",
+          "component": "steel_arch",
+          "offsetM": -4.7,
+          "source": "2d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次ZZ-Va 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/centerline/task-reference-1064.glb",
+            "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+            "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+            "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+          ],
+          "sequence": 1,
+          "recordedAt": "2026-11-18T03:06:56.999Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        },
+        {
+          "taskId": "scene-1794971212898-iv9j9",
+          "resourceId": "support.test-section",
+          "rowId": "support.test-section:steel_arch",
+          "component": "steel_arch",
+          "offsetM": -4.7,
+          "source": "2d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次ZZ-Va 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/centerline/task-reference-1064.glb",
+            "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+            "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+            "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+          ],
+          "sequence": 2,
+          "recordedAt": "2026-11-18T03:06:57.870Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        },
+        {
+          "taskId": "scene-1794971212898-iv9j9",
+          "resourceId": "support.test-section",
+          "rowId": "support.test-section:steel_arch",
+          "component": "steel_arch",
+          "offsetM": -0.7000000000000002,
+          "source": "3d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次ZZ-Va 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/centerline/task-reference-1064.glb",
+            "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+            "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+            "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+          ],
+          "sequence": 3,
+          "recordedAt": "2026-11-18T03:06:58.393Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        }
+      ],
+      "options": [
+        {
+          "value": "support.test-section:primary_concrete",
+          "text": "初支混凝土"
+        },
+        {
+          "value": "support.test-section:primary_mesh",
+          "text": "初支钢筋网"
+        },
+        {
+          "value": "support.test-section:secondary_lining",
+          "text": "二次衬砌"
+        },
+        {
+          "value": "support.test-section:secondary_rebar_N3",
+          "text": "二衬钢筋 N3"
+        },
+        {
+          "value": "support.test-section:secondary_rebar_N4",
+          "text": "二衬钢筋 N4"
+        },
+        {
+          "value": "support.test-section:steel_arch",
+          "text": "钢拱架"
+        },
+        {
+          "value": "support.test-section:system_anchor",
+          "text": "系统锚杆"
+        },
+        {
+          "value": "support.test-section:lock_foot_anchor",
+          "text": "锁脚锚杆"
+        },
+        {
+          "value": "support.test-section:secondary_rebar_N1",
+          "text": "二衬钢筋 N1"
+        },
+        {
+          "value": "support.test-section:secondary_rebar_N2",
+          "text": "二衬钢筋 N2"
+        }
+      ]
+    },
+    {
+      "id": "geographic-station-return",
+      "entry": {
+        "taskId": "scene-1794971212898-iv9j9",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090643,
+          -0.6464296098251231,
+          -0.4771505423970672,
+          -0.7904617282184939,
+          0.5776374796825,
+          0.20372824617092622
+        ]
+      },
+      "station": {
+        "taskId": "scene-1794971212898-iv9j9",
+        "selection": "station",
+        "camera": [
+          -475170.60045795905,
+          5536143.9874390755,
+          3126954.6632938897,
+          -0.49688848307923683,
+          0.10620229038357792,
+          -0.8612914192655684,
+          -0.2315919618103987,
+          0.9402611982789103,
+          0.2495476752765261
+        ]
+      },
+      "restored": {
+        "taskId": "scene-1794971212898-iv9j9",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090643,
+          -0.646429609825123,
+          -0.4771505423970673,
+          -0.7904617282184941,
+          0.5776374796824998,
+          0.20372824617092555
+        ]
+      },
+      "refit": {
+        "taskId": "scene-1794971212898-iv9j9",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090643,
+          -0.646429609825123,
+          -0.4771505423970673,
+          -0.7904617282184941,
+          0.5776374796824998,
+          0.20372824617092555
+        ]
+      }
+    }
+  ],
+  "modelRequests": 0
+}

@@ -1,0 +1,88 @@
+{
+  "passed": false,
+  "modelRequests": 0,
+  "errors": [],
+  "cases": [
+    {
+      "id": "hardness",
+      "before": {
+        "imagery": [
+          {
+            "brightness": 1,
+            "saturation": 1,
+            "show": true
+          }
+        ],
+        "terrain": {
+          "enabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": [
+            400,
+            0.9,
+            800,
+            0.9
+          ],
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ]
+        }
+      },
+      "after": {
+        "imagery": [
+          {
+            "brightness": 1,
+            "saturation": 1,
+            "show": true
+          }
+        ],
+        "terrain": {
+          "enabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": [
+            400,
+            0.9,
+            800,
+            0.9
+          ],
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ]
+        }
+      },
+      "positioning": {
+        "anchor": [
+          -474298.13953647827,
+          5536216.194389634,
+          3126922.4578933874
+        ],
+        "designPoint": [
+          -474298.13953647827,
+          5536216.194389634,
+          3126922.4578933874
+        ],
+        "errorM": 0,
+        "centerlineShown": false
+      }
+    }
+  ],
+  "diagnostics": [],
+  "configRequests": [
+    "/src/assets/data/centerLine.json",
+    "/src/assets/data/centerline_mileage.json",
+    "/data/task-asset-manifest.json",
+    "/data/tsp_actual/hardness.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json",
+    "/data/task-asset-manifest.json"
+  ],
+  "failure": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '自主执行剩余步骤', exact: true })\u001b[22m\n"
+}

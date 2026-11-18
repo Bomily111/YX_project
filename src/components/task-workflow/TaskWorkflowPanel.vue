@@ -253,6 +253,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import {aiEvents} from '@/ai-agent/events'
 import { onBeforeRouteLeave } from 'vue-router'
 import { useTunnelStore } from '@/stores/tunnelStore'
 import { viewerService } from '@/platform/viewer/ViewerService'
@@ -722,7 +723,7 @@ const prepareWorkflow = async (source: 'agent' | 'panel' = 'panel', sceneInput?:
     activeSceneExecutor = sceneExecutor
     activeEnhancementEngine = enhancementEngine
     activeProvenance = provenance
-    stopExecutor = nextExecutor.subscribe((next) => { snapshot.value = next })
+    stopExecutor = nextExecutor.subscribe((next) => { snapshot.value = next;aiEvents.emit('task:workflow-status',getAgentStatus()) })
     notice.value = sceneInput
       ? { type: 'success', title: '动态场景计划已生成', message: sceneInput.resourceIds.some(id => id.startsWith('support.modeler-'))
         ? '可逐步执行。支护为新模块已导出的 1 m 断面，在目标 YK 中线装配；不代表目标里程实测或质量结论。'

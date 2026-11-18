@@ -368,12 +368,14 @@ onMounted(() => {
   // 监听场景打开事件
   aiEvents.on('scene:open', handleSceneOpen)
   aiEvents.on('task:open', handleTaskOpen)
+  aiEvents.on('task:workflow-status', handleWorkflowStatus)
 })
 
 onBeforeUnmount(() => {
   releaseCapabilities?.()
   aiEvents.off('scene:open', handleSceneOpen)
   aiEvents.off('task:open', handleTaskOpen)
+  aiEvents.off('task:workflow-status', handleWorkflowStatus)
   unregisterModule('common')
   if (engine.value) engine.value.abort()
 })
@@ -467,7 +469,7 @@ const send = async () => {
             canonicalDispatchShown = true
             streaming.value = false
             streamBuffer.value = ''
-            const labels: Record<string, string> = { overview: '整体布置', face: '掌子面近景', support: '支护近景', excavation: '三台阶近景', drill: '水平钻布置', blast: '爆破断面' }
+            const labels: Record<string, string> = { geographic:'中线与地形', overview: '整体布置', face: '掌子面近景', support: '支护近景', excavation: '三台阶近景', drill: '水平钻布置', blast: '爆破断面' }
             messages.value.push({ role: 'assistant', content: parsed.ok ? `已切换到${labels[parsed.view] || parsed.view}视角，当前装配保持不变。` : `视角未调整：${parsed.reason || result}。` })
             await scrollToBottom()
           }
@@ -616,6 +618,11 @@ const sendQuick = (cmd: string) => {
 
 const handleSceneOpen = (scene: string) => emit('sceneOpen', scene)
 const handleTaskOpen = () => emit('taskWorkflowOpen')
+const handleWorkflowStatus = (status:AgentTaskWorkflowStatus) => {
+  chatTaskStatus.value=status.prepared?status:undefined
+  if(status.status==='completed'&&status.lastCompletedStage)publishAssembledScene(status)
+  else if(status.completed===0)emit('assemblyChange',null)
+}
 const openTaskWorkflow = () => {
   isOpen.value = true
   emit('taskWorkflowOpen')

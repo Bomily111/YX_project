@@ -12,7 +12,6 @@ import {installTaskVolumeDomain} from './TaskVolumeDomain'
 import {applyTaskChartLayout} from './TaskChartLayout'
 import { isThreeBenchResourceId, getActiveThreeBenchModel } from '@/modules/rock/three-bench-resource'
 import { isTestSupportId, getTestSectionSupportModels } from '@/modules/support/test-section-resource'
-import {applyTaskTerrainContext} from './TaskTerrainContext'
 import {getFlowBoundingSphere} from '@/views/ventilation-module/cesiumVentilation'
 import {installTaskFlowReview,flowReviewInitialMode} from './TaskFlowReview'
 import {fitTaskCameraToViewport,clearTaskViewportTarget} from './TaskViewport'
@@ -45,15 +44,7 @@ export function presentTaskScene(viewer: C.Viewer, ids: readonly string[], chain
   try {
     const profile = taskPresentationProfile(ids,goal)
     undo.push(applyTaskChartLayout(viewer,ids))
-    undo.push(applyTaskTerrainContext(viewer,chainage))
-    // Retain geographic context in the shared viewer, with reversible imagery
-    // attenuation. Do not replace terrain, semantic model colors or the sky.
-    const imagery = viewer.imageryLayers
-    if(imagery) for(let i=0;i<imagery.length;i++) {
-      const layer=imagery.get(i), brightness=layer.brightness, saturation=layer.saturation
-      undo.push(()=>{layer.brightness=brightness;layer.saturation=saturation})
-      layer.brightness=brightness*.22;layer.saturation=saturation*.18
-    }
+    // Keep the main viewer terrain, imagery brightness and saturation unchanged.
     if (profile.volumeCut) undo.push(applyTaskVolumeCut())
     // Task assembly uses the current platform viewer/environment. Only model
     // emphasis and camera framing belong to this transaction.
