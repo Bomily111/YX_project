@@ -1,0 +1,68 @@
+{
+  "cases": [
+    {
+      "id": "axial-fan-with-flow",
+      "taskId": "scene-1795152855264-9sn8q",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/ventilation/axial-fan.glb",
+        "/data/ventilation/cfd_cell_data_lite.json",
+        "/data/ventilation/cfd_arrows.json"
+      ],
+      "elapsedMs": 6405,
+      "fan": {
+        "bladeCount": 8,
+        "ready": true,
+        "directionDot": 1,
+        "markerDistance": 0,
+        "markers": 1,
+        "atTaskStation": true,
+        "picked": true,
+        "flowLoaded": true,
+        "renderError": false
+      }
+    },
+    {
+      "id": "axial-fan-reversed",
+      "taskId": "scene-1795152868535-gk24r",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/ventilation/axial-fan.glb"
+      ],
+      "elapsedMs": 7603,
+      "fan": {
+        "bladeCount": 8,
+        "ready": true,
+        "directionDot": 1.0000000000000002,
+        "markerDistance": 0,
+        "markers": 1,
+        "atTaskStation": true,
+        "picked": true,
+        "flowLoaded": false,
+        "renderError": false
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

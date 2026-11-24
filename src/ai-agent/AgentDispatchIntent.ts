@@ -1,4 +1,5 @@
 import {wantsSupportLayerControl,wantsSupportInspection} from './SupportLayerIntent'
+import { isTunnelSectionRequest, tunnelSectionIntent } from '@/platform/tasks/TunnelSectionIntent'
 export interface RoutedToolCall {
   name: string
   input: Record<string, any>
@@ -44,6 +45,7 @@ export function resolveClarifiedSceneRequest(message: string, pending?: string):
   return `${pending}\n用户补充：${message}`
 }
 export function wantsTaskViewControl(message: string): boolean {
+  if (tunnelSectionIntent(message)) return !/[DY]K\s*\d|构建|装配|加载|测试工段/i.test(message)
   if(/中线与地形|地理位置|地形位置/.test(message)){
     return !/[DY]K\s*\d|构建|装配|加载|计划|如何|怎么|只读|只查询|仅查询|不要|不切换|不改/i.test(message)
       && /切换|切到|回到|查看|看看|定位|显示/.test(message)
@@ -52,7 +54,7 @@ export function wantsTaskViewControl(message: string): boolean {
     && /整体布置|整体视角|全景|近景|拉近|聚焦|放大.*(?:掌子面|支护|钻孔|爆破)|视角.*(?:掌子面|支护|钻孔|爆破)/.test(message)
 }
 export function wantsTaskCutControl(message: string): boolean {
-  return !/[DY]K\s*\d|装配|加载|计划|如何|怎么|能否/i.test(message)
+  return !isTunnelSectionRequest(message) && !/[DY]K\s*\d|装配|加载|计划|如何|怎么|能否/i.test(message)
     && /剖切|裁剪|完整解释体|完整体数据/.test(message)
     && /开启|打开|关闭|取消|恢复|显示|切开/.test(message)
 }
@@ -65,6 +67,17 @@ export function wantsBlastLayerControl(message: string): boolean {
 }
 
 /** Ordinary scene requests use one platform assembly call; explicit step-debug tasks retain the older tools. */
+export function wantsAssemblyThenVisualReview(message: string): boolean {
+  if (wantsScenePreflight(message) || /只读|仅查询|先别|暂不|不执行|只(?:要|看|做|给|生成).{0,10}(?:计划|方案|装配)|(?:不要|不必|无需|请勿).{0,8}(?:执行|装配|增强|显露|避让|切换|移动相机|改.{0,4}显示)/.test(message)) return false
+  return (wantsTaskExecution(message) || /(?:请|麻烦)[^。！？]{0,45}(?:装配|构建|搭建)/.test(message))
+    && /(?:装配|构建|搭建)/.test(message)
+    && /(?:视觉分析|视觉增强|细部|显露|暂避|避让|剖开|暖色|局部取景)/.test(message)
+}
+
+export function wantsOverviewThenDetail(message: string): boolean {
+  return /先[^。！？]{0,80}(?:整体|全景|总体)[^！？]{0,80}(?:再|随后|然后)[^。！？]{0,55}(?:细部|近景|局部|单独观察)/.test(message)
+}
+
 export function wantsDirectSceneAssembly(message: string): boolean {
   if(taskVisualReviewIntent(message))return false
   if(readOnlyTaskReviewTool(message))return false
@@ -79,7 +92,7 @@ export function wantsDirectSceneAssembly(message: string): boolean {
   if (/如何|怎么|为什么|介绍|解释一下/.test(message)) return false
   if (/(?:质量检查|质量评估|只.{0,8}(?:计划|方案)|不执行|暂不执行|assemblyModes|revise_next_scene_assembly|修订.{0,8}装配计划|分阶段|逐层|依次|轮流|先.{0,24}再)/i.test(message)) return false
   return /(?:构建|装配|展示|加载|查看|调出|呈现|可视化|准备|搭建|看看|放到.{0,8}场景)/.test(message)
-    && /(?:场景|围岩|岩体|支护|爆破|炮孔|点云|通风|风流|流线|热场|温度场|温度分布|掌子面|照片|雷达|GPR|水平钻|钻孔|模型|电阻率|物探)/i.test(message)
+    && /(?:场景|围岩|岩体|支护|爆破|炮孔|点云|通风|轴流风机|射流风机|送风布置|风流|流线|热场|温度场|温度分布|掌子面|照片|雷达|GPR|水平钻|钻孔|模型|电阻率|物探)/i.test(message)
 }
 
 /** Explicit user-requested plan revision must be observed before advancing the next scene step. */
@@ -107,6 +120,10 @@ export function routeWorkflowToolCall(
   input: Record<string, any>,
   userMessage: string,
 ): RoutedToolCall {
+  const section = tunnelSectionIntent(userMessage)
+  if (name === 'set_task_view' && section && wantsTaskViewControl(userMessage)) {
+    return { name, input: { view: section === 'open' ? 'tunnel-side-section' : 'restore-tunnel-section' }, routed: true }
+  }
   if (!wantsTaskExecution(userMessage)) return { name, input, routed: false }
   if (name === 'orchestrate_platform_task') {
     return { name: 'prepare_platform_task', input, routed: true }

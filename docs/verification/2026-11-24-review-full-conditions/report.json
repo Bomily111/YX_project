@@ -1,0 +1,947 @@
+{
+  "passed": false,
+  "scope": "complete workflows, software conditions",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "cases": [
+    {
+      "key": "support",
+      "stages": [
+        {
+          "key": "workface",
+          "manual": {
+            "taskId": "scene-1795498401263-yvr40",
+            "status": "completed",
+            "resources": [
+              "rock.workface-surface"
+            ],
+            "matrices": [
+              [
+                0.0259063318902152,
+                0.08972304014064278,
+                -0.15387864710841012,
+                0,
+                -0.013393346768155028,
+                0.15603856203348512,
+                0.08872759109132945,
+                0,
+                0.17762173355291286,
+                -0.0013203130094099416,
+                0.029133769807822892,
+                0,
+                -475180.0195431422,
+                5536147.703044718,
+                3126926.1197220813,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475168.29603267583,
+                5536150.120905136,
+                3126938.069544029
+              ],
+              [
+                -0.7732187650624113,
+                -0.024849611689328453,
+                -0.6336523006777844
+              ],
+              [
+                -0.29976465532552377,
+                0.8948636374937007,
+                0.3306965704526016
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/workface-surface/texturedMesh.glb",
+              "/data/workface-surface/texturedMesh.jpg"
+            ],
+            "anchors": [],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [
+              "scene-1",
+              "scene-2"
+            ],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7ef7dda545cfd62cb601131c1a11ea919563649eb6ef51c4e1f37ef33e2cda60"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.jpg",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "8902d1db0398b34214582867a212120d7f308bf5559be56a2564a624185f9370"
+              }
+            ]
+          },
+          "assembly": {
+            "taskId": "scene-1795498413532-d5q0u",
+            "status": "completed",
+            "resources": [
+              "rock.workface-surface"
+            ],
+            "matrices": [
+              [
+                0.0259063318902152,
+                0.08972304014064278,
+                -0.15387864710841012,
+                0,
+                -0.013393346768155028,
+                0.15603856203348512,
+                0.08872759109132945,
+                0,
+                0.17762173355291286,
+                -0.0013203130094099416,
+                0.029133769807822892,
+                0,
+                -475180.0195431422,
+                5536147.703044718,
+                3126926.1197220813,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475168.2960407452,
+                5536150.120899131,
+                3126938.069554111
+              ],
+              [
+                -0.7732187650624115,
+                -0.024849611689327367,
+                -0.6336523006777843
+              ],
+              [
+                -0.2997646553255249,
+                0.8948636374937003,
+                0.3306965704526016
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/workface-surface/texturedMesh.glb",
+              "/data/workface-surface/texturedMesh.jpg"
+            ],
+            "anchors": [],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7ef7dda545cfd62cb601131c1a11ea919563649eb6ef51c4e1f37ef33e2cda60"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.jpg",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "8902d1db0398b34214582867a212120d7f308bf5559be56a2564a624185f9370"
+              }
+            ]
+          }
+        },
+        {
+          "key": "reveal",
+          "manual": {
+            "taskId": "scene-1795498404191-f8xcr",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section-zz-ivb"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.5055735621,
+                5536077.111829829,
+                3127232.300546514
+              ],
+              [
+                -0.3454637812722637,
+                0.15566912429028798,
+                -0.9254306562740207
+              ],
+              [
+                -0.1847556527154493,
+                0.9555626607594572,
+                0.22970709643368667
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section-zz-ivb",
+                "component": "system_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [
+              "scene-1",
+              "scene-2",
+              "scene-3",
+              "scene-4",
+              "scene-4"
+            ],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+              }
+            ]
+          }
+        },
+        {
+          "key": "baseline",
+          "manual": {
+            "taskId": "scene-1795498404191-f8xcr",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section-zz-ivb"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.5055735621,
+                5536077.111829829,
+                3127232.300546514
+              ],
+              [
+                -0.3454637812722637,
+                0.15566912429028798,
+                -0.9254306562740207
+              ],
+              [
+                -0.1847556527154493,
+                0.9555626607594572,
+                0.22970709643368667
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section-zz-ivb",
+                "component": "system_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+              }
+            ]
+          }
+        },
+        {
+          "key": "candidate",
+          "manual": {
+            "taskId": "scene-1795498408420-4iaqs",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.5209564711,
+                5536076.929445952,
+                3127232.11400868
+              ],
+              [
+                -0.34546378129313793,
+                0.15566912409313027,
+                -0.9254306562993926
+              ],
+              [
+                -0.18475565291304322,
+                0.9555626607532233,
+                0.22970709630069228
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section",
+                "component": "system_anchor",
+                "visible": true
+              },
+              {
+                "resourceId": "support.test-section",
+                "component": "lock_foot_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [
+              "scene-1",
+              "scene-2",
+              "scene-2",
+              "scene-4",
+              "scene-5"
+            ],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "pageErrors": [],
+  "modelRequests": 0,
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nnull !== 'workface'\n\n    at verifySequence (file:///D:/project/scripts/verify-construction-review-conditions.mjs:394:16)\n    at async file:///D:/project/scripts/verify-construction-review-conditions.mjs:431:37"
+}

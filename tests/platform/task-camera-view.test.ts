@@ -1,6 +1,6 @@
 import * as C from 'cesium'
 import { expect, it, vi } from 'vitest'
-vi.mock('@/modules/face-sketch/resources', () => ({ getActiveFaceSlices: () => [] }))
+vi.mock('@/modules/face-sketch/resources', () => ({ getActiveFaceSlices: () => [], isFacePhotoResource: () => false }))
 vi.mock('@/modules/rock/drill-resource', () => ({ getActiveDrillModels: () => [] }))
 vi.mock('@/modules/support/modeler-resources', async importOriginal => ({ ...await importOriginal<typeof import('@/modules/support/modeler-resources')>(), getActiveModelerSupportModel: () => undefined }))
 vi.mock('@/views/tunnel-module/blast', () => ({ getBlastModel: () => undefined, blastViewOffset: () => undefined }))

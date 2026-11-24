@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest'
 import * as C from 'cesium'
 const state = vi.hoisted(() => ({ faces: [] as any[], drills: [] as any[], tunnel: undefined as any }))
-vi.mock('@/modules/face-sketch/resources', () => ({ getActiveFaceSlices: () => state.faces }))
+vi.mock('@/modules/face-sketch/resources', () => ({ getActiveFaceSlices: () => state.faces, isFacePhotoResource: (id: string) => id.startsWith('rock.face-photo') }))
 vi.mock('@/modules/rock/drill-resource', () => ({ getActiveDrillModels: () => state.drills }))
 vi.mock('@/modules/support/modeler-resources', async importOriginal => ({ ...await importOriginal<typeof import('@/modules/support/modeler-resources')>(), getActiveModelerSupportModel: () => undefined }))
 vi.mock('@/views/tunnel-module/blast', () => ({ getBlastModel: () => undefined, blastViewOffset: () => undefined }))

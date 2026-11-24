@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "directlyPicked": [
+    "candidate",
+    "jet-fan",
+    "blast-cloud"
+  ],
+  "modelRequests": 0,
+  "pageErrors": [],
+  "dragDoesNotSelect": true,
+  "experimentDenied": true,
+  "reset": true
+}

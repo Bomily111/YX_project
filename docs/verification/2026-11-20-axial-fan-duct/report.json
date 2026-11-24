@@ -1,0 +1,51 @@
+{
+  "cases": [
+    {
+      "id": "axial-fan-with-duct",
+      "taskId": "scene-1795165977370-xth0g",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/ventilation/axial-fan.glb",
+        "/data/ventilation/axial-fan-duct.glb"
+      ],
+      "elapsedMs": 14361,
+      "fan": {
+        "bladeCount": 8,
+        "ready": true,
+        "directionDot": 1,
+        "markerDistance": 0,
+        "markers": 1,
+        "atTaskStation": true,
+        "picked": true,
+        "flowLoaded": false,
+        "renderError": false
+      },
+      "duct": {
+        "ready": true,
+        "inletAligned": true,
+        "jointGap": 0,
+        "picked": true
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

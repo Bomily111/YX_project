@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {
+      "id": "native-tem-absolute",
+      "taskId": "scene-1795145092059-en869",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/geophysical_tem/resistivity.json",
+        "/data/geophysical_tem/resistivity_volume.png",
+        "/data/tunnel/tunnel002.glb"
+      ],
+      "elapsedMs": 12239
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

@@ -138,6 +138,82 @@
 
 本次完成的是两小时开发阶段，不是论文全部研究、全场景质量基线或人员实验完成。
 
-## 后续开发：相邻基准定位与记录间隔
+## 11月19日后续开发：相邻基准定位与记录间隔
 
 用户继续开发，本轮对应R2（P0154）的二维三维量值联动和R3（P0155）固定问题准备。任务为YK2+244钢架/格栅示意布置核对，具体问题是选中某基准后，前后相邻基准在哪里、记录间隔是多少，而不是接缝或实测净距。现有页面只有单点偏移和全行统一间距，不能直接对应相邻关系。最小改动为从当前行记录计算相邻区间，增加二维区间及三维基准辅助连线，清除/切换时释放，不改模型、坐标、地形或工具数量。纯计算覆盖不等距、端点、无记录及单元基准边界；真实页面检查二维/三维同一对基准、清除/重选/换行和原恢复。在线余额上轮不足，本轮不重复模型调用，不把交互实现称为自主策略或人员效果通过。
+
+已实现相邻基准联动。从当前行相邻站位相减得到两侧记录间隔，端点只显示实际存在的一侧。单位回退行显示相邻单元基准。二维高亮和三维辅助线使用同一对相对偏移，三维端点复用已有定位标记坐标。清除定位、换行或释放面板时移除辅助线。
+
+[真实页面报告](verification/2026-11-19-adjacent-stations/report.json)通过。5m ZZ-Va二维选中 −4.70m 后显示 −5.50 至 −4.70m、−4.70 至 −3.90m，两段均0.80m。三维鼠标选中末站只保留 −1.50 至 −0.70m，未移动相机。截图经目视核对。[恢复与显隐回归](verification/2026-11-19-adjacent-stations-recovery/report.json)通过，保持清除、重选、临时显露、手动接管及进入视角恢复。两份页面报告均零页面错误、零模型请求。纵向布置3项测试与[构建](verification/2026-11-19-adjacent-stations-build.log)通过。
+
+已核对1064米源元数据第19段钢架字段 `spacing_m.steel_arch_m=0.8` 与PARTIAL状态，将固定题面、源依据、端点答案和评分口径写入[实验规程](experiments/r3-entry-protocol.md)。真实页面本轮覆盖ZZ-Va钢架。格栅和独立单元共用计算与绘制路径，尚无本次新增功能的独立页面结果。人员辨识效果及现场尺寸仍待验证。
+
+## 11月19日补验：格栅和独立单元
+
+继续R2相邻基准联动与R3验证。固定YK2+244和5m长度，用ZZ-IIIx格栅检查多分组共用基准的去重，用Z-PM检查单元间隔与配筋间距的区分。复用既有页面脚本，核验真实鼠标拾取、清除、关闭和原视角恢复，发现表达错误则修正。两任务通过后结束本轮。
+
+- ZZ-IIIx源GLB第6段对应主筋、腹筋、箍筋、连接筋四分组，源参数均为2000mm纵向布置间距。真实页面去重后有3个基准。选中 −3.50m 显示两侧各2.00m，三维末站点击只保留前一段。[格栅报告](verification/2026-11-19-adjacent-lattice-rendered/report.json)
+- Z-PM显示5个独立单元基准，选中 −4.50m 显示两侧各1.00m。界面在数值旁注明独立单元放置记录，并将表格的未核验项明确标为配筋间距。[独立单元报告](verification/2026-11-19-adjacent-units-solid/report.json)
+- 三维辅助线改为黄色实线，遮挡时采用纯色材质。两类最终截图目视可见连接线。测试覆盖真实拾取、清除、关闭及原视角恢复，格栅另覆盖换行。两类均零页面错误和模型调用，构建通过。中途一次Z-PM验收因测试定位器作用域错误超时，修改定位器后通过。[构建记录](verification/2026-11-19-adjacent-solid-build.log)
+
+## 任务替换后的定位状态
+
+对应R2连续分析与R3原型验证。在YK2+244的5m钢架任务中保留站位选择和临时显露，直接切换至同里程Z-PM。核对旧标记、辅助线、模型及活动定位记录释放，新任务只显示自己的单元间隔。先复用真实页面脚本验证普通入口，有可复现问题再修复。
+
+同里程替换已通过。测试从实际工作流读取新任务ID、完成状态和资源，避免把同里程旧面板当作新任务完成。旧钢架基准、辅助线、活动定位记录和支护模型均已释放，新任务打开后从自己的单元基准开始，选中 −4.50m 时两侧均显示1.00m。[切换截图](verification/2026-11-19-station-task-switch-final/replacement.png)
+
+代码核对发现，站位附带的视觉问题原先只按任务和资源匹配。已增加构件范围核对。没有指定构件的计划仍按资源匹配。真实页面在钢架计划下先选混凝土行再选钢架行，只有钢架记录附有计划问题。最终页面零错误、零模型请求，构建通过。人员辨识效果和工程尺寸的核验范围保持为后续工作。[页面报告](verification/2026-11-19-station-task-switch-final/report.json)
+
+## 11月20日 围岩已有资源接入与资产收敛
+
+对应 R1。用于后续复杂交底的原始资产目录按照围岩、爆破、通风、支护、调度五类组织。本轮把原三维 GPR GLB、两份内容不同的 TEM 异常体 GLB、原始绝对电阻率体素补进围岩任务。原始 GLB 直接加载，采用既有围岩页的模型定位，再做沿中线的刚性变换。TEM 的 `latest` 与另一个历史目录的 GLB 字节相同，任务侧共享一个入口。五处掌子面照片按原有来源里程分别调用，单个阶段选一张，来源里程与任务显示里程分开解析。水平钻取消原任务的强制着色。
+
+三台阶公开目录只留基础模型，两份阶段资产移到历史归档。九个旧支护构件 GLB 和对应旧加载函数已移除，历史快照保留原始记录，在缺源文件时无法回放这些构件。新支护的 14 个原始单元继续使用。
+
+真实 Edge 页面确认三维 GPR 和两份 TEM 实体分别请求原 GLB，任务切换释放前序资源。绝对电阻率体素以源 JSON 和纹理加载，首次连续测试截图超时，独立页面复测通过运行与快照校验。基础三台阶与原始 ZZ-Va 组合的装配、显露和恢复也通过。[原模型加载记录](verification/2026-11-20-native-rock/report.json) · [绝对电阻率复测](verification/2026-11-20-native-tem-absolute/report.json) · [基础三台阶与支护复测](verification/2026-11-20-basic-bench-support/report.json)
+
+五处掌子面来源逐一通过实际在线调度，结果快照指向各自的源纹理。切换后每次只保留一张，默认照片与二维雷达测线的组合也正常。[五处照片来源的实页记录](verification/2026-11-20-native-face-sources-final/report.json)
+
+## 11月20日 掌子面与邻近岩壁三维网格
+
+对应 R1、R2。班前地质交底需从工段位置进入岩面近景，观察同一块岩面的起伏及向两侧延伸的关系。核查了旧 TFS 的照片平面、爆后样例点云和研究目录源文件，选择 `D:/研/任务/Geology-v3-master/public/scene/data/texturedMesh.glb` 与同目录 `texturedMesh.jpg`。两文件原样复制到 `public/data/workface-surface`，SHA-256 分别为 `7EF7DDA545CFD62CB601131C1A11EA919563649EB6EF51C4E1F37EF33E2CDA60` 和 `8902D1DB0398B34214582867A212120D7F308BF5559BE56A2564A624185F9370`。源网格含 109584 个顶点，源工点、采集方式及测量比例未核验。
+
+新增资源 `rock.workface-surface`，沿真实 YK 中线以统一 0.18 展示比例布置，不写回几何、纹理或材料。提供斜视和正向近景，局部取景调整地下背景色，退出任务或拉远恢复。与平面掌子面照片分阶段使用。当前资产只覆盖源网格已有局部范围，不能依据示意布置判读实际净空、岩面尺寸或支护贴合。
+
+真实页面以 YK2+244 班前交底触发在线装配；验证源 GLB、外部 JPG 请求和结果快照，调用近景后相机变化、模型矩阵保持一致。两张截图均已目视复核，近景可辨认岩面纹理和接缝式起伏，源模型边缘和远景地形拼接仍可见。26 项相关测试通过，生产构建通过，末次背景调整后类型和页面复验通过。[测试报告](verification/2026-11-20-workface-surface-final/report.json) · [工作面斜视](verification/2026-11-20-workface-surface-final/workface-overview.png) · [岩面近景](verification/2026-11-20-workface-surface-final/workface-detail.png)
+
+### 掌子面背后加厚预览
+
+对应 R1 模型装配与 R2 观察对照。`rock.workface-backing-preview` 依赖原岩面并加载独立的背部 GLB。生成脚本从源网格提取外边缘，生成过渡侧壁和后盖，并校验组合网格每条边均关联两面。按当前 0.18 展示比例，后盖比源网格最深处多 3 米。保持原 GLB、纹理及装配姿态，新增背部为示意材质。真实页面使用同一相机做显隐对照，再检查原岩面近景。侧壁仍可见示意面和少量接合纹理。类型检查、26 项回归和资产指纹校验通过。[加厚前](verification/2026-11-20-workface-backing-blended/before.png) · [加厚后](verification/2026-11-20-workface-backing-blended/after.png) · [验证报告](verification/2026-11-20-workface-backing-blended/report.json)
+
+针对斜看时侧壁条纹和板状外观，R2 预览改用连续过渡曲面，在新增侧壁上复用原纹理中一块连续岩面作为示意贴图。YK2+244 实页同机位显隐对照及正面近景通过，确认原岩面和 3 米加厚部件按同一姿态加载。斜视仍可辨认接合处的明暗差。[新版斜视](verification/2026-11-20-workface-side-textured/after.png) · [验证报告](verification/2026-11-20-workface-side-textured/report.json)
+
+R2 班前交底预览修正两侧鼓出。移除向外扩展的轮廓，越过原网格后缘后逐渐收窄，后盖横向比上一版收窄约 14%，展示深度仍为 3 米。YK2+244 实页同机位显隐对照中，两侧基本贴合原有轮廓，中央 240×240 像素区域一致，左下仍可见少量接缝。[原岩面正视](verification/2026-11-20-workface-shoulders-smoothed/front-original.png) · [加厚后正视](verification/2026-11-20-workface-shoulders-smoothed/front-with-backing.png) · [加厚后斜视](verification/2026-11-20-workface-shoulders-smoothed/after.png)
+
+用户更偏好上一版的斜侧观感。恢复圆润过渡与岩面贴图，仅对新增侧壁的横向轮廓做轻微内收，原网格与 3 米展示深度保留。YK2+244 实页斜侧可见连续曲面，正视左缘仍有一条可辨认的加厚侧边。[斜侧](verification/2026-11-20-workface-rounded-sides/after.png) · [正视](verification/2026-11-20-workface-rounded-sides/front-with-backing.png)
+
+按反馈局部改造新增左侧壁，先沿原边缘向后过渡，再于原网格后缘内收，与其余方位的圆润曲面连续衔接。YK2+244 实页同机位正视时左侧长条已消除，左下仍可见小块接缝，斜视可辨 3 米示意厚度和左侧曲面明暗分界。[正视](verification/2026-11-20-workface-left-edge-final/front-with-backing.png) · [斜视](verification/2026-11-20-workface-left-edge-final/after.png) · [实页报告](verification/2026-11-20-workface-left-edge-final/report.json)
+
+根据后续反馈，班前交底预览恢复内收左缘之前的圆润侧壁。该版恢复连续的斜视曲面，正视左侧仍有一条侧壁可见。原掌子面与 3 米示意厚度保留。[复测斜视](verification/2026-11-20-workface-rounded-restored/after.png) · [复测正视](verification/2026-11-20-workface-rounded-restored/front-with-backing.png)
+
+### 隧道侧面剖切
+
+对应 R2。YK2+244 班前交底中，沿真实中线建立局部纵向窗口，剖开朝镜头一侧的公共隧道外壳，保留对侧洞壁、前方三台阶及后方 5 米原版 ZZ-Va 支护。样板窗口为 YK2+237 至 YK2+268。智能体可在装配任务中开启侧剖，也可在当前任务中用自然语言打开或关闭。关闭时恢复原洞壁、相机及原分段裁剪。当前适用范围为装配对象完整落在同一公共隧道分段内的三台阶与测试支护任务。
+
+真实 Edge 页面通过整段施工任务开启侧剖，随后通过智能体关闭、重开、再关闭。复核同一 Viewer 和同一批装配对象，原洞壁状态、原分段裁剪和相机恢复，未出现页面渲染错误。初测有旧 1064 米间距断言误套在原版单元上，已按实际资产检查原版单元的数量。类型检查及 30 项针对性测试通过。画面支持辨认台阶与后方支护的示意关系。[侧剖画面](verification/2026-11-20-tunnel-side-section-final/section.png) · [恢复视图](verification/2026-11-20-tunnel-side-section-final/restored.png) · [实页报告](verification/2026-11-20-tunnel-side-section-final/report.json)
+
+### 施工通风轴流风机模型
+
+对应 R1 资源补建，用于后续送风设备布置交底。新建独立 GLB，包含带螺栓的双端法兰、护网、八片有扭转的叶片、轮毂、电机、接线盒与减振底座。内径按 1.20 m 建模，整机约长 2.28 m、宽 1.41 m、高 1.62 m。坐标为米，原点为底座下表面中点，+Y 向上，+Z 为示意出风方向，进出口中心和部件分组写入 GLB。外形参考施工通风设备的常见结构，尺寸为建模选择，供场景示意。风量、风压、转速和实际选型待实机资料。[参考图册](https://www.sodeca.com/files/catalogs/en/SODECA_CT28_VENTILATION_SYSTEMS_FOR%20TUNNELS_EN.pdf) · [生成脚本](../scripts/build-axial-fan.mjs)
+
+资产指纹已登记。沿 YK4+000 真实中线在平台 Cesium Viewer 中临时装配，复核进风端防护网后可见叶轮、出风端能辨认电机支撑及法兰。模型作为独立资产供后续接入通风任务。[进风端](verification/2026-11-20-axial-fan-verified/inlet.png) · [出风端](verification/2026-11-20-axial-fan-verified/outlet.png) · [实页报告](verification/2026-11-20-axial-fan-verified/report.json)
+
+已接入智能体资源 `ventilation.axial-fan`，支持独立布置和在风场现有覆盖范围内同屏。设备沿目标工点实中线布置，示意横向偏移 2.1 m，出风方向可随任务反转。用法兰中心引出风筒接口箭头。状态快照记录资源与设备朝向，切换工点释放前序设备标记及不再使用的风场。后续施工送风样板按取风、风机、风筒、掌子面与回风通道组织，预留风筒接口，采用既有 CFD 时保留独立来源。该布置作为交底示意，工程布置与设备选型以项目设计和实机资料为准。[施工通风技术参考](https://www.safework.nsw.gov.au/__data/assets/pdf_file/0019/52147/Excavation-work-COP.pdf)
+
+真实 Edge 页面使用在线智能体执行两条完整交底任务。YK4+000 同屏加载风机和已有稳态风场，YK2+244 独立风机改为小里程方向并撤下前序风场。检查两处设备实页拾取、出风轴方向、接口箭头起点与法兰中心重合，画面复核两处近景。[带风场交底](verification/2026-11-20-axial-fan-agent-complete/axial-fan-with-flow.png) · [小里程朝向](verification/2026-11-20-axial-fan-agent-complete/axial-fan-reversed.png) · [实页报告](verification/2026-11-20-axial-fan-agent-complete/report.json)
+
+接着完成近机接装，新增 `ventilation.axial-fan-duct`。4 米柔性风筒沿风机出风轴安装，进风端和风机法兰共用坐标系及端面，实际显示时把接口标记落在接缝上方。智能体在明确要求实体风筒时组合两件，后续可沿中线继续补足风筒到掌子面和回风通道。当前近机段为示意，未建立全程风筒、吊挂、阻力计算或实机工况。[接装实页](verification/2026-11-20-axial-fan-duct-final/axial-fan-with-duct.png) · [实页报告](verification/2026-11-20-axial-fan-duct-final/report.json)
+
+### 洞顶吊装射流风机
+
+用户选择继续以洞内纵向通风展示为主。R1 增加 `ventilation.ceiling-jet-fan`，独立 GLB 含吊架、隔振垫、机筒和两端消声段。智能体按正反向里程放置。具备射线拾取能力的 3D Viewer 优先以当前隧道 GLB 的拱顶微调展示高度。YK4+000 实页在线装配、实页拾取和吊架组检查通过，拱顶修正约 0.46 米。截图为示意展示，安装高度与吊点根据项目资料确认。[工程设备吊装参考](https://www.sodeca.com/files/catalogs/en/SODECA_CT28_VENTILATION_SYSTEMS_FOR%20TUNNELS_EN.pdf) · [装配画面](verification/2026-11-20-ceiling-jet-fan-aligned/ceiling-jet-fan.png) · [实页报告](verification/2026-11-20-ceiling-jet-fan-aligned/report.json)

@@ -6,6 +6,7 @@ import { resourceRegistry } from '@/platform/resources/ResourceRegistry'
 import { resourceManager } from '@/platform/resources/ResourceManager'
 import { AGENT_SCENE_RESOURCES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import type { SceneCapabilityReport } from './SceneCapabilities'
+import { facePhotoCatalog } from '@/modules/face-sketch/resources'
 /** Metadata registration only: never load a model or create/replace a task. */
 export function inspectPlatformSceneCapabilities(): SceneCapabilityReport {
   registerRockModule(); registerSupportModule(); registerBlastModule(); registerVentilationModule()
@@ -13,6 +14,7 @@ export function inspectPlatformSceneCapabilities(): SceneCapabilityReport {
     resources: AGENT_SCENE_RESOURCES.flatMap(id => {
       const resource = resourceRegistry.get(id)
       return resource ? [{ id, module: resource.module, type: resource.type,
+        sourceMileage: facePhotoCatalog.find(item => item.id === id)?.sourceMileage,
         declaredRange: resource.chainageRange ? { ...resource.chainageRange } : undefined,
         state: resourceManager.getState(id).status }] : []
     }) }

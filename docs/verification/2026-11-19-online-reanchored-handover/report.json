@@ -1,0 +1,13 @@
+{
+  "online": true,
+  "passed": false,
+  "requests": [],
+  "errors": [],
+  "modelRequests": 1,
+  "checks": [],
+  "replies": [
+    "🤖场景装配未完成：[DrawLine] 等待公共隧道分段 2 超时👍👎",
+    "🤖我先按你指定的参数装配：YK1+346 三台阶整体参照 + ZZ-Va 后方 5 米示意段。👍👎"
+  ],
+  "failure": "TimeoutError: locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('task-purpose') to be visible\u001b[22m\n"
+}

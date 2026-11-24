@@ -4,6 +4,9 @@ export function supportOffsets(length = 10) {
 }
 /** Read the protected user request, excluding source-unit dimensions. */
 export function resolveTestSupportLength(request: string): number {
+  for (const offset of excavationRelativeOffsets(request).reverse()) {
+    request = request.slice(0, offset.index) + request.slice(offset.index + offset[0].length)
+  }
   const values: number[] = []
   const number = (text: string) => {
     if (/^[+-]?\d/.test(text)) return Number(text)
@@ -25,3 +28,5 @@ export function resolveTestSupportLength(request: string): number {
   supportOffsets(length)
   return length
 }
+import { excavationRelativeOffsets } from '@/platform/tasks/excavation-relative-offset'
+

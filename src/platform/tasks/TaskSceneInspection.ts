@@ -34,7 +34,7 @@ export function inspectTaskScene(status: AgentTaskWorkflowStatus, registry: Reso
     const paths = loaded ? [...read(resource.getActiveAssetPaths, [] as readonly string[])] : []
     const targets = loaded ? read(resource.getEnhanceTargets, []) : []
     const hints = [...new Set(targets.map(target => JSON.stringify(Object.fromEntries(
-      ['displayName','note','placement','demonstration','componentScope','supportType','sourceStatus','sourceGeometryReused','originalGeometry']
+      ['displayName','note','placement','demonstration','componentScope','supportType','sourceStatus','sourceGeometryReused','originalGeometry','sourceReferenceChainage','taskReferenceChainage']
         .filter(key => ['string','boolean','number'].includes(typeof target.metadata?.[key]))
         .map(key => [key,target.metadata![key]])
     ))).filter(value => value !== '{}'))]

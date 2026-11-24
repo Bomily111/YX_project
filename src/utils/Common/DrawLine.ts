@@ -4,7 +4,7 @@
 import * as Cesium from 'cesium';
 import { DTScopeEngine } from './Viewer';
 import centerLineData from '@/assets/data/centerLine.json';
-import { queueLegacySupportModel, invalidateLegacySupportModels } from '@/modules/support/LegacySupportLifecycle';
+import { invalidateLegacySupportModels } from '@/modules/support/LegacySupportLifecycle';
 
 // 全局变量存储实体引用
 let allLineEntity: Cesium.Entity | null | undefined = null;
@@ -525,54 +525,10 @@ function makeModelMatrix(pos: Cesium.Cartesian3, next: Cesium.Cartesian3, downOf
 }
 
 /** 加载洞口钢筋网（第一节 23m） */
-export function loadRebarMeshes(customViewer?: any) {
-  const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer) return;
-  if (rebarPrimitives.length > 0) return;
 
-  const utils = getCenterlineUtils();
-  if (!utils) return;
-
-  const mesh1Url = 'data/zhihu/Z-PM-23m/Z-PM-钢筋第一层.glb';
-  const mesh2Url = 'data/zhihu/Z-PM-23m/Z-PM-钢筋第二层.glb';
-  const count = Math.floor(REBAR_TOTAL_LENGTH / REBAR_SPACING) + 1;
-
-  for (let i = 0; i < count; i++) {
-    const dist = i * REBAR_SPACING;
-    const pos = utils.sampleAt(dist);
-    const next = utils.sampleAt(Math.min(dist + 0.01, utils.totalLen));
-    const modelMatrix = makeModelMatrix(pos, next);
-    const url = i % 2 === 0 ? mesh1Url : mesh2Url;
-    queueLegacySupportModel('rebar', viewer, { url, modelMatrix }, (model) => { rebarPrimitives.push(viewer.scene.primitives.add(model)); });
-  }
-  console.log(`[DrawLine] 洞口钢筋网共 ${count} 层（间距${REBAR_SPACING}m，总长${REBAR_TOTAL_LENGTH}m）`);
-}
 
 /** 加载二衬钢筋（第二节 44m，从 23m 处开始） */
-export function loadSecondRebarMeshes(customViewer?: any) {
-  const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer) return;
-  if (secondRebarPrimitives.length > 0) return;
 
-  const utils = getCenterlineUtils();
-  if (!utils) return;
-
-  const SECOND_START = 23;
-  const SECOND_LENGTH = 44;
-  const mesh1Url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第一层.glb';
-  const mesh2Url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-二衬钢筋第二层.glb';
-  const count = Math.floor(SECOND_LENGTH / REBAR_SPACING) + 1;
-
-  for (let i = 0; i < count; i++) {
-    const dist = SECOND_START + i * REBAR_SPACING;
-    const pos = utils.sampleAt(dist);
-    const next = utils.sampleAt(Math.min(dist + 0.01, utils.totalLen));
-    const modelMatrix = makeModelMatrix(pos, next, 0);
-    const url = i % 2 === 0 ? mesh1Url : mesh2Url;
-    queueLegacySupportModel('lining_rebar', viewer, { url, modelMatrix }, (model) => { secondRebarPrimitives.push(viewer.scene.primitives.add(model)); });
-  }
-  console.log(`[DrawLine] 二衬钢筋共 ${count} 层（起始${SECOND_START}m，总长${SECOND_LENGTH}m）`);
-}
 
 /** 移除所有支护模型 */
 export function removeRebarMeshes(customViewer?: any) {
@@ -639,29 +595,7 @@ export function removeSecondRebarMeshes(customViewer?: any) {
 let steelFramePrimitives: any[] = [];
 
 /** 加载钢架模型（从 23m 处开始，间隔 1m，总长 44m） */
-export function loadSteelFrameMeshes(customViewer?: any) {
-  const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer) return;
-  if (steelFramePrimitives.length > 0) return;
 
-  const utils = getCenterlineUtils();
-  if (!utils) return;
-
-  const STEEL_START = 23;
-  const STEEL_LENGTH = 44;
-  const STEEL_SPACING = 0.5;
-  const url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-钢架.glb';
-  const count = Math.floor(STEEL_LENGTH / STEEL_SPACING) + 1;
-
-  for (let i = 0; i < count; i++) {
-    const dist = STEEL_START + i * STEEL_SPACING;
-    const pos = utils.sampleAt(dist);
-    const next = utils.sampleAt(Math.min(dist + 0.01, utils.totalLen));
-    const modelMatrix = makeModelMatrix(pos, next, 0);
-    queueLegacySupportModel('steel_frame', viewer, { url, modelMatrix }, (model) => { steelFramePrimitives.push(viewer.scene.primitives.add(model)); });
-  }
-  console.log(`[DrawLine] 钢架共 ${count} 榀（起始${STEEL_START}m，间距${STEEL_SPACING}m，总长${STEEL_LENGTH}m）`);
-}
 
 /** 控制钢架显示/隐藏 */
 export function setSteelFrameVisible(show: boolean) {
@@ -700,61 +634,7 @@ const PIPESHED_RADIUS = 6.33;
 const PIPESHED_CENTER_Y = 2.1;  // 拱圆心在中线上方 2.1m
 
 /** 加载中管棚模型（搭在每榀钢架上） */
-export function loadPipeShedMeshes(customViewer?: any) {
-  const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer) return;
-  if (pipeShedPrimitives.length > 0) return;
 
-  const utils = getCenterlineUtils();
-  if (!utils) return;
-
-  const url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ76中管棚.glb';
-  const archHalf = PIPESHED_ARCH_ANGLE / 2 * Math.PI / 180;
-  const sideArcLen = PIPESHED_RADIUS * archHalf;
-  const sideCount = Math.floor(sideArcLen / PIPESHED_CIRC_SPACING);
-
-  // 预计算环向角度列表
-  const thetaList: number[] = [];
-  for (let i = 0; i < sideCount; i++) {
-    const arcDist = (i + 0.5) * PIPESHED_CIRC_SPACING;
-    const theta = arcDist / PIPESHED_RADIUS;
-    thetaList.push(theta);
-    thetaList.push(-theta);
-  }
-  thetaList.sort((a, b) => a - b);
-
-  const tiltRad = Cesium.Math.toRadians(PIPESHED_TILT_DEG);
-  const ringCount = Math.floor(PIPESHED_LENGTH / PIPESHED_LONG_SPACING) + 1;
-
-  for (let ri = 0; ri < ringCount; ri++) {
-    const ringDist = PIPESHED_START + ri * PIPESHED_LONG_SPACING - 0.15;
-    const pos = utils.sampleAt(ringDist);
-    const next = utils.sampleAt(Math.min(ringDist + 0.1, utils.totalLen));
-    const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
-    const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
-    const dir = Cesium.Cartesian3.subtract(next, pos, new Cesium.Cartesian3());
-    const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, dir, new Cesium.Cartesian3());
-    const tunnelHeading = Math.atan2(localDir.x, localDir.y);
-    const cosH = Math.cos(tunnelHeading);
-    const sinH = Math.sin(tunnelHeading);
-
-    for (const theta of thetaList) {
-      const sideDist = PIPESHED_RADIUS * Math.sin(theta);
-      const upDist = PIPESHED_CENTER_Y + PIPESHED_RADIUS * Math.cos(theta);
-      const localOffset = new Cesium.Cartesian3(sideDist * cosH, -sideDist * sinH, upDist);
-      const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
-      const pipePos = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
-      const hpr = new Cesium.HeadingPitchRoll(tunnelHeading, 0, 0);
-      let m = Cesium.Transforms.headingPitchRollToFixedFrame(pipePos, hpr);
-      const tiltRot = Cesium.Matrix3.fromRotationX(tiltRad);
-      const tiltM4 = Cesium.Matrix4.fromRotationTranslation(tiltRot);
-      m = Cesium.Matrix4.multiply(m, tiltM4, new Cesium.Matrix4());
-      queueLegacySupportModel('pipe_shed', viewer, { url, modelMatrix: m }, (model) => { pipeShedPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); });
-    }
-  }
-
-  console.log(`[DrawLine] 中管棚共 ${ringCount} 环 × ${thetaList.length} 根，R=${PIPESHED_RADIUS}m`);
-}
 
 /** 控制中管棚显示/隐藏 */
 export function setPipeShedVisible(show: boolean) {
@@ -793,56 +673,7 @@ const ANCHOR_RADIUS = 6.33;
 const ANCHOR_CENTER_Y = 2.1;
 
 /** 加载锚杆模型（梅花状铺设，垂直插入） */
-export function loadAnchorMeshes(customViewer?: any) {
-  const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer) return;
-  if (anchorPrimitives.length > 0) return;
 
-  const utils = getCenterlineUtils();
-  if (!utils) return;
-
-  const url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ25自进式中空注浆锚杆.glb';
-  const archHalf = ANCHOR_ARCH_ANGLE / 2 * Math.PI / 180;
-  const sideArcLen = ANCHOR_RADIUS * archHalf;
-  const sideCount = Math.floor(sideArcLen / ANCHOR_CIRC_SPACING);
-  const ringCount = Math.floor(ANCHOR_LENGTH / ANCHOR_LONG_SPACING) + 1;
-  for (let ri = 0; ri < ringCount; ri++) {
-    const ringDist = ANCHOR_START + ri * ANCHOR_LONG_SPACING;
-    const pos = utils.sampleAt(ringDist);
-    const next = utils.sampleAt(Math.min(ringDist + 0.1, utils.totalLen));
-    const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
-    const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
-    const dir = Cesium.Cartesian3.subtract(next, pos, new Cesium.Cartesian3());
-    const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, dir, new Cesium.Cartesian3());
-    const tunnelHeading = Math.atan2(localDir.x, localDir.y);
-    const cosH = Math.cos(tunnelHeading);
-    const sinH = Math.sin(tunnelHeading);
-
-    const place = (theta: number) => {
-      const sideDist = ANCHOR_RADIUS * Math.sin(theta);
-      const upDist = ANCHOR_CENTER_Y + ANCHOR_RADIUS * Math.cos(theta);
-      const localOffset = new Cesium.Cartesian3(sideDist * cosH, -sideDist * sinH, upDist);
-      const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
-      const anchorPos = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
-      const m = buildAnchorMatrix(anchorPos, tunnelHeading, theta);
-      queueLegacySupportModel('anchor', viewer, { url, modelMatrix: m }, (model) => { anchorPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); });
-    };
-
-    // 偶数环从拱顶开始(i=0→θ=0)，奇数环错开半间距
-    const offset = ri % 2 === 0 ? 0 : ANCHOR_CIRC_SPACING / 2;
-    const startI = ri % 2 === 0 ? 1 : 0; // 偶数环跳过i=0(已单独place拱顶)
-    if (ri % 2 === 0) place(0);
-    for (let i = startI; i <= sideCount + 1; i++) {
-      const arcDist = offset + i * ANCHOR_CIRC_SPACING;
-      if (arcDist > sideArcLen) break;
-      const theta = arcDist / ANCHOR_RADIUS;
-      place(theta);
-      place(-theta);
-    }
-  }
-
-  console.log(`[DrawLine] 锚杆共 ${ringCount} 环梅花状，间距${ANCHOR_LONG_SPACING}m，R=${ANCHOR_RADIUS}m`);
-}
 
 /** 控制锚杆显示/隐藏 */
 export function setAnchorVisible(show: boolean) {
@@ -907,51 +738,7 @@ const CONDUIT_RADIUS = 6.33;
 const CONDUIT_CENTER_Y = 2.1;
 
 /** 加载注浆小导管模型（起拱线 65.2° 以上，梅花状排布） */
-export function loadConduitMeshes(customViewer?: any) {
-  const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer) return;
-  if (conduitPrimitives.length > 0) return;
 
-  const utils = getCenterlineUtils();
-  if (!utils) return;
-
-  const url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42注浆小导管.glb';
-  const ringCount = Math.floor(CONDUIT_LENGTH / CONDUIT_LONG_SPACING) + 1;
-
-  for (let ri = 0; ri < ringCount; ri++) {
-    const ringDist = CONDUIT_START + ri * CONDUIT_LONG_SPACING;
-    const pos = utils.sampleAt(ringDist);
-    const next = utils.sampleAt(Math.min(ringDist + 0.1, utils.totalLen));
-    const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
-    const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
-    const dir = Cesium.Cartesian3.subtract(next, pos, new Cesium.Cartesian3());
-    const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, dir, new Cesium.Cartesian3());
-    const tunnelHeading = Math.atan2(localDir.x, localDir.y);
-    const cosH = Math.cos(tunnelHeading);
-    const sinH = Math.sin(tunnelHeading);
-
-    const place = (theta: number) => {
-      const sideDist = CONDUIT_RADIUS * Math.sin(theta);
-      const upDist = CONDUIT_CENTER_Y + CONDUIT_RADIUS * Math.cos(theta);
-      const localOffset = new Cesium.Cartesian3(sideDist * cosH, -sideDist * sinH, upDist);
-      const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
-      const p = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
-      const m = buildAnchorMatrix(p, tunnelHeading, theta);
-      queueLegacySupportModel('conduit', viewer, { url, modelMatrix: m }, (model) => { conduitPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); });
-    };
-
-    const offset = ri % 2 === 1 ? CONDUIT_CIRC_SPACING / 2 : 0;
-    const maxCount = ri % 2 === 0 ? 3 : 2;
-    for (let i = 0; i < maxCount; i++) {
-      const arcDist = offset + i * CONDUIT_CIRC_SPACING;
-      const theta = CONDUIT_ARCH_START + arcDist / CONDUIT_RADIUS;
-      place(theta);
-      place(-theta);
-    }
-  }
-
-  console.log(`[DrawLine] 小导管共 ${ringCount} 环梅花状，R=${CONDUIT_RADIUS}m`);
-}
 
 export function setConduitVisible(show: boolean) {
   for (const p of conduitPrimitives) p.model.show = show;
@@ -986,42 +773,7 @@ const LOCK_ANCHOR_RADIUS = 6.33;
 const LOCK_ANCHOR_CENTER_Y = 2.1;
 
 /** 加载锁脚锚杆模型（拱脚 117.4° 处，每环 2 根） */
-export function loadLockAnchorMeshes(customViewer?: any) {
-  const viewer = customViewer || DTScopeEngine.viewer;
-  if (!viewer) return;
-  if (lockAnchorPrimitives.length > 0) return;
 
-  const utils = getCenterlineUtils();
-  if (!utils) return;
-
-  const url = 'data/zhihu/ZZ-QJsx-44m/ZZ-QJsx-φ42锁脚锚杆.glb';
-  const ringCount = Math.floor(LOCK_ANCHOR_LENGTH / LOCK_ANCHOR_SPACING) + 1;
-
-  for (let ri = 0; ri < ringCount; ri++) {
-    const ringDist = LOCK_ANCHOR_START + ri * LOCK_ANCHOR_SPACING;
-    const pos = utils.sampleAt(ringDist);
-    const next = utils.sampleAt(Math.min(ringDist + 0.1, utils.totalLen));
-    const enuMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(pos);
-    const invEnu = Cesium.Matrix4.inverseTransformation(enuMatrix, new Cesium.Matrix4());
-    const dir = Cesium.Cartesian3.subtract(next, pos, new Cesium.Cartesian3());
-    const localDir = Cesium.Matrix4.multiplyByPointAsVector(invEnu, dir, new Cesium.Cartesian3());
-    const tunnelHeading = Math.atan2(localDir.x, localDir.y);
-    const cosH = Math.cos(tunnelHeading);
-    const sinH = Math.sin(tunnelHeading);
-
-    for (const theta of [LOCK_ANCHOR_ANGLE, -LOCK_ANCHOR_ANGLE]) {
-      const sideDist = LOCK_ANCHOR_RADIUS * Math.sin(theta);
-      const upDist = LOCK_ANCHOR_CENTER_Y + LOCK_ANCHOR_RADIUS * Math.cos(theta);
-      const localOffset = new Cesium.Cartesian3(sideDist * cosH, -sideDist * sinH, upDist);
-      const worldOffset = Cesium.Matrix4.multiplyByPointAsVector(enuMatrix, localOffset, new Cesium.Cartesian3());
-      const p = Cesium.Cartesian3.add(pos, worldOffset, new Cesium.Cartesian3());
-      const m = buildAnchorMatrix(p, tunnelHeading, theta);
-      queueLegacySupportModel('lock_anchor', viewer, { url, modelMatrix: m }, (model) => { lockAnchorPrimitives.push({ model: viewer.scene.primitives.add(model), theta }); });
-    }
-  }
-
-  console.log(`[DrawLine] 锁脚锚杆共 ${ringCount} 环 ×2，θ=${LOCK_ANCHOR_ANGLE * 180 / Math.PI}°`);
-}
 
 export function setLockAnchorVisible(show: boolean) {
   for (const p of lockAnchorPrimitives) p.model.show = show;
@@ -1444,19 +1196,22 @@ function applyTunnelSegmentRotation(segmentIndex: number) {
   model.modelMatrix = Cesium.Matrix4.multiply(aroundPivot, baseMatrix, new Cesium.Matrix4());
 }
 
-/** 加载单段隧道 */
-function loadTunnelSegment(i: number, viewer: any) {
-  if (tunnelGlbPrimitives[i] || tunnelLoadingSet.has(i)) return;
-  const cfg = SEGMENT_CONFIGS[i];
-  if (!cfg) return;
-
+export function getTunnelSegmentBaseMatrix(index: number): Cesium.Matrix4 {
+  const cfg = SEGMENT_CONFIGS[index];
+  if (!cfg) throw new Error(`[DrawLine] 隧道分段不存在：${index}`);
   const pos = Cesium.Cartesian3.fromDegrees(
     cfg.lon,
     cfg.lat,
     cfg.height + TUNNEL_VERTICAL_OFFSET_M,
   );
   const hpr = new Cesium.HeadingPitchRoll(Cesium.Math.toRadians(cfg.headingDeg), 0, 0);
-  const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr);
+  return Cesium.Transforms.headingPitchRollToFixedFrame(pos, hpr);
+}
+
+/** 加载单段隧道 */
+function loadTunnelSegment(i: number, viewer: any) {
+  if (tunnelGlbPrimitives[i] || tunnelLoadingSet.has(i) || !SEGMENT_CONFIGS[i]) return;
+  const modelMatrix = getTunnelSegmentBaseMatrix(i);
   const clippingPlanes = createTunnelSegmentClippingPlanes(i, modelMatrix);
   const idx = String(i).padStart(3, '0');
   const url = `data/tunnel/tunnel${idx}.glb`;

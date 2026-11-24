@@ -1,0 +1,165 @@
+{
+  "cases": [
+    {
+      "id": "tunnel-side-section",
+      "taskId": "scene-1795151763143-60m6i",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 7155,
+      "tunnelSection": {
+        "initial": {
+          "planes": 5,
+          "edgeWidth": 1,
+          "opacity": 0.62,
+          "camera": [
+            -475190.92292192386,
+            5536127.9098321125,
+            3127014.7165119215
+          ],
+          "sameModels": true,
+          "stableModels": true,
+          "renderError": false
+        },
+        "baseline": {
+          "planes": 2,
+          "edgeWidth": 0,
+          "opacity": 0.035,
+          "camera": [
+            -475153.7702680871,
+            5536139.0869592875,
+            3126999.1915677763
+          ],
+          "sameModels": true,
+          "stableModels": true,
+          "renderError": false
+        },
+        "reopened": {
+          "planes": 5,
+          "edgeWidth": 1,
+          "opacity": 0.62,
+          "camera": [
+            -475190.8634899258,
+            5536127.671858276,
+            3127015.752509665
+          ],
+          "sameModels": true,
+          "stableModels": true,
+          "renderError": false
+        },
+        "restored": {
+          "planes": 2,
+          "edgeWidth": 0,
+          "opacity": 0.035,
+          "camera": [
+            -475153.7702680871,
+            5536139.0869592875,
+            3126999.1915677763
+          ],
+          "sameModels": true,
+          "stableModels": true,
+          "renderError": false
+        }
+      },
+      "existingSupport": {
+        "source": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+        "type": "ZZ-Va",
+        "activePaths": [
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "count": 5,
+        "ready": true,
+        "summary": {
+          "id": "support.test-section",
+          "supportType": "ZZ-Va",
+          "lengthM": 5,
+          "layout": "original-unit-assembly",
+          "unitOffsetsM": [
+            -5.5,
+            -4.5,
+            -3.5,
+            -2.5,
+            -1.5
+          ],
+          "groups": [
+            {
+              "component": "primary_concrete",
+              "name": "primarySupportConcreteGroup",
+              "visible": true
+            },
+            {
+              "component": "primary_mesh",
+              "name": "primarySupportMeshGroup",
+              "visible": true
+            },
+            {
+              "component": "steel_arch",
+              "name": "steelArchArrayGroup",
+              "visible": true
+            },
+            {
+              "component": "system_anchor",
+              "name": "systemAnchorGroup",
+              "visible": true
+            },
+            {
+              "component": "lock_foot_anchor",
+              "name": "lockFootAnchorGroup",
+              "visible": true
+            },
+            {
+              "component": "secondary_lining",
+              "name": "secondaryLiningGroup",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N1",
+              "name": "N1Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N2",
+              "name": "N2Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N3",
+              "name": "N3Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N4",
+              "name": "N4Group",
+              "visible": true
+            }
+          ],
+          "sourceReferenceChainage": 2244,
+          "taskReferenceChainage": 2244,
+          "note": "直接装配支护版块原始1米GLB单元；单元间隔来自本次放置，构件间距与工程接缝待核查。"
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0.09411764705882353,
+      0.16470588235294117,
+      0.2235294117647059,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

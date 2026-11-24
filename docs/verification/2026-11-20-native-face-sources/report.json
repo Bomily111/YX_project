@@ -1,0 +1,18 @@
+{
+  "cases": [
+    {
+      "id": "face-original-source",
+      "taskId": "scene-1795145003914-fpxrr",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_905_0_clean.png"
+      ],
+      "elapsedMs": 8061
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "Runtime mismatch face-original-source: {\"activePaths\":[\"/data/tunnel/tunnel002.glb\",\"/data/face_sketch/X1DK2_905_0_clean.png\"],\"leaked\":[],\"testSupports\":0,\"solids\":0,\"faces\":1,\"drills\":0}"
+}

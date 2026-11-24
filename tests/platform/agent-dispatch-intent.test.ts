@@ -1,7 +1,41 @@
 import { describe, expect, it } from 'vitest'
 import { routeWorkflowToolCall, wantsTaskExecution, wantsDirectSceneAssembly, wantsBlastLayerControl, mustReviseAssemblyBeforeAdvance, blocksUnrevisedSceneAdvance } from '@/ai-agent/AgentDispatchIntent'
+import { wantsAssemblyThenVisualReview, wantsOverviewThenDetail, wantsTaskCutControl, wantsTaskViewControl } from '@/ai-agent/AgentDispatchIntent'
+import { constructionReviews, resolveConstructionReviewRequest } from '@/platform/tasks/ConstructionReview'
 
 describe('agent dispatch intent gate', () => {
+  it('routes face views within geology review and leaves consultation outside the execution route', () => {
+    const kind = 'geology-change' as const
+    const steps = constructionReviews[kind].steps
+    const active = { kind, taskId: 'demo-review', stepIndex: steps.findIndex(step => step.key === 'candidate') }
+    const front = resolveConstructionReviewRequest('请正视掌子面。', active)
+    expect(front).toMatchObject({ kind, start: false, workfaceView: 'front' })
+    expect(steps[front!.stepIndex].key).toBe('workface')
+    expect(resolveConstructionReviewRequest('查看初支锚杆', active)).toMatchObject({ stepIndex: active.stepIndex, supportDisplay: 'assembled' })
+    expect(resolveConstructionReviewRequest('回看掌子面', { ...active, kind: 'blast-handoff' })).toBeUndefined()
+    expect(resolveConstructionReviewRequest('请介绍地质揭示后的开挖与支护变更复核', active)).toBeUndefined()
+    expect(resolveConstructionReviewRequest('地质揭示后的开挖与支护变更复核，暂不执行。', active)).toBeUndefined()
+  })
+  it('routes tunnel side sections separately from TSP and new assembly', () => {
+    expect(wantsTaskViewControl('打开隧道侧剖')).toBe(true)
+    expect(wantsTaskCutControl('打开隧道侧剖')).toBe(false)
+    expect(routeWorkflowToolCall('set_task_view', {}, '关闭隧道侧剖').input.view).toBe('restore-tunnel-section')
+    expect(wantsTaskCutControl('打开当前TSP解释体纵向剖切')).toBe(true)
+    expect(wantsTaskViewControl('不要开启隧道侧剖')).toBe(false)
+    expect(wantsDirectSceneAssembly('请在YK2+244装配三台阶和后方支护并采用隧道侧剖')).toBe(true)
+  })
+  it('recognizes two explicitly ordered visual steps without counting overall context alone', () => {
+    expect(wantsOverviewThenDetail('请装配已有模型，先看整体关系并保留后方支护，再切到钢拱架细部。')).toBe(true)
+    expect(wantsOverviewThenDetail('请装配已有模型，保留整体参照并显露钢拱架。')).toBe(false)
+  })
+  it('continues from assembly only when the construction request authorizes visual actions', () => {
+    expect(wantsAssemblyThenVisualReview('准备班前交底，请装配已有支护并完成视觉分析。')).toBe(true)
+    expect(wantsAssemblyThenVisualReview('班前要交底YK2+244三台阶后方初支。请装配已有ZZ-Va，保留三台阶为参照，暂避混凝土外壳并看钢架细部。请直接执行。')).toBe(true)
+    expect(wantsAssemblyThenVisualReview('请装配已有ZZ-Va，先不要显露钢架。')).toBe(false)
+    expect(wantsAssemblyThenVisualReview('只给我装配和细部增强方案，不执行。')).toBe(false)
+    expect(wantsAssemblyThenVisualReview('请直接执行当前钢架细部视觉分析。')).toBe(false)
+    expect(wantsAssemblyThenVisualReview('请直接执行本次三台阶与后方支护装配。')).toBe(false)
+  })
   it('recognizes business preparation while leaving how-to questions conversational', () => {
     expect(wantsDirectSceneAssembly('目前平台支持哪些模型和资料，先不要装配')).toBe(false)
     expect(wantsDirectSceneAssembly('准备YK1+346施工交底场景，说明岩体完整性与ZZ-Va支护关系')).toBe(true)

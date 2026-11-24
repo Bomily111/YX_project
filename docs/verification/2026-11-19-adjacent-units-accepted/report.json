@@ -1,0 +1,237 @@
+{
+  "passed": true,
+  "scenario": {
+    "resource": "support.test-section-z-pm",
+    "row": "units",
+    "offsets": [
+      -5.5,
+      -4.5,
+      -3.5,
+      -2.5,
+      -1.5
+    ],
+    "interval": 1
+  },
+  "errors": [],
+  "checks": [
+    {
+      "id": "actual-3d-pick-and-component-isolation",
+      "pick": {
+        "x": 627.9562968401452,
+        "y": 430.7907341456039,
+        "offset": -1.5,
+        "count": 5
+      },
+      "beforePick": {
+        "taskId": "scene-1795074040822-br9to",
+        "selection": "station",
+        "camera": [
+          -475170.7978766378,
+          5536143.989815504,
+          3126954.631353755,
+          -0.4968884864027008,
+          0.10620226777789338,
+          -0.8612914201356389,
+          -0.23159199518567566,
+          0.9402611915478731,
+          0.2495476696643186
+        ]
+      },
+      "afterPick": {
+        "taskId": "scene-1795074040822-br9to",
+        "selection": "station",
+        "camera": [
+          -475170.7978766378,
+          5536143.989815504,
+          3126954.631353755,
+          -0.4968884864027024,
+          0.10620226777789295,
+          -0.8612914201356381,
+          -0.2315919951856757,
+          0.9402611915478731,
+          0.2495476696643186
+        ]
+      },
+      "evidence": [
+        {
+          "taskId": "scene-1795074040822-br9to",
+          "resourceId": "support.test-section-z-pm",
+          "rowId": "support.test-section-z-pm:units",
+          "component": "units",
+          "offsetM": -4.5,
+          "source": "2d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次Z-PM 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb"
+          ],
+          "sequence": 1,
+          "recordedAt": "2026-11-19T07:40:50.840Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        },
+        {
+          "taskId": "scene-1795074040822-br9to",
+          "resourceId": "support.test-section-z-pm",
+          "rowId": "support.test-section-z-pm:units",
+          "component": "units",
+          "offsetM": -4.5,
+          "source": "2d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次Z-PM 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb"
+          ],
+          "sequence": 2,
+          "recordedAt": "2026-11-19T07:40:54.959Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        },
+        {
+          "taskId": "scene-1795074040822-br9to",
+          "resourceId": "support.test-section-z-pm",
+          "rowId": "support.test-section-z-pm:units",
+          "component": "units",
+          "offsetM": -1.5,
+          "source": "3d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次Z-PM 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb"
+          ],
+          "sequence": 3,
+          "recordedAt": "2026-11-19T07:40:56.037Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        },
+        {
+          "taskId": "scene-1795074040822-br9to",
+          "resourceId": "support.test-section-z-pm",
+          "rowId": "support.test-section-z-pm:units",
+          "component": "units",
+          "offsetM": -1.5,
+          "source": "3d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次Z-PM 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/master_demo/Z-PM_support_1m_partial.glb"
+          ],
+          "sequence": 4,
+          "recordedAt": "2026-11-19T07:40:56.737Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        }
+      ],
+      "options": [
+        {
+          "value": "support.test-section-z-pm:units",
+          "text": "单元基准（非配筋间距）"
+        }
+      ]
+    },
+    {
+      "id": "same-interval-endpoints-in-2d-and-3d",
+      "twoDimensional": [
+        {
+          "offsets": [
+            -5.5,
+            -4.5
+          ],
+          "matches": true
+        },
+        {
+          "offsets": [
+            -4.5,
+            -3.5
+          ],
+          "matches": true
+        }
+      ],
+      "threeDimensional": [
+        {
+          "offsets": [
+            -2.5,
+            -1.5
+          ],
+          "matches": true
+        }
+      ]
+    },
+    {
+      "id": "geographic-station-return",
+      "entry": {
+        "taskId": "scene-1795074040822-br9to",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090643,
+          -0.6464296098251231,
+          -0.4771505423970672,
+          -0.7904617282184939,
+          0.5776374796825,
+          0.20372824617092622
+        ]
+      },
+      "station": {
+        "taskId": "scene-1795074040822-br9to",
+        "selection": "station",
+        "camera": [
+          -475170.7978766378,
+          5536143.989815504,
+          3126954.631353755,
+          -0.4968884864027008,
+          0.10620226777789338,
+          -0.8612914201356389,
+          -0.23159199518567566,
+          0.9402611915478731,
+          0.2495476696643186
+        ]
+      },
+      "restored": {
+        "taskId": "scene-1795074040822-br9to",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090642,
+          -0.6464296098251231,
+          -0.47715054239706733,
+          -0.7904617282184941,
+          0.5776374796824999,
+          0.20372824617092566
+        ]
+      },
+      "refit": {
+        "taskId": "scene-1795074040822-br9to",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090642,
+          -0.6464296098251231,
+          -0.47715054239706733,
+          -0.7904617282184941,
+          0.5776374796824999,
+          0.20372824617092566
+        ]
+      }
+    }
+  ],
+  "modelRequests": 0
+}

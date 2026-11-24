@@ -15,10 +15,10 @@
       <span class="gpr-icon">≋</span>
       <span class="gpr-title">地质雷达剖面 — {{ radarData?.name || '加载中...' }}</span>
       <span class="gpr-meta" v-if="radarData">{{ radarData.n_scans }}道 · {{ radarData.profile_length_m }}m · εr={{ radarData.dielectric }}</span>
-      <button class="gpr-btn-collapse" @mousedown.stop @click="collapsed = !collapsed" :title="collapsed ? '展开' : '折叠'">
+      <button v-if="!readOnly" class="gpr-btn-collapse" @mousedown.stop @click="collapsed = !collapsed" :title="collapsed ? '展开' : '折叠'">
         {{ collapsed ? '▸' : '▾' }}
       </button>
-      <button class="gpr-btn-close" @mousedown.stop @click="visible = false" title="关闭">×</button>
+      <button v-if="!readOnly" class="gpr-btn-close" @mousedown.stop @click="visible = false" title="关闭">×</button>
     </header>
 
     <div class="gpr-body" v-show="!collapsed">
@@ -27,7 +27,7 @@
 
       <template v-else>
         <!-- Controls -->
-        <div class="gpr-controls">
+        <div v-if="!readOnly" class="gpr-controls">
           <div class="gpr-section-title"><span class="gpr-si">▸</span> 显示设置</div>
           <div class="gpr-ctrl-row">
             <label class="gpr-label">测线
@@ -82,6 +82,7 @@ const props = defineProps({
   initialY: { type: Number, default: 480 },
   initialLine: { type: Number, default: 1 },
   taskDataset: { type: Object, default: null },
+  readOnly: { type: Boolean, default: false },
 })
 
 // ---- Panel state ----
@@ -105,6 +106,7 @@ const cursorDist = ref(0)
 const cursorDepth = ref(0)
 
 let rawData = null
+const plotInsets = () => props.readOnly ? { left: 39, right: 9, bottom: 32 } : { left: 0, right: 0, bottom: 0 }
 let resizeObserver = null
 
 // ---- Drag (viewport-clamped, matches DispatchGantt) ----
@@ -112,6 +114,7 @@ let dragging = false
 let dragStart = { x: 0, y: 0 }
 
 function onDragStart(e) {
+  if (props.readOnly) return
   if (e.button !== 0) return
   dragging = true
   dragStart = { x: e.clientX - pos.value.x, y: e.clientY - pos.value.y }
@@ -202,22 +205,26 @@ function render() {
   const [nScans, nSamples] = shape
   const g = gain.value
 
-  const img = ctx.createImageData(W, H)
-  for (let py = 0; py < H; py++) {
-    const dIdx = Math.floor(py / H * nSamples)
-    const rowBase = dIdx * nScans
-    for (let px = 0; px < W; px++) {
-      const sIdx = Math.floor(px / W * nScans)
-      const val = data[rowBase + sIdx] * g
+  const { left, right, bottom } = plotInsets()
+  const width = W - left - right, height = H - bottom
+  if (width <= 0 || height <= 0) return
+  const pixelLeft = Math.round(left * dpr)
+  const img = ctx.createImageData(Math.round(width * dpr), Math.round(height * dpr))
+  for (let py = 0; py < img.height; py++) {
+    const dIdx = Math.floor(py / img.height * nSamples)
+    for (let px = 0; px < img.width; px++) {
+      const sIdx = Math.floor(px / img.width * nScans)
+      // The source viewer stores all depth samples of each scan consecutively.
+      const val = data[sIdx * nSamples + dIdx] * g
       const [r, gv, b] = getColor(val)
-      const idx = (py * W + px) * 4
+      const idx = (py * img.width + px) * 4
       img.data[idx] = Math.round(r * 255)
       img.data[idx + 1] = Math.round(gv * 255)
       img.data[idx + 2] = Math.round(b * 255)
       img.data[idx + 3] = 255
     }
   }
-  ctx.putImageData(img, 0, 0)
+  ctx.putImageData(img, pixelLeft, 0)
 
   // Reflectors
   if (showReflectors.value && radarData.value?.reflectors) {
@@ -228,12 +235,12 @@ function render() {
     ctx.font = '9px "Consolas", monospace'
     ctx.fillStyle = 'rgba(0,234,255,0.8)'
     radarData.value.reflectors.forEach((r) => {
-      const y = r.depth_m / depthMax * H
+      const y = r.depth_m / depthMax * height
       ctx.beginPath()
-      ctx.moveTo(0, y)
-      ctx.lineTo(W, y)
+      ctx.moveTo(left, y)
+      ctx.lineTo(left + width, y)
       ctx.stroke()
-      ctx.fillText(r.depth_m.toFixed(1) + 'm', 5, y - 3)
+      if (!props.readOnly) ctx.fillText(r.depth_m.toFixed(1) + 'm', 5, y - 3)
     })
     ctx.setLineDash([])
   }
@@ -248,7 +255,7 @@ function render() {
       const x = s / nScans * W
       ctx.beginPath()
       for (let d = 0; d < nSamples; d++) {
-        const val = data[d * nScans + s] * g * ampScale
+        const val = data[s * nSamples + d] * g * ampScale
         const y = d / nSamples * H
         if (d === 0) ctx.moveTo(x + val, y)
         else ctx.lineTo(x + val, y)
@@ -256,14 +263,33 @@ function render() {
       ctx.stroke()
     }
   }
+  if (props.readOnly) {
+    ctx.fillStyle = '#adc8db'
+    ctx.font = '11px "Microsoft YaHei", sans-serif'
+    ctx.textAlign = 'right'
+    for (let tick = 0; tick <= 4; tick++) {
+      const fraction = tick / 4
+      const y = Math.max(11, fraction * height)
+      ctx.fillText(`${Number((fraction * radarData.value.depth_range_m).toFixed(1))}m`, left - 5, y)
+    }
+    for (let tick = 0; tick <= 4; tick++) {
+      const fraction = tick / 4
+      ctx.textAlign = tick === 0 ? 'left' : tick === 4 ? 'right' : 'center'
+      ctx.fillText(fraction ? (fraction * radarData.value.profile_length_m).toFixed(1) : '0', left + width * fraction, height + 14)
+    }
+    ctx.textAlign = 'center'
+    ctx.fillText('测线横距（m）', left + width / 2, height + 29)
+  }
 }
 
 // ---- Mouse ----
 function onMouseMove(e) {
   if (!canvasWrap.value || !rawData) return
   const rect = canvasWrap.value.getBoundingClientRect()
-  const relX = (e.clientX - rect.left) / rect.width
-  const relY = (e.clientY - rect.top) / rect.height
+  const { left, right, bottom } = plotInsets()
+  const relX = (e.clientX - rect.left - left) / (rect.width - left - right)
+  const relY = (e.clientY - rect.top) / (rect.height - bottom)
+  if (relX < 0 || relX >= 1 || relY < 0 || relY >= 1) return onMouseLeave()
   const [nScans] = rawData.shape
   cursorScan.value = Math.floor(relX * nScans)
   cursorDist.value = relX * (radarData.value?.profile_length_m || 4.1)

@@ -6,10 +6,23 @@ import { waitForTunnelGlbSegment } from '@/utils/Common/DrawLine'
 import { threeBenchMatrix } from '@/modules/rock/three-bench-resource'
 import { taskFaceSection,taskFaceGeometry } from './task-face-section'
 export const FACE_PHOTO_ID = 'rock.face-photos'
-export const facePhotoCatalog = FACE_SKETCH_RECORDS.map(record => ({ sourceMileage: record.mileage, date: record.date, path: record.photoUrl.replace('_clean.png', '.jpg') })).sort((a,b) => b.date.localeCompare(a.date))
-// Explicit example source: no surveyed correspondence to the requested YK is available.
-const source = FACE_SKETCH_RECORDS.find(record => record.mileage === facePhotoCatalog[0].sourceMileage)!
-export const faceSourceDescription = () => `掌子面示例来源 ${source.mileage}，资料日期 ${source.date}；按目标YK示意装配，尚未建立目标实测对应。照片仅为未标定的平面铺贴，不是实测三维重建；YK2+244使用源隧道法向轮廓载体，其他工段暂保留原载体。`
+const ordered = [...FACE_SKETCH_RECORDS].sort((a,b) => b.date.localeCompare(a.date))
+export const facePhotoCatalog = ordered.map((source,index) => ({
+  id: index ? `rock.face-photo-${source.mileageValue.toFixed(1).replace('.', '-')}` : FACE_PHOTO_ID,
+  sourceMileage: source.mileage, date: source.date, path: source.photoUrl.replace('_clean.png', '.jpg'),
+}))
+export const isFacePhotoResource = (id: string) => facePhotoCatalog.some(item => item.id === id)
+const activeSlices = new Map<string, Cesium.Entity>()
+export const getActiveFaceSlices = () => [...activeSlices.values()]
+export const getActiveFacePhotos = () => facePhotoCatalog.filter(item => activeSlices.has(item.id))
+export const faceSourceDescription = (id = FACE_PHOTO_ID) => {
+  const source = facePhotoCatalog.find(item => item.id === id)
+  return source ? `掌子面照片来源 ${source.sourceMileage}，资料日期 ${source.date}；按目标YK示意装配，照片使用既有载体，目标工点实测对应未核验。` : ''
+}
+let activeCarrier: Cesium.Primitive | undefined
+export const getActiveFaceCarrier = () => activeCarrier
+export const facePhotoResources: SceneResource[] = ordered.map((source,index) => {
+const id = facePhotoCatalog[index]!.id
 let loaded = false
 let texture: HTMLImageElement | undefined
 let viewer: Cesium.Viewer | undefined
@@ -17,9 +30,6 @@ let slice: Cesium.Entity | undefined
 let sectionFrame:Cesium.Matrix4|undefined
 let carrier:Cesium.Primitive|undefined
 let placementRevision=0
-export const getActiveFaceCarrier=()=>carrier
-export const getActiveFaceSlices = () => slice ? [slice] : []
-export const getActiveFacePhotos = () => loaded ? [facePhotoCatalog[0]] : []
 async function placeSlice(chainage: number): Promise<void> {
   if (!viewer) return
   const revision=++placementRevision,targetViewer=viewer
@@ -35,10 +45,10 @@ async function placeSlice(chainage: number): Promise<void> {
   const lateral = new Cesium.Cartesian3(Math.cos(station.heading), -Math.sin(station.heading), 0)
   const point = (sign: number) => Cesium.Matrix4.multiplyByPoint(frame, Cesium.Cartesian3.multiplyByScalar(lateral, sign * halfWidth, new Cesium.Cartesian3()), new Cesium.Cartesian3())
   if (slice) viewer.entities.remove(slice)
-  if(carrier){viewer.scene.primitives.remove(carrier);carrier=undefined}
+  if(carrier){viewer.scene.primitives.remove(carrier);if(activeCarrier === carrier) activeCarrier = undefined;carrier=undefined}
   if(chainage===2244&&sectionFrame){
     const section=taskFaceSection(sectionFrame)
-    slice=viewer.entities.add({id:'task-face-slice',name:'掌子面照片 · 源断面轮廓载体（未标定）',show:true,
+    slice=viewer.entities.add({id:`task-face-slice-${id}`,name:'掌子面照片 · 源断面轮廓载体（未标定）',show:true,
       position:section.center,
       properties:{sourceMileage:source.mileage,sourceDate:source.date,targetChainage:chainage,placement:'demonstration',
         carrier:'source-normal-section',profileSource:section.source,textureCalibration:'unverified',surfaceReconstruction:false},
@@ -56,11 +66,13 @@ async function placeSlice(chainage: number): Promise<void> {
       }),
       asynchronous:false,
     }))
+    activeSlices.set(id, slice)
+    activeCarrier = carrier
     viewer.scene.requestRender()
     return
   }
   slice = viewer.entities.add({
-    id: 'task-face-slice', name: '掌子面示意模型 · 来源 ' + source.mileage, show: true,
+    id: `task-face-slice-${id}`, name: '掌子面示意模型 · 来源 ' + source.mileage, show: true,
     position: Cesium.Cartesian3.fromDegrees(station.longitude, station.latitude, station.height + 3),
     properties: { sourceMileage: source.mileage, sourceDate: source.date, targetChainage: chainage, placement: 'demonstration' },
     wall: { positions: [point(1), point(-1)],
@@ -68,10 +80,11 @@ async function placeSlice(chainage: number): Promise<void> {
       maximumHeights: [station.height + 3 + halfHeight, station.height + 3 + halfHeight],
       material: new Cesium.ImageMaterialProperty({ image: texture!, transparent: false }) },
   })
+  activeSlices.set(id, slice)
   viewer.scene.requestRender()
 }
-export const facePhotoResource: SceneResource = {
-  id: FACE_PHOTO_ID, module: 'rock', type: 'task-workface', chainageRange: { start: 1116, end: 9400 },
+return {
+  id, module: 'rock', type: 'task-workface', chainageRange: { start: 1116, end: 9400 },
   processes: ['excavation', 'inspection'], states: ['reference'], dependencies: ['common.tunnel'], lifetime: 'task',
   async load(context) {
     const image = new Image(); image.src = source.textureUrl; await image.decode()
@@ -90,7 +103,9 @@ export const facePhotoResource: SceneResource = {
   async unload() {
     placementRevision++
     if(viewer&&!viewer.isDestroyed?.()&&carrier)viewer.scene.primitives.remove(carrier)
+    if(activeCarrier === carrier) activeCarrier = undefined
     carrier=undefined
+    activeSlices.delete(id)
     if (viewer && !viewer.isDestroyed?.() && slice) viewer.entities.remove(slice)
     slice = undefined; viewer = undefined; texture = undefined; sectionFrame=undefined; loaded = false
   },
@@ -101,3 +116,4 @@ export const facePhotoResource: SceneResource = {
     carrier:slice.polygon?'source-normal-section':'legacy-wall',textureCalibration:'unverified',surfaceReconstruction:false,
   } }] : [],
 }
+})

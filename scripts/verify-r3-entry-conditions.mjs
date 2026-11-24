@@ -1,6 +1,8 @@
 import {chromium} from 'playwright-core'
 import {mkdir,writeFile,readFile} from 'node:fs/promises'
 const root=process.env.R3_ENTRY_OUTPUT_DIR||'docs/verification/2026-11-17-r3-entry-normalized'
+const appUrl=new URL(process.env.R3_ENTRY_APP_URL||'http://localhost:5178')
+appUrl.searchParams.set('taskControls','manual')
 await mkdir(root,{recursive:true})
 const report={passed:false,scope:'entry-feasibility-not-participant-experiment',errors:[],cases:[],modelRequests:0}
 const conditions=process.env.R3_MANUAL_STEPWISE==='1'?['manual-stepwise']:['form-input','agent-assembly','agent-with-review']
@@ -15,8 +17,7 @@ try{
    page=await browser.newPage({viewport:{width:1400,height:900}})
    page.on('pageerror',e=>report.errors.push(e.message))
    page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/api/ai-agent/chat'))report.modelRequests++})
-   await page.route('http://localhost:5178/api/**',route=>{const url=new URL(route.request().url());url.port='3000';return route.continue({url:url.toString()})})
-   await page.goto('http://localhost:5178',{waitUntil:'domcontentloaded'});await page.locator('.agent-fab').click()
+   await page.goto(appUrl.toString(),{waitUntil:'domcontentloaded'});await page.locator('.agent-fab').click()
    const send=async request=>{
     const n=await page.locator('.agent-messages .msg-row.assistant').count()
     await page.locator('.agent-input').fill(request);await page.locator('.agent-input').press('Enter')

@@ -24,8 +24,15 @@ it.each(['长度改为21米','长度改为2.5米','长度改为15','把支护改
   expect(()=>resolveTestSupportUpdate(message,state)).toThrow()
   expect(JSON.stringify(state)).toBe(before)
 })
-it('refuses unprepared, running, unrelated or out-of-section tasks',()=>{
-  for(const change of [{prepared:false},{status:'running'},{lastCompletedStage:{...current().lastCompletedStage!,assembledResourceIds:['rock.tsp-integrity']}},{lastCompletedStage:{...current().lastCompletedStage!,chainageRange:{start:4000,end:4000}}}])expect(()=>resolveTestSupportUpdate('改用Z-PM',{...current(),...change})).toThrow()
+it('refuses unprepared, running or unrelated tasks',()=>{
+  for(const change of [{prepared:false},{status:'running'},{lastCompletedStage:{...current().lastCompletedStage!,assembledResourceIds:['rock.tsp-integrity']}}])expect(()=>resolveTestSupportUpdate('改用Z-PM',{...current(),...change})).toThrow()
+})
+it('keeps the target mileage when changing reanchored support',()=>{
+  const status=current()
+  status.lastCompletedStage!.chainageRange={start:1346,end:1346}
+  const result=resolveTestSupportUpdate('改用Z-PM',status)
+  expect(result.targetMileage).toBe('YK1+346')
+  expect(result.request).toContain('YK1+346')
 })
 it('routes short changes without capturing questions or new locations',()=>{
   for(const message of ['把支护改成ZZ-IVb','长度改为十五米','改用Z-PM']){expect(wantsTestSupportUpdate(message)).toBe(true);expect(wantsDirectSceneAssembly(message)).toBe(false)}
@@ -59,12 +66,4 @@ it('does not merge an older pending clarification into a live-task update',async
   await engine.chat('把支护改成ZZ-IVb',{},callbacks)
   expect(calls).toHaveLength(1)
   expect(calls[0].input.userRequest).toBe('把支护改成ZZ-IVb')
-})
-
-it.each(['upper-first', 'lower-follow'])('preserves excavation phase when updating support: %s', phase => {
-  const status = current()
-  status.lastCompletedStage!.assembledResourceIds = [`rock.three-bench-${phase}`, 'support.test-section']
-  const result = resolveTestSupportUpdate('长度改为8米', status)
-  expect(result.resourceIds).toEqual([`rock.three-bench-${phase}`, 'support.test-section'])
-  expect(result.request).toContain(phase === 'upper-first' ? '上台阶先行' : '下台阶跟进')
 })

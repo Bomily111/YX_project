@@ -2,6 +2,7 @@ export interface SceneCapability {
   id: string
   module: string
   type: string
+  sourceMileage?: string
   declaredRange?: { start: number; end: number }
   state: string
 }

@@ -1,0 +1,71 @@
+{
+  "cases": [
+    {
+      "id": "workface-radar",
+      "taskId": "scene-1795083932505-kdr0m",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/data/GPR_new/output/radargram_line1.json"
+      ],
+      "elapsedMs": 35358,
+      "visibleManualControls": 0
+    },
+    {
+      "id": "fan-shutdown",
+      "taskId": "scene-1795084003766-tmdez",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/ventilation/transient_fan_shutdown.json",
+        "/data/tunnel/tunnel005.glb"
+      ],
+      "elapsedMs": 28848,
+      "visibleManualControls": 0,
+      "chart": {
+        "range": [
+          0,
+          300
+        ],
+        "expected": [
+          0,
+          300
+        ],
+        "visible": [
+          "Duct_Right"
+        ],
+        "name": "Duct_Right"
+      }
+    },
+    {
+      "id": "design-only",
+      "taskId": "scene-1795084081054-e05xz",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [],
+      "elapsedMs": 37692,
+      "visibleManualControls": 0
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  },
+  "failure": "Snapshot omitted active asset: design-only"
+}

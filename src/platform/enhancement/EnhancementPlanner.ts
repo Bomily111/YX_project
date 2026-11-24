@@ -58,7 +58,7 @@ export class EnhancementPlanner {
           })
         }
         if (decision.role === 'focus') {
-          if (target.object && options.highlightFocus !== false) {
+          if (target.object && options.highlightFocus !== false && target.metadata?.preserveSourceAppearance !== true) {
             directives.push({
               id: `${scenePlan.stepId}:${target.id}:highlight`,
               resourceId: resource.id,
@@ -82,7 +82,7 @@ export class EnhancementPlanner {
               parameters: target.enhancementParameters?.[strategy] ?? {},
             })
           }
-        } else if (target.object) {
+        } else if (target.object && target.metadata?.preserveSourceAppearance !== true) {
           directives.push({
             id: `${scenePlan.stepId}:${target.id}:opacity`,
             resourceId: resource.id,

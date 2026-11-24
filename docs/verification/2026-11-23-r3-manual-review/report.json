@@ -1,0 +1,758 @@
+{
+  "passed": true,
+  "scope": "entry-feasibility-not-participant-experiment",
+  "errors": [],
+  "cases": [
+    {
+      "task": {
+        "id": "hardness",
+        "resource": "rock.tsp-hardness",
+        "name": "TSP坚硬度解释体",
+        "mileage": "YK1+346"
+      },
+      "condition": "manual-stepwise",
+      "main": {
+        "ids": [],
+        "matrix": null,
+        "style": null,
+        "paths": [],
+        "camera": [
+          -473869.40487207327,
+          5536493.254218888,
+          3126753.240602614,
+          -0.6295140094488293,
+          -0.6836142822411804,
+          0.3693015367197042,
+          -0.3256052438509544,
+          0.6636525553822303,
+          0.6734586185589998
+        ],
+        "environment": {
+          "terrainProvider": "CesiumTerrainProvider",
+          "tilesLoaded": true,
+          "globeShow": true,
+          "baseColor": [
+            0,
+            0,
+            0.5,
+            1
+          ],
+          "translucencyEnabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": {
+            "near": 400,
+            "nearValue": 0.9,
+            "far": 800,
+            "farValue": 0.9
+          },
+          "backDistance": null,
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "review": null
+      },
+      "assembly": {
+        "taskId": "scene-1795415282163-vqq15",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -474311.05406835227,
+            5536180.22162435,
+            3126934.2763122446
+          ],
+          [
+            -474314.4539184228,
+            5536222.738741405,
+            3126958.395511585
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474315.98170263047,
+            5536191.764014523,
+            3126913.234885261
+          ],
+          [
+            -474319.38155270106,
+            5536234.281131579,
+            3126937.354084601
+          ],
+          [
+            -474393.1729628207,
+            5536179.235339017,
+            3126924.439421856
+          ],
+          [
+            -474396.5728128913,
+            5536221.752456072,
+            3126948.558621196
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "style": {
+          "color": null,
+          "mode": 0,
+          "amount": 0.5
+        },
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "camera": [
+          -474133.8375432502,
+          5536241.436179015,
+          3127126.588127256,
+          -0.694591469817016,
+          -0.16280992383814627,
+          -0.7007393372412131,
+          -0.41801299218330246,
+          0.8840874762996669,
+          0.20893652772085675
+        ],
+        "environment": {
+          "terrainProvider": "CesiumTerrainProvider",
+          "tilesLoaded": false,
+          "globeShow": true,
+          "baseColor": [
+            0,
+            0,
+            0.5,
+            1
+          ],
+          "translucencyEnabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": {
+            "near": 400,
+            "nearValue": 0.9,
+            "far": 800,
+            "farValue": 0.9
+          },
+          "backDistance": null,
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "review": null
+      },
+      "prepared": {
+        "taskId": "scene-1795415282163-vqq15",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-hardness",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 1346,
+          "end": 1346
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "domain": [
+          [
+            -474292.4890817242,
+            5536183.234850105,
+            3126931.5815502787
+          ],
+          [
+            -474295.8889317948,
+            5536225.75196716,
+            3126955.700749619
+          ],
+          [
+            -474388.2453285424,
+            5536167.692948843,
+            3126945.4808488395
+          ],
+          [
+            -474391.645178613,
+            5536210.2100658985,
+            3126969.6000481797
+          ],
+          [
+            -474302.3443502807,
+            5536206.319630451,
+            3126889.4986963114
+          ],
+          [
+            -474305.7442003513,
+            5536248.836747506,
+            3126913.617895651
+          ],
+          [
+            -474398.10059709894,
+            5536190.777729189,
+            3126903.3979948717
+          ],
+          [
+            -474401.50044716947,
+            5536233.294846245,
+            3126927.517194212
+          ]
+        ],
+        "matrix": [
+          0.22005896564401384,
+          -0.4678649882647748,
+          0.8559651887756233,
+          0,
+          -0.07426833592922809,
+          0.8668926353023134,
+          0.49293140814611675,
+          0,
+          -0.9726552657123642,
+          -0.1720450859937948,
+          0.15601994253106774,
+          0,
+          -474298.2954999837,
+          5536218.014864168,
+          3126923.4930493445,
+          1
+        ],
+        "style": {
+          "color": null,
+          "mode": 0,
+          "amount": 0.5
+        },
+        "paths": [
+          "/data/tsp_actual/hardness.json",
+          "/data/tsp_actual/hardness_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "camera": [
+          -474119.0708116275,
+          5536206.864610344,
+          3127108.887108018,
+          -0.7492589384916872,
+          -0.02886674290680264,
+          -0.6616477569252862,
+          -0.30952124037015977,
+          0.8984904214492955,
+          0.31130622275114467
+        ],
+        "environment": {
+          "terrainProvider": "CesiumTerrainProvider",
+          "tilesLoaded": true,
+          "globeShow": true,
+          "baseColor": [
+            0,
+            0,
+            0.5,
+            1
+          ],
+          "translucencyEnabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": {
+            "near": 400,
+            "nearValue": 0.9,
+            "far": 800,
+            "farValue": 0.9
+          },
+          "backDistance": null,
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "review": null
+      },
+      "manualTrace": [
+        {
+          "completedBefore": 0,
+          "stepId": "scene-1",
+          "input": "existing-manual-step-button"
+        },
+        {
+          "completedBefore": 1,
+          "stepId": "scene-2",
+          "input": "existing-manual-step-button"
+        },
+        {
+          "completedBefore": 2,
+          "stepId": "scene-3",
+          "input": "existing-manual-step-button"
+        }
+      ],
+      "dataVersions": [
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-23T06:28:03.739Z"
+        },
+        {
+          "digest": "a5690b2f9f9489960ce22b76de470263c9658aa20c7c259f0948acc6b2702369",
+          "locator": "/data/tsp_actual/hardness.json",
+          "sourceId": "asset:/data/tsp_actual/hardness.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-23T06:28:03.739Z"
+        },
+        {
+          "digest": "4bbaefecbeb255b17ca45ff7ab7a64a579dc67df84b929a88ac855039e32ddd2",
+          "locator": "/data/tsp_actual/hardness_volume.png",
+          "sourceId": "asset:/data/tsp_actual/hardness_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-23T06:28:03.739Z"
+        },
+        {
+          "digest": "960b0328e1e2b34457177133512a8c12821f63fda44d734fdddf038ee32edd48",
+          "locator": "/data/tunnel/tunnel000.glb",
+          "sourceId": "asset:/data/tunnel/tunnel000.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-23T06:28:03.739Z"
+        }
+      ]
+    },
+    {
+      "task": {
+        "id": "integrity",
+        "resource": "rock.tsp-integrity",
+        "name": "TSP完整度解释体",
+        "mileage": "YK2+244"
+      },
+      "condition": "manual-stepwise",
+      "main": {
+        "ids": [],
+        "matrix": null,
+        "style": null,
+        "paths": [],
+        "camera": [
+          -473869.40487207327,
+          5536493.254218888,
+          3126753.240602614,
+          -0.6295140094488293,
+          -0.6836142822411804,
+          0.3693015367197042,
+          -0.3256052438509544,
+          0.6636525553822303,
+          0.6734586185589998
+        ],
+        "environment": {
+          "terrainProvider": "CesiumTerrainProvider",
+          "tilesLoaded": true,
+          "globeShow": true,
+          "baseColor": [
+            0,
+            0,
+            0.5,
+            1
+          ],
+          "translucencyEnabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": {
+            "near": 400,
+            "nearValue": 0.9,
+            "far": 800,
+            "farValue": 0.9
+          },
+          "backDistance": null,
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "review": null
+      },
+      "assembly": {
+        "taskId": "scene-1795415292892-dzqe1",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.5,
+          "ymin": 0.2
+        },
+        "domain": [
+          [
+            -475209.0750584551,
+            5536112.127189011,
+            3126927.70405606
+          ],
+          [
+            -475212.4799970846,
+            5536154.599654785,
+            3126951.9010815797
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475205.0800661547,
+            5536124.33369843,
+            3126906.8404234825
+          ],
+          [
+            -475208.4850047842,
+            5536166.806164204,
+            3126931.0374490027
+          ],
+          [
+            -475282.8291707763,
+            5536126.020142269,
+            3126892.9396091998
+          ],
+          [
+            -475286.2341094058,
+            5536168.492608042,
+            3126917.1366347196
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "style": {
+          "color": null,
+          "mode": 0,
+          "amount": 0.5
+        },
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "camera": [
+          -475093.4026117888,
+          5536140.5599162225,
+          3127168.428414217,
+          -0.4566999923518599,
+          -0.035504964928210314,
+          -0.8889119835232607,
+          -0.3032535106838611,
+          0.9455711855311513,
+          0.11803576301751417
+        ],
+        "environment": {
+          "terrainProvider": "CesiumTerrainProvider",
+          "tilesLoaded": false,
+          "globeShow": true,
+          "baseColor": [
+            0,
+            0,
+            0.5,
+            1
+          ],
+          "translucencyEnabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": {
+            "near": 400,
+            "nearValue": 0.9,
+            "far": 800,
+            "farValue": 0.9
+          },
+          "backDistance": null,
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "review": null
+      },
+      "prepared": {
+        "taskId": "scene-1795415292892-dzqe1",
+        "status": "completed",
+        "ids": [
+          "rock.tsp-integrity",
+          "support.modeler-zz-va"
+        ],
+        "chainage": {
+          "start": 2244,
+          "end": 2244
+        },
+        "cut": {
+          "xmax": 0.99,
+          "ymin": 0.01
+        },
+        "domain": [
+          [
+            -475190.3759067107,
+            5536111.721588594,
+            3126931.0472898744
+          ],
+          [
+            -475193.78084534017,
+            5536154.194054368,
+            3126955.2443153947
+          ],
+          [
+            -475286.82416307664,
+            5536113.81363285,
+            3126913.803241777
+          ],
+          [
+            -475290.2291017061,
+            5536156.286098624,
+            3126938.000267297
+          ],
+          [
+            -475182.38592210994,
+            5536136.134607432,
+            3126889.32002472
+          ],
+          [
+            -475185.7908607394,
+            5536178.607073206,
+            3126913.51705024
+          ],
+          [
+            -475278.8341784759,
+            5536138.226651688,
+            3126872.0759766223
+          ],
+          [
+            -475282.2391171054,
+            5536180.699117462,
+            3126896.2730021426
+          ]
+        ],
+        "matrix": [
+          -0.14392406605675112,
+          -0.4984613341146822,
+          0.8548813728245007,
+          0,
+          -0.07440748204530571,
+          0.8668809001860285,
+          0.492931061618497,
+          0,
+          -0.9867874086272936,
+          0.007335072274499671,
+          -0.1618542767101272,
+          0,
+          -475187.255473556,
+          5536146.963433401,
+          3126923.493284961,
+          1
+        ],
+        "style": {
+          "color": null,
+          "mode": 0,
+          "amount": 0.5
+        },
+        "paths": [
+          "/data/tsp_actual/integrity.json",
+          "/data/tsp_actual/integrity_volume.png",
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "camera": [
+          -475080.02773074975,
+          5536103.85315812,
+          3127154.2756285304,
+          -0.49688925933563516,
+          0.10619682951126508,
+          -0.8612916447746601,
+          -0.2315998586811236,
+          0.9402596392529494,
+          0.24954622067023352
+        ],
+        "environment": {
+          "terrainProvider": "CesiumTerrainProvider",
+          "tilesLoaded": true,
+          "globeShow": true,
+          "baseColor": [
+            0,
+            0,
+            0.5,
+            1
+          ],
+          "translucencyEnabled": true,
+          "front": 1,
+          "back": 1,
+          "frontDistance": {
+            "near": 400,
+            "nearValue": 0.9,
+            "far": 800,
+            "farValue": 0.9
+          },
+          "backDistance": null,
+          "rectangle": [
+            -3.141592653589793,
+            -1.5707963267948966,
+            3.141592653589793,
+            1.5707963267948966
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "review": null
+      },
+      "manualTrace": [
+        {
+          "completedBefore": 0,
+          "stepId": "scene-1",
+          "input": "existing-manual-step-button"
+        },
+        {
+          "completedBefore": 1,
+          "stepId": "scene-2",
+          "input": "existing-manual-step-button"
+        },
+        {
+          "completedBefore": 2,
+          "stepId": "scene-3",
+          "input": "existing-manual-step-button"
+        }
+      ],
+      "dataVersions": [
+        {
+          "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22",
+          "locator": "/data/tsp_actual/integrity.json",
+          "sourceId": "asset:/data/tsp_actual/integrity.json",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-23T06:28:14.435Z"
+        },
+        {
+          "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca",
+          "locator": "/data/tsp_actual/integrity_volume.png",
+          "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-23T06:28:14.435Z"
+        },
+        {
+          "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04",
+          "locator": "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-23T06:28:14.435Z"
+        },
+        {
+          "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d",
+          "locator": "/data/tunnel/tunnel002.glb",
+          "sourceId": "asset:/data/tunnel/tunnel002.glb",
+          "algorithm": "sha256-bytes-v1",
+          "capturedAt": "2026-11-23T06:28:14.435Z"
+        }
+      ]
+    }
+  ],
+  "modelRequests": 0
+}

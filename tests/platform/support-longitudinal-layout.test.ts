@@ -1,5 +1,12 @@
 import {expect,it} from 'vitest'
-import {supportLongitudinalRows,supportLayoutFinding,supportReviewSteps} from '@/modules/support/longitudinal-layout'
+import {adjacentSupportIntervals,supportLongitudinalRows,supportLayoutFinding,supportReviewSteps} from '@/modules/support/longitudinal-layout'
+it('computes actual adjacent gaps for irregular stations and does not invent endpoint neighbors',()=>{
+ const offsets=[-5,-4,-2.5]
+ expect(adjacentSupportIntervals(offsets,-4)).toEqual([{from:-5,to:-4,distanceM:1},{from:-4,to:-2.5,distanceM:1.5}])
+ expect(adjacentSupportIntervals(offsets,-2.5)).toEqual([{from:-4,to:-2.5,distanceM:1.5}])
+ expect(adjacentSupportIntervals([-1],-1)).toEqual([])
+ expect(adjacentSupportIntervals(offsets,-3)).toEqual([])
+})
 it('uses recorded placement stations, deduplicates component parts and never infers from counts',()=>{
  const rows=supportLongitudinalRows([{id:'support.test-section',supportType:'ZZ-Va',lengthM:5,layout:'1064m-component-example',sourceSegment:19,
   groups:[{component:'steel_arch',spacingM:.8,stations:7,stationOffsetsM:[-5.5,-4.7,-3.9]},{component:'steel_arch',spacingM:.8,stationOffsetsM:[-5.5,-4.7]},

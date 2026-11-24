@@ -16,24 +16,28 @@ import { continuousSupportCatalog, planContinuousSupport } from '@/modules/suppo
 import { ALTERNATING_SUPPORT_ID } from '@/modules/support/alternating-resource'
 import { transientScenarioCatalog } from '@/modules/ventilation/transient-catalog'
 import { thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
+import { AXIAL_FAN_DUCT_ID, AXIAL_FAN_ID, JET_FAN_ID, axialFanNote } from '@/modules/ventilation/axial-fan-resource'
 import { presentTaskScene, taskPresentationProfile } from '../TaskScenePresentation'
-import { faceSourceDescription } from '@/modules/face-sketch/resources'
-import { isThreeBenchResourceId, THREE_BENCH_PHASE_IDS, validateThreeBenchChainage, threeBenchDescription } from '@/modules/rock/three-bench-resource'
+import { faceSourceDescription, facePhotoCatalog, isFacePhotoResource } from '@/modules/face-sketch/resources'
+import { isThreeBenchResourceId, validateThreeBenchChainage, threeBenchDescription } from '@/modules/rock/three-bench-resource'
 import { isTestSupportId, testSupportCatalog } from '@/modules/support/test-section-resource'
+
+import { nativeRockCatalog, isNativeRockModel, isWorkfaceResource } from '@/modules/rock/native-model-resources'
 
 /** 只允许现有四类可展示资产进入智能体的场景编排，不能把任意路径当作资源加载。 */
 export const SCENE_EXPLORATION_RESOURCES = [
   'rock.design-grade', 'rock.geophysical-grade', 'rock.tsp-hardness',
   'rock.tsp-integrity', 'rock.tsp-vp', 'rock.tsp-vs', 'rock.tsp-ratio',
-  'rock.tsp-anomaly', 'rock.tem-resistivity', 'rock.tem-water',
+  'rock.tsp-anomaly', 'rock.tem-resistivity', 'rock.tem-resistivity-absolute', 'rock.tem-water',
   'support.scene', 'blast.effect', 'blast.design-data',
-  'rock.face-photos',
-  'rock.three-bench', ...THREE_BENCH_PHASE_IDS,
+  ...facePhotoCatalog.map(item => item.id),
+  ...nativeRockCatalog.map(item => item.id),
+  'rock.three-bench',
   ...testSupportCatalog.map(asset => asset.id),
   'rock.gpr-line1', 'rock.gpr-line2',
   'rock.advance-drill',
   'ventilation.steady-cfd', 'ventilation.transient-network', 'ventilation.thermal-field',
-  'ventilation.co-analysis',
+  'ventilation.co-analysis', AXIAL_FAN_ID, AXIAL_FAN_DUCT_ID, JET_FAN_ID,
   ...transientScenarioCatalog.map(scenario => scenario.id),
   ...thermalSnapshotCatalog.map(snapshot => snapshot.id),
   ...modelerSupportCatalog.map(asset => asset.id),
@@ -97,10 +101,10 @@ export function validateSceneSequence(ids: readonly string[], registry: Resource
 export function sceneStageTask(task: TaskContext, resource: SceneResource, requestedChainage?: number): TaskContext {
   // Task and registered resource ranges are always in the surveyed YK frame.
   const focusChainage = requestedChainage ?? (resource.module === 'ventilation' ? 1346
-      : resource.module === 'rock' && resource.id !== 'rock.design-grade' ? 2244
+      : (resource.module === 'rock' && resource.id !== 'rock.design-grade' || isTestSupportId(resource.id)) ? 2244
         : 1346)
   const chainageRange = resource.chainageRange!
-  const demoRelocatable = resource.module === 'rock' && resource.id !== 'rock.design-grade'
+  const demoRelocatable = resource.module === 'rock' && resource.id !== 'rock.design-grade' || isTestSupportId(resource.id)
   if (requestedChainage !== undefined && !demoRelocatable && (requestedChainage < chainageRange.start || requestedChainage > chainageRange.end)) {
     throw new Error(`目标里程不在 ${resource.id} 的资产覆盖范围 ${chainageRange.start}–${chainageRange.end} 内`)
   }
@@ -117,9 +121,28 @@ export function sceneStageTask(task: TaskContext, resource: SceneResource, reque
 
 /** Demo assembly permits one interpreted rock layer with the reanchored structure-tree support layout. */
 function compatibleAssembly(ids: readonly string[]): boolean {
+  const uniqueIds = new Set(ids)
+  if (uniqueIds.size !== ids.length) return false
+  if (ids.some(isThreeBenchResourceId) && (ids.includes('rock.tsp-integrity') || ids.includes('blast.design-data'))) {
+    return ids.filter(isTestSupportId).length <= 1 &&
+      ids.every(id => id === 'rock.tsp-integrity' || id === 'blast.design-data' || isThreeBenchResourceId(id) || isTestSupportId(id))
+  }
+  if (ids.includes('ventilation.co-analysis') && ids.includes('blast.effect')) {
+    return ids.every(id => id === 'ventilation.co-analysis' || id === 'blast.effect' || id === 'rock.design-grade' || id === JET_FAN_ID)
+  }
+  if (ids.includes(JET_FAN_ID)) {
+    const others = ids.filter(id=>id!==JET_FAN_ID)
+    return (others.every(id=>isThreeBenchResourceId(id)||isTestSupportId(id)) ||
+      others.every(id=>id==='blast.effect'||id==='rock.design-grade'||id==='ventilation.steady-cfd')) && compatibleAssembly(others)
+  }
+  if (ids.includes(AXIAL_FAN_ID) || ids.includes(AXIAL_FAN_DUCT_ID)) {
+    return ids.every(id => id === AXIAL_FAN_ID || id === AXIAL_FAN_DUCT_ID || id === 'ventilation.steady-cfd')
+  }
+  if (ids.some(isWorkfaceResource) && ids.some(isFacePhotoResource)) return false
   if (ids.some(isThreeBenchResourceId) || ids.some(isTestSupportId)) return new Set(ids).size === ids.length && ids.filter(isTestSupportId).length <= 1 && ids.filter(isThreeBenchResourceId).length <= 1 && ids.every(id => isThreeBenchResourceId(id) || isTestSupportId(id))
-  if (ids.includes('rock.face-photos')) {
-    const others = ids.filter(id => id !== 'rock.face-photos')
+  if (ids.filter(isFacePhotoResource).length > 1) return false
+  if (ids.some(isFacePhotoResource)) {
+    const others = ids.filter(id => !isFacePhotoResource(id))
     return new Set(ids).size === ids.length && (others.length <= 1 || compatibleAssembly(others))
   }
   if (ids.includes('blast.design-data')) {
@@ -131,8 +154,9 @@ function compatibleAssembly(ids: readonly string[]): boolean {
   if (unique.size !== ids.length) return false
   const support = ids.filter(id => id.startsWith('support.modeler-') || id === ALTERNATING_SUPPORT_ID)
   if (ids.includes('blast.effect') && ids.includes('ventilation.steady-cfd')) {
-    return ids.length === 2
+    return ids.every(id => id === 'blast.effect' || id === 'ventilation.steady-cfd' || id === 'rock.design-grade')
   }
+  if (ids.every(id=>id==='rock.design-grade'||id==='ventilation.steady-cfd')) return true
   if (support.length > 0) {
     const ventilation = ids.filter(id => id === 'ventilation.steady-cfd')
     if (ventilation.length > 0) {
@@ -143,6 +167,8 @@ function compatibleAssembly(ids: readonly string[]): boolean {
       && ids.filter(id => id.startsWith('rock.')).length <= 1
       && ids.every(id => id.startsWith('rock.') || id === support[0])
   }
+  if (ids.some(isNativeRockModel)) return ids.length === 1 || ids.length === 2 && (
+    ids.includes('rock.design-grade') || ids.includes('rock.gpr-model') && ids.some(id => /^rock\.gpr-line[12]$/.test(id)))
   const worksite = new Set(['rock.design-grade', 'support.scene', 'blast.effect'])
   return ids.every(id => worksite.has(id))
 }
@@ -154,6 +180,8 @@ export function resolveAssemblyStages(
   for (const [index, current] of resources.entries()) {
     const previous = stages[index - 1] ?? []
     const autoRetain = modes[index] === 'auto' && (
+      (previous.length > 0 && compatibleAssembly([...previous.map(item => item.id), current.id]) &&
+        [...previous, current].some(item => item.id === AXIAL_FAN_ID || item.id === AXIAL_FAN_DUCT_ID || item.id === JET_FAN_ID)) ||
       (isTestSupportId(current.id) && isThreeBenchResourceId(resources[index - 1]?.id ?? '')) || (isThreeBenchResourceId(current.id) && isTestSupportId(resources[index - 1]?.id ?? '')) ||
       (current.id.startsWith('support.modeler-') || current.id === ALTERNATING_SUPPORT_ID) && resources[index - 1]?.id.startsWith('rock.')
       || current.id === 'support.scene' && resources[index - 1]?.id === 'rock.design-grade'
@@ -359,7 +387,8 @@ export function createSceneExplorationExecutor(
     return planned
   }
   for (const resource of resources) {
-    if (isThreeBenchResourceId(resource.id) || isTestSupportId(resource.id)) validateThreeBenchChainage(options.targetChainage ?? task.chainageRange.start)
+    if (isThreeBenchResourceId(resource.id)) validateThreeBenchChainage(options.targetChainage ?? task.chainageRange.start)
+    if (isTestSupportId(resource.id)) validateThreeBenchChainage(options.targetChainage ?? task.chainageRange.start, (task.supportLengthM ?? 10) + 1, 0)
     const continuous = continuousSupportCatalog.find(item => item.id === resource.id)
     if (continuous) planContinuousSupport(options.targetChainage ?? task.chainageRange.start, continuous.length)
   }
@@ -385,7 +414,7 @@ export function createSceneExplorationExecutor(
       const enhanced = await enhancement.engine.apply(enhancement.planner.create({ ...active, stepId: step.stepId }, { highlightFocus: false }))
       if (enhanced.status === 'failed') throw enhanced.error ?? new Error('整体增强失败')
       undoPresentation = presentTaskScene(load.viewer, active.rootResourceIds, options.targetChainage ?? task.chainageRange.start,task.description)
-      if (active.rootResourceIds.includes('rock.face-photos')) await waitForSceneEntitiesReady(load.viewer)
+      if (active.rootResourceIds.some(isFacePhotoResource)) await waitForSceneEntitiesReady(load.viewer)
       const previous = context.plan.sharedContext[`scene.stage.${resources.length}`]?.value as Record<string, unknown>
       return { outputs: { [step.outputKeys[0]]: { ...previous, phase: 'constructed-then-enhanced', presentation: taskPresentationProfile(active.rootResourceIds,task.description),
         provenance: active.rootResourceIds.map(id => ({ resourceId: id, assets: registry.require(id).getActiveAssetPaths?.() ?? [],
@@ -414,8 +443,11 @@ export function createSceneExplorationExecutor(
           : resource.id.startsWith('rock.gpr-line')
           ? '现有GPR处理剖面参考，测线横距/深度为局部轴；未建立目标YK测量对应，不将反射异常直接判为富水或破碎带'
           : isThreeBenchResourceId(resource.id) ? threeBenchDescription
-          : resource.id === 'rock.face-photos'
-          ? faceSourceDescription()
+          : isFacePhotoResource(resource.id)
+          ? faceSourceDescription(resource.id)
+          : resource.id === AXIAL_FAN_ID ? axialFanNote
+          : resource.id === AXIAL_FAN_DUCT_ID ? '4米示意柔性风筒在风机出风法兰处同轴接装，代表近机连接段。'
+          : resource.id === JET_FAN_ID ? '洞顶射流风机沿隧道轴向示意吊装，吊点和净空以项目设计为准。'
           : resource.id.startsWith('ventilation.thermal-t')
           ? '现有稳态解与指数松弛近似热场时间片，示意配准仅显示右洞；完整瞬态CFD待重跑，非目标工点实测温度'
           : resource.id.startsWith('ventilation.transient-')

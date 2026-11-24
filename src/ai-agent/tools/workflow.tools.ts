@@ -13,10 +13,16 @@ import {getTaskVolumeDomain,getTaskVolumeKey} from '@/platform/tasks/TaskVolumeC
 import {inspectVentilationCharts,setVentilationChartReview} from '@/modules/ventilation/resources'
 import {setTaskFlowReview,inspectTaskFlowReview,evaluateTaskFlowReview,adjustTaskFlowReview} from '@/platform/tasks/TaskFlowReview'
 import { focusTaskCamera, taskViews, type TaskView } from '@/platform/tasks/TaskCameraView'
+import { constructionReview, constructionReviews, publishConstructionReview, resolveConstructionReviewRequest, type ConstructionReviewReference } from '@/platform/tasks/ConstructionReview'
+import { captureReviewAssemblyView, focusConstructionReview } from '@/platform/tasks/ConstructionReviewScene'
+import { nextTick } from 'vue'
+import { taskManualControlsEnabled } from '@/platform/tasks/taskManualControls'
+import { getJetFanPlacement } from '@/modules/ventilation/axial-fan-resource'
+import { clearTaskTunnelSection, showTaskTunnelSection } from '@/platform/tasks/TaskTunnelSection'
 import { advancePlatformTask, dispatchValidatedWorkflow, orchestratePlatformTask } from '../TaskOrchestrator'
 import { AGENT_SCENE_RESOURCES, SCENE_ENHANCEMENT_MODES, SCENE_ASSEMBLY_MODES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import { getBlastDesignSummary } from '@/modules/blast/design-resource'
-import { getActiveFaceSlices } from '@/modules/face-sketch/resources'
+import { facePhotoCatalog, getActiveFaceSlices, isFacePhotoResource } from '@/modules/face-sketch/resources'
 import { getActiveDrillModels } from '@/modules/rock/drill-resource'
 import { canRetrySceneLoad } from '../SceneRecovery'
 import { resourceManager } from '@/platform/resources/ResourceManager'
@@ -99,7 +105,7 @@ const normalizeNumericTaskChainage = (value: number): number => value >= chainag
   ? chainageService.legacyDkToCanonical(value) : value
 
 export function resolveAssemblyMileage(modelValue: unknown, userRequest?: string): string {
-  const mileagePattern = /(?:DK|YK)\s*\d+\s*\+\s*\d+(?:\.\d+)?/gi
+  const mileagePattern = /(?<![A-Z0-9])(?:DK|YK)\s*\d+\s*\+\s*\d+(?:\.\d+)?/gi
   const explicit = [...new Set((userRequest ?? '').match(mileagePattern)?.map(value => value.replace(/\s+/g, '').toUpperCase()) ?? [])]
   if (userRequest !== undefined) {
     if (explicit.length === 0 && /测试工段|论文测试|(?:展示|查看|加载|装配|看看).{0,8}三台阶/.test(userRequest)) return 'YK2+244'
@@ -112,6 +118,14 @@ export function resolveAssemblyMileage(modelValue: unknown, userRequest?: string
     throw new Error('请明确提供 DK 或 YK 格式的目标里程，不能猜测位置')
   }
   return candidate
+}
+
+function validateSelectedPhoto(resourceIds: readonly string[], request: string) {
+  const requestedPhotos = [...new Set(request.match(/X1DK\s*2\s*\+\s*\d+(?:\.\d+)?/gi)?.map(value => Number(value.split('+')[1])) ?? [])]
+  const photoId = resourceIds.find(isFacePhotoResource)
+  if (photoId && requestedPhotos.length && (requestedPhotos.length !== 1 || !facePhotoCatalog.some(item => item.id === photoId && Number(item.sourceMileage.split('+')[1]) === requestedPhotos[0]))) {
+    throw new Error('当前只装配一张照片，所选照片与指定的来源里程不符')
+  }
 }
 
 export function normalizeAgentTaskInput(input: Record<string, any>): AgentTaskWorkflowInput {
@@ -129,7 +143,158 @@ export function normalizeAgentTaskInput(input: Record<string, any>): AgentTaskWo
 }
 
 export const workflowTools: ToolRegistration[] = [
- {module:'common',tool:{name:'plan_task_visual_review',description:'为当前已完成场景规划视觉分析目标：依据本轮用户原话指定分析目的、实际重点资源和1至3个待回答问题。平台读取本轮场景快照并生成有限候选及完成条件。只更新分析计划显示，不改相机、模型、源数据，不新建任务。source-review没有相机动作。',input_schema:{type:'object',properties:{objective:{type:'string',enum:[...visualObjectives]},focusComponent:{type:'string',description:'可选构件显露，仅component-detail或spatial-relation且重点为一种当前support.test-section资源；先从inspect_task_scene的componentDisplay读取真实component，再原样传入。显示该构件，暂避其他初支/二衬外壳，其余结构保持原显隐，恢复精确还原。不猜测未返回的构件。'},emphasis:{type:'string',enum:['source','material-focus'],description:'可选支护重点着色，默认source；暖色仅表示当前重点，不是风险分级。不改地质语义色标。'},referenceScope:{type:'string',enum:['full','near-support'],description:'未指定时保留当前裁剪范围。full在TSP任务恢复原显示范围再整体取景；仅TSP解释体与支护空间关系可选near-support，组合近端剖切和局部取景；不表示全体范围入镜。'},focusResourceIds:{type:'array',minItems:1,items:{type:'string'},description:'仅列本任务重点对象；near-support与material-focus组合只列已装配支护ID，围岩自动保留为参照，不加入重点。'},questions:{type:'array',minItems:1,maxItems:3,items:{type:'string'}}},required:['objective','focusResourceIds','questions']}},executor:async input=>JSON.stringify({ok:true,action:'plan_task_visual_review',taskId:getTaskWorkflowController().getStatus().taskId,review:planTaskVisualReview(input as any)})},
+  {
+    module: 'common',
+    tool: {
+      name: 'run_construction_review',
+      description: '按用户原话启动两项论文施工复盘，或切换当前复盘节点。复核为示例资料演练，不能判定施工审批或准入。',
+      input_schema: { type: 'object', properties: {} },
+    },
+    executor: async input => {
+      const request = String(input.userRequest ?? '')
+      const action = 'run_construction_review'
+      const controller = getTaskWorkflowController()
+      const current = controller.getStatus()
+      const selection = constructionReview.value?.taskId === current.taskId && current.status === 'completed'
+        ? constructionReview.value : null
+      const intent = resolveConstructionReviewRequest(request, selection)
+      if (!intent) return JSON.stringify({ action, ok: false, reason: '请明确指定一项施工复盘及其节点。' })
+      const assemblyOnly = intent.experiment === 'assemble' ||
+        (!intent.start && intent.experiment !== 'enhance' && selection?.assemblyOnly === true)
+      if ((intent.experiment || assemblyOnly) && !taskManualControlsEnabled()) {
+        return JSON.stringify({ action, ok: false, reason: '此入口仅用于开发环境的复盘对照。' })
+      }
+      if (assemblyOnly && (intent.supportDisplay || intent.workfaceView)) {
+        return JSON.stringify({ action, ok: false, reason: '当前为仅装配条件，请先增强当前复盘再调整表达。' })
+      }
+      if (intent.experiment === 'enhance' && !selection?.assemblyOnly) {
+        return JSON.stringify({ action, ok: false, reason: '请先完成仅装配条件。' })
+      }
+      if (intent.experiment === 'restore' && !selection?.restoreAssemblyView) {
+        return JSON.stringify({ action, ok: false, reason: '当前节点没有可恢复的装配表达。' })
+      }
+      if (intent.experiment === 'annotations' && !selection?.restoreAssemblyView) {
+        return JSON.stringify({ action, ok: false, reason: '请先增强当前复盘，再切换三维标注。' })
+      }
+      if (intent.experiment === 'reference-links' && !selection?.restoreAssemblyView) {
+        return JSON.stringify({ action, ok: false, reason: '请先增强当前复盘，再切换里程联动。' })
+      }
+      const review = constructionReviews[intent.kind]
+      const step = review.steps[intent.stepIndex]
+      if (!step) return JSON.stringify({ action, ok: false, reason: '已到复盘流程边界，场景保持在当前节点。' })
+      if (intent.supportDisplay && step.view !== 'support') {
+        return JSON.stringify({ action, ok: false, reason: '请先复核原支护版本或拟变更版本，再切换初支展示。' })
+      }
+      const explicitlyRequested = [...request.matchAll(/\b(?:YK|DK)\s*\d+\s*\+\s*\d+(?:\.\d+)?/gi)]
+      if (explicitlyRequested.some(match => chainageService.toCanonicalChainage(match[0].replace(/\s/g, '')) !== chainageService.toCanonicalChainage(review.mileage))) {
+        return JSON.stringify({ action, ok: false, reason: `当前示例资料固定在 ${review.mileage}，请指定该展示位置或补充目标工段资料。` })
+      }
+      const loadedIds = current.lastCompletedStage?.assembledResourceIds ?? []
+      const needsAssembly = intent.start || loadedIds.length !== step.ids.length ||
+        step.ids.some(id => !loadedIds.includes(id) || resourceManager.getState(id).status !== 'loaded')
+      if ((intent.supportDisplay || (intent.experiment && intent.experiment !== 'assemble')) && needsAssembly) {
+        return JSON.stringify({ action, ok: false, reason: '当前复盘资源已变化，请重新进入该节点。' })
+      }
+      let assembly
+      if (needsAssembly) {
+        const assemble = workflowTools.find(item => item.tool.name === 'assemble_scene_at_mileage')!
+        const assemblyRequest = intent.kind === 'geology-change'
+          ? step.key === 'workface' ? `${review.title} ${review.mileage} 掌子面岩面近景`
+            : `${review.title} ${review.mileage} 三台阶后方5米${step.key === 'candidate' ? 'ZZ-Va' : 'ZZ-IVb'}支护`
+          : `${review.title} ${review.mileage}，洞顶射流风机布置在开挖基准后方12米，出风朝里程增大方向。`
+        assembly = JSON.parse(await assemble.executor({
+          targetMileage: review.mileage, resourceIds: [...step.ids], userRequest: assemblyRequest,
+        }))
+        if (!assembly.ok) return JSON.stringify({ ...assembly, action })
+      }
+      const status = controller.getStatus()
+      const stage = status.lastCompletedStage
+      if (status.status !== 'completed' || !status.taskId || !stage || (assembly && assembly.taskId !== status.taskId)) {
+        return JSON.stringify({ action, ok: false, reason: '任务已切换，未应用旧节点。' })
+      }
+      if (intent.experiment === 'annotations') {
+        publishConstructionReview({ ...selection!, sceneAnnotations: intent.sceneAnnotations })
+        return JSON.stringify({ action, ok: true, taskId: status.taskId, sceneChanged: false,
+          summary: `已${intent.sceneAnnotations ? '显示' : '隐藏'}复盘三维标注，保留当前机位与二维资料。` })
+      }
+      if (intent.experiment === 'reference-links') {
+        publishConstructionReview({ ...selection!, referenceLinks: intent.referenceLinks })
+        return JSON.stringify({ action, ok: true, taskId: status.taskId, sceneChanged: false,
+          summary: `已${intent.referenceLinks ? '开启' : '关闭'}复盘里程联动，保留当前机位、静态标注和二维资料。` })
+      }
+      if (assemblyOnly || intent.experiment === 'restore') {
+        publishConstructionReview({ kind: intent.kind, stepIndex: intent.stepIndex, taskId: status.taskId, references: [], assemblyOnly: true })
+        if (intent.experiment === 'restore') {
+          // Dispose the enhanced scene presentation before restoring the captured camera and layers.
+          await nextTick()
+          const restored = constructionReview.value
+          if (controller.getStatus().taskId !== status.taskId || !restored?.assemblyOnly ||
+              restored.taskId !== status.taskId || restored.stepIndex !== intent.stepIndex) {
+            return JSON.stringify({ action, ok: false, reason: '任务已切换，未恢复旧节点表达。' })
+          }
+          selection!.restoreAssemblyView!()
+        }
+        return JSON.stringify({ ...assembly, action, ok: true, sceneChanged: needsAssembly, taskId: status.taskId,
+          targetMileage: review.mileage, taskDescription: review.title, step: step.key, assembledResourceIds: stage.assembledResourceIds,
+          summary: intent.experiment === 'restore' ? `${step.label}｜已恢复增强前的装配表达，可再次增强。`
+            : `${step.label}｜${review.mileage} 使用平台默认场景表达。可继续查看下一节点，或输入“增强当前复盘”进行同场景对照。` })
+      }
+      const chainage = stage.chainageRange.start
+      const geology = intent.kind === 'geology-change'
+      const references: ConstructionReviewReference[] = [step.key === 'workface'
+        ? { role: 'workface', label: '掌子面岩面', start: chainage }
+        : geology ? { role: 'excavation', label: '开挖基准', start: chainage }
+          : { role: 'blast-cloud', label: '爆后点云', start: chainage }]
+      const support = geology ? getTestSectionSupportSummaries(stage.assembledResourceIds)[0] : undefined
+      const offsets: number[] | undefined = support?.unitOffsetsM
+      const supportRange = offsets?.length ? {
+        start: chainage + offsets[0]! - .5, end: chainage + offsets.at(-1)! + .5,
+      } : undefined
+      if (supportRange) references.push({ role: 'support-span', label: `${support.supportType} 初支`, ...supportRange })
+      const fan = geology ? undefined : getJetFanPlacement()
+      if (fan) references.push({ role: 'jet-fan', label: '洞顶射流风机', start: fan.chainage })
+      const supportEvidence = geology ? {
+        ...(!intent.start && selection?.kind === intent.kind ? selection.supportEvidence : undefined),
+        ...(support ? { [step.key === 'candidate' ? 'candidate' : 'baseline']: getTaskSupportLayers([support.id]).map(layer => layer.component) } : undefined),
+      } : undefined
+      const chart = intent.kind === 'blast-handoff'
+        ? inspectVentilationCharts().find(item => item.owner === 'ventilation.co-analysis')
+        : undefined
+      const keepSupportComparison = !intent.start && !intent.supportDisplay && step.view === 'support' &&
+        selection?.kind === intent.kind && review.steps[selection.stepIndex]?.view === 'support'
+      const nextReview = {
+        kind: intent.kind, stepIndex: intent.stepIndex, taskId: status.taskId, references,
+        restoreAssemblyView: intent.experiment === 'enhance'
+          ? captureReviewAssemblyView(viewerService.require(), stage.assembledResourceIds)
+          : !intent.start && selection?.stepIndex === intent.stepIndex ? selection.restoreAssemblyView : undefined,
+        sceneAnnotations: !intent.start && selection?.stepIndex === intent.stepIndex ? selection.sceneAnnotations : undefined,
+        referenceLinks: !intent.start && selection?.stepIndex === intent.stepIndex ? selection.referenceLinks : undefined,
+        simulation: chart ? { range: [chart.timeRange[0]!, chart.timeRange[1]!] as const, unit: chart.timeUnit } : undefined,
+        supportDisplay: step.view === 'support' ? intent.supportDisplay ?? 'outline' as const : undefined,
+        supportEvidence,
+        supportComponent: keepSupportComparison ? selection?.supportComponent : undefined,
+        supportDetailView: keepSupportComparison ? selection?.supportDetailView : undefined,
+        workfaceView: step.key === 'workface' ? intent.workfaceView ?? 'oblique' as const : undefined,
+      }
+      let focusIssue
+      try { if (!intent.supportDisplay) focusConstructionReview(viewerService.require(), nextReview) }
+      catch (error) { focusIssue = error instanceof Error ? error.message : String(error) }
+      publishConstructionReview(nextReview)
+      const supportDisplayNote = nextReview.supportDisplay === 'outline' ? '轮廓对照暂收起已有锚杆组。'
+        : nextReview.supportDisplay === 'assembled' ? '已恢复本次对照前的锚杆显示。' : ''
+      const detail = intent.supportDisplay ? supportDisplayNote : intent.workfaceView
+        ? intent.workfaceView === 'front' ? '已切到岩面正视，便于看纹理。' : '已切到岩面斜视，便于看侧缘和起伏。'
+        : `${step.detail}${supportDisplayNote}`
+      return JSON.stringify({
+        ...assembly, action, ok: true, taskId: status.taskId, targetMileage: review.mileage,
+        taskDescription: review.title, step: step.key, sceneChanged: needsAssembly,
+        assembledResourceIds: stage.assembledResourceIds,
+        summary: `${step.label}｜${detail}${focusIssue ? ` 取景未完成：${focusIssue}` : ''}${intent.kind === 'blast-handoff' && !chart ? ' CO 图表未就绪。' : ''}`,
+        ...(chart ? { chartTimeRange: chart.timeRange, chartTimeUnit: chart.timeUnit } : {}),
+      })
+    },
+  },
+ {module:'common',tool:{name:'plan_task_visual_review',description:'为当前已完成场景规划视觉分析目标：依据本轮用户原话指定分析目的、实际重点资源和1至3个待回答问题。平台读取本轮场景快照并生成有限候选及完成条件。只更新分析计划显示，不改相机、模型、源数据，不新建任务。source-review没有相机动作。',input_schema:{type:'object',properties:{objective:{type:'string',enum:[...visualObjectives]},focusComponent:{type:'string',description:'可选构件显露，仅component-detail或spatial-relation且重点为一种当前support.test-section资源；先从inspect_task_scene的componentDisplay读取真实component，再原样传入。整体关系时暂避混凝土外壳并保留其他构件，细部时单独显露此组并暂避其他已识别组，恢复精确还原。不猜测未返回的构件。'},emphasis:{type:'string',enum:['source','material-focus'],description:'可选支护重点着色，默认source；暖色仅表示当前重点，不是风险分级。不改地质语义色标。'},referenceScope:{type:'string',enum:['full','near-support'],description:'未指定时保留当前裁剪范围。full在TSP任务恢复原显示范围再整体取景；仅TSP解释体与支护空间关系可选near-support，组合近端剖切和局部取景；不表示全体范围入镜。'},focusResourceIds:{type:'array',minItems:1,items:{type:'string'},description:'仅列本任务重点对象；near-support与material-focus组合只列已装配支护ID，围岩自动保留为参照，不加入重点。'},questions:{type:'array',minItems:1,maxItems:3,items:{type:'string'}}},required:['objective','focusResourceIds','questions']}},executor:async input=>JSON.stringify({ok:true,action:'plan_task_visual_review',taskId:getTaskWorkflowController().getStatus().taskId,review:planTaskVisualReview(input as any)})},
  {module:'common',tool:{name:'apply_task_visual_review',description:'执行当前已校验视觉计划的受控策略；先规划，校验任务未变和对象就绪。每场景最多2次，重新规划/恢复不重置预算。可包含取景、TSP显式full恢复原显示范围、near-support近端剖切及局部取景、material-focus支护暖色显示；不改源几何、体素或色标；仅focusComponent候选调整已声明构件节点显隐并可精确恢复。返回前后实际反馈，不宣称工程验收。',input_schema:{type:'object',properties:{taskId:{type:'string'}},required:['taskId']}},executor:async input=>JSON.stringify({ok:true,action:'apply_task_visual_review',taskId:input.taskId,review:applyTaskVisualReview(String(input.taskId))})},
  {module:'common',tool:{name:'restore_task_visual_review',description:'恢复当前任务第一次视觉分析前的相机、取景目标及已保存的裁剪/支护表达，保留装配对象和无关显示；构件显露候选还原分析前节点显隐。成功后restoredFeedback为恢复时快照，feedback.before/after仅历史；失败不能宣称已恢复，可在故障解除后重试，预算不重置。任务变化拒绝旧计划。',input_schema:{type:'object',properties:{taskId:{type:'string'}},required:['taskId']}},executor:async input=>JSON.stringify({ok:true,action:'restore_task_visual_review',taskId:input.taskId,review:restoreTaskVisualReview(String(input.taskId))})},
 
@@ -186,6 +351,7 @@ export const workflowTools: ToolRegistration[] = [
     executor: async input => {
       const mileage = resolveAssemblyMileage(input.targetMileage, input.userRequest)
       const resourceIds = agentResourceIds(input.resourceIds)
+      validateSelectedPhoto(resourceIds, String(input.userRequest ?? ''))
       if (!resourceIds.length || resourceIds.length > 4) throw new Error('预检需要1–4个资源')
       const controller = getTaskWorkflowController()
       if (!controller.inspectScene) throw new Error('当前页面尚未接入装配预检')
@@ -217,16 +383,24 @@ export const workflowTools: ToolRegistration[] = [
   },
   {
     module: 'common',
-    tool: { name: 'set_task_view', description: '仅调整已完成装配任务的相机：中线与地形位置geographic，整体布置overview，掌子面近景face，支护support，三台阶excavation，水平钻drill，爆破断面blast。不加载资源、不改变里程、剖切或图层。没有当前任务或对应模型时失败。',
-      input_schema: { type: 'object', properties: { view: { type: 'string', enum: [...taskViews] } }, required: ['view'] } },
+    tool: { name: 'set_task_view', description: '调整已完成装配任务的取景。中线与地形geographic，整体overview，掌子面face，支护support，三台阶excavation，水平钻drill，爆破断面blast，轴流风机fan。tunnel-side-section在三台阶与后方支护交底场景中开启公共洞壁侧剖，restore-tunnel-section关闭侧剖并还原相机。不加载资源、不改变里程。',
+      input_schema: { type: 'object', properties: { view: { type: 'string', enum: [...taskViews, 'tunnel-side-section', 'restore-tunnel-section'] } }, required: ['view'] } },
     executor: async input => {
-      if (!taskViews.includes(input.view)) throw new Error('不支持的任务视角')
       const status = getTaskWorkflowController().getStatus()
       const stage = status.lastCompletedStage
       if (status.status !== 'completed' || !stage || !stage.assembledResourceIds.length ||
           stage.assembledResourceIds.some(id => resourceManager.getState(id).status !== 'loaded')) throw new Error('请先完成当前任务场景装配')
-      focusTaskCamera(viewerService.require(), stage.assembledResourceIds, stage.chainageRange.start, input.view as TaskView)
-      return JSON.stringify({ ok: true, action: 'set_task_view', taskId: status.taskId, view: input.view, resourceIds: stage.assembledResourceIds })
+      const viewer = viewerService.require()
+      let sectionRange
+      if (input.view === 'tunnel-side-section') sectionRange = showTaskTunnelSection(viewer, stage.assembledResourceIds, stage.chainageRange.start)
+      else if (input.view === 'restore-tunnel-section') {
+        if (!clearTaskTunnelSection(viewer, true)) throw Error('当前任务未开启隧道侧剖')
+      } else {
+        if (!taskViews.includes(input.view)) throw Error('不支持的任务视角')
+        focusTaskCamera(viewer, stage.assembledResourceIds, stage.chainageRange.start, input.view as TaskView)
+        clearTaskTunnelSection(viewer)
+      }
+      return JSON.stringify({ ok: true, action: 'set_task_view', taskId: status.taskId, view: input.view, resourceIds: stage.assembledResourceIds, sectionRange })
     },
   },
   {
@@ -283,7 +457,7 @@ export const workflowTools: ToolRegistration[] = [
       const layout=getTestSectionSupportSummaries(status.lastCompletedStage?.assembledResourceIds)[0]
       if (!layout || layout.lengthM !== update.previousLengthM || !current.length || current.some(model => !model.ready)) throw new Error('当前支护模型不完整或已释放，请重新装配后再调整')
       const assemble = workflowTools.find(item => item.tool.name === 'assemble_scene_at_mileage')!
-      const result = JSON.parse(await assemble.executor({ description: `测试支护调整：${update.previousType}→${update.supportType}，${update.previousLengthM}→${update.supportLengthM}米；承接${update.parentTaskId}`, targetMileage: 'YK2+244', resourceIds: update.resourceIds, userRequest: update.request,
+      const result = JSON.parse(await assemble.executor({ description: `测试支护调整：${update.previousType}→${update.supportType}，${update.previousLengthM}→${update.supportLengthM}米；承接${update.parentTaskId}`, targetMileage: update.targetMileage, resourceIds: update.resourceIds, userRequest: update.request,
         resourceReasons: update.resourceIds.map(resourceId=>({resourceId,reason:'承接当前测试任务，保留未修改的类型/长度及资源组合'})) }))
       let displayContinuity
       if(result.ok){
@@ -324,6 +498,7 @@ export const workflowTools: ToolRegistration[] = [
       const resourceIds = agentResourceIds(input.resourceIds)
       const resourceReasons = resourceIds.map(resourceId => ({ resourceId, reason: Array.isArray(input.resourceReasons)
         ? String(input.resourceReasons.find((item: any) => item?.resourceId === resourceId)?.reason ?? '').trim().slice(0, 300) : '' }))
+      validateSelectedPhoto(resourceIds, String(input.userRequest ?? ''))
       validateTestSupportRequest(resourceIds, String(input.userRequest ?? ''))
       const supportLengthM = resourceIds.some(isTestSupportId) ? resolveTestSupportLength(String(input.userRequest ?? '')) : undefined
       for (const item of continuousSupportCatalog.filter(item => resourceIds.includes(item.id))) {
@@ -340,7 +515,7 @@ export const workflowTools: ToolRegistration[] = [
       if (resourceIds.length < 1 || resourceIds.length > 4) throw new Error('单次场景装配需要 1–4 个模型资源')
       const controller = getTaskWorkflowController()
       const prepared = await controller.prepareScene({
-        description: String(resourceIds.includes('blast.effect')&&resourceIds.includes('ventilation.steady-cfd')&&input.userRequest?input.userRequest:input.description??'').trim(), targetMileage, resourceIds,
+        description: String(input.userRequest ?? input.description ?? '').trim(), targetMileage, resourceIds,
         supportLengthM,
         enhanceAfterAssembly: true,
         assemblyModes: resourceIds.map((_, index) => index === 0 ? 'replace' : 'retain'),
@@ -363,7 +538,7 @@ export const workflowTools: ToolRegistration[] = [
           viewer.scene.requestRender()
           return
         }
-        const face = assembled && resourceIds.includes('rock.face-photos') ? getActiveFaceSlices().find(slice => slice.show) : undefined
+        const face = assembled && resourceIds.some(isFacePhotoResource) ? getActiveFaceSlices().find(slice => slice.show) : undefined
         const faceCenter = face?.position?.getValue(Cesium.JulianDate.now())
         if (faceCenter) {
           viewer.camera.viewBoundingSphere(new Cesium.BoundingSphere(faceCenter, 5), new Cesium.HeadingPitchRange(position.heading + Math.PI, -0.1, 24))

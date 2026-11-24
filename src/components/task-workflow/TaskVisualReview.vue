@@ -1,11 +1,11 @@
 <template>
- <details v-if="taskVisualReview" class="visual-review" data-testid="task-visual-review" open>
-  <summary>任务视觉分析 · {{ labels[taskVisualReview.plan.objective] }}</summary>
+ <details v-if="taskVisualReview" class="visual-review" data-testid="task-visual-review" :open="manualControls">
+  <summary>{{ labels[taskVisualReview.plan.objective] }} · {{ phaseLabels[taskVisualReview.phase] }}</summary>
   <p data-testid="visual-review-phase">{{ taskVisualReview.phase==='failed'?(taskVisualReview.recoveryStatus==='restored'?'执行失败，已恢复本次操作前视角':'执行失败，恢复未完成，请核查实际显示'):phaseLabels[taskVisualReview.phase] }} · 剩余调整{{ taskVisualReview.remaining }}次</p>
-  <small v-if="taskVisualReview.remaining===0" data-testid="visual-review-budget-exhausted">本场景两次调整已用尽，重新规划或恢复不会补回次数；仍可使用普通视角与图层控件。</small>
+  <small v-if="taskVisualReview.remaining===0" data-testid="visual-review-budget-exhausted">本场景两次增强已用尽。<template v-if="taskVisualReview.canRestore">可让智能体恢复原显示。</template></small>
   <small v-if="taskVisualReview.plan.emphasis==='material-focus'">暖色作用于当前支护模型的可见部分，仅表示重点，不表示风险或工程分级；恢复时还原原显示颜色。</small>
   <small>重点：{{ taskVisualReview.plan.focusResourceIds.map(id=>props.resourceLabels?.[id]??id).join('、') }}</small>
-  <small v-if="taskVisualReview.plan.focusComponent">计划显露：{{ supportComponentLabel(taskVisualReview.plan.focusComponent) }}；暂避其他初支/二衬外壳，其余结构保留原显隐。恢复时还原原设置。</small>
+  <small v-if="taskVisualReview.plan.focusComponent">重点构件为{{ supportComponentLabel(taskVisualReview.plan.focusComponent) }}。{{ taskVisualReview.plan.objective==='component-detail'?'细部取景暂避其他构件组。':'整体取景暂避混凝土外壳。' }}</small>
   <small v-if="componentSourceStatuses.includes('PARTIAL')" data-testid="component-source-partial">源示例标记为PARTIAL（部分完整），模型就绪和构件入镜不代表资料完整或通过本工段工程核验。</small>
   <ul data-testid="visual-review-questions"><li v-for="question in taskVisualReview.plan.questions" :key="question">{{ question }}</li></ul>
   <details><summary>本次任务原话</summary><p>{{ taskVisualReview.plan.userRequest }}</p></details>
@@ -31,7 +31,7 @@
 import {taskVisualReview} from '@/platform/tasks/TaskVisualReview'
 import {computed} from 'vue'
 import {supportComponentLabel} from '@/modules/support/component-labels'
-const props=defineProps<{resourceLabels?:Record<string,string>}>()
+const props=defineProps<{resourceLabels?:Record<string,string>;manualControls?:boolean}>()
 const context=computed(()=>{const r=taskVisualReview.value;return (r?.phase==='restored'?r.restoredFeedback:r?.phase==='applied'?r.feedback?.after:undefined)?.supportContext})
 const componentResource=computed(()=>{const r=taskVisualReview.value;if(!r?.plan.focusComponent)return undefined;const snapshot=r.phase==='restored'?r.restoredFeedback:r.phase==='applied'?r.feedback?.after:r.phase==='planned'?r.plan.evidence:undefined;return snapshot?.resources.find(resource=>resource.id===r.plan.focusResourceIds[0])})
 const componentFeedback=computed(()=>componentResource.value?.componentDisplay?.find(component=>component.component===taskVisualReview.value?.plan.focusComponent))

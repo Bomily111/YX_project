@@ -1,15 +1,10 @@
 import * as C from 'cesium'
 import type { SceneResource } from '@/platform/resources/types'
-import { waitForTunnelGlbSegment } from '@/utils/Common/DrawLine'
-import { threeBenchMatrix, validateThreeBenchChainage } from '@/modules/rock/three-bench-resource'
+import { threeBenchTaskFrame, validateThreeBenchChainage, THREE_BENCH_SOURCE_CHAINAGE } from '@/modules/rock/three-bench-resource'
 import profile from '@/modules/face-sketch/tunnel-normal-sections.json'
 import origin from '@/modules/rock/three-bench.metadata.json'
 import { modelerSupportCatalog } from './modeler-resources'
 import { supportOffsets } from './test-section-layout'
-import * as T from 'three'
-import { buildExampleSupport, examplePaths } from './example-layout'
-import { fingerprintGeneratedAsset } from '@/platform/telemetry/GeneratedAssetVersions'
-import type { DataVersion } from '@/platform/telemetry/TaskDataProvenance'
 import { viewerService } from '@/platform/viewer/ViewerService'
 import { ref } from 'vue'
 import {supportComponentLabel} from './component-labels'
@@ -79,11 +74,12 @@ export function setTaskSupportLayer(id:string,component:string,visible:boolean|'
 }
 export type TaskSupportNodeRestore = (()=>void)&{isCurrent:()=>boolean}
 /** Preserve each node's state, including partially visible component groups. */
-export function captureTaskSupportNodes(id:string):TaskSupportNodeRestore {
+export function captureTaskSupportNodes(id:string, components?: readonly string[]):TaskSupportNodeRestore {
   const models=activeModels.get(id),summary=activeSummaries.get(id)
   if(!summary?.groups?.length)return Object.assign(()=>{},{isCurrent:()=>true})
   if(!models?.length||models.some(model=>!model.ready))throw Error('当前构件尚不可观察')
-  const nodes=models.flatMap(model=>summary.groups.map((group:any)=>model.getNode(group.name)))
+  const groups=components ? summary.groups.filter((group:any)=>components.includes(group.component)) : summary.groups
+  const nodes=models.flatMap(model=>groups.map((group:any)=>model.getNode(group.name)))
   if(nodes.some(node=>!node))throw Error('当前构件节点不完整，未改变显示')
   const saved=nodes.map(node=>({node:node!,show:node!.show}))
   const restore=()=>{
@@ -92,14 +88,15 @@ export function captureTaskSupportNodes(id:string):TaskSupportNodeRestore {
   }
   return Object.assign(restore,{isCurrent:()=>activeModels.get(id)===models&&!models.some(model=>model.isDestroyed())&&saved.every(item=>item.node.show===item.show)})
 }
-export function revealTaskSupportComponent(id:string,component:string):TaskSupportNodeRestore {
+export function revealTaskSupportComponent(id:string,component:string, isolate = false):TaskSupportNodeRestore {
   const summary=activeSummaries.get(id)
   if(activeModels.get(id)?.some(model=>model.show===false))throw Error('支护模型整体隐藏，未修改构件；请先核对整体显隐')
   if(!summary?.groups?.some((group:any)=>group.component===component))throw Error('当前构件尚不可观察')
   const restore=captureTaskSupportNodes(id)
   try{
     setTaskSupportLayer(id,component,true)
-    for(const shell of ['primary_concrete','secondary_lining'])if(shell!==component&&summary.groups.some((group:any)=>group.component===shell))setTaskSupportLayer(id,shell,false)
+    const occluders = isolate ? [...new Set<string>(summary.groups.map((group:{component:string})=>group.component))] : ['primary_concrete','secondary_lining']
+    for(const group of occluders)if(group!==component&&summary.groups.some((item:any)=>item.component===group))setTaskSupportLayer(id,group,false)
     const expected=captureTaskSupportNodes(id)
     return Object.assign(()=>restore(),{isCurrent:()=>expected.isCurrent()})
   }catch(error){restore();throw error}
@@ -135,31 +132,18 @@ export function existingSupportPlacement(offset: number, designElevationY = -2.1
   return C.Matrix4.fromRotationTranslation(rotation,new C.Cartesian3(point[2]-origin.sourceGltfOrigin[2],point[1]-origin.sourceGltfOrigin[1],-(point[0]-origin.sourceGltfOrigin[0])))
 }
 export const testSectionSupportResources: SceneResource[] = testSupportCatalog.map(asset => {
- let models: C.Model[] = [], viewer: C.Viewer | undefined, offsets = supportOffsets(), paths:string[]=[], versions:DataVersion[]=[],summary:any
+ let models: C.Model[] = [], viewer: C.Viewer | undefined, offsets = supportOffsets(), paths:string[]=[],summary:any
  const resource: SceneResource = {
   id: asset.id, module: 'support', type: 'existing-support-template-array',
   chainageRange: { start: 2244, end: 2244 }, dependencies: ['common.tunnel'],
   processes: ['support-design'], states: ['demonstration'], lifetime: 'task', estimatedMemoryMb: 200,
   async load(context) {
-    validateThreeBenchChainage(context.task?.chainageRange.start ?? NaN)
+    const chainage = context.task?.chainageRange.start ?? NaN
     offsets = supportOffsets(context.task?.supportLengthM ?? 10)
-    const tunnel = await waitForTunnelGlbSegment(2, context.viewer)
-    const frame = threeBenchMatrix(tunnel.modelMatrix)
+    validateThreeBenchChainage(chainage, Math.abs(offsets[0]!) + 0.5, 0)
+    const frame = threeBenchTaskFrame(chainage)
     viewer = context.viewer
     try {
-      const example=await buildExampleSupport(asset.type,offsets.length,distance=>new T.Matrix4().fromArray(C.Matrix4.toArray(existingSupportPlacement(distance,0),[])))
-      if(context.signal?.aborted)throw new DOMException('支护加载取消','AbortError')
-      if(example){
-        versions=await fingerprintGeneratedAsset(asset.id,example.buffer,{type:asset.type,lengthM:offsets.length,source:examplePaths[0],groups:example.groups})
-        const url=URL.createObjectURL(new Blob([example.buffer],{type:'model/gltf-binary'}))
-        try{
-          const loaded=await C.Model.fromGltfAsync({url,modelMatrix:frame,upAxis:C.Axis.Z,forwardAxis:C.Axis.X})
-          if(context.signal?.aborted){loaded.destroy();throw new DOMException('支护加载取消','AbortError')}
-          context.viewer.scene.primitives.add(loaded);models.push(loaded);activeModels.set(asset.id,models)
-        }finally{URL.revokeObjectURL(url)}
-        paths=[...examplePaths]
-        summary={supportType:asset.type,lengthM:offsets.length,layout:'1064m-component-example',sourceSegment:example.sourceSegment,groups:example.groups,sourceStatus:example.sourceStatus,geometryTreatment:example.geometryTreatment,shellJoints:example.shellJoints}
-      }else{
       for (const offset of offsets) {
         if (context.signal?.aborted) throw new DOMException('支护加载取消', 'AbortError')
         const loaded = await C.Model.fromGltfAsync({ url: asset.path,
@@ -168,8 +152,6 @@ export const testSectionSupportResources: SceneResource[] = testSupportCatalog.m
         context.viewer.scene.primitives.add(loaded); models.push(loaded); activeModels.set(asset.id, models); context.viewer.scene.requestRender()
       }
       paths=[asset.path]
-      summary={supportType:asset.type,lengthM:offsets.length,layout:'original-unit-fallback',unitOffsetsM:[...offsets],note:'1064米示例该类型为空范围，使用已有独立模型，未冒称示例布置'}
-      }
       const started = performance.now()
       while (!models.every(model => model.ready)) {
         if (context.signal?.aborted) throw new DOMException('支护加载取消', 'AbortError')
@@ -177,25 +159,37 @@ export const testSectionSupportResources: SceneResource[] = testSupportCatalog.m
         context.viewer.scene.requestRender()
         await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
       }
-      if(example)for(const group of example.groups){const node=models[0].getNode(group.name);if(node)node.show=group.visible}
-      if(!example&&asset.type==='Z-PM'){
-        // Existing source groups only: no replacement geometry or inferred spacing.
-        summary.groups=[{component:'secondary_lining',name:'ZPMSecondaryLiningConcrete',visible:true},
-          ...Array.from({length:7},(_,i)=>({component:`secondary_rebar_N${i+1}`,name:`N${i+1}Group`,visible:true}))]
-        if(models.some(model=>summary.groups.some((group:any)=>!model.getNode(group.name))))throw new Error('Z-PM原模型缺少预期构件节点')
-        summary.note+='；仅二衬和N1～N7已有分组可控制，配筋为PARTIAL，适用性仍待确认；构件间距未核验'
+      // Existing node names only. Preserve the delivered geometry, materials and visibility.
+      const declaredGroups = [
+        ['primary_concrete', 'primarySupportConcreteGroup'],
+        ['primary_mesh', 'primarySupportMeshGroup'],
+        ['steel_arch', 'steelArchArrayGroup'],
+        ['system_anchor', 'systemAnchorGroup'],
+        ['lock_foot_anchor', 'lockFootAnchorGroup'],
+        ['secondary_lining', 'secondaryLiningGroup'],
+        ...Array.from({length: 7}, (_, index) => ['secondary_rebar_N'+(index+1), 'N'+(index+1)+'Group']),
+      ]
+      const groups = declaredGroups.flatMap(([component, name]) => {
+        const node = models[0]?.getNode(name!)
+        return node && models.every(model => !!model.getNode(name!))
+          ? [{component, name, visible: node.show}] : []
+      })
+      summary = {
+        supportType: asset.type, lengthM: offsets.length, layout: 'original-unit-assembly',
+        unitOffsetsM: [...offsets], groups, sourceReferenceChainage: THREE_BENCH_SOURCE_CHAINAGE, taskReferenceChainage: chainage,
+        ...(asset.type==='Z-PM' ? {sourceStatus:'PARTIAL'} : {}),
+        note: '直接装配支护版块原始1米GLB单元；单元间隔来自本次放置，构件间距与工程接缝待核查。',
       }
       activeSummaries.set(asset.id,summary)
     } catch (error) { await resource.unload(); throw error }
   },
-  async unload() { if (viewer && !viewer.isDestroyed()) for (const model of models) viewer.scene.primitives.remove(model); activeModels.delete(asset.id);activeSummaries.delete(asset.id); models = []; viewer = undefined;paths=[];versions=[];summary=undefined },
+  async unload() { if (viewer && !viewer.isDestroyed()) for (const model of models) viewer.scene.primitives.remove(model); activeModels.delete(asset.id);activeSummaries.delete(asset.id); models = []; viewer = undefined;paths=[];summary=undefined },
   getActiveAssetPaths: () => models.length ? paths : [],
-  getActiveDataVersions:()=>versions,
   getEnhanceTargets: () => models.map((model,index) => ({ id: `${asset.id}.${index}`, type: 'support-segment', object: model,
-    metadata: { ...summary, source: paths, supportType: asset.type, originalGeometry: summary?.layout!=='1064m-component-example', generatedGeometry: summary?.layout==='1064m-component-example', sourceGeometryReused:true,
+    metadata: { ...summary, source: paths, supportType: asset.type, originalGeometry: true, generatedGeometry: false, sourceGeometryReused:true,
       componentScope: asset.type === 'Z-PM' ? 'secondary-lining-and-N1-N7-only' : 'source-model-components', designElevationY: asset.designElevationY,
-      unitCount: summary?.layout==='original-unit-fallback'?offsets.length:undefined, unitLengthM: summary?.layout==='original-unit-fallback'?1:undefined, nominalLengthM: offsets.length, offsetM: offsets[index],
-      placement: summary?.layout==='1064m-component-example'?'reference-components-centerline-normal':'rigid-template-centerline-normal', note: summary?.layout==='1064m-component-example'?'复用1064米示例已有构件轮廓、各自间距与默认显隐；混凝土端断面沿目标中线连接并去除内部端盖，其余构件刚性装配。源轮廓与测试隧道尺寸有差异，工程贴合与设计适用性仍需核查。':'1064米示例没有该类型实例，保留已有独立模型的1米单元布置；曲线接缝与现场布置仍需校核。' } })),
+      unitCount: offsets.length, unitLengthM: 1, nominalLengthM: offsets.length, offsetM: offsets[index],
+      placement: 'rigid-template-centerline-normal', note: summary?.note } })),
 }
  return resource
 })

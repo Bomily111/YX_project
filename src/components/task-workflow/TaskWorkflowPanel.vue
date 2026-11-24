@@ -893,6 +893,7 @@ const lastCompletedStage = (): AgentTaskWorkflowStatus['lastCompletedStage'] => 
 }
 
 const getAgentStatus = (): AgentTaskWorkflowStatus => ({
+  taskDescription: executor.value?.task.description,
   available: true,
   prepared: Boolean(executor.value),
   taskId: executor.value?.task.taskId,

@@ -20,6 +20,7 @@ export interface AgentSceneWorkflowInput {
 }
 
 export interface AgentTaskWorkflowStatus {
+  taskDescription?: string
   available: boolean
   prepared: boolean
   taskId?: string

@@ -20,6 +20,54 @@ export const modelerSupportCatalog = sectionTypes.map(type => ({
 const activeModels = new Map<string, Cesium.Model>()
 export function trackModelerSupportModel(id: string, model?: Cesium.Model) { if (model) activeModels.set(id, model); else activeModels.delete(id) }
 export const getActiveModelerSupportModel = (id: string): Cesium.Model | undefined => activeModels.get(id)
+const activeUnitAssemblies = new Map<string, readonly Cesium.Model[]>()
+export function trackSupportUnits(id: string, models: readonly Cesium.Model[] = []) {
+  if (models.length) activeUnitAssemblies.set(id, models)
+  else activeUnitAssemblies.delete(id)
+}
+export function getActiveModelerSupportModels(ids: readonly string[]) {
+  return ids.flatMap(id => activeUnitAssemblies.get(id) ?? (activeModels.has(id) ? [activeModels.get(id)!] : []))
+}
+
+export async function loadOriginalSupportUnits(
+  viewer: Cesium.Viewer,
+  units: readonly {supportType: string; chainage: number}[],
+  signal?: AbortSignal,
+) {
+  const models: Cesium.Model[] = []
+  try {
+    for (const unit of units) {
+      if (signal?.aborted || viewer.isDestroyed()) throw new DOMException('支护装配取消', 'AbortError')
+      const asset = modelerSupportCatalog.find(entry => entry.type === unit.supportType)
+      if (!asset) throw Error('未登记的原始支护单元')
+      const model = await Cesium.Model.fromGltfAsync({
+        url: asset.path,
+        modelMatrix: Cesium.Matrix4.multiplyByTranslation(
+          modelerSectionFrame(unit.chainage), new Cesium.Cartesian3(0, -2.1 - asset.designElevationY, 0), new Cesium.Matrix4(),
+        ),
+        upAxis: Cesium.Axis.Z, forwardAxis: Cesium.Axis.X,
+      })
+      if (signal?.aborted || viewer.isDestroyed()) {
+        model.destroy()
+        throw new DOMException('支护装配取消', 'AbortError')
+      }
+      viewer.scene.primitives.add(model)
+      models.push(model)
+      viewer.scene.requestRender()
+    }
+    const started = performance.now()
+    while (models.some(model => !model.ready)) {
+      if (signal?.aborted || viewer.isDestroyed()) throw new DOMException('支护装配取消', 'AbortError')
+      if (performance.now() - started > 30_000) throw Error('支护原始单元显示超时')
+      viewer.scene.requestRender()
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+    }
+    return models
+  } catch (error) {
+    if (!viewer.isDestroyed()) for (const model of models) viewer.scene.primitives.remove(model)
+    throw error
+  }
+}
 
 /** The delivered 1 m templates use x=right, y=up, z=forward and a crown-circle origin. */
 export function modelerSectionFrame(chainage: number): Cesium.Matrix4 {

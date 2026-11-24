@@ -1,0 +1,255 @@
+{
+  "passed": true,
+  "scenario": {
+    "resource": "support.test-section-zz-iiix",
+    "row": "lattice_arch",
+    "offsets": [
+      -5.5,
+      -3.5,
+      -1.5
+    ],
+    "interval": 2
+  },
+  "errors": [],
+  "checks": [
+    {
+      "id": "actual-3d-pick-and-component-isolation",
+      "pick": {
+        "x": 651.1681883262098,
+        "y": 436.97443928087847,
+        "offset": -1.5,
+        "count": 3
+      },
+      "beforePick": {
+        "taskId": "scene-1795073913277-3i5w9",
+        "selection": "station",
+        "camera": [
+          -475171.78491042764,
+          5536144.001903249,
+          3126954.4713005046,
+          -0.49688850301383997,
+          0.10620215470161165,
+          -0.8612914244954492,
+          -0.23159216205039074,
+          0.9402611579117366,
+          0.2495476415422634
+        ]
+      },
+      "afterPick": {
+        "taskId": "scene-1795073913277-3i5w9",
+        "selection": "station",
+        "camera": [
+          -475171.78491042764,
+          5536144.001903249,
+          3126954.4713005046,
+          -0.49688850301383997,
+          0.10620215470161165,
+          -0.8612914244954492,
+          -0.23159216205039074,
+          0.9402611579117366,
+          0.2495476415422634
+        ]
+      },
+      "evidence": [
+        {
+          "taskId": "scene-1795073913277-3i5w9",
+          "resourceId": "support.test-section-zz-iiix",
+          "rowId": "support.test-section-zz-iiix:lattice_arch",
+          "component": "lattice_arch",
+          "offsetM": -3.5,
+          "source": "2d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次ZZ-IIIx 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/centerline/task-reference-1064.glb",
+            "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+            "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+            "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+          ],
+          "sequence": 1,
+          "recordedAt": "2026-11-19T07:38:37.455Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        },
+        {
+          "taskId": "scene-1795073913277-3i5w9",
+          "resourceId": "support.test-section-zz-iiix",
+          "rowId": "support.test-section-zz-iiix:lattice_arch",
+          "component": "lattice_arch",
+          "offsetM": -3.5,
+          "source": "2d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次ZZ-IIIx 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/centerline/task-reference-1064.glb",
+            "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+            "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+            "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+          ],
+          "sequence": 2,
+          "recordedAt": "2026-11-19T07:38:38.949Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        },
+        {
+          "taskId": "scene-1795073913277-3i5w9",
+          "resourceId": "support.test-section-zz-iiix",
+          "rowId": "support.test-section-zz-iiix:lattice_arch",
+          "component": "lattice_arch",
+          "offsetM": -1.5,
+          "source": "3d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次ZZ-IIIx 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/centerline/task-reference-1064.glb",
+            "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+            "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+            "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+          ],
+          "sequence": 3,
+          "recordedAt": "2026-11-19T07:38:40.048Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        },
+        {
+          "taskId": "scene-1795073913277-3i5w9",
+          "resourceId": "support.test-section-zz-iiix",
+          "rowId": "support.test-section-zz-iiix:lattice_arch",
+          "component": "lattice_arch",
+          "offsetM": -1.5,
+          "source": "3d",
+          "reviewStep": {
+            "id": "overview",
+            "question": "本次ZZ-IIIx 5m示意段处于什么范围？",
+            "boundary": "仅核对当前装配范围，不等同现场施工范围。"
+          },
+          "assetPaths": [
+            "/support-modeler/outputs/centerline/task-reference-1064.glb",
+            "/support-modeler/outputs/centerline/task-reference-1064.capture.json",
+            "/support-modeler/outputs/centerline/real_YK1+098_YK2+162_support.metadata.json",
+            "/support-modeler/outputs/centerline/real_centerline_0_1064m.json"
+          ],
+          "sequence": 4,
+          "recordedAt": "2026-11-19T07:38:40.248Z",
+          "evidenceType": "assembly-station-visit",
+          "engineeringAcceptance": "not-verified"
+        }
+      ],
+      "options": [
+        {
+          "value": "support.test-section-zz-iiix:primary_concrete",
+          "text": "初支混凝土"
+        },
+        {
+          "value": "support.test-section-zz-iiix:secondary_lining",
+          "text": "二次衬砌"
+        },
+        {
+          "value": "support.test-section-zz-iiix:lattice_arch",
+          "text": "格栅拱架"
+        }
+      ]
+    },
+    {
+      "id": "same-interval-endpoints-in-2d-and-3d",
+      "twoDimensional": [
+        {
+          "offsets": [
+            -5.5,
+            -3.5
+          ],
+          "matches": true
+        },
+        {
+          "offsets": [
+            -3.5,
+            -1.5
+          ],
+          "matches": true
+        }
+      ],
+      "threeDimensional": [
+        {
+          "offsets": [
+            -3.5,
+            -1.5
+          ],
+          "matches": true
+        }
+      ]
+    },
+    {
+      "id": "geographic-station-return",
+      "entry": {
+        "taskId": "scene-1795073913277-3i5w9",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090643,
+          -0.6464296098251231,
+          -0.4771505423970672,
+          -0.7904617282184939,
+          0.5776374796825,
+          0.20372824617092622
+        ]
+      },
+      "station": {
+        "taskId": "scene-1795073913277-3i5w9",
+        "selection": "station",
+        "camera": [
+          -475171.78491042764,
+          5536144.001903249,
+          3126954.4713005046,
+          -0.49688850301383997,
+          0.10620215470161165,
+          -0.8612914244954492,
+          -0.23159216205039074,
+          0.9402611579117366,
+          0.2495476415422634
+        ]
+      },
+      "restored": {
+        "taskId": "scene-1795073913277-3i5w9",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090643,
+          -0.646429609825123,
+          -0.4771505423970673,
+          -0.7904617282184941,
+          0.5776374796824998,
+          0.20372824617092555
+        ]
+      },
+      "refit": {
+        "taskId": "scene-1795073913277-3i5w9",
+        "selection": "geographic",
+        "camera": [
+          -473877.3024328238,
+          5537567.288125126,
+          3127972.1893230053,
+          -0.5953621750090643,
+          -0.646429609825123,
+          -0.4771505423970673,
+          -0.7904617282184941,
+          0.5776374796824998,
+          0.20372824617092555
+        ]
+      }
+    }
+  ],
+  "modelRequests": 0
+}

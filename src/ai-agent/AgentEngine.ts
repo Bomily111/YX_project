@@ -13,6 +13,10 @@ import {wantsSupportLayerControl,wantsSupportInspection} from './SupportLayerInt
 import {wantsReadOnlyFlowEvaluation,wantsTaskReset,readOnlyTaskReviewTool,taskVisualReviewIntent} from './AgentDispatchIntent'
 import {agentServiceError} from './ServiceError'
 import {formatSupportInspection} from './SupportInspectionReply'
+import {wantsAssemblyThenVisualReview,wantsOverviewThenDetail} from './AgentDispatchIntent'
+import { tunnelSectionIntent } from '@/platform/tasks/TunnelSectionIntent'
+import {getTaskWorkflowController,hasTaskWorkflowController} from '@/platform/tasks/TaskWorkflowBridge'
+import { constructionReview, constructionReviews, resolveConstructionReviewRequest } from '@/platform/tasks/ConstructionReview'
 
 interface StreamCallbacks {
   onText: (delta: string) => void
@@ -161,6 +165,40 @@ export class AgentEngine {
     try {
       // 1. 添加用户消息
       this.addMessage('user', userMessage)
+      const activeReview = constructionReview.value
+      const activeReviewTask = activeReview && hasTaskWorkflowController() ? getTaskWorkflowController().getStatus() : undefined
+      const reviewIntent = resolveConstructionReviewRequest(userMessage,
+        activeReviewTask?.status === 'completed' && activeReviewTask.taskId === activeReview?.taskId ? activeReview : null)
+      if (reviewIntent) {
+        this.pendingSceneRequest = undefined
+        const automatic = reviewIntent.start && !reviewIntent.experiment && !/仅启动|只启动|先只看/.test(userMessage)
+        const requests = automatic ? constructionReviews[reviewIntent.kind].steps.map((_, index) => index === 0 ? userMessage : '下一步') : [userMessage]
+        const findings: string[] = []
+        for (const [index, request] of requests.entries()) {
+          if (signal.aborted) break
+          const call: ToolUseBlock = { type: 'tool_use', id: `construction-review-${Date.now()}-${index}`,
+            name: 'run_construction_review', input: { userRequest: request } }
+          this.messages.push({ role: 'assistant', content: '', tool_calls: [{ id: call.id, name: call.name, input: call.input }] })
+          const output = callbacks.onToolUse ? await callbacks.onToolUse(call) : await executeTool(call.name, call.input)
+          this.messages.push({ role: 'tool', content: output, tool_call_id: call.id, name: call.name })
+          try {
+            const result = JSON.parse(output)
+            if (result.ok) findings.push(automatic ? result.summary.replace('｜', ' · ') : result.summary)
+            else {
+              findings.push(`复核未完成：${result.reason ?? '请核对任务状态'}`)
+              break
+            }
+          } catch {
+            findings.push(output)
+            break
+          }
+        }
+        const summary = findings.join('\n\n')
+        this.addMessage('assistant', summary)
+        callbacks.onText(summary)
+        callbacks.onComplete(summary)
+        return
+      }
       // Explicit recovery remains available even when the model provider is down.
       const localTool=(taskVisualReviewIntent(userMessage)||readOnlyTaskReviewTool(userMessage)==='inspect_task_scene')?undefined:wantsTaskReset(userMessage)?'reset_task_scene':wantsSupportInspection(userMessage)?'inspect_current_support':undefined
       if(localTool){
@@ -181,21 +219,22 @@ export class AgentEngine {
       const selectedTools = context.scene
         ? [...getToolsForModule('common'), ...getToolsForModule(context.scene)]
         : getAllTools()
-      const availableTools = [...new Map(selectedTools.map(tool => [tool.name, tool])).values()]
+      const availableTools = [...new Map(selectedTools.filter(tool => tool.name !== 'run_construction_review').map(tool => [tool.name, tool])).values()]
       const effectiveRequest = resolveClarifiedSceneRequest(userMessage, this.pendingSceneRequest)
       this.pendingSceneRequest = undefined
-      const visualIntent=taskVisualReviewIntent(userMessage)
+      const combinedTask=wantsAssemblyThenVisualReview(effectiveRequest)
+      const visualIntent=combinedTask?undefined:taskVisualReviewIntent(userMessage)
       const supportInspection=!visualIntent&&wantsSupportInspection(userMessage)
       const visualTools=['inspect_task_scene',...(visualIntent==='plan'?['plan_task_visual_review']:visualIntent==='restore'?['restore_task_visual_review']:['plan_task_visual_review','apply_task_visual_review'])]
-      const readReview=visualIntent?undefined:readOnlyTaskReviewTool(userMessage)
+      const readReview=visualIntent||combinedTask?undefined:readOnlyTaskReviewTool(userMessage)
       const flowEvaluation=!readReview&&wantsReadOnlyFlowEvaluation(userMessage)
       const supportTool=supportInspection?'inspect_current_support':'set_support_layers'
-      const supportLayers = !visualIntent&&!wantsTaskCutControl(userMessage)&&(supportInspection||wantsSupportLayerControl(userMessage))
-      const supportUpdate = !visualIntent && !supportLayers && wantsTestSupportUpdate(userMessage)
-      const directSceneAssembly = !supportUpdate && wantsDirectSceneAssembly(effectiveRequest)
-      const blastLayerControl = !visualIntent && wantsBlastLayerControl(userMessage)
-      const viewControl = !visualIntent && !supportUpdate && wantsTaskViewControl(userMessage)
-      const cutControl = !visualIntent && wantsTaskCutControl(userMessage)
+      const supportLayers = !combinedTask&&!visualIntent&&!wantsTaskCutControl(userMessage)&&!tunnelSectionIntent(userMessage)&&(supportInspection||wantsSupportLayerControl(userMessage))
+      const supportUpdate = !combinedTask && !visualIntent && !supportLayers && wantsTestSupportUpdate(userMessage)
+      const directSceneAssembly = combinedTask || (!supportUpdate && wantsDirectSceneAssembly(effectiveRequest))
+      const blastLayerControl = !combinedTask && !visualIntent && wantsBlastLayerControl(userMessage)
+      const viewControl = !combinedTask && !visualIntent && !supportUpdate && wantsTaskViewControl(userMessage)
+      const cutControl = !combinedTask && !visualIntent && wantsTaskCutControl(userMessage)
       const preflightControl = !visualIntent && wantsScenePreflight(userMessage)
       const timeIssue = directSceneAssembly ? thermalRequestIssue(effectiveRequest) : undefined
       if (timeIssue) {
@@ -239,6 +278,14 @@ export class AgentEngine {
       let visualPlanCompleted = false
       let visualWriteCompleted = false
       let recoveryUsed = false
+      let assembledTaskId: string | undefined
+      let combinedApplications = 0
+      const orderedReview = combinedTask && wantsOverviewThenDetail(effectiveRequest)
+      const requiredApplications = orderedReview ? 2 : 1
+      let combinedInspected = false
+      const combinedVisualTools = ['inspect_task_scene','plan_task_visual_review','apply_task_visual_review']
+      if (combinedTask) system += '\n这是一次包含装配与后续增强的施工任务。第一步只调用装配工具。装配成功后必须依据新场景返回继续执行已授权的视觉分析。'
+      if (orderedReview) system += '\n用户明确要求先整体再细部。装配后先规划并执行spatial-relation，再规划并执行component-detail。两个视角都实际执行后才完成本轮。'
       if(requireSceneRead&&tools.some(tool=>tool.name==='inspect_task_scene')){
         const readCall:ToolUseBlock={type:'tool_use',id:`required-scene-read-${Date.now()}`,name:'inspect_task_scene',input:{}}
         const output=callbacks.onToolUse?await callbacks.onToolUse(readCall):await executeTool(readCall.name,readCall.input)
@@ -256,7 +303,9 @@ export class AgentEngine {
 
         await sendChatRequest(
           this.messages,
-          recoveryTaskId ? availableTools.filter(tool => tool.name === 'retry_scene_load') : pendingTask
+          recoveryTaskId ? availableTools.filter(tool => tool.name === 'retry_scene_load') : assembledTaskId
+            ? availableTools.filter(tool => combinedVisualTools.includes(tool.name) && (tool.name!=='apply_task_visual_review' || visualPlanCompleted) && combinedApplications<2)
+            : pendingTask
             ? tools.filter(tool => ['advance_platform_task', 'revise_next_scene_assembly', 'get_task_status'].includes(tool.name))
             : tools,
           system,
@@ -270,7 +319,19 @@ export class AgentEngine {
               if (tool.name === 'assemble_scene_at_mileage' || tool.name === 'update_test_support') tool.input = { ...tool.input, userRequest: tool.name === 'update_test_support' ? userMessage : effectiveRequest }
               hadToolUse = true
               let result: string
-              if ((supportLayers || directSceneAssembly || blastLayerControl || viewControl || cutControl || preflightControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
+              if (assembledTaskId && !assemblyReturnedThisRound) {
+                const sameScene = hasTaskWorkflowController() && getTaskWorkflowController().getStatus().taskId === assembledTaskId
+                const expectedObjective = combinedApplications === 0 ? 'spatial-relation' : 'component-detail'
+                const validStep = combinedVisualTools.includes(tool.name) && combinedApplications < 2
+                  && (tool.name !== 'plan_task_visual_review' || combinedInspected)
+                  && (!orderedReview || tool.name !== 'plan_task_visual_review' || tool.input.objective === expectedObjective)
+                  && (tool.name !== 'apply_task_visual_review' || (visualPlanCompleted && tool.input.taskId === assembledTaskId))
+                if (!sameScene || !validStep) {
+                  result = JSON.stringify({ok:false, action:tool.name, reason:orderedReview && sameScene && tool.name === 'plan_task_visual_review' && tool.input.objective !== expectedObjective
+                    ? `当前步骤需要先规划 ${expectedObjective}，请按用户指定顺序继续。` : '后续增强只允许按授权读取、规划并执行同一已装配任务；请核对当前任务和前一步结果。'})
+                  if (!sameScene) stopAfterTool = true
+                } else result = callbacks.onToolUse ? await callbacks.onToolUse(tool) : await executeTool(tool.name,tool.input)
+              } else if ((supportLayers || directSceneAssembly || blastLayerControl || viewControl || cutControl || preflightControl || recoveryTaskId) && (stopAfterTool || assemblyReturnedThisRound)) {
                 result = JSON.stringify({ ok: false, action: tool.name,
                   reason: '本轮场景工具调用已结束，后续调用已拒绝' })
               } else if(visualIntent&&(!visualTools.includes(tool.name)||(visualWriteCompleted&&tool.name!=='inspect_task_scene'))){
@@ -330,6 +391,24 @@ export class AgentEngine {
               }
               try {
                 const observation = JSON.parse(result)
+                if (combinedTask && !assembledTaskId && ['assemble_scene_at_mileage','retry_scene_load'].includes(tool.name)
+                    && observation.ok === true && observation.status === 'completed' && typeof observation.taskId === 'string') {
+                  assembledTaskId = observation.taskId
+                  recoveryTaskId = undefined
+                  stopAfterTool = false
+                  system += `\n已装配任务 ${assembledTaskId}。只在此任务中先调用inspect_task_scene，再按用户重点和必要参照调用plan_task_visual_review及apply_task_visual_review。完成后按真实反馈简报，默认最多三句。按用户明确要求展开详细依据或建议。`
+                }
+                if (assembledTaskId && observation.ok === true) {
+                  if (tool.name==='inspect_task_scene') combinedInspected = true
+                  if (tool.name==='plan_task_visual_review') visualPlanCompleted = true
+                  if (tool.name==='apply_task_visual_review') {
+                    combinedApplications++
+                    visualPlanCompleted = false
+                    system += combinedApplications < requiredApplications
+                      ? '\n整体视角已实际执行。现在请规划并应用同一任务的component-detail，再汇报结果。'
+                      : '\n增强已成功。最终答复默认约80字，写成两三句短句。仅报告实际操作、最重要的一项观察和一项必要限制。跳过投影采样、节点名和限制清单。只有用户明确要求详细说明时才展开。'
+                  }
+                }
                 if (tool.name === 'assemble_scene_at_mileage' && !recoveryUsed && observation.ok === false &&
                     typeof observation.taskId === 'string' && observation.taskId.length > 0 &&
                     observation.recovery?.kind === 'retry-scene-load' && observation.recovery.taskId === observation.taskId) {
@@ -391,7 +470,12 @@ export class AgentEngine {
           }
         }
         if (requireSceneRead && !hadToolUse) callbacks.onText(roundText)
-        if(directSceneAssembly&&!hadToolUse){
+        if(assembledTaskId && !hadToolUse && combinedApplications<requiredApplications && missingActionNudges<1 && round<maxToolRounds){
+          missingActionNudges++
+          system+='\n装配已经完成，仍有用户明确要求的视觉步骤未执行。继续调用剩余允许的工具，若无法应用请明确说明限制。'
+          continue
+        }
+        if(directSceneAssembly&&!assembledTaskId&&!hadToolUse){
           const clarification=/[？?]|请.*(?:明确|提供|选择|补充|确认)|需要.*(?:哪|什么)/.test(roundText)
           if(!clarification&&missingActionNudges<1&&round<maxToolRounds){
             missingActionNudges++
@@ -401,7 +485,7 @@ export class AgentEngine {
           if(!clarification)roundText='本轮尚未取得场景工具执行结果，未执行新的场景操作。请重试；当前显示仍是上一任务，不能视为已满足这次要求。'
           callbacks.onText(roundText)
         }
-        if ((requireSceneRead || visualIntent) && hadToolUse) roundText = ''
+        if ((requireSceneRead || visualIntent || combinedTask) && hadToolUse) roundText = ''
         if (roundToolCalls.length > 0) {
           // One model response can contain several tool calls. Keep their
           // shared assistant turn before every matching tool result.
@@ -424,6 +508,10 @@ export class AgentEngine {
           }
           break
         }
+      }
+      if (assembledTaskId && combinedApplications<requiredApplications) {
+        completedText = combinedApplications > 0 ? '已完成场景装配和整体取景，细部增强未完成。' : '场景已装配，视觉增强未完成。'
+        callbacks.onText(completedText)
       }
       if (visualIntent) {
         if (!visualOutcome) completedText = `本轮视觉分析请求未完成：${visualFailure || '未取得所需工具的成功结果'}。不能把历史计划或口头说明当作本次执行；当前实际显示以工具状态为准。`

@@ -2,7 +2,7 @@
   <section v-if="taskFlowReview" class="flow-review" data-testid="task-flow-review">
     <strong>爆后轮廓与风向复核</strong>
     <p data-testid="flow-review-mode">{{ taskFlowReview.mode==='focus'?'重点表达：附近风向参照，弱化CFD点层':'全段表达：已恢复原风场显示' }}</p>
-    <div class="actions">
+    <div v-if="props.manualControls" class="actions">
       <button data-testid="flow-review-focus" :aria-pressed="taskFlowReview.mode==='focus'" @click="change('focus')">复核重点</button>
       <button data-testid="flow-review-context" :aria-pressed="taskFlowReview.mode==='context'" @click="change('context')">风场全段</button>
     </div>
@@ -10,7 +10,7 @@
     <p>风速 / m·s⁻¹</p><div class="scale" :style="{background:gradient}"></div>
     <div class="ticks"><span>≤0.03</span><span>0.53</span><span>≥1.03</span></div>
     <small>颜色沿用模拟风速色标；仅降低不透明度。异工点数据为示意配准，未测真实遮挡，不作通风达标判断。</small>
-    <button data-testid="flow-review-evaluate" @click="evaluate">检查当前画面</button>
+    <button v-if="props.manualControls" data-testid="flow-review-evaluate" @click="evaluate">检查当前画面</button>
     <section v-if="evaluation" data-testid="flow-review-evaluation">
       <p>{{ evaluation.status==='screen-criteria-met'?'当前屏幕采样条件满足':evaluation.status==='adjustment-available'?'可根据面板占用改善取景':'当前画面仍需人工复核' }}</p>
       <small v-if="feedback">投影采样：{{ feedback.inside }}/{{ feedback.sampled }}入镜，{{ feedback.panelCovered }}个被面板覆盖。仅测投影，不测深度遮挡。</small>
@@ -27,6 +27,7 @@ import {velocityColor} from '@/views/ventilation-module/cesiumVentilation'
 import {executeTool} from '@/ai-agent/ToolRegistry'
 import {recordTaskEvent} from '@/platform/telemetry/TaskAuditClient'
 import type {evaluateFlowReview,FlowScreenFeedback} from '@/platform/tasks/FlowReviewEvaluation'
+const props=defineProps<{manualControls?:boolean}>()
 const error=ref('')
 const evaluation=ref<ReturnType<typeof evaluateFlowReview>>(),feedback=ref<FlowScreenFeedback>()
 watch(taskFlowReview,()=>{evaluation.value=undefined;feedback.value=undefined})

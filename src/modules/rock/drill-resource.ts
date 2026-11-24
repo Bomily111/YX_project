@@ -31,10 +31,7 @@ export const advanceDrillResource: SceneResource = {
     viewer = context.viewer
     try {
       for (const [i, url] of drillAssets.entries()) {
-        const model = await Cesium.Model.fromGltfAsync({ url, modelMatrix: drillPlacement(context.task?.chainageRange.start ?? 2244, i ? 1 : -1), upAxis: Cesium.Axis.Z, forwardAxis: Cesium.Axis.X,
-          customShader: new Cesium.CustomShader({ lightingModel: Cesium.LightingModel.UNLIT }) })
-        model.color = i ? Cesium.Color.LIME : Cesium.Color.ORANGE
-        model.colorBlendMode = Cesium.ColorBlendMode.REPLACE
+        const model = await Cesium.Model.fromGltfAsync({ url, modelMatrix: drillPlacement(context.task?.chainageRange.start ?? 2244, i ? 1 : -1), upAxis: Cesium.Axis.Z, forwardAxis: Cesium.Axis.X })
         models.push(model); viewer.scene.primitives.add(model); viewer.scene.requestRender()
       }
     } catch (error) {

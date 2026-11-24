@@ -1,0 +1,18 @@
+{
+  "passed": false,
+  "scenario": {
+    "resource": "support.test-section-z-pm",
+    "row": "units",
+    "offsets": [
+      -5.5,
+      -4.5,
+      -3.5,
+      -2.5,
+      -1.5
+    ],
+    "interval": 1
+  },
+  "errors": [],
+  "checks": [],
+  "failure": "locator.innerText: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByTestId('support-layout').getByRole('row').filter({ has: getByTestId('support-layout').getByRole('rowheader', { name: '配筋间距', exact: true }) }).getByRole('cell')\u001b[22m\n"
+}

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "modelRequests": 0,
+  "pageErrors": [],
+  "supportModelClick": true,
+  "dragDoesNotSelect": true,
+  "experimentDenied": true,
+  "fanModelClick": true,
+  "reset": true
+}

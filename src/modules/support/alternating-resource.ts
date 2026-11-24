@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import type { SceneResource } from '@/platform/resources/types'
-import { modelerSectionFrame } from './modeler-resources'
+import { modelerSectionFrame, loadOriginalSupportUnits, trackSupportUnits } from './modeler-resources'
 import { planAlternatingSupportSections } from './alternating-layout'
 
 export const ALTERNATING_SUPPORT_ID = 'support.alternating-zz-va-z-pm'
@@ -91,10 +91,10 @@ export async function buildInstancedGlb(start: number, lengthM = SUPPORT_WINDOW_
   return await new GLTFExporter().parseAsync(root, { binary: true, onlyVisible: true }) as ArrayBuffer
 }
 
-let active: Cesium.Model | undefined
+let active: Cesium.Model[] = []
 let activeViewer: Cesium.Viewer | undefined
 let activeSpan: ReturnType<typeof supportAssemblySpanAt> | undefined
-export const getActiveAlternatingSupportModel = (): Cesium.Model | undefined => active
+export const getActiveAlternatingSupportModel = (): Cesium.Model | undefined => active[0]
 export const getActiveAlternatingSupportSpan = (): { start: number; end: number; sections: number; zzVa: number; zPm: number } | undefined =>
   activeSpan ? { start: activeSpan.start, end: activeSpan.end,
     sections: activeSpan.end - activeSpan.start,
@@ -108,37 +108,22 @@ export const alternatingSupportResource: SceneResource = {
   estimatedMemoryMb: 80,
   async load(context) {
     const span = supportAssemblySpanAt(context.task?.chainageRange.start ?? START_CHAINAGE)
-    const buffer = await buildInstancedGlb(span.start, span.end - span.start)
-    if (context.signal?.aborted) throw new DOMException('支护装配已取消', 'AbortError')
-    const objectUrl = URL.createObjectURL(new Blob([buffer], { type: 'model/gltf-binary' }))
-    try {
-      const model = await Cesium.Model.fromGltfAsync({
-        url: objectUrl, modelMatrix: modelerSectionFrame(span.start),
-        upAxis: Cesium.Axis.Z, forwardAxis: Cesium.Axis.X,
-      })
-      if (context.signal?.aborted) { model.destroy(); throw new DOMException('支护装配已取消', 'AbortError') }
-      if (active && activeViewer && !activeViewer.isDestroyed()) activeViewer.scene.primitives.remove(active)
-      context.viewer.scene.primitives.add(model)
-      active = model
-      activeViewer = context.viewer
-      activeSpan = span
-      context.viewer.scene.requestRender()
-    } finally { URL.revokeObjectURL(objectUrl) }
+    const placements = planAlternatingSupportSections(span.start, span.end - span.start, ['ZZ-Va', 'Z-PM'])
+    active = await loadOriginalSupportUnits(context.viewer, placements, context.signal)
+    activeViewer = context.viewer
+    activeSpan = span
+    trackSupportUnits(ALTERNATING_SUPPORT_ID, active)
   },
   async activate() {},
   async update() {},
   async unload() {
-    if (active && activeViewer && !activeViewer.isDestroyed()) activeViewer.scene.primitives.remove(active)
-    active = undefined
-    activeViewer = undefined
-    activeSpan = undefined
+    if (activeViewer && !activeViewer.isDestroyed()) for (const model of active) activeViewer.scene.primitives.remove(model)
+    trackSupportUnits(ALTERNATING_SUPPORT_ID)
+    active = []; activeViewer = undefined; activeSpan = undefined
   },
-  getEnhanceTargets: () => active ? [{ id: ALTERNATING_SUPPORT_ID, type: 'support-segment', object: active,
-    metadata: { supportTypes: ['ZZ-Va', 'Z-PM'], alternatingEveryM: 1,
-      startChainage: activeSpan?.start, endChainage: activeSpan?.end,
-      lengthM: activeSpan ? activeSpan.end - activeSpan.start : undefined,
-      sectionCount: activeSpan ? activeSpan.end - activeSpan.start : undefined,
-      zpmComponents: 'secondary lining and N1–N7 rebar; partial editor assembly',
-      generatedForTask: false } }] : [],
-  getActiveAssetPaths: () => active ? Object.values(urls) : [],
+  getEnhanceTargets: () => active.map((object,index) => ({ id: ALTERNATING_SUPPORT_ID+'.'+index, type:'support-segment', object,
+    metadata: { supportTypes:['ZZ-Va','Z-PM'], alternatingEveryM:1,
+      startChainage:activeSpan?.start, endChainage:activeSpan?.end, sectionCount:active.length,
+      originalGeometry:true, zpmComponents:'secondary lining and N1–N7 rebar; partial editor assembly' } })),
+  getActiveAssetPaths: () => active.length ? Object.values(urls) : [],
 }

@@ -1,7 +1,8 @@
 import * as Cesium from 'cesium'
 import {sourceInterpretationLegend} from './interpretation-legend'
-import { facePhotoResource } from '@/modules/face-sketch/resources'
-import { threeBenchResource, threeBenchPhaseResources } from './three-bench-resource'
+import { facePhotoResources } from '@/modules/face-sketch/resources'
+import { threeBenchResource } from './three-bench-resource'
+import { nativeRockResources } from './native-model-resources'
 import { gprResources } from './gpr-resources'
 import { advanceDrillResource } from './drill-resource'
 import { chainageService } from '@/platform/coordinates/ChainageService'
@@ -175,6 +176,8 @@ const interpretedRockLayers = [
     range: { start: 2244, end: 2303 }, asset: '/data/geophysical_tem/resistivity_contrast.json', texture: '/data/geophysical_tem/resistivity_contrast_volume.png' },
   { id: 'rock.tem-water', key: 'tem_water', type: 'tem-water-interpretation',
     range: { start: 2244, end: 2303 }, asset: '/data/geophysical_tem/water.json', texture: '/data/geophysical_tem/water_volume.png' },
+  { id: 'rock.tem-resistivity-absolute', key: 'tem_absolute', type: 'tem-absolute-resistivity',
+    range: { start: 2244, end: 2303 }, asset: '/data/geophysical_tem/resistivity.json', texture: '/data/geophysical_tem/resistivity_volume.png' },
 ] as const
 let activeTemLegend:{range:number[];unit:string;stretch:string}|undefined
 export const getActiveTemLegend=()=>activeTemLegend
@@ -229,7 +232,7 @@ export const rockInterpretationResources: SceneResource[] = interpretedRockLayer
   getActiveAssetPaths() { return getActiveGeoModelKey() === layer.key ? [layer.asset, layer.texture,...(layer.id==='rock.tem-resistivity'?['/data/geophysical_tem/metadata.json']:[]),...(activeTspLegends.has(layer.key)?['/data/tsp_actual/metadata.json']:[])] : [] },
 }))
 
-export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources, facePhotoResource, threeBenchResource, ...threeBenchPhaseResources, ...gprResources, advanceDrillResource] as const
+export const rockResources = [rockDesignGradeResource, ...rockInterpretationResources, ...facePhotoResources, threeBenchResource, ...gprResources, ...nativeRockResources, advanceDrillResource] as const
 
 export const rockModuleManifest: SceneModuleManifest = {
   id: 'rock',

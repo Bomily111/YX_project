@@ -163,12 +163,14 @@ import { hasTaskWorkflowController, getTaskWorkflowController } from '@/platform
 import type { AgentTaskWorkflowStatus } from '@/platform/tasks/TaskWorkflowBridge'
 import { dispatchValidatedWorkflow } from './TaskOrchestrator'
 import { routeWorkflowToolCall } from './AgentDispatchIntent'
+import { wantsAssemblyThenVisualReview } from './AgentDispatchIntent'
 import { AGENT_SCENE_RESOURCES } from '@/platform/tasks/samples/SceneExplorationWorkflow'
 import { modelerSupportCatalog } from '@/modules/support/modeler-resources'
-import { testSupportCatalog, isTestSupportId, getTestSectionSupportSummaries } from '@/modules/support/test-section-resource'
+import { testSupportCatalog, isTestSupportId } from '@/modules/support/test-section-resource'
 import { transientScenarioCatalog } from '@/modules/ventilation/transient-catalog'
 import { thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
-import { faceSourceDescription } from '@/modules/face-sketch/resources'
+import { isNativeRockModel, nativeRockCatalog, WORKFACE_SURFACE_ID, WORKFACE_BACKING_ID } from '@/modules/rock/native-model-resources'
+import { faceSourceDescription, facePhotoCatalog, isFacePhotoResource } from '@/modules/face-sketch/resources'
 import { useTunnelStore } from '@/stores/tunnelStore'
 import { chainageService } from '@/platform/coordinates/ChainageService'
 import type { Message, ToolUseBlock, AgentContext } from './types'
@@ -185,7 +187,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   sceneOpen: [scene: string]
   taskWorkflowOpen: []
-  assemblyChange: [result: { targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }>;
+  assemblyChange: [result: { targetMileage: string; taskId: string; taskDescription?:string; resources: Array<{ id: string; label: string }>;
     supportRange?: { start: string; end: string; sections: number; zzVa: number; zPm: number } } | null]
 }>()
 
@@ -224,9 +226,9 @@ const sceneResourceLabels: Record<string, string> = {
   'rock.tem-water': 'TEM 富水解释 · 示意重定位',
   'blast.effect': '爆破炮孔与爆后点云（45 万点）',
   'blast.design-data': '炮孔设计 · 二维图与参数参考',
-  'rock.face-photos': '单掌子面模型 · 示意装配',
-  'rock.three-bench-upper-first': '三台阶 · 上台阶先行（示意）',
-  'rock.three-bench-lower-follow': '三台阶 · 下台阶跟进（示意）',
+  ...Object.fromEntries(nativeRockCatalog.map(item => [item.id, item.name])),
+  'rock.tem-resistivity-absolute': 'TEM 原始电阻率体素',
+  ...Object.fromEntries(facePhotoCatalog.map(item => [item.id, '掌子面照片 · '+item.sourceMileage])),
   'rock.three-bench': '三台阶 · 论文测试工段',
   ...Object.fromEntries(testSupportCatalog.map(asset => [asset.id, `已有${asset.type}${asset.type === 'Z-PM' ? '二衬及配筋' : '支护'} · 后方支护示意段`])),
   'rock.gpr-line1': 'GPR测线1 · 剖面参考', 'rock.gpr-line2': 'GPR测线2 · 剖面参考',
@@ -238,31 +240,31 @@ const sceneResourceLabels: Record<string, string> = {
   ...Object.fromEntries(modelerSupportCatalog.map(asset => [asset.id, `新支护模块 ${asset.type} · 1 m ${asset.type === 'Z-PM' ? '二衬及配筋' : '断面'}`])),
   ...Object.fromEntries(continuousSupportCatalog.map(asset => [asset.id, `ZZ-Va · ${asset.length} m 连续支护示意段`])),
   'ventilation.steady-cfd': '稳态 CFD · 点云、矢量、流线、动态粒子', 'ventilation.transient-network': '瞬态风网',
+  'ventilation.axial-fan': '施工轴流风机 · 示意设备',
+  'ventilation.axial-fan-duct': '出风端柔性风筒 · 4 m 示意段',
+  'ventilation.ceiling-jet-fan': '洞顶吊装射流风机 · 示意设备',
   'ventilation.thermal-field': '热场时间片', 'ventilation.co-analysis': 'CO 扩散分析',
 }
 const sceneSourceNotes = (plans: Array<{ resources: string[] }> = [], volumeCutApplied = false): string => {
   const ids = plans.flatMap(plan => plan.resources)
   return [
-    ids.some(id => id.startsWith('support.modeler-continuous-')) ? '连续支护按任务指定长度复用1米ZZ-Va模板沿中线示意布置，保留模板内间距并去除重复内部端盖；不是现场设计重建，曲线接缝和纵向连续性仍需校核。' : '',
+    ids.some(id => id.startsWith('support.modeler-continuous-')) ? '连续支护按任务指定长度复用1米ZZ-Va模板沿中线示意布置，保留原始单元几何与材质，曲线接缝和纵向连续性仍需校核。' : '',
     volumeCutApplied && ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity') && ids.some(id => id.startsWith('support.'))
       ? '当前为解释体剖切展示：隐藏部分横向区域及近端区域以显露支护；原始体数据未修改，不能把裁剪边界当作地质边界。' : '',
     ids.includes('rock.advance-drill') ? '水平钻模型沿目标中线示意装配，孔位和轨迹非目标实测，不含钻进日志或涌水记录。' : '',
     ids.some(id => id.startsWith('rock.gpr-line')) ? 'GPR为现有处理剖面参考，未建立与目标YK的测量对应，不将反射异常直接作为富水或破碎带结论。' : '',
-    ids.includes('rock.face-photos') ? faceSourceDescription() : '',
+    ids.filter(isFacePhotoResource).map(id => faceSourceDescription(id)).join(' '),
     ids.some(id => id === 'rock.three-bench' || id.startsWith('rock.three-bench-')) ? '论文测试工段：三台阶使用tunnel002源断面，台阶高度与错距为示意参数，不代表现场工法设计。' : '',
-    ids.includes('rock.three-bench-upper-first') ? '上台阶先行：上/中/下台阶前缘偏移12/0/0米；高度及错距均为示意参数。' : '',
-    ids.includes('rock.three-bench-lower-follow') ? '下台阶跟进：上/中/下台阶前缘偏移12/6/4米；后方支护仍以源零点布置，不随下台阶前缘移动，不代表现场支护跟进距离。' : '',
-    ids.some(isTestSupportId) ? '按1064米支护区段示例复用已有构件，混凝土、钢架、锚杆和配筋分别沿用示例间距；默认显示主体和钢架/格栅。Z-PM在该示例为空范围，保留独立模型备选，不冒称其有完整示例布置。' : '',
-    ...getTestSectionSupportSummaries(ids).filter(layout=>layout.layout==='1064m-component-example').map(layout=>{
-      const arch=layout.groups.find((group:any)=>group.component==='steel_arch'||group.component==='lattice_arch')
-      return `${layout.supportType}：${arch?`钢架/格栅间距${arch.spacingM}米，${arch.stations}组`:'示例未提供钢架实例'}；构件组成与显隐沿用1064米页面。`
-    }),
+    ids.some(isTestSupportId) ? '后方支护直接装配支护版块原始1米GLB，保留源构件与材质；单元布置间隔不代表构件间距。' : '',
     ids.some(id => id === 'support.modeler-z-pm' || id === 'support.test-section-z-pm') ? 'Z-PM为已有部分构件模型，仅包含二衬及N1～N7钢筋，不代表完整初期支护体系。' : '',
     ids.some(id => id.startsWith('ventilation.thermal-t')) ? '热场时间片基于稳态解与指数松弛近似，仅示意显示右洞；完整瞬态CFD待重跑，不是目标工点实测温度。' : '',
     ids.some(id => id.startsWith('ventilation.transient-')) ? '瞬态风网为现有一维网络分析工况的流量—时间曲线，不是该工况的三维CFD，也不代表目标工点实时监测。' : '',
     ids.some(id => id.startsWith('support.modeler-') && !id.startsWith('support.modeler-continuous-')) ? '新支护模块使用已导出的 1 m 断面模型，按平台 YK 中线装配；尚未按本任务参数重新生成，不代表目标里程实测支护。' : '',
     ids.includes('support.alternating-zz-va-z-pm') ? '目标里程附近 50 m 内按 50 个 1 m 位置交替装配 ZZ-Va 和 Z-PM；Z-PM 当前仅有二衬及 N1–N7 钢筋，为示意模型。' : '',
-    ids.some(id => id.startsWith('rock.') && !id.startsWith('rock.three-bench') && id !== 'rock.design-grade' && id !== 'rock.face-photos' && id !== 'rock.advance-drill' && !id.startsWith('rock.gpr-line'))
+    ids.includes(WORKFACE_BACKING_ID) ? '在原掌子面背后补入示意岩体，新增展示深度 3 米。'
+      : ids.includes(WORKFACE_SURFACE_ID) ? '岩面为历史纹理网格，源工点和比例未标定，本次按统一展示比例沿中线示意布置。'
+      : ids.some(isNativeRockModel) ? '直接加载原始 GLB，按目标中线示意布置。' : '',
+    ids.some(id => /^rock\.(tsp-|tem-|geophysical-grade)/.test(id) && !isNativeRockModel(id))
       ? '物探围岩解释层以 YK2+244 为源锚点沿目标中线示意重定位，不代表目标工点实测。' : '',
     ids.some(id => id === 'rock.tsp-hardness' || id === 'rock.tsp-integrity')
       ? 'TSP 来源报告标记为 X1DK2+937，不能作为目标工点的实测结论。' : '',
@@ -274,10 +276,12 @@ const publishAssembledScene = (status: AgentTaskWorkflowStatus): void => {
   emit('assemblyChange', {
     targetMileage: chainageService.format(stage.chainageRange.start),
     taskId: status.taskId,
+    taskDescription: status.taskDescription,
     resources: stage.assembledResourceIds.map(id => ({ id, label: (sceneResourceLabels[id] ?? id) + (isTestSupportId(id) ? ` · ${stage.supportLengthM ?? 10}米` : '') })),
   })
 }
 const workflowToolNames = new Set([
+  'run_construction_review',
   'inspect_current_support',
   'set_support_layers',
   'update_test_support',
@@ -305,11 +309,8 @@ const currentScene = computed(() => props.context?.scene || '')
 const placement = computed(() => props.placement ?? 'floating')
 
 const defaultQuickCmds = [
-  '准备YK1+346施工交底场景，说明前方岩体完整性与ZZ-Va支护的空间关系。',
-  '准备YK4+000通风交底场景，看看空气流动方向。',
-  '准备YK2+244施工交底，需要结合照片说明岩面情况并核对ZZ-Va支护断面。',
-  'YK4+000 查看热场模拟200秒的右洞温度场。',
-  '准备YK1+346钻孔施工交底，核对炮眼布置和本循环进尺。',
+  '班前要交底 YK2+244 三台阶开挖与后方初支。请以本次指定的 ZZ-Va 后方 5 米示意段为基础完成装配，先保留三台阶和后方支护的整体位置关系，再切到钢拱架细部，暂避遮住钢架的外壳。最后说明画面能核对哪些布置，哪些仍需对应设计或实测。请直接执行。',
+  '准备 YK1+346 的初支交底。先用已有 TSP 坚硬度解释和 ZZ-Va 支护断面建立上下文。我的重点是支护及其邻近围岩，请保留邻近地质参照，让支护轮廓容易区分，并说明当前局部范围还有哪些信息看不到。请装配并完成视觉分析。',
 ]
 
 const blastQuickCmds = [
@@ -327,7 +328,7 @@ const quickCommands = computed(() => {
 
 const welcomeIcon = computed(() => props.welcomeIcon || '🏔')
 const welcomeText = computed(() =>
-  props.welcomeText || '你好！请告诉我目标里程和要展示的模型。<br>我会在主场景装配，左侧和底部显示实际任务信息。'
+  props.welcomeText || '请描述施工任务、工段、要核对的问题和需保留的参照。<br>我会选择已有模型，并根据任务执行装配、取景和观察。'
 )
 
 // ── 反馈机制 ──────────────────────────────────────────────
@@ -406,6 +407,7 @@ const send = async () => {
   let firstChunk = true
   let assistantMsg = ''
   let canonicalDispatchShown = false
+  const combinedTask = wantsAssemblyThenVisualReview(text)
 
   try {
     await engine.value.chat(
@@ -432,6 +434,13 @@ const send = async () => {
           toolStatus.value = ''
           let parsed: Record<string, any> = {}
           try { parsed = JSON.parse(result) } catch { /* 文本型模块工具 */ }
+          if (routed.name === 'run_construction_review') {
+            if (parsed.ok && parsed.sceneChanged) emit('assemblyChange', {
+              targetMileage: parsed.targetMileage, taskId: parsed.taskId, taskDescription: parsed.taskDescription,
+              resources: (parsed.assembledResourceIds as string[]).map(id => ({ id, label: sceneResourceLabels[id] ?? id })),
+            })
+            else if (parsed.status === 'failed') emit('assemblyChange', null)
+          }
           if (routed.name === 'assemble_scene_at_mileage' && parsed.ok === false && parsed.status === 'failed') emit('assemblyChange', null)
           if (workflowToolNames.has(routed.name) && typeof parsed.prepared === 'boolean') {
             chatTaskStatus.value = parsed as AgentTaskWorkflowStatus
@@ -469,8 +478,11 @@ const send = async () => {
             canonicalDispatchShown = true
             streaming.value = false
             streamBuffer.value = ''
-            const labels: Record<string, string> = { geographic:'中线与地形', overview: '整体布置', face: '掌子面近景', support: '支护近景', excavation: '三台阶近景', drill: '水平钻布置', blast: '爆破断面' }
-            messages.value.push({ role: 'assistant', content: parsed.ok ? `已切换到${labels[parsed.view] || parsed.view}视角，当前装配保持不变。` : `视角未调整：${parsed.reason || result}。` })
+            const labels: Record<string, string> = { geographic:'中线与地形', overview: '整体布置', face: '掌子面近景', support: '支护近景', excavation: '三台阶近景', drill: '水平钻布置', blast: '爆破断面', fan: '轴流风机近景' }
+            const feedback = parsed.view === 'tunnel-side-section' ? '已开启隧道侧剖，保留对侧洞壁、三台阶和后方支护。'
+              : parsed.view === 'restore-tunnel-section' ? '已关闭隧道侧剖，恢复剖切前视图。'
+              : `已切换到${labels[parsed.view] || parsed.view}视角，当前装配保持不变。`
+            messages.value.push({ role: 'assistant', content: parsed.ok ? feedback : `视角未调整：${parsed.reason || result}。` })
             await scrollToBottom()
           }
           if (routed.name === 'toggle_layer') {
@@ -520,14 +532,15 @@ const send = async () => {
                 sections: span.sections, zzVa: span.zzVa, zPm: span.zPm } : undefined
             if (parsed.ok) emit('assemblyChange', {
               targetMileage: String(parsed.targetMileage), taskId: String(parsed.taskId),
+              taskDescription: typeof parsed.taskDescription==='string'?parsed.taskDescription:undefined,
               resources: ids.map(id => ({ id, label: (sceneResourceLabels[id] ?? id) + (isTestSupportId(id) ? ` · ${supportLength}米` : '') })),
               ...(supportRange ? { supportRange } : {}),
             })
-            messages.value.push({ role: 'assistant', content: parsed.ok
+            if (!combinedTask || !parsed.ok || routed.name === 'update_test_support') messages.value.push({ role: 'assistant', content: parsed.ok
               ? `已定位 ${parsed.targetMileage}，主场景装配完成：${resources || '无'}。${supportRange
                 ? `实际范围 ${supportRange.start}—${supportRange.end}，共 ${supportRange.sections} 个断面（ZZ-Va ${supportRange.zzVa}、Z-PM ${supportRange.zPm}）。` : ''}${parsed.lastCompletedStage?.phase === 'constructed-then-enhanced' ? '整体构建后的增强已完成。' : ''}${selectionText}${designText}${sceneSourceNotes(parsed.scenePlans, parsed.lastCompletedStage?.phase === 'constructed-then-enhanced')}`
               : `场景装配未完成：${parsed.reason || parsed.notice?.message || (result.startsWith('❌') ? result : '请核对里程与资源。')}` })
-            if(parsed.ok&&parsed.displayContinuity)messages.value.push({role:'assistant',content:parsed.displayContinuity.mode==='missing-visible-components'?'新支护类型不包含原先可见的构件，已保留新模型默认显示，避免支护全部不可见。':parsed.displayContinuity.mode==='preserved'?`已承接当前构件显隐设置（${parsed.displayContinuity.preservedComponents.length}类）；可在左侧任务栏核对或恢复默认显示。`:'当前模型没有可承接的分组显隐，采用源模型默认显示。'})
+            if(parsed.ok&&parsed.displayContinuity)messages.value.push({role:'assistant',content:parsed.displayContinuity.mode==='missing-visible-components'?'新支护类型不包含原先可见的构件，已保留新模型默认显示，避免支护全部不可见。':parsed.displayContinuity.mode==='preserved'?`已承接当前构件显隐设置（${parsed.displayContinuity.preservedComponents.length}类）；可继续让我核对或恢复默认显示。`:'当前模型没有可承接的分组显隐，采用源模型默认显示。'})
             await scrollToBottom()
           }
           if ((routed.name === 'advance_platform_task' || routed.name === 'orchestrate_platform_task') && Array.isArray(parsed.dispatchTrace)) {
@@ -583,7 +596,7 @@ const send = async () => {
         onComplete: (fullText: string) => {
           streaming.value = false
           streamBuffer.value = ''
-          if (!canonicalDispatchShown) messages.value.push({ role: 'assistant', content: fullText })
+          if (!canonicalDispatchShown || combinedTask) messages.value.push({ role: 'assistant', content: fullText })
           else if (chatTaskStatus.value?.prepared && chatTaskStatus.value.status !== 'completed' && chatTaskStatus.value.status !== 'failed') {
             messages.value.push({ role: 'assistant', content: `智能体本轮已停止。任务 ${chatTaskStatus.value.taskId} 目前完成 ${chatTaskStatus.value.completed}/${chatTaskStatus.value.total} 步，可继续要求它观察并推进。` })
           }

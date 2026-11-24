@@ -77,9 +77,10 @@ describe('ventilation resource split', () => {
       await ventilationSceneResource.unload()
     }
   })
-  it('registers independent analysis resources that depend on the base scene', () => {
+  it('registers ventilation equipment and analysis with their own dependencies', () => {
     expect(ventilationResources.map(({ id }) => id)).toEqual([
       'ventilation.scene',
+      'ventilation.axial-fan', 'ventilation.axial-fan-duct', 'ventilation.ceiling-jet-fan',
       'ventilation.steady-cfd',
       'ventilation.co-analysis',
       'ventilation.transient-network',
@@ -89,7 +90,12 @@ describe('ventilation resource split', () => {
       ...thermalSnapshotCatalog.map(snapshot => snapshot.id),
     ])
     for (const resource of ventilationResources.slice(1)) {
-      expect(resource.dependencies).toContain('ventilation.scene')
+      const equipmentDependencies: Record<string, string> = {
+        'ventilation.axial-fan': 'common.tunnel',
+        'ventilation.axial-fan-duct': 'ventilation.axial-fan',
+        'ventilation.ceiling-jet-fan': 'common.tunnel',
+      }
+      expect(resource.dependencies).toContain(equipmentDependencies[resource.id] ?? 'ventilation.scene')
       expect(resource.lifetime).toBe('task')
     }
     expect(ventilationModuleManifest.resources).toBe(ventilationResources)

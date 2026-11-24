@@ -1,0 +1,41 @@
+{
+  "cases": [
+    {
+      "id": "workface-backing-preview",
+      "taskId": "scene-1795149568511-ipn1p",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/workface-surface/texturedMesh.glb",
+        "/data/workface-surface/texturedMesh.jpg",
+        "/data/workface-surface/workface-backing-3m.glb"
+      ],
+      "elapsedMs": 9006,
+      "backingComparison": {
+        "sameCamera": true,
+        "bothReady": true,
+        "samePlacement": true,
+        "sameFrontCamera": true
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

@@ -1,0 +1,239 @@
+{
+  "online": true,
+  "passed": false,
+  "requests": [
+    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+  ],
+  "errors": [],
+  "modelRequests": 1,
+  "checks": [
+    {
+      "id": "original-source-and-task-first-panel",
+      "assembled": {
+        "status": "completed",
+        "taskId": "scene-1795080205679-sl5nu",
+        "ids": [
+          "rock.three-bench",
+          "support.test-section"
+        ],
+        "source": [
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "summary": {
+          "id": "support.test-section",
+          "supportType": "ZZ-Va",
+          "lengthM": 5,
+          "layout": "original-unit-assembly",
+          "unitOffsetsM": [
+            -5.5,
+            -4.5,
+            -3.5,
+            -2.5,
+            -1.5
+          ],
+          "groups": [
+            {
+              "component": "primary_concrete",
+              "name": "primarySupportConcreteGroup",
+              "visible": true
+            },
+            {
+              "component": "primary_mesh",
+              "name": "primarySupportMeshGroup",
+              "visible": true
+            },
+            {
+              "component": "steel_arch",
+              "name": "steelArchArrayGroup",
+              "visible": true
+            },
+            {
+              "component": "system_anchor",
+              "name": "systemAnchorGroup",
+              "visible": true
+            },
+            {
+              "component": "lock_foot_anchor",
+              "name": "lockFootAnchorGroup",
+              "visible": true
+            },
+            {
+              "component": "secondary_lining",
+              "name": "secondaryLiningGroup",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N1",
+              "name": "N1Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N2",
+              "name": "N2Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N3",
+              "name": "N3Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N4",
+              "name": "N4Group",
+              "visible": true
+            }
+          ],
+          "note": "直接装配支护版块原始1米GLB单元；单元间隔来自本次放置，构件间距与工程接缝待核查。"
+        },
+        "targets": [
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          }
+        ],
+        "models": [
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": true,
+            "lining": true,
+            "matrix": [
+              -0.14409683040392884,
+              -0.49845961221254925,
+              0.8548532730594511,
+              0,
+              -0.06944177527284173,
+              0.8668328315440487,
+              0.49373948799370243,
+              0,
+              -0.9871240769601852,
+              0.01178376638610358,
+              -0.15952178388941188,
+              0,
+              -475187.63627055916,
+              5536147.021069524,
+              3126923.340197923,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": true,
+            "lining": true,
+            "matrix": [
+              -0.14450388291029134,
+              -0.49845650097221117,
+              0.8547863735825395,
+              0,
+              -0.06944207630625927,
+              0.8668318009949006,
+              0.49374125493239146,
+              0,
+              -0.987064549997681,
+              0.011989387910861266,
+              -0.1598744154497474,
+              0,
+              -475188.6233642796,
+              5536147.032948524,
+              3126923.1804955006,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": true,
+            "lining": true,
+            "matrix": [
+              -0.14491081517877022,
+              -0.4984533056670839,
+              0.8547193444129956,
+              0,
+              -0.06944237895140626,
+              0.866830770705961,
+              0.4937430211789114,
+              0,
+              -0.9870048691114921,
+              0.012194959076040096,
+              -0.16022693694675727,
+              0,
+              -475189.61039839505,
+              5536147.045033124,
+              3126923.0204405035,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": true,
+            "lining": true,
+            "matrix": [
+              -0.1453176269881124,
+              -0.49845002635888075,
+              0.8546521856927384,
+              0,
+              -0.06944268320676358,
+              0.8668297406783467,
+              0.4937447867315211,
+              0,
+              -0.9869450344551052,
+              0.012400479762547365,
+              -0.16057934819294087,
+              0,
+              -475190.5973727737,
+              5536147.0573235275,
+              3126922.860033187,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": true,
+            "lining": true,
+            "matrix": [
+              -0.14572431811681175,
+              -0.498446663109459,
+              0.8545848975639786,
+              0,
+              -0.06944298907080844,
+              0.8668287109131746,
+              0.4937465515884802,
+              0,
+              -0.9868850461823312,
+              0.012605949851145173,
+              -0.16093164900058843,
+              0,
+              -475191.58428727475,
+              5536147.069819845,
+              3126922.6992737525,
+              1
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "replies": [
+    "🤖已定位 YK2+244，主场景装配完成：三台阶 · 论文测试工段、已有ZZ-Va支护 · 后方支护示意段 · 5米。整体构建后的增强已完成。选用三台阶 · 论文测试工段：三台阶开挖整体参照（上/中/下台阶错距12/6/0米示意）选用已有ZZ-Va支护 · 后方支护示意段：ZZ-Va 后方5米测试支护示意段，用于核对钢拱架等构件布置论文测试工段：三台阶使用tunnel002源断面，台阶高度与错距为示意参数，不代表现场工法设计。后方支护直接装配支护版块原始1米GLB，保留源构件与材质；单元布置间隔不代表构件间距。👍👎"
+  ],
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'applied'\n"
+}

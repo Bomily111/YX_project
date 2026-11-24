@@ -1,5 +1,6 @@
 <template>
-  <div class="dashboard-container" :class="{ 'rock-workspace': showRockWorkspaceShell, 'platform-workspace': showPlatformWorkspaceShell }">
+  <div class="dashboard-container" :class="{ 'rock-workspace': showRockWorkspaceShell, 'platform-workspace': showPlatformWorkspaceShell }"
+    :data-construction-review-stage="constructionReviewStage">
     <div class="globe-layer">
       <DTGlobe />
     </div>
@@ -133,7 +134,7 @@
     />
 
     <!-- 体数据渲染覆盖层（进入模型视图后挂载，始终保持 DOM） -->
-    <DTVolume v-show="showVolumeOverlay" />
+    <DTVolume v-show="showVolumeOverlay && !supportComparisonVisible" data-testid="task-volume-overlay" />
     <RockGradeColorBar v-if="(isModelViewMode && currentActiveKey === 'geophysical_grade') || agentVolumeKey === 'geophysical_grade'" />
     <TSPColorBar :demonstration="!!agentVolumeKey" :value-range="agentTspLegend?.range" :unit="agentTspLegend?.unit" :gradient="agentTspLegend?.gradient"
       v-if="(isModelViewMode && (isTSP || ['tsp', 'tsp_hardness', 'tsp_integrity'].includes(currentActiveKey))) || !!agentTspType"
@@ -158,24 +159,33 @@
 
     <!-- 左侧掌子面信息面板（总览模式下显示，场景/模型视图模式下隐藏） -->
     <WorkfaceInfoPanel v-show="!activeScene && !isModelViewMode && !agentAssembly" />
-    <aside v-if="agentAssembly && !activeScene" class="agent-assembly-info" aria-label="当前任务场景信息">
+    <aside v-if="agentAssembly && !activeScene" class="agent-assembly-info"
+      :class="{
+        'agent-assembly-info--geology': showTaskDesignReference && agentAssembly.resources.length > 1,
+        'agent-assembly-info--blast-review': constructionReviewStage === 'ventilation',
+        'agent-assembly-info--hybrid-co': !activeConstructionReview && agentAssembly.resources.length > 1 && agentAssembly.resources.some(resource => resource.id === 'ventilation.co-analysis'),
+      }" aria-label="当前任务场景信息">
       <div class="agent-assembly-kicker">任务场景</div>
       <h2>{{ agentAssembly.targetMileage }}</h2>
+      <ConstructionReviewPanel v-if="activeConstructionReview" :selection="activeConstructionReview" />
+      <template v-else>
+      <p v-if="agentAssembly.taskDescription" class="task-purpose" data-testid="task-purpose">{{ agentAssembly.taskDescription }}</p>
       <p>已沿中线定位，并装配以下模型：</p>
       <ul><li v-for="resource in agentAssembly.resources" :key="resource.id">{{ resource.label }}</li></ul>
+      <small v-if="agentAssembly.resources.some(resource => resource.id.startsWith('rock.three-bench'))" class="task-source-mode">示意装配 · {{ agentAssembly.targetMileage }} 为展示里程</small>
       <small v-if="taskTerrainContextActive" data-testid="task-terrain-context">任务范围地形已淡化 · 仅展示状态，复位恢复</small>
-      <TaskSupportLayers :key="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource => resource.id)" />
-      <TaskSupportLayout :key="agentAssembly.taskId" :task-id="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource=>resource.id)" />
-      <TaskFlowReview :key="agentAssembly.taskId" />
-      <TaskVisualReview :key="agentAssembly.taskId" :resource-labels="Object.fromEntries(agentAssembly.resources.map(resource=>[resource.id,resource.label]))" />
+      <TaskSupportLayers v-if="manualTaskControls" :key="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource => resource.id)" />
+      <TaskSupportLayout v-if="manualTaskControls" :key="agentAssembly.taskId" :task-id="agentAssembly.taskId" :resource-ids="agentAssembly.resources.map(resource=>resource.id)" />
+      <TaskFlowReview :key="agentAssembly.taskId" :manual-controls="manualTaskControls" />
+      <TaskVisualReview :key="agentAssembly.taskId" :manual-controls="manualTaskControls" :resource-labels="Object.fromEntries(agentAssembly.resources.map(resource=>[resource.id,resource.label]))" />
       <div class="task-view-controls" aria-label="任务场景视角">
         <small>最近选择：{{ taskViewLabels[taskCameraSelection] }}</small>
-        <div class="task-view-buttons">
+        <div v-if="manualTaskControls" class="task-view-buttons">
           <button v-for="view in availableTaskViews" :key="view" type="button" :data-testid="`task-view-${view}`" :aria-pressed="taskCameraSelection === view" @click="chooseTaskView(view)">{{ taskViewLabels[view] }}</button>
         </div>
         <p v-if="taskViewError" role="alert">{{ taskViewError }}</p>
       </div>
-      <div v-if="agentAssembly.resources.some(resource => resource.id === 'blast.effect')" class="blast-layer-controls">
+      <div v-if="manualTaskControls && agentAssembly.resources.some(resource => resource.id === 'blast.effect')" class="blast-layer-controls">
         <label><input v-model="blastCloudVisible" type="checkbox" data-testid="blast-cloud-toggle"> 爆后点云</label>
         <label><input v-model="blastHolesVisible" type="checkbox" data-testid="blast-holes-toggle"> 炮孔</label>
       </div>
@@ -183,12 +193,14 @@
         共 {{ agentAssembly.supportRange.sections }} 个断面：ZZ-Va {{ agentAssembly.supportRange.zzVa }}，Z-PM {{ agentAssembly.supportRange.zPm }}</p>
       <div v-if="agentAssembly.resources.some(resource => ['rock.tsp-hardness', 'rock.tsp-integrity'].includes(resource.id))" class="task-cut-controls">
         <span data-testid="task-cut-status">{{ !taskVolumeCutDisplay.enabled ? '解释体：完整范围' : taskVolumeCutDisplay.preset==='geology-section'?'解释体：纵向参照剖切':'解释体：近端支护观察窗口' }}</span>
+        <template v-if="manualTaskControls">
         <button type="button" data-testid="task-cut-geology" :disabled="!taskVolumeCutDisplay.available" @click="chooseTaskCut('geology-section')">保留纵向地质参照</button>
         <button type="button" data-testid="task-cut-structure" :disabled="!taskVolumeCutDisplay.available" @click="chooseTaskCut('structure-window')">显露近端支护</button>
         <small>剖切只改变展示范围，切面不是地质边界；完整范围可作对照。</small>
         <button type="button" data-testid="task-cut-toggle" :disabled="!taskVolumeCutDisplay.available" @click="toggleTaskCut">{{ taskVolumeCutDisplay.enabled ? '恢复完整范围' : '开启展示剖切' }}</button>
         <small>显示裁剪边界不是地质边界。</small>
         <p v-if="taskCutError" role="alert">{{ taskCutError }}</p>
+        </template>
       </div>
       <section v-if="agentVolumeDomain" data-testid="task-volume-domain" class="task-cut-controls">
         <span>解释体当前采样范围</span>
@@ -196,6 +208,7 @@
         <small>青色边框仅表示当前渲染采样盒，含无数据区，不是地质界面、测量边界或风险等级。</small>
       </section>
       <small>以实际加载结果为准；示例场景不代表工程质量结论。</small>
+      </template>
     </aside>
 
     <!-- 隧洞围岩左侧阶段目录 -->
@@ -269,16 +282,17 @@
     <DispatchEquipment v-if="showDispatchEquipment" @close="showDispatchEquipment = false" />
     <DispatchGantt v-if="showDispatchGantt" @close="showDispatchGantt = false" />
 
-    <Design2DPanel v-if="agentAssembly && !activeScene && agentAssembly.resources.some(resource => resource.id === 'blast.design-data')"
-      :visible="true" :task-primary="agentAssembly.resources.length===1" style="left:20px;top:auto;bottom:64px;width:280px;max-height:42vh" />
+    <Design2DPanel v-if="agentAssembly && showTaskDesignReference"
+      :visible="true" :task-primary="agentAssembly.resources.length===1"
+      :style="constructionReviewStage === 'reveal' ? reviewDrawingStyle : taskDrawingStyle" />
     <GPRRadargram v-for="resource in (agentAssembly && !activeScene ? agentAssembly.resources.filter(item => item.id.startsWith('rock.gpr-line')) : [])"
       :key="resource.id" :task-dataset="getActiveGprSection(resource.id)" :initial-line="resource.id.endsWith('2') ? 2 : 1"
-      :initial-x="20" style="top:auto;bottom:64px" />
+      :read-only="!manualTaskControls" :initial-x="20" style="top:auto;bottom:64px" />
     <!-- 底部状态与进度栏（仅总览模式显示） -->
     <div v-if="agentAssembly && !activeScene" class="agent-assembly-bottom" aria-label="当前任务场景状态">
       <strong>{{ agentAssembly.targetMileage }}</strong>
       <span>中线定位完成</span>
-      <span>已装配 {{ agentAssembly.resources.length }} 类模型</span>
+      <span>已装配 {{ agentAssembly.resources.length }} {{ activeConstructionReview ? '项资源' : '类模型' }}</span>
       <span v-if="agentAssembly.supportRange">支护 {{ agentAssembly.supportRange.start }}—{{ agentAssembly.supportRange.end }} · {{ agentAssembly.supportRange.sections }} 个断面</span>
       <span class="agent-assembly-run">任务 {{ agentAssembly.taskId }}</span>
     </div>
@@ -343,6 +357,7 @@ import { viewerService } from '@/platform/viewer/ViewerService';
 import {planTaskVisualReview,applyTaskVisualReview} from '@/platform/tasks/TaskVisualReview';
 import TaskVisualReview from '@/components/task-workflow/TaskVisualReview.vue';
 import { taskCameraSelection, resetTaskCameraSelection, availableTaskCameraViews, type TaskView } from '@/platform/tasks/TaskCameraView';
+import { taskManualControlsEnabled } from '@/platform/tasks/taskManualControls';
 import { executeTool } from '@/ai-agent/ToolRegistry';
 import { taskVolumeCutDisplay, setTaskVolumeCut,getTaskVolumeDomain } from '@/platform/tasks/TaskVolumeCut';
 import { registerSceneLayerController } from '@/ai-agent/SceneLayerBridge';
@@ -390,6 +405,9 @@ import TaskWorkflowPanel from '@/components/task-workflow/TaskWorkflowPanel.vue'
 import TaskSupportLayers from '@/components/task-workflow/TaskSupportLayers.vue';
 import TaskSupportLayout from '@/components/task-workflow/TaskSupportLayout.vue';
 import TaskFlowReview from '@/components/task-workflow/TaskFlowReview.vue';
+import ConstructionReviewPanel from '@/components/task-workflow/ConstructionReviewPanel.vue';
+import { constructionReview, constructionReviews } from '@/platform/tasks/ConstructionReview';
+import { focusConstructionReview } from '@/platform/tasks/ConstructionReviewScene';
 import {taskTerrainContextActive} from '@/platform/tasks/TaskTerrainContext';
 import { DTScopeEngine } from '@/utils/Common/Viewer';
 import { loadCenterLine, enableBlackModelMode, restoreEarthMode, enableTerrainTransparency, setTunnelGlbVisible, setTunnelTranslucent, setWindTunnelTranslucent, setCenterLineVisible, loadWindTunnelGlb, removeWindTunnelGlb, setWindTunnelVisible, setDesignRockGradeModelEnabled, flyToDesignRockGradeSegment, prepareTunnelSegmentsAt, clearFocusedTunnelSegment, onTunnelLoadingChange, type DesignRockGradeSegment } from '@/utils/Common/DrawLine';
@@ -420,18 +438,42 @@ const modelStore = useModelStore();
 const isModelViewMode = ref(false);
 const showGeophysicalVoxelWorkbench = ref(false);
 const showTaskWorkflow = ref(false);
-const agentAssembly = ref<{ targetMileage: string; taskId: string; resources: Array<{ id: string; label: string }>;
+const agentAssembly = ref<{ targetMileage: string; taskId: string; taskDescription?:string; resources: Array<{ id: string; label: string }>;
   supportRange?: { start: string; end: string; sections: number; zzVa: number; zPm: number } } | null>(null);
-watch(agentAssembly,async scene=>{
+const activeConstructionReview = computed(() => {
+  const review = constructionReview.value
+  return review && !review.assemblyOnly && review.taskId === agentAssembly.value?.taskId ? review : undefined
+});
+const constructionReviewStage = computed(() => {
+  if (activeScene.value) return undefined
+  const review = activeConstructionReview.value
+  return review && constructionReviews[review.kind].steps[review.stepIndex]?.key
+});
+const supportComparisonVisible = computed(() => constructionReviewStage.value === 'baseline' || constructionReviewStage.value === 'candidate');
+const showTaskDesignReference = computed(() => !activeScene.value && !supportComparisonVisible.value &&
+  !!agentAssembly.value?.resources.some(resource => resource.id === 'blast.design-data'));
+const taskDrawingStyle = { left: '20px', top: 'auto', bottom: '64px', width: '280px', maxHeight: '42vh' };
+const reviewDrawingStyle = { ...taskDrawingStyle, width: 'var(--review-panel-width)', maxHeight: 'var(--review-drawing-height)' };
+watch([agentAssembly, activeConstructionReview],async ([scene, review], [previousScene, previousReview])=>{
   if(!scene)return
+  if (scene.taskId === previousScene?.taskId && !review && previousReview &&
+      constructionReview.value?.taskId === scene.taskId && constructionReview.value.assemblyOnly) return
+  if (scene.taskId === previousScene?.taskId && review && previousReview?.stepIndex === review.stepIndex &&
+      previousReview.kind === review.kind && previousReview.workfaceView === review.workfaceView &&
+      !!previousReview.supportDetailView === !!review.supportDetailView) return
   await nextTick()
-  if(agentAssembly.value?.taskId!==scene.taskId)return
+  if(agentAssembly.value?.taskId!==scene.taskId || activeConstructionReview.value!==review)return
   const viewer=viewerService.current
-  if(viewer&&!viewer.isDestroyed())try{refitTaskViewport(viewer)}catch(e){taskViewError.value=e instanceof Error?e.message:String(e)}
+  if(viewer&&!viewer.isDestroyed())try{
+    if (review && !activeScene.value) focusConstructionReview(viewer, review)
+    else refitTaskViewport(viewer)
+  }catch(e){taskViewError.value=e instanceof Error?e.message:String(e)}
 })
 const blastCloudVisible = computed({ get: () => blastLayerVisibility.pointcloud, set: visible => setBlastLayerVisible('pointcloud', visible) });
 const taskViewError = ref('');
-const taskViewLabels = { auto: '自动取景', station:'站位近景', geographic:'中线与地形', 'support-context':'支护与邻近围岩', overview: '整体布置', face: '掌子面', support: '支护', excavation: '三台阶', drill: '水平钻', blast: '爆破断面' };
+const taskViewLabels = { auto: '自动取景', station:'站位近景', geographic:'中线与地形', 'support-context':'支护与邻近围岩', overview: '整体布置', face: '掌子面', support: '支护', excavation: '三台阶', drill: '水平钻', blast: '爆破断面', fan: '轴流风机' };
+// Keep the human-operation research baseline available in development only.
+const manualTaskControls = taskManualControlsEnabled();
 const availableTaskViews = computed<TaskView[]>(() => {
   const ids = agentAssembly.value?.resources.map(resource => resource.id) ?? [];
   return availableTaskCameraViews(ids);
@@ -458,7 +500,7 @@ function toggleTaskCut() {
 }
 const blastHolesVisible = computed({ get: () => blastLayerVisibility.holes, set: visible => setBlastLayerVisible('holes', visible) });
 watch(agentAssembly, scene => {
-  resetTaskCameraSelection();
+  if (!activeConstructionReview.value) resetTaskCameraSelection();
   taskViewError.value = '';
   taskCutError.value = '';
   if (!scene) clearFocusedTunnelSegment();
@@ -469,9 +511,10 @@ watch(agentAssembly, scene => {
   const ruler = getMileageRuler();
   if (scene) ruler?.hide(); else if (layerState.showMileageRuler) ruler?.show();
   blastCloudVisible.value = true;
-  blastHolesVisible.value = !scene?.resources.some(resource => resource.id === 'ventilation.steady-cfd');
-  setBlastLayerVisible('pointcloud', blastCloudVisible.value);
-  setBlastLayerVisible('holes', blastHolesVisible.value);
+});
+watch([agentAssembly, () => activeConstructionReview.value?.kind], ([scene, kind]) => {
+  blastHolesVisible.value = !scene?.resources.some(resource => resource.id === 'ventilation.steady-cfd') &&
+    kind !== 'blast-handoff';
 });
 const activeScene = ref<string | null>(null);
 const agentVolumeKey = computed(() => {
@@ -491,7 +534,7 @@ const agentVolumeKey = computed(() => {
 const showVolumeOverlay = computed(() => isModelViewMode.value || !!agentVolumeKey.value);
 const agentVolumeDomain=computed(()=>{void taskVolumeCutDisplay.value;return agentVolumeKey.value?getTaskVolumeDomain():undefined})
 const agentTemLegend=computed(()=>agentVolumeKey.value==='tem'?getActiveTemLegend():undefined)
-const agentTspType=computed(()=>({tsp_hardness:'hardness',tsp_integrity:'integrity',tsp_vp:'vp',tsp_vs:'vs',tsp_ratio:'ratio',tsp_anomaly:'anomaly'} as Record<string,string>)[agentVolumeKey.value??''])
+const agentTspType=computed(()=>supportComparisonVisible.value ? undefined : ({tsp_hardness:'hardness',tsp_integrity:'integrity',tsp_vp:'vp',tsp_vs:'vs',tsp_ratio:'ratio',tsp_anomaly:'anomaly'} as Record<string,string>)[agentVolumeKey.value??''])
 const agentTspLegend=computed(()=>agentVolumeKey.value?getActiveTspLegend(agentVolumeKey.value):undefined)
 watch(showVolumeOverlay, async visible => {
   if (!visible) return;
@@ -1852,7 +1895,47 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(0, 190, 255, .4); border-left: 4px solid #00aaff;
   border-radius: 5px; box-shadow: 0 12px 30px rgba(0, 0, 0, .38);
 }
+.dashboard-container {
+  --review-panel-width: 280px;
+  --review-chart-height: clamp(230px, 35.42vh, 340px);
+  --review-drawing-height: 42vh;
+}
+.dashboard-container[data-construction-review-stage] .agent-assembly-info { width: var(--review-panel-width); }
+.agent-assembly-info--geology { max-height: calc(100% - var(--review-drawing-height) - 156px); }
+.agent-assembly-info--blast-review { max-height: calc(100% - var(--review-chart-height) - 156px); }
+.agent-assembly-info--hybrid-co { max-height: calc(100% - 496px); }
+.dashboard-container[data-construction-review-stage='ventilation']
+  :deep([data-ventilation-owner='ventilation.co-analysis']) { height: var(--review-chart-height) !important; }
+.dashboard-container:is([data-construction-review-stage='blast'], [data-construction-review-stage='handoff'])
+  :deep([data-ventilation-owner='ventilation.co-analysis']) { display: none !important; }
+@media (min-width: 850px) and (max-width: 1250px) {
+  .dashboard-container[data-construction-review-stage] {
+    --review-panel-width: clamp(220px, 22vw, 266px);
+    --review-drawing-height: 38vh;
+    --review-chat-width: clamp(270px, 27vw, 330px);
+  }
+  .dashboard-container[data-construction-review-stage] :deep(.agent-root.docked.expanded) { width: var(--review-chat-width); }
+  .dashboard-container[data-construction-review-stage] :deep(.agent-header) { gap: 5px; }
+  .dashboard-container[data-construction-review-stage] :deep(.ah-title),
+  .dashboard-container[data-construction-review-stage] :deep(.ah-task) { white-space: nowrap; }
+  .dashboard-container[data-construction-review-stage] :deep(.ah-model) { display: none; }
+  .dashboard-container[data-construction-review-stage] .agent-assembly-bottom { right: var(--review-chat-width); }
+  .dashboard-container[data-construction-review-stage] .tech-header { min-width: 0; }
+  .dashboard-container[data-construction-review-stage] .title-container { padding-inline: 16px 20px; }
+  .dashboard-container[data-construction-review-stage] .logo-text { font-size: 19px; letter-spacing: 1px; white-space: nowrap; }
+  .dashboard-container[data-construction-review-stage] .header-center { min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .dashboard-container[data-construction-review-stage] .header-right { margin-right: 10px; }
+  .dashboard-container[data-construction-review-stage='ventilation']
+    :deep([data-ventilation-owner='ventilation.co-analysis']) { width: clamp(310px, 34vw, 425px) !important; }
+  .dashboard-container[data-construction-review-stage='reveal'] :deep(.tsp-legend) {
+    left: calc(26px + var(--review-panel-width));
+    width: min(218px, 26vw);
+    bottom: 56px;
+  }
+}
 .agent-assembly-kicker { color: #45d5ff; font-size: 11px; letter-spacing: 2px; }
+.task-purpose { overflow-wrap: anywhere; color: #d7eaf2; line-height: 1.5; }
+.agent-assembly-info .task-source-mode { display: block; margin: 0 0 10px; color: #ffd19b; }
 .agent-assembly-info h2 { margin: 6px 0 12px; color: white; font-size: 22px; }
 .agent-assembly-info p, .agent-assembly-info small { color: #a9c8d8; font-size: 12px; line-height: 1.5; }
 .agent-assembly-info ul { margin: 10px 0 12px; padding-left: 20px; font-size: 13px; line-height: 1.8; }

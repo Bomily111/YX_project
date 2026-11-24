@@ -1,0 +1,89 @@
+{
+  "cases": [
+    {
+      "id": "tunnel-side-section",
+      "taskId": "scene-1795151642284-tkgay",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+      ],
+      "elapsedMs": 8266,
+      "tunnelSection": {
+        "initial": {
+          "planes": 5,
+          "edgeWidth": 1,
+          "opacity": 0.48,
+          "camera": [
+            -475180.7785803231,
+            5536126.488198283,
+            3127013.223841769
+          ],
+          "sameModels": true,
+          "stableModels": true,
+          "renderError": false
+        },
+        "baseline": {
+          "planes": 2,
+          "edgeWidth": 0,
+          "opacity": 0.035,
+          "camera": [
+            -475153.7702680871,
+            5536139.0869592875,
+            3126999.1915677763
+          ],
+          "sameModels": true,
+          "stableModels": true,
+          "renderError": false
+        },
+        "reopened": {
+          "planes": 5,
+          "edgeWidth": 1,
+          "opacity": 0.48,
+          "camera": [
+            -475180.6045632754,
+            5536126.234166432,
+            3127014.24297911
+          ],
+          "sameModels": true,
+          "stableModels": true,
+          "renderError": false
+        },
+        "restored": {
+          "planes": 2,
+          "edgeWidth": 0,
+          "opacity": 0.035,
+          "camera": [
+            -475153.7702680871,
+            5536139.0869592875,
+            3126999.1915677763
+          ],
+          "sameModels": true,
+          "stableModels": true,
+          "renderError": false
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0.09411764705882353,
+      0.16470588235294117,
+      0.2235294117647059,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  },
+  "failure": "ZZ-Va未沿用1064米示例0.8米钢架间距"
+}

@@ -314,6 +314,7 @@ for (const [key, file] of Object.entries({
   MODEL_CONFIGS[key] = { ...MODEL_CONFIGS.tsp, volumeUrl: `data/tsp_actual/${file}.json` };
 }
 MODEL_CONFIGS.tem_water = { ...MODEL_CONFIGS.tem, volumeUrl: 'data/geophysical_tem/water.json' };
+MODEL_CONFIGS.tem_absolute = { ...MODEL_CONFIGS.tem, volumeUrl: 'data/geophysical_tem/resistivity.json' };
 // Task resource descriptors refer to these source presets. Keep them separate
 // from legacy database instances, which may carry old paths and non-metre scales.
 const taskVolumeConfigs:Record<string,ModelConfig>=JSON.parse(JSON.stringify(MODEL_CONFIGS));

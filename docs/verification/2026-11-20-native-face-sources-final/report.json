@@ -1,0 +1,157 @@
+{
+  "cases": [
+    {
+      "id": "face-original-source",
+      "taskId": "scene-1795145092921-okdt9",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_905_0_clean.png"
+      ],
+      "elapsedMs": 10131,
+      "faceCarrier": {
+        "polygon": true,
+        "wall": false,
+        "coplanarReady": true,
+        "vertices": 649,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+905.0",
+        "sourceDate": "2022-06-14",
+        "targetChainage": 2244,
+        "placement": "demonstration",
+        "carrier": "source-normal-section",
+        "profileSource": "tunnel002.glb / tunnel-normal-sections.json / sections[0]",
+        "textureCalibration": "unverified",
+        "surfaceReconstruction": false
+      }
+    },
+    {
+      "id": "face-source-2885-4",
+      "taskId": "scene-1795145141128-2uz27",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_885_4_clean.png"
+      ],
+      "elapsedMs": 26607,
+      "faceCarrier": {
+        "polygon": true,
+        "wall": false,
+        "coplanarReady": true,
+        "vertices": 649,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+885.4",
+        "sourceDate": "2022-07-02",
+        "targetChainage": 2244,
+        "placement": "demonstration",
+        "carrier": "source-normal-section",
+        "profileSource": "tunnel002.glb / tunnel-normal-sections.json / sections[0]",
+        "textureCalibration": "unverified",
+        "surfaceReconstruction": false
+      }
+    },
+    {
+      "id": "face-source-2892-6",
+      "taskId": "scene-1795145186114-vhmho",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_892_6_clean.png"
+      ],
+      "elapsedMs": 17256,
+      "faceCarrier": {
+        "polygon": true,
+        "wall": false,
+        "coplanarReady": true,
+        "vertices": 649,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+892.6",
+        "sourceDate": "2022-06-29",
+        "targetChainage": 2244,
+        "placement": "demonstration",
+        "carrier": "source-normal-section",
+        "profileSource": "tunnel002.glb / tunnel-normal-sections.json / sections[0]",
+        "textureCalibration": "unverified",
+        "surfaceReconstruction": false
+      }
+    },
+    {
+      "id": "face-source-2900-0",
+      "taskId": "scene-1795145233046-icu1m",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_900_0_clean.png"
+      ],
+      "elapsedMs": 20786,
+      "faceCarrier": {
+        "polygon": true,
+        "wall": false,
+        "coplanarReady": true,
+        "vertices": 649,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+900.0",
+        "sourceDate": "2022-06-19",
+        "targetChainage": 2244,
+        "placement": "demonstration",
+        "carrier": "source-normal-section",
+        "profileSource": "tunnel002.glb / tunnel-normal-sections.json / sections[0]",
+        "textureCalibration": "unverified",
+        "surfaceReconstruction": false
+      }
+    },
+    {
+      "id": "workface-radar",
+      "taskId": "scene-1795145283038-lyt1e",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/face_sketch/X1DK2_880_6_clean.png",
+        "/data/GPR_new/output/radargram_line1.json"
+      ],
+      "elapsedMs": 23529,
+      "faceCarrier": {
+        "polygon": true,
+        "wall": false,
+        "coplanarReady": true,
+        "vertices": 649,
+        "expectedVertices": 649,
+        "sourceMileage": "X1DK2+880.6",
+        "sourceDate": "2022-07-03",
+        "targetChainage": 2244,
+        "placement": "demonstration",
+        "carrier": "source-normal-section",
+        "profileSource": "tunnel002.glb / tunnel-normal-sections.json / sections[0]",
+        "textureCalibration": "unverified",
+        "surfaceReconstruction": false
+      },
+      "gprPanel": {
+        "width": 400,
+        "cssWidth": "400px"
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

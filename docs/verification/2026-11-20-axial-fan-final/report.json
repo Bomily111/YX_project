@@ -1,0 +1,15 @@
+{
+  "assetStatus": 200,
+  "bearing": 2.2478652980350793,
+  "chainage": 4000,
+  "segment": 5,
+  "shellReady": true,
+  "ready": true,
+  "groups": true,
+  "blades": 8,
+  "canvasCount": 1,
+  "widgetError": false,
+  "removed": true,
+  "errors": [],
+  "passed": true
+}

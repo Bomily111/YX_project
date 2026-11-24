@@ -1,0 +1,49 @@
+{
+  "online": false,
+  "passed": false,
+  "requests": [
+    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+  ],
+  "errors": [],
+  "modelRequests": 0,
+  "checks": [
+    {
+      "id": "original-source-and-task-first-panel",
+      "assembled": {
+        "status": "completed",
+        "taskId": "scene-1795081979320-17zzd",
+        "ids": [
+          "rock.three-bench",
+          "support.test-section"
+        ],
+        "source": [
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "targets": [
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          }
+        ],
+        "models": []
+      }
+    }
+  ],
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 5\n"
+}

@@ -1,0 +1,3844 @@
+{
+  "passed": true,
+  "scope": "complete workflows, software conditions",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "cases": [
+    {
+      "key": "support",
+      "stages": [
+        {
+          "key": "workface",
+          "manual": {
+            "taskId": "scene-1795498965418-sy1dr",
+            "status": "completed",
+            "resources": [
+              "rock.workface-surface"
+            ],
+            "matrices": [
+              [
+                0.0259063318902152,
+                0.08972304014064278,
+                -0.15387864710841012,
+                0,
+                -0.013393346768155028,
+                0.15603856203348512,
+                0.08872759109132945,
+                0,
+                0.17762173355291286,
+                -0.0013203130094099416,
+                0.029133769807822892,
+                0,
+                -475180.0195431422,
+                5536147.703044718,
+                3126926.1197220813,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475168.29603267583,
+                5536150.120905136,
+                3126938.069544029
+              ],
+              [
+                -0.7732187650624126,
+                -0.024849611689335225,
+                -0.6336523006777826
+              ],
+              [
+                -0.29976465532552377,
+                0.8948636374937007,
+                0.3306965704526016
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/workface-surface/texturedMesh.glb",
+              "/data/workface-surface/texturedMesh.jpg"
+            ],
+            "anchors": [],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [
+              "scene-1",
+              "scene-2"
+            ],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7ef7dda545cfd62cb601131c1a11ea919563649eb6ef51c4e1f37ef33e2cda60"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.jpg",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "8902d1db0398b34214582867a212120d7f308bf5559be56a2564a624185f9370"
+              }
+            ]
+          },
+          "assembly": {
+            "taskId": "scene-1795498981636-7nfye",
+            "status": "completed",
+            "resources": [
+              "rock.workface-surface"
+            ],
+            "matrices": [
+              [
+                0.0259063318902152,
+                0.08972304014064278,
+                -0.15387864710841012,
+                0,
+                -0.013393346768155028,
+                0.15603856203348512,
+                0.08872759109132945,
+                0,
+                0.17762173355291286,
+                -0.0013203130094099416,
+                0.029133769807822892,
+                0,
+                -475180.0195431422,
+                5536147.703044718,
+                3126926.1197220813,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475168.296040745,
+                5536150.1208991315,
+                3126938.0695541105
+              ],
+              [
+                -0.7732187650624113,
+                -0.024849611689328532,
+                -0.6336523006777843
+              ],
+              [
+                -0.29976465532553764,
+                0.894863637493697,
+                0.33069657045259887
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "workface",
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/workface-surface/texturedMesh.glb",
+              "/data/workface-surface/texturedMesh.jpg"
+            ],
+            "anchors": [],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7ef7dda545cfd62cb601131c1a11ea919563649eb6ef51c4e1f37ef33e2cda60"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.jpg",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "8902d1db0398b34214582867a212120d7f308bf5559be56a2564a624185f9370"
+              }
+            ]
+          },
+          "restored": {
+            "taskId": "scene-1795498981636-7nfye",
+            "status": "completed",
+            "resources": [
+              "rock.workface-surface"
+            ],
+            "matrices": [
+              [
+                0.0259063318902152,
+                0.08972304014064278,
+                -0.15387864710841012,
+                0,
+                -0.013393346768155028,
+                0.15603856203348512,
+                0.08872759109132945,
+                0,
+                0.17762173355291286,
+                -0.0013203130094099416,
+                0.029133769807822892,
+                0,
+                -475180.0195431422,
+                5536147.703044718,
+                3126926.1197220813,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475168.296040745,
+                5536150.1208991315,
+                3126938.0695541105
+              ],
+              [
+                -0.7732187650624159,
+                -0.024849611689327256,
+                -0.6336523006777788
+              ],
+              [
+                -0.29976465532553215,
+                0.8948636374936965,
+                0.33069657045260575
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "workface",
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/workface-surface/texturedMesh.glb",
+              "/data/workface-surface/texturedMesh.jpg"
+            ],
+            "anchors": [],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            }
+          },
+          "enhanced": {
+            "taskId": "scene-1795498996525-alq7t",
+            "status": "completed",
+            "resources": [
+              "rock.workface-surface"
+            ],
+            "matrices": [
+              [
+                0.0259063318902152,
+                0.08972304014064278,
+                -0.15387864710841012,
+                0,
+                -0.013393346768155028,
+                0.15603856203348512,
+                0.08872759109132945,
+                0,
+                0.17762173355291286,
+                -0.0013203130094099416,
+                0.029133769807822892,
+                0,
+                -475180.0195431422,
+                5536147.703044718,
+                3126926.1197220813,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475166.78076094954,
+                5536148.248782918,
+                3126940.9533722494
+              ],
+              [
+                -0.7350767900159529,
+                0.058024929530453254,
+                -0.6754962770680745
+              ],
+              [
+                -0.24853283049568503,
+                0.903912551739701,
+                0.34809988648838375
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "workface",
+            "workfaceShader": true,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/workface-surface/texturedMesh.glb",
+              "/data/workface-surface/texturedMesh.jpg"
+            ],
+            "anchors": [],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 1,
+            "visibleMarkers": 1,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7ef7dda545cfd62cb601131c1a11ea919563649eb6ef51c4e1f37ef33e2cda60"
+              },
+              {
+                "sourceId": "asset:/data/workface-surface/texturedMesh.jpg",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "8902d1db0398b34214582867a212120d7f308bf5559be56a2564a624185f9370"
+              }
+            ]
+          }
+        },
+        {
+          "key": "reveal",
+          "manual": {
+            "taskId": "scene-1795498968346-z4470",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section-zz-ivb"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.5055735621,
+                5536077.111829829,
+                3127232.300546514
+              ],
+              [
+                -0.3454637812722637,
+                0.15566912429028798,
+                -0.9254306562740207
+              ],
+              [
+                -0.1847556527154493,
+                0.9555626607594572,
+                0.22970709643368667
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section-zz-ivb",
+                "component": "system_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [
+              "scene-1",
+              "scene-2",
+              "scene-3",
+              "scene-4",
+              "scene-5"
+            ],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+              }
+            ]
+          },
+          "assembly": {
+            "taskId": "scene-1795498985214-gy21n",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section-zz-ivb"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.5059893237,
+                5536077.111418607,
+                3127232.3006325453
+              ],
+              [
+                -0.3454637812722639,
+                0.15566912429028812,
+                -0.9254306562740204
+              ],
+              [
+                -0.1847556527154492,
+                0.9555626607594572,
+                0.2297070964336867
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "reveal",
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section-zz-ivb",
+                "component": "system_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+              }
+            ]
+          },
+          "enhanced": {
+            "taskId": "scene-1795498998017-jarlx",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section-zz-ivb"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475085.3001748147,
+                5536076.489150972,
+                3127235.131714404
+              ],
+              [
+                -0.3454637812722638,
+                0.15566912429028532,
+                -0.925430656274021
+              ],
+              [
+                -0.18475565271544936,
+                0.9555626607594572,
+                0.2297070964336867
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "reveal",
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section-zz-ivb",
+                "component": "system_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 3,
+            "visibleMarkers": 3,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+              }
+            ]
+          }
+        },
+        {
+          "key": "baseline",
+          "manual": {
+            "taskId": "scene-1795498968346-z4470",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section-zz-ivb"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.5055735621,
+                5536077.111829829,
+                3127232.300546514
+              ],
+              [
+                -0.3454637812722637,
+                0.15566912429028798,
+                -0.9254306562740207
+              ],
+              [
+                -0.1847556527154493,
+                0.9555626607594572,
+                0.22970709643368667
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section-zz-ivb",
+                "component": "system_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+              }
+            ]
+          },
+          "assembly": {
+            "taskId": "scene-1795498985214-gy21n",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section-zz-ivb"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.5059893237,
+                5536077.111418607,
+                3127232.3006325453
+              ],
+              [
+                -0.3454637812722639,
+                0.15566912429028812,
+                -0.9254306562740204
+              ],
+              [
+                -0.1847556527154492,
+                0.9555626607594572,
+                0.2297070964336867
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "baseline",
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section-zz-ivb",
+                "component": "system_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+              }
+            ]
+          },
+          "enhanced": {
+            "taskId": "scene-1795498998017-jarlx",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section-zz-ivb"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475177.46390722226,
+                5536132.602753125,
+                3127007.079670251
+              ],
+              [
+                -0.19337803739591664,
+                0.18984909319796153,
+                -0.9625810389077978
+              ],
+              [
+                -0.13770660064688994,
+                0.9661361989202693,
+                0.21821488783804832
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "baseline",
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section-zz-ivb",
+                "component": "system_anchor",
+                "visible": false
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 4,
+            "visibleMarkers": 4,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+              }
+            ]
+          }
+        },
+        {
+          "key": "candidate",
+          "manual": {
+            "taskId": "scene-1795498972459-6td0c",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.5209564711,
+                5536076.929445952,
+                3127232.11400868
+              ],
+              [
+                -0.34546378129313793,
+                0.15566912409313027,
+                -0.9254306562993926
+              ],
+              [
+                -0.18475565291304322,
+                0.9555626607532233,
+                0.22970709630069228
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section",
+                "component": "system_anchor",
+                "visible": true
+              },
+              {
+                "resourceId": "support.test-section",
+                "component": "lock_foot_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [
+              "scene-1",
+              "scene-2",
+              "scene-3",
+              "scene-4",
+              "scene-5"
+            ],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04"
+              }
+            ]
+          },
+          "assembly": {
+            "taskId": "scene-1795498987563-w57k5",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475086.52137213387,
+                5536076.929034826,
+                3127232.114094691
+              ],
+              [
+                -0.34546378129313804,
+                0.15566912409313038,
+                -0.9254306562993926
+              ],
+              [
+                -0.1847556529130432,
+                0.9555626607532233,
+                0.22970709630069217
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "candidate",
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section",
+                "component": "system_anchor",
+                "visible": true
+              },
+              {
+                "resourceId": "support.test-section",
+                "component": "lock_foot_anchor",
+                "visible": true
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04"
+              }
+            ]
+          },
+          "enhanced": {
+            "taskId": "scene-1795499000918-ijuqg",
+            "status": "completed",
+            "resources": [
+              "blast.design-data",
+              "rock.three-bench",
+              "rock.tsp-integrity",
+              "support.test-section"
+            ],
+            "matrices": [
+              [
+                -0.04214446023312385,
+                0.4911288563875297,
+                -0.8700668312808713,
+                0,
+                -0.07438828223370382,
+                0.866881003576301,
+                0.4929337776059418,
+                0,
+                0.9963384103496048,
+                0.08549720499538294,
+                -1.6301015716329842e-16,
+                0,
+                -475193.07950184203,
+                5536147.263124687,
+                3126922.556426498,
+                1
+              ],
+              [
+                -0.14409683040392884,
+                -0.49845961221254925,
+                0.8548532730594511,
+                0,
+                -0.06944177527284173,
+                0.8668328315440487,
+                0.49373948799370243,
+                0,
+                -0.9871240769601852,
+                0.01178376638610358,
+                -0.15952178388941188,
+                0,
+                -475187.63627055916,
+                5536147.021069524,
+                3126923.340197923,
+                1
+              ],
+              [
+                -0.14450388291029134,
+                -0.49845650097221117,
+                0.8547863735825395,
+                0,
+                -0.06944207630625927,
+                0.8668318009949006,
+                0.49374125493239146,
+                0,
+                -0.987064549997681,
+                0.011989387910861266,
+                -0.1598744154497474,
+                0,
+                -475188.6233642796,
+                5536147.032948524,
+                3126923.1804955006,
+                1
+              ],
+              [
+                -0.14491081517877022,
+                -0.4984533056670839,
+                0.8547193444129956,
+                0,
+                -0.06944237895140626,
+                0.866830770705961,
+                0.4937430211789114,
+                0,
+                -0.9870048691114921,
+                0.012194959076040096,
+                -0.16022693694675727,
+                0,
+                -475189.61039839505,
+                5536147.045033124,
+                3126923.0204405035,
+                1
+              ],
+              [
+                -0.1453176269881124,
+                -0.49845002635888075,
+                0.8546521856927384,
+                0,
+                -0.06944268320676358,
+                0.8668297406783467,
+                0.4937447867315211,
+                0,
+                -0.9869450344551052,
+                0.012400479762547365,
+                -0.16057934819294087,
+                0,
+                -475190.5973727737,
+                5536147.0573235275,
+                3126922.860033187,
+                1
+              ],
+              [
+                -0.14572431811681175,
+                -0.498446663109459,
+                0.8545848975639786,
+                0,
+                -0.06944298907080844,
+                0.8668287109131746,
+                0.4937465515884802,
+                0,
+                -0.9868850461823312,
+                0.012605949851145173,
+                -0.16093164900058843,
+                0,
+                -475191.58428727475,
+                5536147.069819845,
+                3126922.6992737525,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -475177.46390722226,
+                5536132.602753125,
+                3127007.079670251
+              ],
+              [
+                -0.19337803739591664,
+                0.18984909319796153,
+                -0.9625810389077978
+              ],
+              [
+                -0.13770660064688994,
+                0.9661361989202693,
+                0.21821488783804832
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "candidate",
+            "workfaceShader": false,
+            "blastCloud": null,
+            "range": {
+              "start": 2244,
+              "end": 2244
+            },
+            "fanStation": null,
+            "paths": [
+              "/data/blast/blast-design.json",
+              "/data/tsp_actual/integrity.json",
+              "/data/tsp_actual/integrity_volume.png",
+              "/data/tunnel/三台阶.glb",
+              "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+            ],
+            "cut": {
+              "xmax": 0.5,
+              "ymin": 0.2
+            },
+            "anchors": [
+              {
+                "resourceId": "support.test-section",
+                "component": "system_anchor",
+                "visible": false
+              },
+              {
+                "resourceId": "support.test-section",
+                "component": "lock_foot_anchor",
+                "visible": false
+              }
+            ],
+            "blastHoles": null,
+            "coVisible": false,
+            "markers": 4,
+            "visibleMarkers": 4,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast-design.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+              },
+              {
+                "sourceId": "asset:/data/tsp_actual/integrity.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/三台阶.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel002.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+              },
+              {
+                "sourceId": "asset:/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "d2d10aa322df1c69766e82353ad9d6b9e47a567cfb16983c31cf4ab23275cb04"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "handoff",
+      "stages": [
+        {
+          "key": "blast",
+          "manual": {
+            "taskId": "scene-1795499010220-hsqyb",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476708.5476965565,
+                5536445.1323900595,
+                3126203.574709436
+              ],
+              [
+                -0.9271336921635577,
+                -0.3719696272012006,
+                -0.04540609314804989
+              ],
+              [
+                -0.3435085633423697,
+                0.7952018855899725,
+                0.4996557095286849
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": true,
+            "coVisible": true,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [
+              "scene-1",
+              "scene-2",
+              "scene-3",
+              "scene-4",
+              "scene-5"
+            ],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          },
+          "assembly": {
+            "taskId": "scene-1795499024447-kwm8v",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476708.5477037839,
+                5536445.132395065,
+                3126203.5748160044
+              ],
+              [
+                -0.9271336921635577,
+                -0.37196962720120075,
+                -0.04540609314804987
+              ],
+              [
+                -0.34350856334236957,
+                0.7952018855899727,
+                0.4996557095286845
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "blast",
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": true,
+            "coVisible": true,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          },
+          "enhanced": {
+            "taskId": "scene-1795499033741-ca0ba",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476697.1523726618,
+                5536454.157157829,
+                3126194.762692225
+              ],
+              [
+                -0.9271336921635577,
+                -0.371969627201201,
+                -0.04540609314804997
+              ],
+              [
+                -0.3435085633423686,
+                0.7952018855899738,
+                0.49965570952868343
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "blast",
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": false,
+            "coVisible": false,
+            "markers": 1,
+            "visibleMarkers": 1,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          }
+        },
+        {
+          "key": "ventilation",
+          "manual": {
+            "taskId": "scene-1795499010220-hsqyb",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476708.5476965565,
+                5536445.1323900595,
+                3126203.574709436
+              ],
+              [
+                -0.9271336921635577,
+                -0.3719696272012006,
+                -0.04540609314804989
+              ],
+              [
+                -0.3435085633423697,
+                0.7952018855899725,
+                0.4996557095286849
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": true,
+            "coVisible": true,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          },
+          "assembly": {
+            "taskId": "scene-1795499024447-kwm8v",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476708.5477037839,
+                5536445.132395065,
+                3126203.5748160044
+              ],
+              [
+                -0.9271336921635577,
+                -0.37196962720120075,
+                -0.04540609314804987
+              ],
+              [
+                -0.34350856334236957,
+                0.7952018855899727,
+                0.4996557095286845
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "ventilation",
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": true,
+            "coVisible": true,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          },
+          "restored": {
+            "taskId": "scene-1795499024447-kwm8v",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476708.5477037839,
+                5536445.132395065,
+                3126203.5748160044
+              ],
+              [
+                -0.9271336921635577,
+                -0.37196962720120075,
+                -0.04540609314805001
+              ],
+              [
+                -0.3435085633423693,
+                0.795201885589973,
+                0.4996557095286845
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "ventilation",
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": true,
+            "coVisible": true,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            }
+          },
+          "enhanced": {
+            "taskId": "scene-1795499033741-ca0ba",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476717.8093669269,
+                5536433.155697577,
+                3126207.552083162
+              ],
+              [
+                -0.3281341639699519,
+                0.7836698560083932,
+                -0.527436751866539
+              ],
+              [
+                0.07926668081321105,
+                0.5792256975109784,
+                0.8113041258712895
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "ventilation",
+            "workfaceShader": false,
+            "blastCloud": false,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": false,
+            "coVisible": true,
+            "markers": 1,
+            "visibleMarkers": 1,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          }
+        },
+        {
+          "key": "handoff",
+          "manual": {
+            "taskId": "scene-1795499010220-hsqyb",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476708.5476965565,
+                5536445.1323900595,
+                3126203.574709436
+              ],
+              [
+                -0.9271336921635577,
+                -0.3719696272012006,
+                -0.04540609314804989
+              ],
+              [
+                -0.3435085633423697,
+                0.7952018855899725,
+                0.4996557095286849
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": null,
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": true,
+            "coVisible": true,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "manualTrace": [],
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          },
+          "assembly": {
+            "taskId": "scene-1795499024447-kwm8v",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476708.5477037839,
+                5536445.132395065,
+                3126203.5748160044
+              ],
+              [
+                -0.9271336921635577,
+                -0.37196962720120075,
+                -0.04540609314805001
+              ],
+              [
+                -0.3435085633423693,
+                0.795201885589973,
+                0.4996557095286845
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "handoff",
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": true,
+            "coVisible": true,
+            "markers": 0,
+            "visibleMarkers": 0,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          },
+          "enhanced": {
+            "taskId": "scene-1795499033741-ca0ba",
+            "status": "completed",
+            "resources": [
+              "blast.effect",
+              "rock.design-grade",
+              "ventilation.ceiling-jet-fan",
+              "ventilation.co-analysis"
+            ],
+            "matrices": [
+              [
+                0.7428626022897471,
+                0.37802838906023173,
+                -0.552494064387873,
+                0,
+                -0.665272579936972,
+                0.32488534622356574,
+                -0.6722067436385917,
+                0,
+                -0.0746160070180018,
+                0.8669164024712648,
+                0.4928370954209612,
+                0,
+                -476519.5816764833,
+                5536378.299953326,
+                3126331.1548570856,
+                1
+              ],
+              [
+                -0.590998824145423,
+                -0.4365138528995239,
+                0.6783627687937627,
+                0,
+                -0.07464743360651142,
+                0.8669253818835305,
+                0.49281654081621096,
+                0,
+                -0.8032111493964017,
+                0.2406159563971339,
+                -0.5449365201676281,
+                0,
+                -476720.53419650515,
+                5536441.257157644,
+                3126202.793002462,
+                1
+              ]
+            ],
+            "pose": [
+              [
+                -476719.23313759075,
+                5536427.428446687,
+                3126261.6766425595
+              ],
+              [
+                -0.0598984754544081,
+                0.20884434855009898,
+                -0.9761128063481815
+              ],
+              [
+                -0.09666688134229214,
+                0.9720588979992809,
+                0.2139088891841078
+              ]
+            ],
+            "terrainTransitions": [
+              "EllipsoidTerrainProvider",
+              "CesiumTerrainProvider"
+            ],
+            "step": "handoff",
+            "workfaceShader": false,
+            "blastCloud": true,
+            "range": {
+              "start": 4000,
+              "end": 4000
+            },
+            "fanStation": 3988,
+            "paths": [
+              "/data/blast/blast_effect.glb",
+              "/data/ventilation/ceiling-jet-fan.glb",
+              "/data/ventilation/co_transport_results.json"
+            ],
+            "anchors": [],
+            "blastHoles": false,
+            "coVisible": false,
+            "markers": 6,
+            "visibleMarkers": 6,
+            "environment": {
+              "terrain": "CesiumTerrainProvider",
+              "globe": true,
+              "translucency": [
+                true,
+                1,
+                1,
+                [
+                  400,
+                  0.9,
+                  800,
+                  0.9
+                ],
+                null
+              ],
+              "imagery": [
+                {
+                  "show": true,
+                  "alpha": 1,
+                  "brightness": 1,
+                  "saturation": 1
+                }
+              ]
+            },
+            "fingerprints": [
+              {
+                "sourceId": "asset:/data/blast/blast_effect.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+              },
+              {
+                "sourceId": "asset:/data/tunnel/tunnel005.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+              },
+              {
+                "sourceId": "asset:/data/ventilation/co_transport_results.json",
+                "algorithm": "sha256-bytes-v1",
+                "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "pageErrors": [],
+  "modelRequests": 0
+}

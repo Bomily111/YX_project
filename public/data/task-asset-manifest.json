@@ -82,6 +82,16 @@
       "digest": "540c4255a2f91274de5ecec37ae8927b5bb7c0909c48a4ee8399b2ac7eebf94e"
     },
     {
+      "path": "/data/geophysical_tem/resistivity.json",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "49fa86d40de49428a8024533173ccb82c9472f2348b6b7a8ae603d73651c16a5"
+    },
+    {
+      "path": "/data/geophysical_tem/resistivity_volume.png",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "540c4255a2f91274de5ecec37ae8927b5bb7c0909c48a4ee8399b2ac7eebf94e"
+    },
+    {
       "path": "/data/geophysical_tem/water.json",
       "algorithm": "sha256-bytes-v1",
       "digest": "59aa0732b8bf661ca4cf9cfa10c5768535ae05e156895be9b94f1d4c9b869f0d"
@@ -277,26 +287,6 @@
       "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
     },
     {
-      "path": "/data/tunnel/三台阶-上台阶先行.glb",
-      "algorithm": "sha256-bytes-v1",
-      "digest": "8cfcab41372cca7a378445fabb89ac5a2ea30d3859c042341070fc8f928a0c24"
-    },
-    {
-      "path": "/data/tunnel/三台阶-上台阶先行.metadata.json",
-      "algorithm": "sha256-bytes-v1",
-      "digest": "baf54b6648342bb8696382d2b6fda6033659f41b84105f08646ae2e50e777d54"
-    },
-    {
-      "path": "/data/tunnel/三台阶-下台阶跟进.glb",
-      "algorithm": "sha256-bytes-v1",
-      "digest": "611791bb63581a5b63691418e3f1ac4b536d5572d2e5bb2acf030535c37788d8"
-    },
-    {
-      "path": "/data/tunnel/三台阶-下台阶跟进.metadata.json",
-      "algorithm": "sha256-bytes-v1",
-      "digest": "7885d32d778807973e3980c4e77b92ee0df98f4b7523fb4e4f9d86f321ba4fc2"
-    },
-    {
       "path": "/data/blast/blast-design.json",
       "algorithm": "sha256-bytes-v1",
       "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
@@ -320,6 +310,36 @@
       "path": "/data/GPR_new/output/radargram_line2.json",
       "algorithm": "sha256-bytes-v1",
       "digest": "f5e8bb7885bece74c903cbc50913129e07d1dd8723ac8e396fdfe2d0d46018b5"
+    },
+    {
+      "path": "/data/gpr/gpr1/1665832_1.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "21af163f64b7ae15e31c3527143991e39e200ccb8b20ac57e1f3f6bf82607775"
+    },
+    {
+      "path": "/data/tem_output/latest/anomaly_k570_4x.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "d179e2d2fb2ab804faa3ff5ef4c9d416e65f9b4f98de365783308b18cfc00c5d"
+    },
+    {
+      "path": "/data/workface-surface/texturedMesh.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "7ef7dda545cfd62cb601131c1a11ea919563649eb6ef51c4e1f37ef33e2cda60"
+    },
+    {
+      "path": "/data/workface-surface/texturedMesh.jpg",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "8902d1db0398b34214582867a212120d7f308bf5559be56a2564a624185f9370"
+    },
+    {
+      "path": "/data/workface-surface/workface-backing-3m.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "05e1d33eeb509f106831afb19a6943ff99a83b8f71a6e3c44a2058127eb336ed"
+    },
+    {
+      "path": "/data/tem_output/1cf406b2-7f32-4b4d-a876-de7677149f3e/anomaly_k570_4x.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "8d1cddd5924a1bf4610eaafa5622919d29b1e1c30fe33cc94ff3a99cddc7e4d0"
     },
     {
       "path": "/data/face_sketch/X1DK2_880_6.jpg",
@@ -375,6 +395,21 @@
       "path": "/data/ventilation/tunnel-assembled.glb",
       "algorithm": "sha256-bytes-v1",
       "digest": "ab251005eadc5327de71b9ac69f56b0cc5580043ad5ad6eda57489bef6a8556e"
+    },
+    {
+      "path": "/data/ventilation/axial-fan.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "f29ae78993d068e66291074a0fa73db0b8709a796f8eb5eb7b830cb2ebd6596e"
+    },
+    {
+      "path": "/data/ventilation/axial-fan-duct.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "c8597212c059ea59c53d7b59505fff30ff83c89ef0cc35b6afe532b923ad7a8e"
+    },
+    {
+      "path": "/data/ventilation/ceiling-jet-fan.glb",
+      "algorithm": "sha256-bytes-v1",
+      "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
     },
     {
       "path": "/data/ventilation/cfd_cell_data_lite.json",

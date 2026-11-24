@@ -1,0 +1,42 @@
+{
+  "cases": [
+    {
+      "id": "ceiling-jet-fan",
+      "taskId": "scene-1795167650501-a53ac",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel005.glb",
+        "/data/ventilation/ceiling-jet-fan.glb"
+      ],
+      "elapsedMs": 7412,
+      "jet": {
+        "ready": true,
+        "picked": true,
+        "chainage": 4000,
+        "hangers": true,
+        "silencers": true,
+        "groundEquipment": false,
+        "renderError": false
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  }
+}

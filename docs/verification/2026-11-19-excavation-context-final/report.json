@@ -1,0 +1,11 @@
+{
+  "online": false,
+  "passed": false,
+  "requests": [
+    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+  ],
+  "errors": [],
+  "modelRequests": 0,
+  "checks": [],
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 5\n"
+}

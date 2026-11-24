@@ -5,10 +5,22 @@ await mkdir(root, { recursive: true })
 const app = process.env.BROWSER_APP_URL || 'http://localhost:5178'
 const selectedCases = process.env.ACCEPTANCE_CASE_IDS?.split(',')
 const cases = [
+  {id:'workface-backing-preview',request:'请在 YK2+244 直接装配三维掌子面加厚示意模型，保留原岩面，在它背后加厚一段。',roots:['rock.workface-backing-preview']},
+  {id:'axial-fan-with-flow',request:'为 YK4+000 施工送风布置交底，请同屏装配轴流风机和已有稳态风场，风机出风端朝里程增大方向。请把风筒接口和风机近景显示清楚，既有风场仅作为方向参照。',roots:['ventilation.axial-fan','ventilation.steady-cfd'],fan:{chainage:4000,sign:1}},
+  {id:'axial-fan-reversed',request:'为 YK2+244 施工送风布置交底，请仅装配一台轴流风机，出风端朝里程减小方向。请标出风筒接口，便于班组确认设备朝向。',roots:['ventilation.axial-fan'],fan:{chainage:2244,sign:-1}},
+  {id:'axial-fan-with-duct',request:'为 YK4+000 的施工送风接装交底，请装配一台轴流风机，在它的出风法兰接上已有4米柔性风筒实体。两者沿中线布置，出风端朝里程增大方向，让班组看清法兰和接缝。',roots:['ventilation.axial-fan','ventilation.axial-fan-duct'],fan:{chainage:4000,sign:1}},
+  {id:'ceiling-jet-fan',request:'为 YK4+000 的洞内纵向通风交底，请装配一台洞顶吊装射流风机，沿隧道轴线布置，出风朝里程增大方向，从下方近景看清吊架和机筒。',roots:['ventilation.ceiling-jet-fan']},
+  {id:'three-module-post-blast',request:'为 YK4+000 爆后通风复核准备同屏场景。请装配该工段设计围岩分级、已有爆后点云、稳态风场与一台洞顶射流风机，风机在开挖基准后方12米，出风朝里程增大方向。重点看爆后轮廓，只看爆后点云，保留局部风向与地质分级参照，供班组确定核查对象。',roots:['rock.design-grade','blast.effect','ventilation.steady-cfd','ventilation.ceiling-jet-fan'],jetStation:3988},
+  {id:'three-module-support',request:'为 YK2+244 初支与通风设备交底装配前方三台阶、后方10米原版ZZ-Va初期支护和一台洞顶吊装射流风机。风机布置在开挖基准后方14米，出风朝里程增大方向。用隧道侧剖同屏看清台阶、支护边界和风机位置，请保留原版构件。',unitCount:10,roots:['rock.three-bench','support.test-section','ventilation.ceiling-jet-fan'],jetStation:2230},
+  {id:'tunnel-side-section',request:'为 YK2+244 的班前施工交底装配前方三台阶与后方5米ZZ-Va初期支护，采用隧道侧面剖切展示，让班组能同时看清台阶和后方初支的空间关系。',unitCount:5,roots:['rock.three-bench','support.test-section']},
+  {id:'native-workface-surface',request:'YK2+244 班前地质交底，请直接装配历史带纹理的三维掌子面和邻近岩壁网格，作为示意观察。不要平面照片。',roots:['rock.workface-surface']},
+  {id:'native-gpr',request:'请直接执行 YK2+244 围岩交底，仅装配已有三维地质雷达原模型，保留原始几何和材质。不要二维测线。',roots:['rock.gpr-model']},
+  {id:'native-tem',request:'请在 YK2+244 装配已有 TEM 异常体的当前版本三维 GLB，仅展示原实体模型。',roots:['rock.tem-anomaly-model']},
+  {id:'native-tem-archive',request:'请在 YK2+244 装配已有 TEM 异常体的历史版本三维 GLB，仅展示历史原实体。',roots:['rock.tem-anomaly-model-archive']},
+  {id:'native-tem-absolute',request:'请在 YK2+244 装配 TEM 原始绝对电阻率体素，使用源体素文件。',roots:['rock.tem-resistivity-absolute']},
+  {id:'face-original-source',request:'为 YK2+244 班前地质交底，请装配来源 X1DK2+905.0 的已有掌子面照片，明确标出照片来源。',roots:['rock.face-photo-2905-0']},
+  ...[['885.4','2885-4'],['892.6','2892-6'],['900.0','2900-0']].map(([source,key])=>({id:`face-source-${key}`,request:`在 YK2+244 装配来源 X1DK2+${source} 的原有掌子面照片，保留来源。`,roots:[`rock.face-photo-${key}`]})),
 
- {id:'bench-upper-first',request:'在论文测试工段YK2+244只展示三台阶上台阶先行阶段示意模型，不加支护和其他资料。',roots:['rock.three-bench-upper-first']},
- {id:'bench-lower-follow',request:'在论文测试工段YK2+244展示三台阶下台阶跟进阶段示意模型，并同屏保留后方5米ZZ-Va支护。',unitCount:5,roots:['rock.three-bench-lower-follow','support.test-section']},
- {id:'bench-phase-support-update',request:'长度改为8米',followup:true,unitCount:8,roots:['rock.three-bench-lower-follow','support.test-section']},
 
   { id:'followup-base',request:'在论文测试工段展示三台阶和后方5米ZZ-Va支护，不用其他资料。',unitCount:5,roots:['rock.three-bench','support.test-section'] },
   {id:'location-inspection',request:'只读读取当前任务核查摘要，按观察事实、证据缺口和下一步核查回答，并引用实际事实ID。说明二维和三维访问过哪些站位，不要重新装配。',reject:true},
@@ -64,6 +76,10 @@ try {
   page = await browser.newPage({ viewport: { width: 1400, height: 900 } })
   page.on('pageerror', error => report.errors.push(error.message))
   const taskIds = []
+  const workfaceTextures=[]
+  page.on('response',response=>{
+    if(new URL(response.url()).pathname==='/data/workface-surface/texturedMesh.jpg')workfaceTextures.push(response.status())
+  })
   page.on('request', request => { if (request.method() === 'POST' && request.url().endsWith('/api/ai-agent/task-runs')) taskIds.push(request.postDataJSON().task.taskId) })
   await page.route(`${app}/api/**`, route => { const url = new URL(route.request().url()); url.port = '3000'; return route.continue({ url: url.toString() }) })
   await page.goto(app, { waitUntil: 'domcontentloaded' }); await page.locator('.agent-fab').click()
@@ -154,22 +170,9 @@ try {
         solids: getActiveThreeBenchModel() ? 1 : 0,
         faces: getActiveFaceSlices().length, drills: getActiveDrillModels().filter(model => model.ready && model.show).length }
     }, lastRoots)
-    if (runtime.leaked.length || runtime.faces !== (lastRoots.includes('rock.face-photos') ? 1 : 0) || runtime.drills !== (lastRoots.includes('rock.advance-drill') ? 2 : 0)) throw new Error(`Runtime mismatch ${entry.id}: ${JSON.stringify(runtime)}`)
-    if (runtime.solids !== (lastRoots.some(id=>id==='rock.three-bench'||id.startsWith('rock.three-bench-')) ? 1 : 0)) throw new Error('三台阶任务模型未正确加载或释放')
+    if (runtime.leaked.length || runtime.faces !== (lastRoots.some(id=>id.startsWith('rock.face-photo')) ? 1 : 0) || runtime.drills !== (lastRoots.includes('rock.advance-drill') ? 2 : 0)) throw new Error(`Runtime mismatch ${entry.id}: ${JSON.stringify(runtime)}`)
+    if (runtime.solids !== (lastRoots.includes('rock.three-bench') ? 1 : 0)) throw new Error('三台阶任务模型未正确加载或释放')
     if (runtime.testSupports !== (lastRoots.some(id => id === 'support.test-section' || id.startsWith('support.test-section-')) ? 1 : 0)) throw new Error('测试支护模型未正确加载或释放')
-    if (lastRoots.some(id => id.startsWith('rock.three-bench-'))) {
-      const phase = await page.evaluate(async roots => {
-        const {resourceRegistry} = await import('/src/platform/resources/ResourceRegistry.ts')
-        const {viewerService} = await import('/src/platform/viewer/ViewerService.ts')
-        const {inspectTaskSphereViewport} = await import('/src/platform/tasks/TaskViewport.ts')
-        const {getActiveThreeBenchModel} = await import('/src/modules/rock/three-bench-resource.ts')
-        const model = getActiveThreeBenchModel()
-        return {ready:model?.ready, framing:inspectTaskSphereViewport(viewerService.require(),model.boundingSphere), metadata:resourceRegistry.require(roots.find(id=>id.startsWith('rock.three-bench-'))).getEnhanceTargets()[0].metadata}
-      }, lastRoots)
-      const expected = lastRoots.includes('rock.three-bench-upper-first') ? [12,0,0] : [12,6,4]
-      if (!phase.ready || phase.framing.insideSafe !== 26 || JSON.stringify([phase.metadata.upperFront,phase.metadata.middleFront,phase.metadata.lowerFront]) !== JSON.stringify(expected)) throw Error(`Phase geometry or framing failed: ${JSON.stringify(phase)}`)
-      report.cases.at(-1).phaseEvidence=phase
-    }
     const currentEnvironment=await environment()
     if(process.env.VERIFY_FLOW_FRAMING==='1'&&lastRoots.some(id=>id==='ventilation.steady-cfd'||/^ventilation\.thermal-t\d+s$/.test(id))){
       const framing=await page.evaluate(async()=>{
@@ -201,7 +204,7 @@ try {
       else if(!terrain.active||terrain.front!==.08||terrain.back!==.08||terrain.frontDistance||terrain.backDistance)throw Error(`任务地形淡化未生效 ${JSON.stringify(terrain)}`)
       if(report.cases.length)report.cases.at(-1).terrainContext=terrain
     }
-    if(process.env.VERIFY_FACE_CARRIER==='1'&&lastRoots.includes('rock.face-photos')){
+    if(process.env.VERIFY_FACE_CARRIER==='1'&&lastRoots.some(id=>id.startsWith('rock.face-photo'))){
       const carrier=await page.evaluate(async()=>{
         const {getActiveFaceSlices,getActiveFaceCarrier}=await import('/src/modules/face-sketch/resources.ts')
         const {default:profile}=await import('/src/modules/face-sketch/tunnel-normal-sections.json')
@@ -216,9 +219,254 @@ try {
         report.cases.at(-1).gprPanel=panel
       }
     }
-    if(JSON.stringify(currentEnvironment)!==JSON.stringify(originalEnvironment)||!currentEnvironment.sameCanvas||currentEnvironment.canvasCount!==1)throw new Error(`任务改用了额外场景或背景: ${JSON.stringify(currentEnvironment)}`)
+    // The existing excavation handover owns its local background color.
+    const expectedEnvironment = entry.id==='tunnel-side-section'||entry.id==='three-module-support' ? {...originalEnvironment,background:currentEnvironment.background} : originalEnvironment
+    if(JSON.stringify(currentEnvironment)!==JSON.stringify(expectedEnvironment)||!currentEnvironment.sameCanvas||currentEnvironment.canvasCount!==1)throw new Error(`任务改用了额外场景或背景: ${JSON.stringify(currentEnvironment)}`)
     report.unifiedEnvironment=currentEnvironment
-    if (!entry.reject && !entry.reset && runtime.activePaths.some(path => !report.cases.at(-1).assets.includes(path))) throw new Error(`Snapshot omitted active asset: ${entry.id}`)
+    if(entry.jetStation){
+      const detail=await page.evaluate(async(withFlow)=>{
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {getActiveJetFan,getJetFanPlacement}=await import('/src/modules/ventilation/axial-fan-resource.ts')
+        const {inspectTaskFlowReview}=await import('/src/platform/tasks/TaskFlowReview.ts')
+        const {blastLayerVisibility}=await import('/src/views/tunnel-module/blast.ts')
+        const viewer=viewerService.require(), fan=getActiveJetFan()
+        const texts=viewer.entities.values.map(entity=>entity.label?.text?.getValue()).filter(Boolean)
+        return {fanReady:fan?.ready,fanStation:getJetFanPlacement()?.chainage,labels:texts.filter(x=>/设计围岩|后方.*射流风机|前方.*三台阶|后方初支/.test(x)),
+          holes:blastLayerVisibility.holes,flow:withFlow?inspectTaskFlowReview():undefined}
+      },entry.id==='three-module-post-blast')
+      if(!detail.fanReady||detail.fanStation!==entry.jetStation)throw Error('风机相对位置错误 '+JSON.stringify(detail))
+      if(entry.id==='three-module-post-blast'&&(!detail.labels.some(t=>t.startsWith('设计围岩'))||detail.holes||detail.flow?.mode!=='focus'))throw Error('爆后复核参照或重点表达错误 '+JSON.stringify(detail))
+      if(entry.id==='three-module-support'&&detail.labels.length<3)throw Error('初支交底缺少三处对象标记 '+JSON.stringify(detail))
+      report.cases.at(-1).linkedScene=detail
+    }
+    if(entry.id==='ceiling-jet-fan'){
+      const jet=await page.evaluate(async()=>{
+        const C=window.Cesium
+        const {getActiveJetFan,getActiveAxialFan,getActiveAxialFanDuct,getJetFanPlacement}=await import('/src/modules/ventilation/axial-fan-resource.ts')
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const model=getActiveJetFan(),place=getJetFanPlacement(),viewer=viewerService.require()
+        const picked=[[0,-.91,-1.3],[0,-1.3,0],[.25,-1.15,.7]].some(([x,y,z])=>{
+          const target=C.Matrix4.multiplyByPoint(model.modelMatrix,new C.Cartesian3(x,y,z),new C.Cartesian3())
+          const pixel=C.SceneTransforms.worldToWindowCoordinates(viewer.scene,target)
+          return pixel&&viewer.scene.pick(pixel,9,9)?.primitive===model
+        })
+        const crownCorrectionM=C.Cartesian3.distance(C.Matrix4.getTranslation(model.modelMatrix,new C.Cartesian3()),C.Matrix4.getTranslation(place.matrix,new C.Cartesian3()))
+        return {ready:model.ready,picked,chainage:place.chainage,crownCorrectionM,hangers:!!model.getNode('Ceiling suspension and isolators'),
+          silencers:!!model.getNode('Inlet and outlet silencers'),groundEquipment:!!(getActiveAxialFan()||getActiveAxialFanDuct()),
+          renderError:!!document.querySelector('.cesium-widget-errorPanel')}
+      })
+      if(!jet.ready||!jet.picked||jet.chainage!==4000||!jet.hangers||!jet.silencers||jet.groundEquipment||jet.renderError)throw Error('洞顶射流风机装配校验失败 '+JSON.stringify(jet))
+      report.cases.at(-1).jet=jet
+    }
+    if(entry.fan) {
+      const fan = await page.evaluate(async({chainage,sign})=>{
+        const C=window.Cesium
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {chainageService}=await import('/src/platform/coordinates/ChainageService.ts')
+        const {getActiveAxialFan}=await import('/src/modules/ventilation/axial-fan-resource.ts')
+        const {getFlowBoundingSphere}=await import('/src/views/ventilation-module/cesiumVentilation.ts')
+        const viewer=viewerService.require(), model=getActiveAxialFan()
+        const {heading,longitude,latitude,height}=chainageService.positionWithHeadingAt(chainage)
+        const enu=C.Transforms.eastNorthUpToFixedFrame(C.Cartesian3.fromDegrees(longitude,latitude,height+.15))
+        const inverse=C.Matrix4.inverseTransformation(enu,new C.Matrix4())
+        const local=C.Matrix4.multiply(inverse,model.modelMatrix,new C.Matrix4())
+        const bladeCount=Array.from({length:8},(_,i)=>model.getNode('Impeller blade '+(i+1))).filter(Boolean).length
+        const axis=C.Matrix4.multiplyByPointAsVector(local,C.Cartesian3.UNIT_Z,new C.Cartesian3())
+        const outlet=C.Matrix4.multiplyByPoint(model.modelMatrix,new C.Cartesian3(0,.91,1.08),new C.Cartesian3())
+        const marker=viewer.entities.values.filter(entity=>entity.label?.text.getValue()==='出风端 · 风筒接口')
+        const directionDot=C.Cartesian3.dot(axis,new C.Cartesian3(sign*Math.sin(heading),sign*Math.cos(heading),0))
+        const markerDistance=marker.length===1?C.Cartesian3.distance(outlet,marker[0].polyline.positions.getValue()[0]):Infinity
+        const picked=[[-.25,.94,-1.08],[0,.91,-1.06],[.25,.94,-1.08],[-.47,1.25,.3],[.47,1.25,.3],[0,1.53,.3]].some(([x,y,z])=>{
+          const point=C.Matrix4.multiplyByPoint(model.modelMatrix,new C.Cartesian3(x,y,z),new C.Cartesian3())
+          const pixel=C.SceneTransforms.worldToWindowCoordinates(viewer.scene,point)
+          return pixel&&viewer.scene.pick(pixel,7,7)?.primitive===model
+        })
+        return {bladeCount,ready:model.ready,directionDot,markerDistance,markers:marker.length,atTaskStation:Math.abs(Math.hypot(local[12],local[13])-2.1)<.001,
+          picked,flowLoaded:!!getFlowBoundingSphere(),renderError:!!document.querySelector('.cesium-widget-errorPanel')}
+      },entry.fan)
+      if(!fan.ready||fan.bladeCount!==8||fan.directionDot<.999||fan.markerDistance>.001||fan.markers!==1||!fan.atTaskStation||!fan.picked||
+        fan.flowLoaded!==lastRoots.includes('ventilation.steady-cfd')||fan.renderError)throw Error('轴流风机装配或风筒接口校验失败 '+JSON.stringify(fan))
+      report.cases.at(-1).fan=fan
+    }
+    if(entry.id==='axial-fan-with-duct'){
+      const connected=await page.evaluate(async()=>{
+        const C=window.Cesium
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {getActiveAxialFan,getActiveAxialFanDuct}=await import('/src/modules/ventilation/axial-fan-resource.ts')
+        const fan=getActiveAxialFan(),duct=getActiveAxialFanDuct(),viewer=viewerService.require()
+        const joint=new C.Cartesian3(0,.91,1.08)
+        const point=C.Matrix4.multiplyByPoint(duct.modelMatrix,new C.Cartesian3(0,1.54,3.4),new C.Cartesian3())
+        const pixel=C.SceneTransforms.worldToWindowCoordinates(viewer.scene,point)
+        return {ready:duct.ready,inletAligned:C.Matrix4.equals(fan.modelMatrix,duct.modelMatrix),
+          jointGap:C.Cartesian3.distance(C.Matrix4.multiplyByPoint(fan.modelMatrix,joint,new C.Cartesian3()),C.Matrix4.multiplyByPoint(duct.modelMatrix,joint,new C.Cartesian3())),
+          picked:!!pixel&&viewer.scene.pick(pixel,11,11)?.primitive===duct}
+      })
+      if(!connected.ready||!connected.inletAligned||connected.jointGap>.001||!connected.picked)throw Error('风筒接口或画面校验失败 '+JSON.stringify(connected))
+      report.cases.at(-1).duct=connected
+    }
+    if(entry.id==='tunnel-side-section') {
+      const state=()=>page.evaluate(async()=>{
+        const C=window.Cesium
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {getFocusedTunnelSegment,getTunnelGlbSegment}=await import('/src/utils/Common/DrawLine.ts')
+        const {getActiveThreeBenchModel}=await import('/src/modules/rock/three-bench-resource.ts')
+        const {getTestSectionSupportModels}=await import('/src/modules/support/test-section-resource.ts')
+        const viewer=viewerService.require(), shell=getTunnelGlbSegment(getFocusedTunnelSegment())
+        const models=[getActiveThreeBenchModel(),...getTestSectionSupportModels()]
+        window.__sectionModels??=models
+        return {planes:shell.clippingPlanes.length,edgeWidth:shell.clippingPlanes.edgeWidth,opacity:shell.color.alpha,
+          camera:C.Cartesian3.pack(viewer.camera.positionWC,[]),sameModels:models.length===window.__sectionModels.length&&models.every((m,i)=>m===window.__sectionModels[i]),
+          stableModels:models.every(model=>model.ready&&model.show&&!model.clippingPlanes?.length),renderError:!!document.querySelector('.cesium-widget-errorPanel')}
+      })
+      const initial=await state()
+      if(initial.planes!==5||initial.edgeWidth!==1||!initial.stableModels||initial.renderError)throw Error(`初始隧道侧剖未生效 ${JSON.stringify(initial)}`)
+      await page.screenshot({path:`${root}/section.png`,timeout:30000})
+      const count=taskIds.length
+      const chat=async(request,reply)=>{
+        const target=page.getByText(reply,{exact:true})
+        const amount=await target.count()
+        await page.locator('.agent-input').fill(request)
+        await page.locator('.agent-input').press('Enter')
+        await wait(async()=>await target.count()>amount)
+        await page.locator('.agent-input').fill('idle');await wait(()=>page.locator('.send-btn').isEnabled());await page.locator('.agent-input').fill('')
+      }
+      await chat('关闭隧道侧剖','已关闭隧道侧剖，恢复剖切前视图。')
+      const baseline=await state()
+      if(baseline.planes!==2||baseline.edgeWidth!==0||!baseline.sameModels||baseline.renderError)throw Error('关闭侧剖后原洞壁状态未恢复')
+      await page.screenshot({path:`${root}/restored.png`,timeout:30000})
+      await chat('打开隧道侧剖','已开启隧道侧剖，保留对侧洞壁、三台阶和后方支护。')
+      const reopened=await state()
+      if(reopened.planes!==5||!reopened.sameModels||reopened.renderError)throw Error('当前任务的侧剖未重新开启')
+      await chat('关闭隧道侧剖','已关闭隧道侧剖，恢复剖切前视图。')
+      const restored=await state()
+      if(JSON.stringify(baseline)!==JSON.stringify(restored)||taskIds.length!==count)throw Error('侧剖往返改变了原任务或相机状态')
+      report.cases.at(-1).tunnelSection={initial,baseline,reopened,restored}
+    }
+    if (entry.id==='workface-backing-preview') {
+      const prepare=async()=>page.evaluate(async()=>{
+        const C=window.Cesium
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {nativeRockModels,WORKFACE_BACKING_ID}=await import('/src/modules/rock/native-model-resources.ts')
+        const {chainageService}=await import('/src/platform/coordinates/ChainageService.ts')
+        const {fitTaskCameraToViewport}=await import('/src/platform/tasks/TaskViewport.ts')
+        const v=viewerService.require(),[face,backing]=nativeRockModels([WORKFACE_BACKING_ID])
+        if(!face?.ready||!backing?.ready||!C.Matrix4.equals(face.modelMatrix,backing.modelMatrix))throw Error('岩面与加厚模型未使用同一装配矩阵')
+        const center=C.BoundingSphere.fromBoundingSpheres([face.boundingSphere,backing.boundingSphere])
+        const heading=chainageService.positionWithHeadingAt(2244).heading
+        v.camera.viewBoundingSphere(center,new C.HeadingPitchRange(heading+.74,-.31,Math.max(27,center.radius*3.2)))
+        v.camera.lookAtTransform(C.Matrix4.IDENTITY)
+        fitTaskCameraToViewport(v,center)
+        backing.show=false
+        v.scene.requestRender()
+        return {position:{x:v.camera.positionWC.x,y:v.camera.positionWC.y,z:v.camera.positionWC.z},ready:true}
+      })
+      const before=await prepare()
+      await page.screenshot({path:`${root}/before.png`,timeout:30000})
+      const after=await page.evaluate(async()=>{
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {nativeRockModels,WORKFACE_BACKING_ID}=await import('/src/modules/rock/native-model-resources.ts')
+        const viewer=viewerService.require(),[,backing]=nativeRockModels([WORKFACE_BACKING_ID])
+        backing.show=true
+        viewer.scene.requestRender()
+        const p=viewer.camera.positionWC
+        return {x:p.x,y:p.y,z:p.z}
+      })
+      if(JSON.stringify(before.position)!==JSON.stringify(after)) throw Error('加厚对照期间相机发生变化')
+      report.cases.at(-1).backingComparison={sameCamera:true,bothReady:before.ready,samePlacement:true}
+      await page.screenshot({path:`${root}/after.png`,timeout:30000})
+      const frontOutline=await page.evaluate(async()=>{
+        const C=window.Cesium
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {nativeRockModels,WORKFACE_BACKING_ID}=await import('/src/modules/rock/native-model-resources.ts')
+        const {chainageService}=await import('/src/platform/coordinates/ChainageService.ts')
+        const {fitTaskCameraToViewport}=await import('/src/platform/tasks/TaskViewport.ts')
+        const viewer=viewerService.require(),[face,backing]=nativeRockModels([WORKFACE_BACKING_ID])
+        const sphere=face.boundingSphere
+        const heading=chainageService.positionWithHeadingAt(2244).heading
+        viewer.camera.viewBoundingSphere(sphere,new C.HeadingPitchRange(heading,0,Math.max(28,sphere.radius*3.6)))
+        viewer.camera.lookAtTransform(C.Matrix4.IDENTITY)
+        fitTaskCameraToViewport(viewer,sphere)
+        backing.show=false
+        viewer.scene.requestRender()
+        return C.Cartesian3.pack(viewer.camera.positionWC,[])
+      })
+      await page.screenshot({path:`${root}/front-original.png`,timeout:30000})
+      const backedOutline=await page.evaluate(async()=>{
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {nativeRockModels,WORKFACE_BACKING_ID}=await import('/src/modules/rock/native-model-resources.ts')
+        const viewer=viewerService.require(),[,backing]=nativeRockModels([WORKFACE_BACKING_ID])
+        backing.show=true
+        viewer.scene.requestRender()
+        return window.Cesium.Cartesian3.pack(viewer.camera.positionWC,[])
+      })
+      if(JSON.stringify(frontOutline)!==JSON.stringify(backedOutline)) throw Error('岩面正视轮廓对照期间相机发生变化')
+      await page.screenshot({path:`${root}/front-with-backing.png`,timeout:30000})
+      report.cases.at(-1).backingComparison.sameFrontCamera=true
+      await page.evaluate(async()=>{
+        const {executeTool}=await import('/src/ai-agent/ToolRegistry.ts')
+        const front=JSON.parse(await executeTool('set_task_view',{view:'face'}))
+        if(!front.ok)throw Error('加厚后掌子面近景不可用')
+      })
+    }
+    if(entry.id==='native-workface-surface'){
+      await page.screenshot({path:`${root}/workface-overview.png`,timeout:30000})
+      const result = await page.evaluate(async()=>{
+        const {nativeRockModels,WORKFACE_SURFACE_ID}=await import('/src/modules/rock/native-model-resources.ts')
+        const {viewerService}=await import('/src/platform/viewer/ViewerService.ts')
+        const {executeTool}=await import('/src/ai-agent/ToolRegistry.ts')
+        const viewer=viewerService.require(),model=nativeRockModels([WORKFACE_SURFACE_ID])[0]
+        if(!model?.ready)throw Error('三维岩面未完成渲染准备')
+        const before=[...Array.from(model.modelMatrix)],position=viewer.camera.positionWC.clone()
+        const changed=JSON.parse(await executeTool('set_task_view',{view:'face'}))
+        return {ok:changed.ok,cameraChanged:!position.equals(viewer.camera.positionWC),matrixStable:before.every((v,i)=>v===model.modelMatrix[i])}
+      })
+      result.textureFetched=workfaceTextures.some(status=>status===200||status===304)
+      if(Object.values(result).some(value=>!value))throw Error(`岩面原纹理或取景校验失败：${JSON.stringify(result)}`)
+      report.cases.at(-1).view=result
+      await page.screenshot({path:`${root}/workface-detail.png`,timeout:30000})
+    }
+    if (process.env.VERIFY_AGENT_ONLY_PANELS==='1' && !entry.reject && !entry.reset) {
+      const controls=await page.locator('.agent-assembly-info button:visible,.agent-assembly-info input:visible,.gpr-float button:visible,.gpr-float input:visible,.gpr-float select:visible').count()
+      if(controls!==0)throw Error(`任务侧栏仍有 ${controls} 个手动控件`)
+      report.cases.at(-1).visibleManualControls=controls
+      if(entry.id==='workface-radar'){
+        const pixels=await page.locator('.gpr-float canvas').evaluate(async canvas=>{
+          const {getActiveGprSection}=await import('/src/modules/rock/gpr-resources.ts')
+          const {ds_shape:[scans,samples],data}=getActiveGprSection('rock.gpr-line1')
+          const dpr=window.devicePixelRatio,left=Math.round(39*dpr),width=Math.round((canvas.clientWidth-48)*dpr),height=Math.round((canvas.clientHeight-32)*dpr)
+          const context=canvas.getContext('2d');let matched=0,total=0
+          for(let x=7;x<width;x+=11)for(let y=9;y<height;y+=13){
+            const sample=data[Math.floor(x/width*scans)*samples+Math.floor(y/height*samples)]
+            const gray=Math.round((Math.max(-1,Math.min(1,sample))+.5*2)*127.5)
+            if(context.getImageData(left+x,y,1,1).data[0]===gray)matched++
+            total++
+          }
+          return {matched,total,dpr}
+        })
+        if(pixels.matched/pixels.total<.65)throw Error(`雷达剖面采样方向与源矩阵不一致: ${JSON.stringify(pixels)}`)
+        report.cases.at(-1).radarPixels=pixels
+      }
+      if(entry.id==='fan-shutdown'){
+        const chart=await page.evaluate(async()=>{
+          const {executeTool}=await import('/src/ai-agent/ToolRegistry.ts')
+          const {inspectVentilationCharts}=await import('/src/modules/ventilation/resources.ts')
+          const before=inspectVentilationCharts()[0]
+          if(!before)throw Error('未加载任务曲线')
+          const range=[before.timeRange[0],(before.timeRange[0]+before.timeRange[1])/2]
+          const name=before.series[0].name
+          const changed=JSON.parse(await executeTool('set_task_chart_review',{owner:before.owner,visibleSeries:[name],timeRange:range}))
+          if(!changed.ok)throw Error(JSON.stringify(changed))
+          const after=inspectVentilationCharts()[0]
+          return {range:after.visibleTimeRange,expected:range,visible:after.series.filter(s=>s.visible).map(s=>s.name),name}
+        })
+        if(chart.visible.length!==1||chart.visible[0]!==chart.name||Math.abs(chart.range[1]-chart.expected[1])>1e-6)throw Error(`智能体图表设置未生效: ${JSON.stringify(chart)}`)
+        report.cases.at(-1).chart=chart
+      }
+    }
+    if (!entry.reject && !entry.reset) {
+      const missing=runtime.activePaths.filter(path=>!report.cases.at(-1).assets.includes(path))
+      if(missing.length)throw new Error(`Snapshot omitted active asset: ${entry.id}: ${missing.join(', ')}`)
+    }
     if (entry.id.startsWith('three-bench-support') || entry.unitCount) {
       if (entry.unitCount && !(await page.locator('.agent-assembly-info').innerText()).includes(`${entry.unitCount}米`)) throw new Error('任务栏未显示实际支护长度')
       const support = await page.evaluate(async roots => {
@@ -231,8 +479,10 @@ try {
       }, entry.roots)
       if (support.summary.lengthM !== (entry.unitCount ?? 10) || !support.ready || !support.activePaths.includes(support.source) || !report.cases.at(-1).assets.includes(support.source)) throw new Error('未正确加载指定长度和类型的支护示例')
       const arch=support.summary.groups?.find(group=>group.component==='steel_arch')
-      if(support.type==='ZZ-Va'&&arch&&(arch.spacingM!==.8||arch.stations!==Math.ceil(support.summary.lengthM/.8)))throw new Error('ZZ-Va未沿用1064米示例0.8米钢架间距')
-      if(support.type==='ZZ-IVb'&&arch&&(arch.spacingM!==1||arch.stations!==support.summary.lengthM))throw new Error('ZZ-IVb未沿用示例1米钢架间距')
+      if(support.summary.layout==='1064m-component-example') {
+        if(support.type==='ZZ-Va'&&arch&&(arch.spacingM!==.8||arch.stations!==Math.ceil(support.summary.lengthM/.8)))throw new Error('ZZ-Va未沿用1064米示例0.8米钢架间距')
+        if(support.type==='ZZ-IVb'&&arch&&(arch.spacingM!==1||arch.stations!==support.summary.lengthM))throw new Error('ZZ-IVb未沿用示例1米钢架间距')
+      } else if(support.summary.unitOffsetsM?.length!==support.summary.lengthM) throw new Error('原版单元支护的实际布置数量错误')
       if (report.cases.at(-1).assets.some(path => path.includes('测试工段支护'))) throw new Error('仍使用已撤下的自建支护')
       report.cases.at(-1).existingSupport = support
       if(process.env.VERIFY_SOURCE_BASELINE==='1'&&support.summary.layout==='1064m-component-example'){

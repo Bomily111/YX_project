@@ -1,0 +1,35 @@
+{
+  "cases": [
+    {
+      "id": "native-workface-surface",
+      "taskId": "scene-1795147365263-89hxq",
+      "total": 2,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/workface-surface/texturedMesh.glb",
+        "/data/workface-surface/texturedMesh.jpg"
+      ],
+      "elapsedMs": 10965
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "unifiedEnvironment": {
+    "sameCanvas": true,
+    "canvasCount": 1,
+    "background": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "globe": true,
+    "skyBox": true,
+    "skyAtmosphere": true,
+    "sun": true,
+    "moon": true,
+    "fog": true
+  },
+  "failure": "岩面原纹理或取景校验失败：{\"ok\":true,\"cameraChanged\":true,\"matrixStable\":true,\"textureFetched\":false}"
+}

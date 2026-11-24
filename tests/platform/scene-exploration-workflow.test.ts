@@ -143,9 +143,12 @@ describe('智能体动态场景编排', () => {
     const { registry, executor } = setup()
     const base = { selector: new ResourceSelector(registry), executor, loadContext: { viewer: {} as never } }
     expect(() => createSceneExplorationExecutor(
-      task(), ['rock.design-grade', 'ventilation.steady-cfd'], registry,
+      task(), ['rock.design-grade', 'ventilation.transient-network'], registry,
       { ...base, assemblyModes: ['replace', 'retain'] },
     )).toThrow('不允许同屏装配')
+    const steady = createSceneExplorationExecutor(task(), ['rock.design-grade', 'ventilation.steady-cfd'], registry,
+      { ...base, assemblyModes: ['replace', 'retain'] })
+    expect(steady.scenePlans[1].rootResourceIds).toEqual(['rock.design-grade', 'ventilation.steady-cfd'])
     expect(() => createSceneExplorationExecutor(
       task(), ['rock.design-grade'], registry,
       { ...base, assemblyModes: ['retain'] },

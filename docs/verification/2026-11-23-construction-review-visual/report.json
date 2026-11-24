@@ -1,0 +1,329 @@
+{
+  "stages": [
+    {
+      "key": "reveal",
+      "taskId": "scene-1795411373848-w96vu",
+      "roots": [
+        "blast.design-data",
+        "rock.three-bench",
+        "rock.tsp-integrity",
+        "support.test-section-zz-ivb"
+      ],
+      "view": "overview",
+      "sameCanvas": true,
+      "camera": [
+        [
+          -475085.3001748147,
+          5536076.489150972,
+          3127235.131714404
+        ],
+        [
+          -0.3454637812722636,
+          0.15566912429028748,
+          -0.9254306562740207
+        ],
+        [
+          -0.18475565271544936,
+          0.9555626607594572,
+          0.2297070964336867
+        ]
+      ],
+      "references": [
+        "开挖基准 · YK2+244",
+        "ZZ-IVb 初支 · YK2+238–YK2+243"
+      ],
+      "volumeFrames": 12,
+      "gradeLabels": 0,
+      "cloudVisible": null,
+      "supports": [
+        {
+          "supportType": "ZZ-IVb",
+          "lengthM": 5
+        }
+      ],
+      "charts": [],
+      "reply": "揭示与影响范围｜以 TSP 完整性解释体和三台阶开挖基准观察空间关系。从循环设计图确认待比对字段，实际影响界线和分部范围待掌子面编录划定。"
+    },
+    {
+      "key": "baseline",
+      "taskId": "scene-1795411373848-w96vu",
+      "roots": [
+        "blast.design-data",
+        "rock.three-bench",
+        "rock.tsp-integrity",
+        "support.test-section-zz-ivb"
+      ],
+      "view": "support",
+      "sameCanvas": true,
+      "camera": [
+        [
+          -475177.46390722215,
+          5536132.602753125,
+          3127007.0796702513
+        ],
+        [
+          -0.19337803739591658,
+          0.18984909319796178,
+          -0.9625810389077978
+        ],
+        [
+          -0.13770660064688994,
+          0.9661361989202693,
+          0.2182148878380483
+        ]
+      ],
+      "references": [
+        "开挖基准 · YK2+244",
+        "ZZ-IVb 初支 · YK2+238–YK2+243"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 0,
+      "cloudVisible": null,
+      "supports": [
+        {
+          "supportType": "ZZ-IVb",
+          "lengthM": 5
+        }
+      ],
+      "charts": [],
+      "reply": "复核原支护版本｜在同一开挖基准后方展示原版 ZZ-IVb 支护单元排列。三台阶保留为比对基准，待核对原施工方案和循环记录。"
+    },
+    {
+      "key": "candidate",
+      "taskId": "scene-1795411380778-ft3rk",
+      "roots": [
+        "blast.design-data",
+        "rock.three-bench",
+        "rock.tsp-integrity",
+        "support.test-section"
+      ],
+      "view": "support",
+      "sameCanvas": true,
+      "camera": [
+        [
+          -475177.46390722215,
+          5536132.602753125,
+          3127007.0796702513
+        ],
+        [
+          -0.19337803739591658,
+          0.18984909319796178,
+          -0.9625810389077978
+        ],
+        [
+          -0.13770660064688994,
+          0.9661361989202693,
+          0.2182148878380483
+        ]
+      ],
+      "references": [
+        "开挖基准 · YK2+244",
+        "ZZ-Va 初支 · YK2+238–YK2+243"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 0,
+      "cloudVisible": null,
+      "supports": [
+        {
+          "supportType": "ZZ-Va",
+          "lengthM": 5
+        }
+      ],
+      "charts": [],
+      "reply": "复核拟变更版本｜在同一展示区间换装 ZZ-Va，对照初支构造。开挖差异和审批状态待核验。"
+    },
+    {
+      "key": "reveal",
+      "taskId": "scene-1795411382580-vzncw",
+      "roots": [
+        "blast.design-data",
+        "rock.three-bench",
+        "rock.tsp-integrity",
+        "support.test-section-zz-ivb"
+      ],
+      "view": "overview",
+      "sameCanvas": true,
+      "camera": [
+        [
+          -475085.3001748147,
+          5536076.489150972,
+          3127235.131714404
+        ],
+        [
+          -0.3454637812722638,
+          0.15566912429028532,
+          -0.925430656274021
+        ],
+        [
+          -0.18475565271544936,
+          0.9555626607594572,
+          0.2297070964336867
+        ]
+      ],
+      "references": [
+        "开挖基准 · YK2+244",
+        "ZZ-IVb 初支 · YK2+238–YK2+243"
+      ],
+      "volumeFrames": 12,
+      "gradeLabels": 0,
+      "cloudVisible": null,
+      "supports": [
+        {
+          "supportType": "ZZ-IVb",
+          "lengthM": 5
+        }
+      ],
+      "charts": [],
+      "reply": "揭示与影响范围｜以 TSP 完整性解释体和三台阶开挖基准观察空间关系。从循环设计图确认待比对字段，实际影响界线和分部范围待掌子面编录划定。"
+    },
+    {
+      "key": "blast",
+      "taskId": "scene-1795411384256-cf4ua",
+      "roots": [
+        "blast.effect",
+        "rock.design-grade",
+        "ventilation.ceiling-jet-fan",
+        "ventilation.co-analysis"
+      ],
+      "view": "blast",
+      "sameCanvas": true,
+      "camera": [
+        [
+          -476697.1523726618,
+          5536454.157157829,
+          3126194.762692225
+        ],
+        [
+          -0.9271336921635577,
+          -0.371969627201201,
+          -0.04540609314804997
+        ],
+        [
+          -0.3435085633423686,
+          0.7952018855899738,
+          0.49965570952868343
+        ]
+      ],
+      "references": [
+        "爆后点云 · YK4+000"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 1,
+      "cloudVisible": true,
+      "supports": [],
+      "charts": [
+        {
+          "owner": "ventilation.co-analysis",
+          "timeRange": [
+            0,
+            60
+          ],
+          "sourceNote": "已有爆后扩散模拟工况，非本工点实时监测；曲线不能单独证明通风达标。"
+        }
+      ],
+      "reply": "爆后断面｜定位爆后点云，以工段设计围岩分级作空间参照。起爆时刻及本循环断面编号待施工记录确认。"
+    },
+    {
+      "key": "ventilation",
+      "taskId": "scene-1795411384256-cf4ua",
+      "roots": [
+        "blast.effect",
+        "rock.design-grade",
+        "ventilation.ceiling-jet-fan",
+        "ventilation.co-analysis"
+      ],
+      "view": "fan",
+      "sameCanvas": true,
+      "camera": [
+        [
+          -476717.8093669269,
+          5536433.155697577,
+          3126207.552083162
+        ],
+        [
+          -0.3281341639699518,
+          0.7836698560083935,
+          -0.5274367518665388
+        ],
+        [
+          0.07926668081321099,
+          0.5792256975109785,
+          0.8113041258712894
+        ]
+      ],
+      "references": [
+        "洞顶射流风机 · YK3+988"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 0,
+      "cloudVisible": false,
+      "supports": [],
+      "charts": [
+        {
+          "owner": "ventilation.co-analysis",
+          "timeRange": [
+            0,
+            60
+          ],
+          "sourceNote": "已有爆后扩散模拟工况，非本工点实时监测；曲线不能单独证明通风达标。"
+        }
+      ],
+      "reply": "排烟与监测｜定位洞顶射流风机，并读取已有 CO 模拟曲线。现场启风时间、实测点位和时钟配准待补，模拟时轴保持独立。"
+    },
+    {
+      "key": "handoff",
+      "taskId": "scene-1795411384256-cf4ua",
+      "roots": [
+        "blast.effect",
+        "rock.design-grade",
+        "ventilation.ceiling-jet-fan",
+        "ventilation.co-analysis"
+      ],
+      "view": "overview",
+      "sameCanvas": true,
+      "camera": [
+        [
+          -476719.23313759075,
+          5536427.428446687,
+          3126261.6766425595
+        ],
+        [
+          -0.0598984754544081,
+          0.20884434855009898,
+          -0.9761128063481815
+        ],
+        [
+          -0.09666688134229214,
+          0.9720588979992809,
+          0.2139088891841078
+        ]
+      ],
+      "references": [
+        "爆后点云 · YK4+000",
+        "洞顶射流风机 · YK3+988"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 0,
+      "cloudVisible": true,
+      "supports": [],
+      "charts": [
+        {
+          "owner": "ventilation.co-analysis",
+          "timeRange": [
+            0,
+            60
+          ],
+          "sourceNote": "已有爆后扩散模拟工况，非本工点实时监测；曲线不能单独证明通风达标。"
+        }
+      ],
+      "reply": "出渣交接｜回看断面与排烟布置，交接前待关联同循环通风记录、现场检测和班组签认。出渣安排和交接状态均待确认。"
+    }
+  ],
+  "pageErrors": [],
+  "passed": true,
+  "lastReply": "出渣交接｜回看断面与排烟布置，交接前待关联同循环通风记录、现场检测和班组签认。出渣安排和交接状态均待确认。",
+  "automatic": {
+    "geology": "揭示与影响范围 · 以 TSP 完整性解释体和三台阶开挖基准观察空间关系。从循环设计图确认待比对字段，实际影响界线和分部范围待掌子面编录划定。\n\n复核原支护版本 · 在同一开挖基准后方展示原版 ZZ-IVb 支护单元排列。三台阶保留为比对基准，待核对原施工方案和循环记录。\n\n复核拟变更版本 · 在同一展示区间换装 ZZ-Va，对照初支构造。开挖差异和审批状态待核验。",
+    "blast": "爆后断面 · 定位爆后点云，以工段设计围岩分级作空间参照。起爆时刻及本循环断面编号待施工记录确认。\n\n排烟与监测 · 定位洞顶射流风机，并读取已有 CO 模拟曲线。现场启风时间、实测点位和时钟配准待补，模拟时轴保持独立。\n\n出渣交接 · 回看断面与排烟布置，交接前待关联同循环通风记录、现场检测和班组签认。出渣安排和交接状态均待确认。"
+  }
+}

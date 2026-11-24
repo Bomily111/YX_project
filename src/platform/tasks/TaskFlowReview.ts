@@ -17,7 +17,7 @@ let current:{set:(mode:FlowReviewMode)=>void;inspect:()=>Record<string,unknown>;
 
 /** Reversible task strategy. Existing geometry, velocity colors and visibility
  * choices are preserved; a local focus cannot imply full-field evaluation. */
-export function installTaskFlowReview(viewer:C.Viewer,blast:C.BoundingSphere,heading:number,initialMode:FlowReviewMode='focus'):()=>void {
+export function installTaskFlowReview(viewer:C.Viewer,blast:C.BoundingSphere,heading:number,initialMode:FlowReviewMode='focus',equipment?:C.BoundingSphere):()=>void {
   if(current)throw Error('上一任务风场复核表达尚未释放')
   const points=layers.points
   if(!points||points.isDestroyed()||!points.length)throw Error('当前没有已绘制的CFD采样点')
@@ -25,7 +25,8 @@ export function installTaskFlowReview(viewer:C.Viewer,blast:C.BoundingSphere,hea
   const originals=Array.from({length:points.length},(_,i)=>{const p=points.get(i);return {point:p,color:C.Color.clone(p.color),size:p.pixelSize}})
   const local=originals.filter(p=>p.point.show&&C.Cartesian3.distance(p.point.position,blast.center)<=radiusM)
   if(!local.length)throw Error('爆破重点附近没有CFD采样点，不执行局部复核表达')
-  const localSphere=C.BoundingSphere.fromBoundingSpheres([blast,C.BoundingSphere.fromPoints(local.map(p=>p.point.position))])
+  const localSphere=equipment ? C.BoundingSphere.fromBoundingSpheres([blast,equipment])
+    : C.BoundingSphere.fromBoundingSpheres([blast,C.BoundingSphere.fromPoints(local.map(p=>p.point.position))])
   const visuals=([layers.streamlines,layers.particles] as const).filter((p):p is NonNullable<typeof p>=>!!p).map(p=>({object:p,show:p.show}))
   const velocities=originals.map(p=>Number(p.point.id?.velocity)).filter(Number.isFinite)
   const base={radiusM,localSamples:local.length,totalSamples:originals.length,velocityMin:Math.min(...velocities),velocityMax:Math.max(...velocities),strategy:'blast-airflow-local-review' as const,occlusion:'not-measured' as const}
@@ -81,7 +82,7 @@ export function installTaskFlowReview(viewer:C.Viewer,blast:C.BoundingSphere,hea
       if(!sphere)throw Error('风场范围不可用')
       try{
         style(next);camera.cancelFlight()
-        const range=Math.max(next==='focus'?65:100,sphere.radius*(next==='focus'?4:3.5))
+        const range=next==='focus' && equipment ? Math.max(34,sphere.radius*3.1) : Math.max(next==='focus'?65:100,sphere.radius*(next==='focus'?4:3.5))
         camera.viewBoundingSphere(sphere,new C.HeadingPitchRange(heading+.85,-.4,range));camera.lookAtTransform(C.Matrix4.IDENTITY)
         if(viewer.container.closest('.dashboard-container'))camera.moveRight(range*.04)
         fitTaskCameraToViewport(viewer,sphere)

@@ -3,6 +3,7 @@ import * as echarts from 'echarts'
 import {validateChartSeries,defaultTransientTraces,summarizeSeriesWindow,snapChartWindow} from './chart-series'
 import type { SceneResource } from '@/platform/resources/types'
 import type { TaskContext } from '@/platform/context/TaskContext'
+import { taskManualControlsEnabled } from '@/platform/tasks/taskManualControls'
 import type { SceneModuleManifest } from '@/platform/modules/types'
 import { moduleRegistry } from '@/platform/modules/ModuleRegistry'
 import {
@@ -20,6 +21,7 @@ import { VENTILATION_COMBINATION_RANGE_YK, setVentilationCombinedPlacement } fro
 import { STEADY_DATASET_FILES, validateSteadyDataset, type SteadyDatasetSummary } from './dataset-contract'
 import { transientScenarioCatalog } from './transient-catalog'
 import { thermalSnapshotCatalog } from './thermal-catalog'
+import { axialFanDuctResource, axialFanResource, ceilingJetFanResource } from './axial-fan-resource'
 
 let ventilationViewer: Cesium.Viewer | undefined
 let previousPublicTunnelVisibility = true
@@ -156,6 +158,7 @@ function createChartOverlay(
   host.dataset.ventilationEnhancement = 'chart'
   host.dataset.ventilationOwner=owner
   const mainScene = !!viewer.container.closest?.('.dashboard-container')
+  const manualControls = !mainScene || taskManualControlsEnabled()
   Object.assign(host.style, {
     position: 'absolute', right: '18px', bottom: '18px', zIndex: '30',
     width: 'min(480px, calc(100% - 36px))', height: '340px',
@@ -184,15 +187,21 @@ function createChartOverlay(
   let resize: (() => void) | undefined
   let observer:ResizeObserver|undefined
   let record:Parameters<typeof activeCharts.add>[0]|undefined
+  const compactLegend = owner === 'ventilation.co-analysis' && mainScene
   try {
     chart = echarts.init(canvas)
     chart.setOption({
       animation: false,
       backgroundColor: 'transparent',
       tooltip: { trigger: 'axis' },
-      legend: {type:'scroll',top:0,textStyle:{color:'#a7bfd0'},pageTextStyle:{color:'#a7bfd0'},selected:Object.fromEntries(series.map((s,i)=>[s.name,options.selected?options.selected.includes(s.name):i<5]))},
-      grid: { left: 64, right: 40, top: 38, bottom: 72 },
-      dataZoom:[{type:'inside',xAxisIndex:0,filterMode:'none'},{type:'slider',xAxisIndex:0,height:16,bottom:12,filterMode:'none',textStyle:{color:'#a7bfd0'}}],
+      legend: {
+        type:'scroll', top:0, selectedMode:manualControls,
+        ...(compactLegend ? { itemWidth:16, itemHeight:8, itemGap:8, padding:0 } : {}),
+        textStyle:{color:'#a7bfd0', ...(compactLegend ? {fontSize:11} : {})}, pageTextStyle:{color:'#a7bfd0'},
+        selected:Object.fromEntries(series.map((s,i)=>[s.name,options.selected?options.selected.includes(s.name):i<5])),
+      },
+      grid: { left: 64, right: 40, top: 38, bottom: manualControls ? 72 : 44 },
+      dataZoom:[{type:'inside',disabled:!manualControls,xAxisIndex:0,filterMode:'none'},{type:'slider',show:manualControls,xAxisIndex:0,height:16,bottom:12,filterMode:'none',textStyle:{color:'#a7bfd0'}}],
       xAxis: {
         type: 'value', name: xName,min:x[0],max:x.at(-1),
         nameTextStyle: { color: '#b6d0df' }, axisLabel: { color: '#9bb6c7',fontSize:11 },
@@ -293,7 +302,7 @@ function transientChartAdapterFor(owner: string, document: Record<string, any> |
   }))
   const selected=defaultTransientTraces(owner,series.map(s=>s.name)),rank=new Map(selected.map((name,i)=>[name,i]))
   series.sort((a,b)=>(rank.get(a.name)??99)-(rank.get(b.name)??99))
-  return createChartOverlay(owner, title, x, series, '时间 / s', 'Q / m³·s⁻¹',{selected,note:`${String(document?.description??'已有瞬态工况')}。一维风网模拟，非三维CFD或本工点实时监测；保留${series.length}条源支路，可点击图例比较。`})
+  return createChartOverlay(owner, title, x, series, '时间 / s', 'Q / m³·s⁻¹',{selected,note:`${String(document?.description??'已有瞬态工况')}。一维风网模拟，保留${series.length}条源支路。`})
 }
 function transientChartAdapter() {
   return transientChartAdapterFor('ventilation.transient-network', transientData as Record<string, any> | undefined, '瞬态通风 · 网络流量')
@@ -618,6 +627,9 @@ export const ventilationSnapshotResources: SceneResource[] = thermalSnapshotCata
 
 export const ventilationResources = [
   ventilationSceneResource,
+  axialFanResource,
+  axialFanDuctResource,
+  ceilingJetFanResource,
   ventilationSteadyResource,
   ventilationCoResource,
   ventilationTransientResource,

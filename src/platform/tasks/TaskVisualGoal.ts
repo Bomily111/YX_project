@@ -39,7 +39,7 @@ export function buildTaskVisualGoal(status:AgentTaskWorkflowStatus,inspection:Sc
  }
  return {sceneKey,taskId:status.taskId!,objective:input.objective,userRequest:input.userRequest,
   emphasis,referenceScope:input.referenceScope,focusComponent:input.focusComponent,focusResourceIds:[...input.focusResourceIds],referenceResourceIds:ids.filter(id=>!input.focusResourceIds.includes(id)),questions:[...input.questions],
-  candidate:view?{type:'camera-view' as const,view,reason:(input.focusComponent?'显露当前重点构件，暂避其他混凝土外壳，其余结构保留原显隐；':'')+(view==='support-context'?'近端剖切与局部取景组合；仅保留支护及邻近采样参照，不表示全体范围入镜':input.objective==='spatial-relation'?'保留当前全部对象的整体空间参照':'聚焦已声明的当前重点对象；其他资源仍保留但不保证同屏可辨')}:null,
+  candidate:view?{type:'camera-view' as const,view,reason:(input.focusComponent?(view==='support'?'在原始单元内单独显露指定构件，其他已识别构件组暂时隐藏；':'显露指定构件，暂避混凝土外壳，保留其他构件作为参照；'):'')+(view==='support-context'?'近端剖切与局部取景组合；仅保留支护及邻近采样参照，不表示全体范围入镜':input.objective==='spatial-relation'?'保留当前全部对象的整体空间参照':'聚焦已声明的当前重点对象；其他资源仍保留但不保证同屏可辨')}:null,
   completionConditions:['执行前后任务与资源保持一致','核对重点对象实际运行状态和26点包围球取景；观察不足单列','画面取景与工程依据分开，待回答问题不作为已证实结论'],
   evidence:inspection,engineeringAcceptance:'not-verified' as const}
 }

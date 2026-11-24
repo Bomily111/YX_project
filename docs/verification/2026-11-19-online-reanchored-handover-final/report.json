@@ -1,0 +1,571 @@
+{
+  "online": true,
+  "passed": true,
+  "requests": [
+    "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+  ],
+  "errors": [],
+  "modelRequests": 5,
+  "checks": [
+    {
+      "id": "original-source-and-task-first-panel",
+      "assembled": {
+        "status": "completed",
+        "taskId": "scene-1795082516898-vp9th",
+        "ids": [
+          "rock.three-bench",
+          "support.test-section"
+        ],
+        "source": [
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "summary": {
+          "supportType": "ZZ-Va",
+          "lengthM": 5,
+          "layout": "original-unit-assembly",
+          "unitOffsetsM": [
+            -5.5,
+            -4.5,
+            -3.5,
+            -2.5,
+            -1.5
+          ],
+          "groups": [
+            {
+              "component": "primary_concrete",
+              "name": "primarySupportConcreteGroup",
+              "visible": true
+            },
+            {
+              "component": "primary_mesh",
+              "name": "primarySupportMeshGroup",
+              "visible": true
+            },
+            {
+              "component": "steel_arch",
+              "name": "steelArchArrayGroup",
+              "visible": true
+            },
+            {
+              "component": "system_anchor",
+              "name": "systemAnchorGroup",
+              "visible": true
+            },
+            {
+              "component": "lock_foot_anchor",
+              "name": "lockFootAnchorGroup",
+              "visible": true
+            },
+            {
+              "component": "secondary_lining",
+              "name": "secondaryLiningGroup",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N1",
+              "name": "N1Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N2",
+              "name": "N2Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N3",
+              "name": "N3Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N4",
+              "name": "N4Group",
+              "visible": true
+            }
+          ],
+          "sourceReferenceChainage": 2244,
+          "taskReferenceChainage": 1346,
+          "note": "直接装配支护版块原始1米GLB单元；单元间隔来自本次放置，构件间距与工程接缝待核查。",
+          "source": [
+            "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+          ],
+          "originalGeometry": true,
+          "generatedGeometry": false,
+          "sourceGeometryReused": true,
+          "componentScope": "source-model-components",
+          "designElevationY": -2.1,
+          "unitCount": 5,
+          "unitLengthM": 1,
+          "nominalLengthM": 5,
+          "offsetM": -5.5,
+          "placement": "rigid-template-centerline-normal"
+        },
+        "excavation": {
+          "source": 2244,
+          "target": 1346,
+          "matrix": [
+            -0.3971461429394978,
+            0.4276992630877857,
+            -0.8120026363888514,
+            0,
+            -0.07424958951385807,
+            0.8668962008871192,
+            0.492927961617622,
+            0,
+            0.9147469265350409,
+            0.25605530113951,
+            -0.31252798779157553,
+            0,
+            -474304.07689497713,
+            5536217.252622977,
+            3126924.4318168443,
+            1
+          ]
+        },
+        "targets": [
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          }
+        ],
+        "context": [
+          {
+            "text": "后方初支  ZZ-Va · 5 m",
+            "show": true
+          },
+          {
+            "text": "前方  三台阶开挖",
+            "show": true
+          }
+        ],
+        "background": "rgb(24,42,57)",
+        "models": [
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.21988866951360175,
+              -0.46789466595536033,
+              0.8559927304539798,
+              0,
+              -0.06937359404452499,
+              0.8677470930810696,
+              0.4921405154005307,
+              0,
+              -0.9730551256063982,
+              -0.16759941533273973,
+              0.15834821916030592,
+              0,
+              -474298.7087736028,
+              5536217.997368599,
+              3126923.467305561,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.21948738961792408,
+              -0.4679655583410098,
+              0.8560569618928968,
+              0,
+              -0.06937314247964603,
+              0.8677461251613549,
+              0.49214228569586815,
+              0,
+              -0.9731457511088502,
+              -0.16740638719607348,
+              0.1579950905083761,
+              0,
+              -474299.68187345,
+              5536217.82985811,
+              3126923.625472912,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.21908616668249867,
+              -0.4680363544584122,
+              0.856121032607918,
+              0,
+              -0.06937269268056448,
+              0.8677451571811425,
+              0.49214405584028253,
+              0,
+              -0.9732361897703026,
+              -0.16721337594210164,
+              0.15764201796294344,
+              0,
+              -474300.6550638282,
+              5536217.662540645,
+              3126923.783287164,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.21868500096892826,
+              -0.4681070543222363,
+              0.8561849426642464,
+              0,
+              -0.06937224464660227,
+              0.8677441891416963,
+              0.4921458258316458,
+              0,
+              -0.9733264416545517,
+              -0.16702038170408856,
+              0.157289001749991,
+              0,
+              -474301.62834457273,
+              5536217.49541644,
+              3126923.9407485174,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.2182838927391678,
+              -0.46817765794723276,
+              0.8562486921272812,
+              0,
+              -0.06937179837707777,
+              0.8677432210442819,
+              0.4921475956678295,
+              0,
+              -0.9734165068256062,
+              -0.16682740461548595,
+              0.15693604209580186,
+              0,
+              -474302.6017155096,
+              5536217.32848564,
+              3126924.097857121,
+              1
+            ]
+          }
+        ],
+        "phase": "applied",
+        "attempts": 1
+      }
+    },
+    {
+      "id": "tool-executes-component-observation",
+      "enhanced": {
+        "status": "completed",
+        "taskId": "scene-1795082516898-vp9th",
+        "ids": [
+          "rock.three-bench",
+          "support.test-section"
+        ],
+        "source": [
+          "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+        ],
+        "summary": {
+          "supportType": "ZZ-Va",
+          "lengthM": 5,
+          "layout": "original-unit-assembly",
+          "unitOffsetsM": [
+            -5.5,
+            -4.5,
+            -3.5,
+            -2.5,
+            -1.5
+          ],
+          "groups": [
+            {
+              "component": "primary_concrete",
+              "name": "primarySupportConcreteGroup",
+              "visible": true
+            },
+            {
+              "component": "primary_mesh",
+              "name": "primarySupportMeshGroup",
+              "visible": true
+            },
+            {
+              "component": "steel_arch",
+              "name": "steelArchArrayGroup",
+              "visible": true
+            },
+            {
+              "component": "system_anchor",
+              "name": "systemAnchorGroup",
+              "visible": true
+            },
+            {
+              "component": "lock_foot_anchor",
+              "name": "lockFootAnchorGroup",
+              "visible": true
+            },
+            {
+              "component": "secondary_lining",
+              "name": "secondaryLiningGroup",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N1",
+              "name": "N1Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N2",
+              "name": "N2Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N3",
+              "name": "N3Group",
+              "visible": true
+            },
+            {
+              "component": "secondary_rebar_N4",
+              "name": "N4Group",
+              "visible": true
+            }
+          ],
+          "sourceReferenceChainage": 2244,
+          "taskReferenceChainage": 1346,
+          "note": "直接装配支护版块原始1米GLB单元；单元间隔来自本次放置，构件间距与工程接缝待核查。",
+          "source": [
+            "/support-modeler/outputs/master_demo/ZZ-Va_support_1m_current.glb"
+          ],
+          "originalGeometry": true,
+          "generatedGeometry": false,
+          "sourceGeometryReused": true,
+          "componentScope": "source-model-components",
+          "designElevationY": -2.1,
+          "unitCount": 5,
+          "unitLengthM": 1,
+          "nominalLengthM": 5,
+          "offsetM": -5.5,
+          "placement": "rigid-template-centerline-normal"
+        },
+        "excavation": {
+          "source": 2244,
+          "target": 1346,
+          "matrix": [
+            -0.3971461429394978,
+            0.4276992630877857,
+            -0.8120026363888514,
+            0,
+            -0.07424958951385807,
+            0.8668962008871192,
+            0.492927961617622,
+            0,
+            0.9147469265350409,
+            0.25605530113951,
+            -0.31252798779157553,
+            0,
+            -474304.07689497713,
+            5536217.252622977,
+            3126924.4318168443,
+            1
+          ]
+        },
+        "targets": [
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          },
+          {
+            "original": true,
+            "generated": false
+          }
+        ],
+        "context": [
+          {
+            "text": "后方初支  ZZ-Va · 5 m",
+            "show": true
+          },
+          {
+            "text": "前方  三台阶开挖",
+            "show": true
+          }
+        ],
+        "background": "rgb(24,42,57)",
+        "models": [
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.21988866951360175,
+              -0.46789466595536033,
+              0.8559927304539798,
+              0,
+              -0.06937359404452499,
+              0.8677470930810696,
+              0.4921405154005307,
+              0,
+              -0.9730551256063982,
+              -0.16759941533273973,
+              0.15834821916030592,
+              0,
+              -474298.7087736028,
+              5536217.997368599,
+              3126923.467305561,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.21948738961792408,
+              -0.4679655583410098,
+              0.8560569618928968,
+              0,
+              -0.06937314247964603,
+              0.8677461251613549,
+              0.49214228569586815,
+              0,
+              -0.9731457511088502,
+              -0.16740638719607348,
+              0.1579950905083761,
+              0,
+              -474299.68187345,
+              5536217.82985811,
+              3126923.625472912,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.21908616668249867,
+              -0.4680363544584122,
+              0.856121032607918,
+              0,
+              -0.06937269268056448,
+              0.8677451571811425,
+              0.49214405584028253,
+              0,
+              -0.9732361897703026,
+              -0.16721337594210164,
+              0.15764201796294344,
+              0,
+              -474300.6550638282,
+              5536217.662540645,
+              3126923.783287164,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.21868500096892826,
+              -0.4681070543222363,
+              0.8561849426642464,
+              0,
+              -0.06937224464660227,
+              0.8677441891416963,
+              0.4921458258316458,
+              0,
+              -0.9733264416545517,
+              -0.16702038170408856,
+              0.157289001749991,
+              0,
+              -474301.62834457273,
+              5536217.49541644,
+              3126923.9407485174,
+              1
+            ]
+          },
+          {
+            "ready": true,
+            "arch": true,
+            "concrete": false,
+            "lining": false,
+            "anchors": true,
+            "matrix": [
+              0.2182838927391678,
+              -0.46817765794723276,
+              0.8562486921272812,
+              0,
+              -0.06937179837707777,
+              0.8677432210442819,
+              0.4921475956678295,
+              0,
+              -0.9734165068256062,
+              -0.16682740461548595,
+              0.15693604209580186,
+              0,
+              -474302.6017155096,
+              5536217.32848564,
+              3126924.097857121,
+              1
+            ]
+          }
+        ],
+        "phase": "applied",
+        "attempts": 1
+      }
+    }
+  ],
+  "replies": [
+    "🤖已定位 YK1+346，主场景装配完成：三台阶 · 论文测试工段、已有ZZ-Va支护 · 后方支护示意段 · 5米。整体构建后的增强已完成。选用三台阶 · 论文测试工段：提供三台阶开挖整体参照，用于确认开挖面与后方支护的相对位置选用已有ZZ-Va支护 · 后方支护示意段：ZZ-Va 后方 5 米示意支护段，作为初支布置参照论文测试工段：三台阶使用tunnel002源断面，台阶高度与错距为示意参数，不代表现场工法设计。后方支护直接装配支护版块原始1米GLB，保留源构件与材质；单元布置间隔不代表构件间距。👍👎",
+    "🤖我先按你指定的参数装配：YK1+346、三台阶整体参照，以及 ZZ-Va 后方 5 米示意支护段。装配成功。现在读取当前场景实际状态。场景已就绪。现在按你的重点规划视觉分析：保留三台阶整体参照，重点看 ZZ-Va 支护，并暂避混凝土外壳。计划已生成，现在执行。已按你指定的参数完成装配与视觉调整（任务 scene-1795082516898-vp9th，YK1+346）。实际执行结果- 装配成功：三台阶（rock.three-bench）+ ZZ-Va 后方 5 米示意支护段（support.test-section），共 3 步全部完成，阶段为“构建后统一增强”。- 视觉调整已执行（第 1 次，本场景剩余 1 次）：以空间关系视角整体取景，重点为 ZZ-Va 支护、显露钢拱架（steel_arch），三台阶保留为整体参照。- 混凝土外壳已暂避：执行后 primary_concrete 与 secondary_lining 可见节点由 5 降为 0；钢拱架、系统锚杆、锁脚锚杆及 N1～N4 钢筋仍各 5 个节点可见。- 取景：三台阶与支护的 26 点包围球采样均全部落在安全视口内（26/26，无出画）。这只是投影入区，不是可见像素，也未测深度遮挡。班前可以核对的布置关系- 开挖面与后方支护的纵向先后次序、支护段相对三台阶的位置，可在当前整体视图中对照说明。- 支护段内钢拱架、锚杆、钢筋等构件组的相对位置关系可作示意讲解。必须由设计或实测确认的部分- 台阶高度与错距为示意参数；三台阶源断面来自 tunnel002、源锚点 YK2+244，本次沿中线示意重定位到 YK1+346，不是本工点实测开挖轮廓。- 后方支护以固定源零点刚性放置，不随台阶前缘移动，因此不能据此核对现场支护跟进距离。- 支护为原始 1 米 GLB 单元按本次放置形成 5 米段，单元间隔来自本次放置；构件间距、工程接缝、断面贴合与净空侵限均未核验。- 当前证据缺口：task-design（源模型与本工段设计是否对应）、field-data（是否有同一基准实测）、geometry（接缝/净空/贴合）三项均未提供；工程验收状态为未核验。下一步建议：向设计方核对 YK1+346 适用断面与支护参数（含章节页码），并取得同一基准的实测断面或支护跟进记录后再作偏差比较。如需恢复调整前视角，可执行恢复（当前仍可撤销一次）。👍👎"
+  ]
+}

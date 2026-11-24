@@ -1,0 +1,19 @@
+{
+  "assetStatus": 200,
+  "chainage": 4000,
+  "segment": 5,
+  "ready": true,
+  "groups": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "blades": 8,
+  "canvasCount": 1,
+  "widgetError": false,
+  "removed": true,
+  "errors": [],
+  "passed": true
+}

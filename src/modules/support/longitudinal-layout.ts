@@ -2,6 +2,15 @@ export interface SupportLayoutRow {
   id:string;resourceId:string;component:string;kind:'component-base'|'unit-base';type:string;lengthM:number
   offsetsM:number[];spacingM:number|null;sourceSegment:number|null
 }
+export function adjacentSupportIntervals(offsets: readonly number[], selected: number | null) {
+  const index = selected === null ? -1 : offsets.indexOf(selected)
+  if (index < 0) return []
+  return [index - 1, index].flatMap(start => {
+    const from = offsets[start], to = offsets[start + 1]
+    if (from === undefined || to === undefined || !Number.isFinite(from) || !Number.isFinite(to) || to <= from) return []
+    return [{ from, to, distanceM: to - from }]
+  })
+}
 export function supportReviewSteps(row:SupportLayoutRow){
   return [
     {id:'overview',title:'整体理解',question:`本次${row.type} ${row.lengthM}m示意段处于什么范围？`,boundary:'仅核对当前装配范围，不等同现场施工范围。'},
@@ -18,13 +27,13 @@ export function supportLayoutFinding(row:SupportLayoutRow){
   return {rowId:row.id,resourceId:row.resourceId,scope:'demonstration-assembly-not-field-acceptance',
     observation:`${row.type}本次${row.lengthM}m示意段，${row.offsetsM.length}个${unit?'独立单元基准':'构件装配基准'}，相对测试源断面范围${range}。`,
     evidence:unit?'依据为当前独立模型的实际单元放置记录；不是1064米示例的配筋布置。':`依据为1064米示例第${row.sourceSegment??'未提供'}段和本次装配记录；${row.spacingM===null?'该构件的统一基准间距未核验':`示例基准间距${row.spacingM}m`}。`,
-    nextCheck:unit?'需核对本工段适用性及N1～N7配筋说明；不能从单元基准推断配筋间距。':'需按对应工段设计核对该构件间距、首末站布置和标高；定位标记不能证明断面贴合。',
+    nextCheck:unit?'需核对本工段适用性及相应构件布置说明；不能从单元基准推断配筋间距。':'需按对应工段设计核对该构件间距、首末站布置和标高；定位标记不能证明断面贴合。',
     designRequirement:null,fieldMeasurement:null,acceptance:'not-verified'}
 }
 /** Consume recorded transforms' station offsets; never infer from mesh counts. */
 export function supportLongitudinalRows(summaries:readonly any[]):SupportLayoutRow[]{
   return summaries.flatMap(s=>{
-    if(s.layout==='original-unit-fallback'){
+    if(s.layout==='original-unit-fallback'||s.layout==='original-unit-assembly'){
       if(!Array.isArray(s.unitOffsetsM))return []
       return [{id:`${s.id}:units`,resourceId:s.id,component:'units',kind:'unit-base' as const,type:s.supportType,lengthM:s.lengthM,
         offsetsM:[...s.unitOffsetsM],spacingM:null,sourceSegment:null}]
