@@ -27,10 +27,10 @@ import { getActiveDrillModels } from '@/modules/rock/drill-resource'
 import { canRetrySceneLoad } from '../SceneRecovery'
 import { resourceManager } from '@/platform/resources/ResourceManager'
 import { requestedThermalTimes, thermalRequestIssue, thermalSnapshotCatalog } from '@/modules/ventilation/thermal-catalog'
-import { chainageService } from '@/platform/coordinates/ChainageService'
+import { chainageService, findMainCenterlineMileageLabels } from '@/platform/coordinates/ChainageService'
 import { viewerService } from '@/platform/viewer/ViewerService'
 import { getActiveModelerSupportModel } from '@/modules/support/modeler-resources'
-import { validateTestSupportRequest, isTestSupportId } from '@/modules/support/test-section-resource'
+import { validateTestSupportRequest, isTestSupportId, MissingTestSupportType } from '@/modules/support/test-section-resource'
 import { resolveTestSupportLength } from '@/modules/support/test-section-layout'
 import { resolveTestSupportUpdate } from '../TestSupportUpdate'
 import { getTestSectionSupportModels, getTestSectionSupportSummaries } from '@/modules/support/test-section-resource'
@@ -104,13 +104,21 @@ const parseDescriptionChainages = (description: string): number[] => {
 const normalizeNumericTaskChainage = (value: number): number => value >= chainageService.legacyDkReference.origin
   ? chainageService.legacyDkToCanonical(value) : value
 
+class MissingAssemblyMileage extends Error {}
+
 export function resolveAssemblyMileage(modelValue: unknown, userRequest?: string): string {
-  const mileagePattern = /(?<![A-Z0-9])(?:DK|YK)\s*\d+\s*\+\s*\d+(?:\.\d+)?/gi
-  const explicit = [...new Set((userRequest ?? '').match(mileagePattern)?.map(value => value.replace(/\s+/g, '').toUpperCase()) ?? [])]
   if (userRequest !== undefined) {
-    if (explicit.length === 0 && /测试工段|论文测试|(?:展示|查看|加载|装配|看看).{0,8}三台阶/.test(userRequest)) return 'YK2+244'
-    if (explicit.length === 0) throw new Error('用户未明确给出目标里程，请先询问')
-    if (explicit.length > 1) throw new Error('用户给出了多个里程，请先明确本次装配目标')
+    const explicit = findMainCenterlineMileageLabels(userRequest)
+    if (explicit.length === 0) {
+      const testStation = /测试工段|论文测试/.test(userRequest)
+      const threeBenchWithoutSupport = /(?:展示|查看|加载|装配|看看).{0,8}三台阶/.test(userRequest) && !/初支|支护/.test(userRequest)
+      if (testStation || threeBenchWithoutSupport) return 'YK2+244'
+    }
+    if (explicit.length === 0) throw new MissingAssemblyMileage('用户未明确给出目标里程，请补充本次目标里程')
+    const stations = new Set(explicit.map(value => chainageService.format(chainageService.toCanonicalChainage(value))))
+    if (stations.size > 1) {
+      throw new Error('用户给出了多个里程，请先明确本次装配目标')
+    }
     return explicit[0]
   }
   const candidate = String(modelValue ?? '').trim().replace(/\s+/g, '').toUpperCase()
@@ -179,14 +187,17 @@ export const workflowTools: ToolRegistration[] = [
       if (intent.experiment === 'reference-links' && !selection?.restoreAssemblyView) {
         return JSON.stringify({ action, ok: false, reason: '请先增强当前复盘，再切换里程联动。' })
       }
+      if (intent.experiment === 'label-layout' && !selection?.restoreAssemblyView) {
+        return JSON.stringify({ action, ok: false, reason: '请先增强当前复盘，再切换标注布局。' })
+      }
       const review = constructionReviews[intent.kind]
       const step = review.steps[intent.stepIndex]
       if (!step) return JSON.stringify({ action, ok: false, reason: '已到复盘流程边界，场景保持在当前节点。' })
       if (intent.supportDisplay && step.view !== 'support') {
         return JSON.stringify({ action, ok: false, reason: '请先复核原支护版本或拟变更版本，再切换初支展示。' })
       }
-      const explicitlyRequested = [...request.matchAll(/\b(?:YK|DK)\s*\d+\s*\+\s*\d+(?:\.\d+)?/gi)]
-      if (explicitlyRequested.some(match => chainageService.toCanonicalChainage(match[0].replace(/\s/g, '')) !== chainageService.toCanonicalChainage(review.mileage))) {
+      const reviewStation = chainageService.toCanonicalChainage(review.mileage)
+      if (findMainCenterlineMileageLabels(request).some(label => chainageService.toCanonicalChainage(label) !== reviewStation)) {
         return JSON.stringify({ action, ok: false, reason: `当前示例资料固定在 ${review.mileage}，请指定该展示位置或补充目标工段资料。` })
       }
       const loadedIds = current.lastCompletedStage?.assembledResourceIds ?? []
@@ -221,6 +232,11 @@ export const workflowTools: ToolRegistration[] = [
         publishConstructionReview({ ...selection!, referenceLinks: intent.referenceLinks })
         return JSON.stringify({ action, ok: true, taskId: status.taskId, sceneChanged: false,
           summary: `已${intent.referenceLinks ? '开启' : '关闭'}复盘里程联动，保留当前机位、静态标注和二维资料。` })
+      }
+      if (intent.experiment === 'label-layout') {
+        publishConstructionReview({ ...selection!, fixedLabelLayout: intent.fixedLabelLayout })
+        return JSON.stringify({ action, ok: true, taskId: status.taskId, sceneChanged: false,
+          summary: intent.fixedLabelLayout ? '已固定复盘标注布局。' : '已启用复盘标注避让。' })
       }
       if (assemblyOnly || intent.experiment === 'restore') {
         publishConstructionReview({ kind: intent.kind, stepIndex: intent.stepIndex, taskId: status.taskId, references: [], assemblyOnly: true })
@@ -268,6 +284,7 @@ export const workflowTools: ToolRegistration[] = [
           ? captureReviewAssemblyView(viewerService.require(), stage.assembledResourceIds)
           : !intent.start && selection?.stepIndex === intent.stepIndex ? selection.restoreAssemblyView : undefined,
         sceneAnnotations: !intent.start && selection?.stepIndex === intent.stepIndex ? selection.sceneAnnotations : undefined,
+        fixedLabelLayout: !intent.start && selection?.stepIndex === intent.stepIndex ? selection.fixedLabelLayout : undefined,
         referenceLinks: !intent.start && selection?.stepIndex === intent.stepIndex ? selection.referenceLinks : undefined,
         simulation: chart ? { range: [chart.timeRange[0]!, chart.timeRange[1]!] as const, unit: chart.timeUnit } : undefined,
         supportDisplay: step.view === 'support' ? intent.supportDisplay ?? 'outline' as const : undefined,
@@ -489,8 +506,14 @@ export const workflowTools: ToolRegistration[] = [
       },
     },
     executor: async (input) => {
-      const requestedMileage = resolveAssemblyMileage(input.targetMileage, input.userRequest === undefined
-        ? undefined : String(input.userRequest))
+      let requestedMileage: string
+      try {
+        requestedMileage = resolveAssemblyMileage(input.targetMileage, input.userRequest === undefined
+          ? undefined : String(input.userRequest))
+      } catch (error) {
+        if (!(error instanceof MissingAssemblyMileage)) throw error
+        return JSON.stringify({ action: 'assemble_scene_at_mileage', ok: false, clarification: 'target-mileage', reason: error.message })
+      }
       const targetChainage = chainageService.toCanonicalChainage(requestedMileage)
       const targetMileage = chainageService.format(targetChainage, 'YK')
       const position = chainageService.positionWithHeadingAt(targetChainage)
@@ -499,7 +522,12 @@ export const workflowTools: ToolRegistration[] = [
       const resourceReasons = resourceIds.map(resourceId => ({ resourceId, reason: Array.isArray(input.resourceReasons)
         ? String(input.resourceReasons.find((item: any) => item?.resourceId === resourceId)?.reason ?? '').trim().slice(0, 300) : '' }))
       validateSelectedPhoto(resourceIds, String(input.userRequest ?? ''))
-      validateTestSupportRequest(resourceIds, String(input.userRequest ?? ''))
+      try {
+        validateTestSupportRequest(resourceIds, String(input.userRequest ?? ''))
+      } catch (error) {
+        if (!(error instanceof MissingTestSupportType)) throw error
+        return JSON.stringify({ action: 'assemble_scene_at_mileage', ok: false, clarification: 'test-support-type', reason: error.message })
+      }
       const supportLengthM = resourceIds.some(isTestSupportId) ? resolveTestSupportLength(String(input.userRequest ?? '')) : undefined
       for (const item of continuousSupportCatalog.filter(item => resourceIds.includes(item.id))) {
         if (input.userRequest === undefined || !new RegExp(`(?:^|[^0-9.])${item.length}\\s*(?:米|m\\b)`, 'i').test(String(input.userRequest))) throw new Error('连续支护必须由用户明确给出长度，不能默认选用或改成最近长度')

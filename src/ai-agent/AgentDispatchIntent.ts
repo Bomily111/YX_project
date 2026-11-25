@@ -1,5 +1,6 @@
 import {wantsSupportLayerControl,wantsSupportInspection} from './SupportLayerIntent'
 import { isTunnelSectionRequest, tunnelSectionIntent } from '@/platform/tasks/TunnelSectionIntent'
+import { findMainCenterlineMileageLabels } from '@/platform/coordinates/ChainageService'
 export interface RoutedToolCall {
   name: string
   input: Record<string, any>
@@ -38,7 +39,21 @@ export function wantsTestSupportUpdate(message: string): boolean {
     && /支护|长度|ZZ-|Z-PM|米|m\b/i.test(message)
 }
 export function resolveClarifiedSceneRequest(message: string, pending?: string): string {
-  if (!pending || !/(?:[DY]K\s*\d+\s*\+|测试工段|论文测试)/i.test(pending) || /[DY]K\s*\d+\s*\+/i.test(message)) return message
+  if (!pending) return message
+  const pendingHasMileage = findMainCenterlineMileageLabels(pending).length > 0 || /测试工段|论文测试/.test(pending)
+  const replyMileages = findMainCenterlineMileageLabels(message)
+  if (replyMileages.length) {
+    const reply = message.normalize('NFKC').trim().toUpperCase()
+      .replace(/^(?:(?:目标)?(?:工点|里程)\s*(?:是|在|为|用|选)?\s*:?|在)\s*/, '')
+      .replace(/[。.!]+$/, '').replace(/\s+/g, '')
+    return !pendingHasMileage && replyMileages.length === 1 && reply === replyMileages[0]
+      ? `${pending}\n用户补充：${message}` : message
+  }
+  if (!pendingHasMileage) {
+    const supportTypeReply = /^(?:(?:本次)?(?:初支|支护)?\s*(?:型号|类型|版本)?\s*(?:是|为|用|选|采用)\s*)?(?:ZZ-[A-Z0-9]+|Z-PM)[。.!！]?$/i
+    return pending.includes('三台阶') && /初支|支护/.test(pending) && supportTypeReply.test(message.trim())
+      ? `${pending}\n用户补充：${message}` : message
+  }
   if (/准备|构建|装配|加载|换个任务|新任务|取消|复位|不执行/.test(message)) return message
   if (/通风|风向|流线|温度|热场/.test(message) && !/通风|风向|流线|温度|热场/.test(pending)) return message
   if (!/断面|围岩|完整|坚硬|ZZ-|支护|照片|测线|GPR|温度|秒|分钟|流线|风向|岩面|水平钻|钻孔|类型/i.test(message)) return message

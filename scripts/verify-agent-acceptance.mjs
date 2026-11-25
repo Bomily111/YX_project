@@ -54,6 +54,18 @@ const cases = [
   { id: 'fan-shutdown', request: 'YK4+000 风机故障停机复核，请调出对应瞬态风网曲线，不要默认爬升或稳态CFD。', roots: ['ventilation.transient-fan-shutdown'] },
   { id: 'design-only', request: 'YK1+346 炮孔施工交底，只调出二维设计和分类数量、进尺，不要爆后点云。', roots: ['blast.design-data'] },
   { id: 'rock-support', request: 'YK1+346 初期支护交底，请同屏展示岩体坚硬程度和新模块ZZ-Va支护，不需要掌子面照片。', roots: ['rock.tsp-hardness', 'support.modeler-zz-va'] },
+  { id: 'r1-support-station-variants', request: '班前讲开挖和初支的位置。请在ＹＫ２＋２４４（旧标 DK279+228）同屏展示前方三台阶和后方5米原版ZZ-IVb，其他资料不用。', roots: ['rock.three-bench', 'support.test-section-zz-ivb'], unitCount: 5, station: 2244 },
+  { id: 'r1-blast-station-variants', request: '班组要同时查看起爆后扫描的断面点云和已有右洞稳态风场，工点写作 ＹＫ４＋０００（YK4+000.0）。不用炮孔设计图。', roots: ['blast.effect', 'ventilation.steady-cfd'], station: 4000 },
+  { id: 'r1-support-clarify-fullwidth', request: '为ＹＫ１＋３４６班前交底，请同屏展示前方三台阶和后方5米初支，沿用已有模型，不用其他资料。', clarification: '支护类型用ZZ-IVb。', roots: ['rock.three-bench', 'support.test-section-zz-ivb'], unitCount: 5, station: 1346, verifyClarification: true },
+  { id: 'r1-blast-clarify-mileage', request: '为爆后通风交底，请同屏展示断面扫描点云和已有右洞稳态风场，保留爆后轮廓，不用炮孔设计图。', clarification: '工点是 ＹＫ４＋０００。', roots: ['blast.effect', 'ventilation.steady-cfd'], station: 4000, verifyClarification: true, clarificationQuestion: /里程|工点/ },
+  { id: 'r1-support-two-clarifications', request: '请同屏展示前方三台阶与后方5米初支，供班前交底，沿用已有模型，不用其他资料。', clarifications: [
+    { answer: '支护型号用ZZ-IVb。', question: /里程|工点|型号|类型/ },
+    { answer: '工点是 ＹＫ１＋３４６。', question: /里程|工点/ },
+  ], roots: ['rock.three-bench', 'support.test-section-zz-ivb'], unitCount: 5, station: 1346, verifyClarification: true },
+  { id: 'r1-support-two-clarifications-mileage-first', request: '班前交底，请同屏展示三台阶和后方5米初支，仅用已有模型。', clarifications: [
+    { answer: '工点是 ＹＫ２＋２４４。', question: /里程|工点|型号|类型/ },
+    { answer: '支护类型用ZZ-Va。' },
+  ], roots: ['rock.three-bench', 'support.test-section'], unitCount: 5, station: 2244, verifyClarification: true },
   { id: 'unavailable-time', request: 'YK4+000 查看模拟250秒的温度场。', reject: true },
   { id: 'incompatible-layers', request: 'YK1+346 请同屏叠加TSP坚硬度和TEM视电阻率，不要分阶段。', reject: true },
   { id: 'repeat-at-new-station', request: 'YK4+000 施工交底，请同屏装配一张掌子面、ZZ-Va支护和现有超前水平钻模型，不要二维照片。', roots: ['rock.face-photos', 'support.modeler-zz-va', 'rock.advance-drill'] },
@@ -76,11 +88,16 @@ try {
   page = await browser.newPage({ viewport: { width: 1400, height: 900 } })
   page.on('pageerror', error => report.errors.push(error.message))
   const taskIds = []
+  let modelRequests = 0
   const workfaceTextures=[]
   page.on('response',response=>{
     if(new URL(response.url()).pathname==='/data/workface-surface/texturedMesh.jpg')workfaceTextures.push(response.status())
   })
-  page.on('request', request => { if (request.method() === 'POST' && request.url().endsWith('/api/ai-agent/task-runs')) taskIds.push(request.postDataJSON().task.taskId) })
+  page.on('request', request => {
+    if (request.method() !== 'POST') return
+    if (request.url().endsWith('/api/ai-agent/task-runs')) taskIds.push(request.postDataJSON().task.taskId)
+    if (request.url().endsWith('/api/ai-agent/chat')) modelRequests++
+  })
   await page.route(`${app}/api/**`, route => { const url = new URL(route.request().url()); url.port = '3000'; return route.continue({ url: url.toString() }) })
   await page.goto(app, { waitUntil: 'domcontentloaded' }); await page.locator('.agent-fab').click()
   const environment=()=>page.evaluate(async()=>{
@@ -97,24 +114,48 @@ try {
     return {enabled:t.enabled,front:t.frontFaceAlpha,back:t.backFaceAlpha,frontDistance:t.frontFaceAlphaByDistance,backDistance:t.backFaceAlphaByDistance,rectangle:t.rectangle,active:taskTerrainContextActive.value}
   })
   const originalTerrain=process.env.VERIFY_TASK_TERRAIN==='1'?await terrainState():undefined
+  const currentAssembly = () => page.evaluate(async () => {
+    const { getTaskWorkflowController } = await import('/src/platform/tasks/TaskWorkflowBridge.ts')
+    const { taskId, status, lastCompletedStage } = getTaskWorkflowController().getStatus()
+    return { taskId, status, stage: lastCompletedStage }
+  })
   let lastRoots = []
   for (const entry of cases) {
     const beforeDisplay=process.env.VERIFY_SUPPORT_CONTINUITY==='1'?await page.evaluate(async()=>{const r=await import('/src/modules/support/test-section-resource.ts');return r.getTaskSupportLayers(r.getTestSectionSupportSummaries().map(s=>s.id))}):[]
-    const started = Date.now(), beforeTasks = taskIds.length
+    const started = Date.now(), beforeTasks = taskIds.length, beforeModelRequests = modelRequests
     const beforeReplies = await page.locator('.agent-messages .msg-row.assistant').count()
+    const beforeClarification = entry.verifyClarification ? await currentAssembly() : undefined
+    const clarificationEvidence = []
     await page.locator('.agent-input').fill(entry.request); await page.locator('.agent-input').press('Enter')
-    if (entry.clarification) {
-      await wait(async () => (await page.locator('.agent-messages .msg-row.assistant').count()) > beforeReplies)
+    const clarifications = entry.clarifications ?? (entry.clarification ? [{ answer: entry.clarification, question: entry.clarificationQuestion }] : [])
+    let lastReplyCount = beforeReplies
+    for (const { answer, question } of clarifications) {
+      await wait(async () => (await page.locator('.agent-messages .msg-row.assistant').count()) > lastReplyCount, 45_000)
       await page.locator('.agent-input').fill('idle probe'); await wait(() => page.locator('.send-btn').isEnabled()); await page.locator('.agent-input').fill('')
       if (taskIds.length !== beforeTasks) throw new Error('Ambiguous business goal executed before clarification')
-      await page.locator('.agent-input').fill(entry.clarification); await page.locator('.agent-input').press('Enter')
+      if (entry.verifyClarification) {
+        const after = await currentAssembly()
+        const reply = await page.locator('.agent-messages .msg-row.assistant').last().innerText()
+        if (JSON.stringify(after) !== JSON.stringify(beforeClarification)) throw new Error('澄清前改变了当前任务')
+        const expected = question ?? /(?:初支|支护).{0,12}(?:类型|型号|版本)|(?:类型|型号|版本).{0,12}(?:初支|支护)/
+        if (!expected.test(reply)) throw new Error(`未询问该用例缺少的信息：${reply}`)
+        clarificationEvidence.push({ reply, supplied: answer, priorTaskId: after.taskId, newTasksBeforeAnswer: 0 })
+      }
+      lastReplyCount = await page.locator('.agent-messages .msg-row.assistant').count()
+      await page.locator('.agent-input').fill(answer); await page.locator('.agent-input').press('Enter')
     }
     if (entry.reject || entry.reset) {
       await wait(async () => (await page.locator('.agent-messages .msg-row.assistant').count()) > beforeReplies, 60000)
       await new Promise(resolve => setTimeout(resolve, 1000))
       if (taskIds.length !== beforeTasks) throw new Error(`Non-assembly request created a task: ${entry.id}`)
     } else {
-      await wait(() => taskIds.length > beforeTasks)
+      try {
+        await wait(() => taskIds.length > beforeTasks, entry.verifyClarification ? 45_000 : 180_000)
+      } catch (error) {
+        if (!entry.verifyClarification) throw error
+        const reply = await page.locator('.agent-messages .msg-row.assistant').last().innerText()
+        throw new Error(`补齐信息后未创建装配任务：${reply}`)
+      }
       const taskId = taskIds.at(-1)
       if (entry.followup) {
         const run = await fetch(`http://localhost:3000/api/ai-agent/task-runs/${taskId}`).then(response=>response.json())
@@ -134,9 +175,20 @@ try {
       if (entry.unitCount && final.supportLengthM !== entry.unitCount) throw new Error('任务输出未保留指定支护长度')
       if (state.steps.at(-1).action !== 'scene.finalize' || final?.phase !== 'constructed-then-enhanced') throw new Error(`Missing final phase: ${entry.id}`)
       if (JSON.stringify([...final.assembledResourceIds].sort()) !== JSON.stringify([...entry.roots].sort())) throw new Error(`Wrong resources: ${entry.id}`)
+      if (entry.station !== undefined && (final.chainageRange?.start !== entry.station || final.chainageRange?.end !== entry.station)) {
+        throw new Error(`Wrong completed station: ${entry.id}, ${JSON.stringify(final.chainageRange)}`)
+      }
       await wait(() => page.locator('.agent-assembly-run').innerText().then(text => text.includes(taskId)).catch(() => false))
       lastRoots = entry.roots
       report.cases.push({ id: entry.id, taskId, total: state.total, phase: final.phase, assets: snapshot.data_versions.map(value => value.locator), elapsedMs: Date.now() - started })
+      if (entry.station !== undefined) {
+        if (modelRequests === beforeModelRequests) throw new Error(`No model call observed: ${entry.id}`)
+        Object.assign(report.cases.at(-1), { request: entry.request, assembledResources: final.assembledResourceIds, station: final.chainageRange.start, modelRequests: modelRequests - beforeModelRequests })
+      }
+      if (clarificationEvidence.length) {
+        if (taskIds.length !== beforeTasks + 1) throw new Error('补充信息后产生了非预期的额外任务')
+        report.cases.at(-1).clarification = { turns: clarificationEvidence, newTasksAfterAnswer: 1, supportLengthM: final.supportLengthM }
+      }
       if (entry.followup) report.cases.at(-1).parentTaskId = taskIds.at(-2)
     }
     await page.locator('.agent-input').fill('acceptance idle probe')
@@ -220,7 +272,11 @@ try {
       }
     }
     // The existing excavation handover owns its local background color.
-    const expectedEnvironment = entry.id==='tunnel-side-section'||entry.id==='three-module-support' ? {...originalEnvironment,background:currentEnvironment.background} : originalEnvironment
+    const expectedEnvironment = ['r1-support-station-variants', 'r1-support-clarify-fullwidth', 'r1-support-two-clarifications', 'r1-support-two-clarifications-mileage-first'].includes(entry.id)
+      ? { ...originalEnvironment, background: [24 / 255, 42 / 255, 57 / 255, 1] }
+      : entry.id === 'tunnel-side-section' || entry.id === 'three-module-support'
+        ? { ...originalEnvironment, background: currentEnvironment.background }
+        : originalEnvironment
     if(JSON.stringify(currentEnvironment)!==JSON.stringify(expectedEnvironment)||!currentEnvironment.sameCanvas||currentEnvironment.canvasCount!==1)throw new Error(`任务改用了额外场景或背景: ${JSON.stringify(currentEnvironment)}`)
     report.unifiedEnvironment=currentEnvironment
     if(entry.jetStation){

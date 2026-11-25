@@ -125,7 +125,9 @@ function toggleReference(role: ReviewReferenceRole) {
 function selectReferenceInPanel(role: ReviewReferenceRole) {
   toggleReference(role)
   if (selectedRole.value) {
-    try { presentation?.ensureReferenceInView(role, props.selection) }
+    try {
+      if (!presentation?.ensureReferenceInView(role, props.selection)) locateIssue.value = '当前视窗空间不足，展开视窗后可重新定位。'
+    }
     catch { locateIssue.value = '未能恢复当前复盘视角。' }
   }
 }
@@ -149,6 +151,7 @@ watch([() => props.selection.taskId, () => props.selection.stepIndex, () => prop
 }, { immediate: true })
 watch(() => props.selection.supportComponent, applySupportComponent)
 watch(() => props.selection.sceneAnnotations, visible => presentation?.setAnnotations(visible !== false))
+watch(() => props.selection.fixedLabelLayout, fixed => presentation?.setLabelAvoidance(!fixed))
 watch(referenceLinksActive, active => {
   if (!active) {
     selectedRole.value = null

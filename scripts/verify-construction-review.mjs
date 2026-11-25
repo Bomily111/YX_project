@@ -103,6 +103,7 @@ try {
           .map(item => item.label.text.getValue()),
         volumeFrames: viewer.entities.values.filter(item => item.properties?.taskVolumeDomain?.getValue() && item.show).length,
         gradeLabels: viewer.entities.values.filter(item => item.properties?.taskBlastDesignGrade?.getValue() && item.show).length,
+        overviewGradeLabels: viewer.entities.values.filter(item => item.properties?.designRockGradeOverview?.getValue() && item.show).length,
         stationGap: viewer.entities.getById('construction-review-station-gap-label')?.label.text.getValue() ?? null,
         cloudVisible: getBlastModel()?.show ?? null,
         supports: getTestSectionSupportSummaries(roots).map(({ supportType, lengthM }) => ({ supportType, lengthM })),
@@ -143,6 +144,7 @@ try {
       assert.equal(await chart.isVisible(), key === 'ventilation')
       assert.equal(facts.cloudVisible, key !== 'ventilation')
       assert.equal(facts.gradeLabels, key === 'blast' ? 1 : 0)
+      assert.equal(facts.overviewGradeLabels, 0)
     }
     const lowerPanel = key === 'reveal' ? drawing : key === 'ventilation' ? chart : undefined
     if (lowerPanel) {
@@ -424,7 +426,7 @@ try {
 
   const ventilation = ['rock.design-grade', 'blast.effect', 'ventilation.ceiling-jet-fan', 'ventilation.co-analysis']
   const blastRequest = '夜班完成一个开挖循环后，请做爆后排烟与出渣交接复盘。先对照爆后断面，然后核对排烟与监测，最后列出出渣班组接班需要的同循环记录。'
-  const blast = await stage(`先仅启动复核。${blastRequest}`,
+  const blast = await stage(`先仅启动复核。工点 ＹＫ４＋０００（旧标 DK280+984）。${blastRequest}`,
     'blast', ventilation, 'blast')
   const air = await stage('查看排烟与监测', 'ventilation', ventilation, 'fan')
   const handoff = await stage('查看出渣交接', 'handoff', ventilation, 'overview')
@@ -485,8 +487,20 @@ try {
   assert.equal(await panel.locator('.events dd').filter({ hasText: '待补' }).count(), 4)
   assert.match(await panel.getByTestId('construction-simulation').innerText(), /CO 模拟相对时间 · 0–60/)
   assert.ok(air.charts.some(chart => chart.owner === 'ventilation.co-analysis' && chart.timeRange[1] > chart.timeRange[0]))
-  assert.match(await send('在YK2+244做爆后排烟与出渣交接复盘'), /固定在 YK4\+000/)
+  const beforeStationConflict = await readScene('handoff')
+  const stationConflicts = []
+  for (const station of ['YK2+244', 'ＹＫ２＋２４４']) {
+    const reply = await send(`在${station}做爆后排烟与出渣交接复盘`)
+    assert.match(reply, /固定在 YK4\+000/)
+    const after = await readScene('handoff')
+    assert.equal(after.taskId, beforeStationConflict.taskId)
+    assert.deepEqual(after.roots, beforeStationConflict.roots)
+    assert.deepEqual(after.references, beforeStationConflict.references)
+    assertSameCamera(beforeStationConflict.camera, after.camera)
+    stationConflicts.push({ station, reply })
+  }
   assert.equal(await panel.getAttribute('data-stage'), 'handoff')
+  report.stationValidation = { accepted: 'ＹＫ４＋０００（旧标 DK280+984）', conflicts: stationConflicts, preservedTask: true }
   await send('复位当前任务场景，释放本次任务模型并恢复主场景。')
   await panel.waitFor({ state: 'detached' })
   await page.locator('[data-ventilation-owner="ventilation.co-analysis"]').waitFor({ state: 'detached' })

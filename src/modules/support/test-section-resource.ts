@@ -101,12 +101,14 @@ export function revealTaskSupportComponent(id:string,component:string, isolate =
     return Object.assign(()=>restore(),{isCurrent:()=>expected.isCurrent()})
   }catch(error){restore();throw error}
 }
+export class MissingTestSupportType extends Error {}
+
 export function validateTestSupportRequest(ids: readonly string[], request: string) {
   const selected = testSupportCatalog.filter(asset => ids.includes(asset.id))
   if (!selected.length) return
   if (selected.length > 1) throw new Error('当前测试工段一次只装配一种后方支护类型')
   const types = [...request.matchAll(/\b(?:Z-PM|ZZ-(?:QJsx|IIIx|IVsx|Vsx|IVa|IVb|IVc|IVx|III|II|Y1|Va|S))(?![A-Za-z0-9])/gi)].map(match => match[0].toLowerCase())
-  if (!types.length) throw new Error(`请明确支护类型，不能默认选择ZZ-Va；可从已有${testSupportCatalog.length}种模型中选择`)
+  if (!types.length) throw new MissingTestSupportType(`请补充本次初支型号，可从已有${testSupportCatalog.length}种模型中选择`)
   if (new Set(types).size !== 1 || types[0] !== selected[0].type.toLowerCase()) throw new Error('所选支护类型与用户要求不一致，请明确本次展示的支护类型')
 }
 export function existingSupportPlacement(offset: number, designElevationY = -2.1): C.Matrix4 {

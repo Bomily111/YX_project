@@ -1,0 +1,26 @@
+{
+  "cases": [
+    {
+      "id": "r1-support-station-variants",
+      "taskId": "scene-1795583569944-wk0da",
+      "total": 3,
+      "phase": "constructed-then-enhanced",
+      "assets": [
+        "/data/tunnel/tunnel002.glb",
+        "/data/tunnel/三台阶.glb",
+        "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+      ],
+      "elapsedMs": 6389,
+      "request": "班前讲开挖和初支的位置。请在ＹＫ２＋２４４（旧标 DK279+228）同屏展示前方三台阶和后方5米原版ZZ-IVb，其他资料不用。",
+      "assembledResources": [
+        "rock.three-bench",
+        "support.test-section-zz-ivb"
+      ],
+      "station": 2244,
+      "modelRequests": 1
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "任务改用了额外场景或背景: {\"sameCanvas\":true,\"canvasCount\":1,\"background\":[0.09411764705882353,0.16470588235294117,0.2235294117647059,1],\"globe\":true,\"skyBox\":true,\"skyAtmosphere\":true,\"sun\":true,\"moon\":true,\"fog\":true}"
+}

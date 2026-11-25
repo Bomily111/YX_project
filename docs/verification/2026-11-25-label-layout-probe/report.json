@@ -1,0 +1,459 @@
+{
+  "passed": false,
+  "scope": "fixed versus adjusted annotations",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "cases": [
+    {
+      "key": "support",
+      "markerId": "construction-review-reference-2238",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "fixed": {
+        "pose": [
+          [
+            -475203.66541390924,
+            5536135.515000485,
+            3126955.002865895
+          ],
+          [
+            0.1497712968992794,
+            0.39111437621556,
+            -0.9080738424503931
+          ],
+          [
+            -0.056887491343963155,
+            0.920320487120924,
+            0.38700647838776003
+          ]
+        ],
+        "samples": {
+          "picked": 90,
+          "exposed": 54,
+          "sampleTarget": {
+            "x": 608,
+            "y": 542
+          },
+          "origin": 1,
+          "offset": [
+            0,
+            34
+          ],
+          "text": "ZZ-IVb 初支 · YK2+238–YK2+243"
+        },
+        "scene": {
+          "resources": [
+            "blast.design-data",
+            "rock.three-bench",
+            "rock.tsp-integrity",
+            "support.test-section-zz-ivb"
+          ],
+          "matrices": [
+            [
+              -0.04214446023312385,
+              0.4911288563875297,
+              -0.8700668312808713,
+              0,
+              -0.07438828223370382,
+              0.866881003576301,
+              0.4929337776059418,
+              0,
+              0.9963384103496048,
+              0.08549720499538294,
+              -1.6301015716329842e-16,
+              0,
+              -475193.07950184203,
+              5536147.263124687,
+              3126922.556426498,
+              1
+            ],
+            [
+              -0.14409683040392884,
+              -0.49845961221254925,
+              0.8548532730594511,
+              0,
+              -0.06944177527284173,
+              0.8668328315440487,
+              0.49373948799370243,
+              0,
+              -0.9871240769601852,
+              0.01178376638610358,
+              -0.15952178388941188,
+              0,
+              -475187.63627055916,
+              5536147.021069524,
+              3126923.340197923,
+              1
+            ],
+            [
+              -0.14450388291029134,
+              -0.49845650097221117,
+              0.8547863735825395,
+              0,
+              -0.06944207630625927,
+              0.8668318009949006,
+              0.49374125493239146,
+              0,
+              -0.987064549997681,
+              0.011989387910861266,
+              -0.1598744154497474,
+              0,
+              -475188.6233642796,
+              5536147.032948524,
+              3126923.1804955006,
+              1
+            ],
+            [
+              -0.14491081517877022,
+              -0.4984533056670839,
+              0.8547193444129956,
+              0,
+              -0.06944237895140626,
+              0.866830770705961,
+              0.4937430211789114,
+              0,
+              -0.9870048691114921,
+              0.012194959076040096,
+              -0.16022693694675727,
+              0,
+              -475189.61039839505,
+              5536147.045033124,
+              3126923.0204405035,
+              1
+            ],
+            [
+              -0.1453176269881124,
+              -0.49845002635888075,
+              0.8546521856927384,
+              0,
+              -0.06944268320676358,
+              0.8668297406783467,
+              0.4937447867315211,
+              0,
+              -0.9869450344551052,
+              0.012400479762547365,
+              -0.16057934819294087,
+              0,
+              -475190.5973727737,
+              5536147.0573235275,
+              3126922.860033187,
+              1
+            ],
+            [
+              -0.14572431811681175,
+              -0.498446663109459,
+              0.8545848975639786,
+              0,
+              -0.06944298907080844,
+              0.8668287109131746,
+              0.4937465515884802,
+              0,
+              -0.9868850461823312,
+              0.012605949851145173,
+              -0.16093164900058843,
+              0,
+              -475191.58428727475,
+              5536147.069819845,
+              3126922.6992737525,
+              1
+            ]
+          ],
+          "range": {
+            "start": 2244,
+            "end": 2244
+          },
+          "paths": [
+            "/data/blast/blast-design.json",
+            "/data/tsp_actual/integrity.json",
+            "/data/tsp_actual/integrity_volume.png",
+            "/data/tunnel/三台阶.glb",
+            "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+          ],
+          "fanStation": null
+        },
+        "environment": {
+          "terrain": "CesiumTerrainProvider",
+          "globe": true,
+          "translucency": [
+            true,
+            1,
+            1,
+            [
+              400,
+              0.9,
+              800,
+              0.9
+            ],
+            null
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "fingerprints": [
+          {
+            "sourceId": "asset:/data/blast/blast-design.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+          },
+          {
+            "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+          },
+          {
+            "sourceId": "asset:/data/tsp_actual/integrity.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/三台阶.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/tunnel002.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+          },
+          {
+            "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+          }
+        ]
+      },
+      "adaptive": {
+        "pose": [
+          [
+            -475203.66541390924,
+            5536135.515000485,
+            3126955.002865895
+          ],
+          [
+            0.1497712968992794,
+            0.39111437621556,
+            -0.9080738424503931
+          ],
+          [
+            -0.056887491343963155,
+            0.920320487120924,
+            0.38700647838776003
+          ]
+        ],
+        "samples": {
+          "picked": 87,
+          "exposed": 87,
+          "sampleTarget": {
+            "x": 496,
+            "y": 542
+          },
+          "origin": -1,
+          "offset": [
+            0,
+            34
+          ],
+          "text": "ZZ-IVb 初支 · YK2+238–YK2+243"
+        },
+        "scene": {
+          "resources": [
+            "blast.design-data",
+            "rock.three-bench",
+            "rock.tsp-integrity",
+            "support.test-section-zz-ivb"
+          ],
+          "matrices": [
+            [
+              -0.04214446023312385,
+              0.4911288563875297,
+              -0.8700668312808713,
+              0,
+              -0.07438828223370382,
+              0.866881003576301,
+              0.4929337776059418,
+              0,
+              0.9963384103496048,
+              0.08549720499538294,
+              -1.6301015716329842e-16,
+              0,
+              -475193.07950184203,
+              5536147.263124687,
+              3126922.556426498,
+              1
+            ],
+            [
+              -0.14409683040392884,
+              -0.49845961221254925,
+              0.8548532730594511,
+              0,
+              -0.06944177527284173,
+              0.8668328315440487,
+              0.49373948799370243,
+              0,
+              -0.9871240769601852,
+              0.01178376638610358,
+              -0.15952178388941188,
+              0,
+              -475187.63627055916,
+              5536147.021069524,
+              3126923.340197923,
+              1
+            ],
+            [
+              -0.14450388291029134,
+              -0.49845650097221117,
+              0.8547863735825395,
+              0,
+              -0.06944207630625927,
+              0.8668318009949006,
+              0.49374125493239146,
+              0,
+              -0.987064549997681,
+              0.011989387910861266,
+              -0.1598744154497474,
+              0,
+              -475188.6233642796,
+              5536147.032948524,
+              3126923.1804955006,
+              1
+            ],
+            [
+              -0.14491081517877022,
+              -0.4984533056670839,
+              0.8547193444129956,
+              0,
+              -0.06944237895140626,
+              0.866830770705961,
+              0.4937430211789114,
+              0,
+              -0.9870048691114921,
+              0.012194959076040096,
+              -0.16022693694675727,
+              0,
+              -475189.61039839505,
+              5536147.045033124,
+              3126923.0204405035,
+              1
+            ],
+            [
+              -0.1453176269881124,
+              -0.49845002635888075,
+              0.8546521856927384,
+              0,
+              -0.06944268320676358,
+              0.8668297406783467,
+              0.4937447867315211,
+              0,
+              -0.9869450344551052,
+              0.012400479762547365,
+              -0.16057934819294087,
+              0,
+              -475190.5973727737,
+              5536147.0573235275,
+              3126922.860033187,
+              1
+            ],
+            [
+              -0.14572431811681175,
+              -0.498446663109459,
+              0.8545848975639786,
+              0,
+              -0.06944298907080844,
+              0.8668287109131746,
+              0.4937465515884802,
+              0,
+              -0.9868850461823312,
+              0.012605949851145173,
+              -0.16093164900058843,
+              0,
+              -475191.58428727475,
+              5536147.069819845,
+              3126922.6992737525,
+              1
+            ]
+          ],
+          "range": {
+            "start": 2244,
+            "end": 2244
+          },
+          "paths": [
+            "/data/blast/blast-design.json",
+            "/data/tsp_actual/integrity.json",
+            "/data/tsp_actual/integrity_volume.png",
+            "/data/tunnel/三台阶.glb",
+            "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+          ],
+          "fanStation": null
+        },
+        "environment": {
+          "terrain": "CesiumTerrainProvider",
+          "globe": true,
+          "translucency": [
+            true,
+            1,
+            1,
+            [
+              400,
+              0.9,
+              800,
+              0.9
+            ],
+            null
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "fingerprints": [
+          {
+            "sourceId": "asset:/data/blast/blast-design.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+          },
+          {
+            "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+          },
+          {
+            "sourceId": "asset:/data/tsp_actual/integrity.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/三台阶.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/tunnel002.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+          },
+          {
+            "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+          }
+        ]
+      }
+    }
+  ],
+  "pageErrors": [],
+  "modelRequests": 0,
+  "failure": "AssertionError [ERR_ASSERTION]: {\"picked\":90,\"exposed\":54,\"sampleTarget\":{\"x\":608,\"y\":542},\"origin\":1,\"offset\":[0,34],\"text\":\"ZZ-IVb 初支 · YK2+238–YK2+243\"}\n    at compareReviewLabelLayout (file:///D:/project/scripts/verify-construction-review-conditions.mjs:533:10)\n    at async file:///D:/project/scripts/verify-construction-review-conditions.mjs:539:35"
+}

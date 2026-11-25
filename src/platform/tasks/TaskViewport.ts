@@ -24,12 +24,17 @@ export function freeTaskViewport(width:number,height:number,obstacles:readonly S
   return best
 }
 
+export function taskViewportOverlays(viewer: C.Viewer) {
+  return Array.from(viewer.scene.canvas.ownerDocument.querySelectorAll(
+    '.agent-window,.agent-assembly-info,.gpr-float,.d2d,.tsp-legend,.tem-legend,.grade-legend,[data-ventilation-enhancement="chart"],.tech-header,.bottom-metrics-bar,.agent-assembly-bottom',
+  ))
+}
+
 export function readTaskViewport(viewer:C.Viewer){
   const canvas=viewer.scene.canvas,rect=canvas?.getBoundingClientRect()
   if(!rect?.width||!rect.height)return null
   const doc=canvas.ownerDocument
-  const selectors='.agent-window,.agent-assembly-info,.gpr-float,.d2d,.tsp-legend,.tem-legend,.grade-legend,[data-ventilation-enhancement="chart"],.tech-header,.bottom-metrics-bar,.agent-assembly-bottom'
-  const obstacles=Array.from(doc.querySelectorAll(selectors)).filter(e=>{
+  const obstacles=taskViewportOverlays(viewer).filter(e=>{
     const css=doc.defaultView?.getComputedStyle(e)
     return css?.display!=='none'&&css?.visibility!=='hidden'
   }).map(e=>e.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0).map(r=>({left:r.left-rect.left,right:r.right-rect.left,top:r.top-rect.top,bottom:r.bottom-rect.top}))

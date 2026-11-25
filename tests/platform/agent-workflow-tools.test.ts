@@ -42,8 +42,26 @@ const tool = (name: string) => {
 describe('agent workflow tools', () => {
   it('anchors the assembly target to the user wording rather than a model-invented mileage', () => {
     expect(resolveAssemblyMileage(278330, '在 DK278+330 主场景装配围岩')).toBe('DK278+330')
+    expect(resolveAssemblyMileage('YK4+000', '在 ＹＫ２＋２４４（YK2+244.0、旧标 DK279+228）装配初支')).toBe('YK2+244')
+    expect(resolveAssemblyMileage('YK4+000', '在 YK2+244.1（旧标 DK279+228.1）装配初支')).toBe('YK2+244.1')
+    expect(resolveAssemblyMileage('YK4+000', '在 ＹＫ２＋２４４ 装配来源 Ｘ１ＤＫ２＋９０５ 的掌子面')).toBe('YK2+244')
     expect(() => resolveAssemblyMileage('DK278+330', '装配围岩')).toThrow('用户未明确')
     expect(() => resolveAssemblyMileage('DK278+330', '对比 DK278+330 和 DK278+400')).toThrow('多个里程')
+    expect(() => resolveAssemblyMileage('YK2+244', '在 ＹＫ２＋２４４ 或 YK4+000 装配初支')).toThrow('多个里程')
+  })
+
+  it.each([
+    ['test-support-type', '在ＹＫ１＋３４６同屏展示三台阶和后方5米初支', ['rock.three-bench', 'support.test-section']],
+    ['target-mileage', '同屏展示三台阶和后方5米ZZ-IVb初支', ['rock.three-bench', 'support.test-section-zz-ivb']],
+    ['target-mileage', '请同屏展示爆后点云和稳态风场，不用炮孔设计图', ['blast.effect', 'ventilation.steady-cfd']],
+  ])('asks for %s before preparing an assembly', async (clarification, userRequest, resourceIds) => {
+    const prepareScene = vi.fn()
+    unregister = registerTaskWorkflowController({ prepareScene } as unknown as TaskWorkflowController)
+    const result = JSON.parse(await tool('assemble_scene_at_mileage').executor({
+      targetMileage: 'YK2+244', userRequest, resourceIds,
+    }))
+    expect(result).toMatchObject({ ok: false, clarification })
+    expect(prepareScene).not.toHaveBeenCalled()
   })
 
   it('assembles one validated main scene at the requested centerline position', async () => {

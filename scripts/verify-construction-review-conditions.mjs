@@ -6,6 +6,7 @@ const url = new URL(process.env.BROWSER_APP_URL ?? 'http://127.0.0.1:5178')
 const ordinaryUrl = url.toString()
 url.searchParams.set('taskControls', 'manual')
 const fullReview = process.env.ACCEPTANCE_FULL_REVIEW === '1'
+const labelLayoutComparison = process.env.ACCEPTANCE_LABEL_LAYOUT === '1'
 const output = process.env.ACCEPTANCE_OUTPUT_DIR ?? (fullReview
   ? 'docs/verification/2026-11-23-review-full-conditions'
   : 'docs/verification/2026-11-23-review-conditions-terrain')
@@ -31,15 +32,15 @@ const sequences = [
 ]
 
 await mkdir(output, { recursive: true })
-const report = { passed: false, scope: fullReview ? 'complete workflows, software conditions' : 'representative nodes, software conditions',
+const report = { passed: false, scope: labelLayoutComparison ? 'fixed versus adjusted annotations' : fullReview ? 'complete workflows, software conditions' : 'representative nodes, software conditions',
   viewport, cases: [], pageErrors: [], modelRequests: 0 }
 const browser = await chromium.launch({
   executablePath: process.env.EDGE_PATH ?? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
   args: ['--enable-webgl', '--use-gl=angle', '--use-angle=d3d11'],
 })
 
-async function openPage(address = url.toString()) {
-  const page = await browser.newPage({ viewport })
+async function openPage(address = url.toString(), size = viewport) {
+  const page = await browser.newPage({ viewport: size })
   page.on('pageerror', error => report.pageErrors.push(error.message))
   page.on('request', request => {
     if (request.method() === 'POST' && /\/api\/ai-agent\/chat$/.test(request.url())) report.modelRequests++
@@ -137,6 +138,8 @@ async function readScene(page) {
       blastHoles: resources.includes('blast.effect') ? blastLayerVisibility.holes : null,
       coVisible: [...overlays].some(element => element.getBoundingClientRect().height > 0),
       markers: markers.length, visibleMarkers: markers.filter(entity => entity.show).length,
+      overviewGradeLabels: viewer.entities.values.filter(entity => entity.properties?.designRockGradeOverview?.getValue())
+        .map(entity => ({ id: entity.id, show: entity.show })).sort((a, b) => a.id.localeCompare(b.id)),
       environment: {
         terrain: viewer.terrainProvider.constructor.name, globe: globe.show,
         translucency: [translucency.enabled, translucency.frontFaceAlpha, translucency.backFaceAlpha,
@@ -203,8 +206,8 @@ async function manualAssembly(page, scenario) {
 }
 
 const placement = ({ resources, matrices, range, paths, fanStation }) => ({ resources, matrices, range, paths, fanStation })
-const presentation = ({ anchors, blastHoles, blastCloud, coVisible, cut, markers, visibleMarkers, workfaceShader }) =>
-  ({ anchors, blastHoles, blastCloud, coVisible, cut, markers, visibleMarkers, workfaceShader })
+const presentation = ({ anchors, blastHoles, blastCloud, coVisible, cut, markers, visibleMarkers, workfaceShader, overviewGradeLabels }) =>
+  ({ anchors, blastHoles, blastCloud, coVisible, cut, markers, visibleMarkers, workfaceShader, overviewGradeLabels })
 function assertSamePose(before, after) {
   for (const [index, vector] of before.entries()) {
     const tolerance = index === 0 ? 1e-6 : 1e-12
@@ -416,6 +419,7 @@ async function verifySequence(stages) {
         if (['baseline', 'candidate'].includes(scenario.stage)) assert.ok(state.anchors.every(layer => !layer.visible))
         if (scenario.key === 'handoff') {
           assert.equal(state.fanStation, 3988)
+          assert.ok(state.overviewGradeLabels.length && state.overviewGradeLabels.every(label => !label.show))
           assert.equal(state.coVisible, scenario.stage === 'ventilation')
           assert.equal(state.blastCloud, scenario.stage !== 'ventilation')
         }
@@ -440,8 +444,329 @@ async function verifySequence(stages) {
   }
 }
 
+async function renderReviewFrames(page) {
+  await page.evaluate(async () => {
+    const { scene } = window.__reviewComparison.viewer()
+    // Graphics properties can update one frame before the Cesium label and pick buffer.
+    for (let frame = 0; frame < 2; frame++) await new Promise(resolve => {
+      const stop = scene.postRender.addEventListener(() => { stop(); resolve() })
+      scene.requestRender()
+    })
+  })
+}
+
+async function sampleReviewLabel(page, markerId) {
+  return page.evaluate(id => {
+    const C = window.Cesium
+    const { canvas, clock, entities, scene } = window.__reviewComparison.viewer()
+    const marker = entities.getById(id)
+    const rect = canvas.getBoundingClientRect()
+    const anchor = C.SceneTransforms.worldToWindowCoordinates(scene, marker.position.getValue(clock.currentTime))
+    const offset = marker.label.pixelOffset.getValue(clock.currentTime)
+    const origin = marker.label.horizontalOrigin?.getValue(clock.currentTime) ?? C.HorizontalOrigin.CENTER
+    const x0 = Math.round(anchor.x + offset.x)
+    const y0 = Math.round(anchor.y + offset.y)
+    let picked = 0
+    const hits = []
+    for (const dy of [-14, -8, -2, 4]) for (let dx = -230; dx <= 230; dx += 8) {
+      const x = x0 + dx, y = y0 + dy
+      if (x < 0 || y < 0 || x >= rect.width || y >= rect.height) continue
+      if (scene.pick(new C.Cartesian2(x, y), 1, 1)?.id !== marker) continue
+      picked++
+      const screen = { x: x + rect.left, y: y + rect.top }
+      if (document.elementFromPoint(screen.x, screen.y) === canvas) {
+        hits.push(screen)
+      }
+    }
+    const center = hits.reduce((point, hit) => ({ x: point.x + hit.x / hits.length, y: point.y + hit.y / hits.length }), { x: 0, y: 0 })
+    const distance = point => (point.x - center.x) ** 2 + (point.y - center.y) ** 2
+    const sampleTarget = hits.sort((a, b) => distance(a) - distance(b))[0]
+    return { picked, exposed: hits.length, sampleTarget, origin, offset: [offset.x, offset.y], text: marker.label.text.getValue() }
+  }, markerId)
+}
+
+async function inspectOverlappingHandoffLabels(page, mode) {
+  const ids = ['construction-review-reference-4000', 'construction-review-reference-3988']
+  await page.evaluate(markerIds => {
+    const C = window.Cesium
+    const { camera, clock, entities, scene } = window.__reviewComparison.viewer()
+    const [cloud, fan] = markerIds.map(id => entities.getById(id).position.getValue(clock.currentTime))
+    const direction = C.Cartesian3.normalize(C.Cartesian3.subtract(fan, cloud, new C.Cartesian3()), new C.Cartesian3())
+    const vertical = C.Ellipsoid.WGS84.geodeticSurfaceNormal(cloud, new C.Cartesian3())
+    const right = C.Cartesian3.cross(direction, vertical, new C.Cartesian3())
+    const up = C.Cartesian3.normalize(C.Cartesian3.cross(right, direction, new C.Cartesian3()), new C.Cartesian3())
+    const destination = C.Cartesian3.subtract(cloud, C.Cartesian3.multiplyByScalar(direction, 35, new C.Cartesian3()), new C.Cartesian3())
+    camera.setView({ destination, orientation: { direction, up } })
+    scene.requestRender()
+  }, ids)
+  await waitForTiles(page)
+  if (mode === 'adaptive') await page.waitForFunction(markerIds => {
+    const { clock, entities } = window.__reviewComparison.viewer()
+    const [first, second] = markerIds.map(id => entities.getById(id).label.pixelOffset.getValue(clock.currentTime).y)
+    return Math.abs(first - second) >= 28
+  }, ids, { timeout: 8000 })
+  await renderReviewFrames(page)
+  const samples = []
+  for (const id of ids) samples.push(await sampleReviewLabel(page, id))
+  const leaders = await page.evaluate(async markerIds => {
+    const overlay = document.querySelector('canvas[data-review-label-leaders]')
+    if (!overlay) return null
+    const { getBlastModel } = await import('/src/views/tunnel-module/blast.ts')
+    const { getActiveJetFan } = await import('/src/modules/ventilation/axial-fan-resource.ts')
+    const { scene, entities, clock, canvas } = window.__reviewComparison.viewer()
+    const models = [getBlastModel(), getActiveJetFan()]
+    const C = window.Cesium
+    const context = overlay.getContext('2d')
+    const anchors = markerIds.flatMap((id, index) => {
+      const label = entities.getById(id).label
+      const offset = label.pixelOffset.getValue(clock.currentTime)
+      if (offset.x === 0 && offset.y === -28 && (label.horizontalOrigin?.getValue(clock.currentTime) ?? C.HorizontalOrigin.CENTER) === C.HorizontalOrigin.CENTER) return []
+      const p = C.SceneTransforms.worldToWindowCoordinates(scene, models[index].boundingSphere.center)
+      const x = Math.round(p.x * overlay.width / canvas.clientWidth)
+      const y = Math.round(p.y * overlay.height / canvas.clientHeight)
+      const pixels = context.getImageData(x - 4, y - 4, 9, 9).data
+      return [{ id, reachesTarget: pixels.some((value, channel) => channel % 4 === 3 && value > 32) }]
+    })
+    return { anchors, pointerTransparent: getComputedStyle(overlay).pointerEvents === 'none' }
+  }, ids)
+  if (mode === 'fixed') assert.equal(leaders, null)
+  else {
+    assert.ok(leaders?.pointerTransparent)
+    assert.ok(leaders.anchors.length && leaders.anchors.every(anchor => anchor.reachesTarget), JSON.stringify(leaders))
+  }
+  await page.screenshot({ path: `${output}/handoff-overlap-${mode}.png` })
+  const initial = await readScene(page)
+  const { pose } = initial
+  const pickedEvents = []
+  const focusedLeaders = []
+  if (mode === 'adaptive') {
+    const sampleLeader = index => page.evaluate(async selectedIndex => {
+      const overlay = document.querySelector('canvas[data-review-label-leaders]')
+      if (!overlay) return { focused: 0, idle: 0 }
+      const { getBlastModel } = await import('/src/views/tunnel-module/blast.ts')
+      const { getActiveJetFan } = await import('/src/modules/ventilation/axial-fan-resource.ts')
+      const { scene, canvas } = window.__reviewComparison.viewer()
+      const model = selectedIndex === 0 ? getBlastModel() : getActiveJetFan()
+      const anchor = window.Cesium.SceneTransforms.worldToWindowCoordinates(scene, model.boundingSphere.center)
+      const x = Math.round(anchor.x * overlay.width / canvas.clientWidth)
+      const y = Math.round(anchor.y * overlay.height / canvas.clientHeight)
+      const rgba = overlay.getContext('2d').getImageData(x - 5, y - 5, 11, 11).data
+      let focused = 0, idle = 0
+      for (let p = 0; p < rgba.length; p += 4) {
+        if (rgba[p + 3] < 80) continue
+        if (rgba[p] >= 230 && rgba[p + 1] >= 240 && rgba[p + 2] >= 245) focused++
+        else if (rgba[p] < 170 && rgba[p + 1] >= 210 && rgba[p + 2] >= 220) idle++
+      }
+      return { focused, idle }
+    }, index)
+    for (const [index, event] of ['起爆', '启风'].entries()) {
+      const hit = samples[index].sampleTarget
+      assert.ok(hit)
+      await page.mouse.click(hit.x, hit.y)
+      await page.waitForFunction(label => document.querySelector('.related-event dt')?.textContent === label, event, { timeout: 5000 })
+      await renderReviewFrames(page)
+      const active = await sampleLeader(index)
+      const other = await sampleLeader(1 - index)
+      assert.ok(active.focused > 0 && active.idle === 0 && other.focused === 0, JSON.stringify({ active, other }))
+      focusedLeaders.push({ event, active, other })
+      await page.screenshot({ path: `${output}/handoff-focus-${index === 0 ? 'cloud' : 'fan'}.png` })
+      pickedEvents.push(event)
+    }
+    const hit = samples[1].sampleTarget
+    await page.mouse.click(hit.x, hit.y)
+    await page.locator('.related-event').waitFor({ state: 'detached' })
+    await renderReviewFrames(page)
+    const idle = await sampleLeader(1)
+    assert.ok(idle.focused === 0 && idle.idle > 0, JSON.stringify(idle))
+    const restored = await readScene(page)
+    assertSamePose(pose, restored.pose)
+    assert.equal(restored.taskId, initial.taskId)
+    assert.deepEqual(placement(restored), placement(initial))
+    return { samples, pose, pickedEvents, leaders, focusedLeaders, restoredIdleLeader: idle }
+  }
+  return { samples, pose, pickedEvents, leaders }
+}
+
+async function compareReviewLabelLayout(scenario) {
+  const isSupport = scenario.key === 'support'
+  const size = isSupport ? { width: 1024, height: 768 } : viewport
+  const markerId = `construction-review-reference-${isSupport ? 2238 : 3988}`
+  const preferredY = isSupport ? 34 : -28
+  const result = { key: scenario.key, markerId, viewport: size }
+  report.cases.push(result)
+  const page = await openPage(url.toString(), size)
+  assert.match(await send(page, `仅装配复盘场景。${scenario.title}`), /使用平台默认场景表达/)
+  if (!isSupport) await page.evaluate(() => {
+    const { entities } = window.__reviewComparison.viewer()
+    const first = entities.values.find(entity => entity.properties?.designRockGradeOverview?.getValue())
+    first.show = false
+  })
+  const assembly = await readScene(page)
+  assert.doesNotMatch(await send(page, '增强当前复盘'), /未完成/)
+  const panel = page.getByTestId('construction-review')
+  await panel.waitFor()
+  if (isSupport) {
+    await panel.getByRole('button', { name: '显露系统锚杆' }).click()
+    await panel.getByRole('button', { name: '布置侧视' }).click()
+    await panel.getByRole('button', { name: '返回整体' }).waitFor()
+  }
+  const sceneBefore = await readScene(page)
+  const button = panel.getByRole('button', { name: isSupport ? /定位ZZ-IVb 初支/ : /定位洞顶射流风机/ })
+  if (!isSupport) {
+    assert.ok(assembly.overviewGradeLabels.some(label => label.show))
+    assert.ok(assembly.overviewGradeLabels.some(label => !label.show))
+    assert.deepEqual(sceneBefore.overviewGradeLabels, assembly.overviewGradeLabels.map(label => ({ ...label, show: false })))
+  }
+  for (const mode of ['fixed', 'adaptive']) {
+    const command = mode === 'fixed' ? '固定复盘标注布局' : '启用复盘标注避让'
+    assert.match(await send(page, command), new RegExp(`已${command}`))
+    if (await button.getAttribute('aria-pressed') === 'true') await button.press('Enter')
+    await page.evaluate(({ id, pose }) => {
+      const C = window.Cesium
+      const viewer = window.__reviewComparison.viewer()
+      const { camera, canvas, clock, entities, scene } = viewer
+      const [destination, direction, up] = pose.map(point => C.Cartesian3.fromArray(point))
+      camera.setView({ destination, orientation: { direction, up } })
+      const rect = canvas.getBoundingClientRect()
+      const panelLeft = document.querySelector('.agent-window').getBoundingClientRect().left - rect.left
+      const anchor = entities.getById(id).position.getValue(clock.currentTime)
+      const angle = C.Cartesian3.subtract(anchor, camera.positionWC, new C.Cartesian3())
+      const depth = C.Cartesian3.dot(camera.directionWC, angle)
+      const pixels = camera.frustum.getPixelDimensions(rect.width, rect.height, depth, 1, new C.Cartesian2())
+      const start = C.SceneTransforms.worldToWindowCoordinates(scene, anchor)
+      camera.moveRight((start.x - (panelLeft - 10)) * pixels.x)
+      scene.requestRender()
+    }, { id: markerId, pose: sceneBefore.pose })
+    await waitForTiles(page)
+    if (mode === 'adaptive') await page.waitForFunction(({ id, dy }) => {
+      const C = window.Cesium
+      const { canvas, entities, clock, scene } = window.__reviewComparison.viewer()
+      const marker = entities.getById(id)
+      const { label } = marker
+      const offset = label.pixelOffset.getValue(clock.currentTime)
+      const origin = label.horizontalOrigin?.getValue(clock.currentTime) ?? C.HorizontalOrigin.CENTER
+      if (origin === C.HorizontalOrigin.CENTER && offset.x === 0 && offset.y === dy) return false
+      const anchor = C.SceneTransforms.worldToWindowCoordinates(scene, marker.position.getValue(clock.currentTime))
+      const rect = canvas.getBoundingClientRect()
+      return [-24, 0, 24].every(dx => document.elementFromPoint(
+        rect.left + anchor.x + offset.x + dx + 48 * origin,
+        rect.top + anchor.y + offset.y - 8,
+      ) === canvas)
+    }, { id: markerId, dy: preferredY }, { timeout: 8000 })
+    await renderReviewFrames(page)
+    const samples = await sampleReviewLabel(page, markerId)
+    const current = await readScene(page)
+    assert.equal(current.taskId, sceneBefore.taskId)
+    assert.deepEqual(placement(current), placement(sceneBefore))
+    assert.ok(samples.picked >= 12 && samples.exposed > 0, JSON.stringify(samples))
+    await page.screenshot({ path: `${output}/${scenario.key}-${mode}.png` })
+    await button.click()
+    const located = await readScene(page)
+    const keptCamera = mode === 'adaptive'
+    assertSamePose(keptCamera ? current.pose : sceneBefore.pose, located.pose)
+    if (!keptCamera) assert.notDeepEqual(located.pose, current.pose)
+    assert.equal(located.taskId, current.taskId)
+    assert.deepEqual(placement(located), placement(current))
+    let removesOffsetOnCollapse = false
+    if (mode === 'adaptive') {
+      await button.click()
+      assert.equal(await button.getAttribute('aria-pressed'), 'false')
+      await renderReviewFrames(page)
+      const { sampleTarget } = await sampleReviewLabel(page, markerId)
+      assert.ok(sampleTarget)
+      await page.mouse.click(sampleTarget.x, sampleTarget.y)
+      const label = await button.getAttribute('aria-label')
+      await page.waitForFunction(name => document.querySelector(`button[aria-label="${name}"]`)?.getAttribute('aria-pressed') === 'true', label, { timeout: 5000 })
+      assertSamePose(current.pose, (await readScene(page)).pose)
+      await page.getByTitle('最小化', { exact: true }).click()
+      await page.locator('.agent-window').waitFor({ state: 'detached' })
+      await page.waitForFunction(({ id, dy }) => {
+        const { entities, clock } = window.__reviewComparison.viewer()
+        const label = entities.getById(id).label
+        const offset = label.pixelOffset.getValue(clock.currentTime)
+        const centered = (label.horizontalOrigin?.getValue(clock.currentTime) ?? window.Cesium.HorizontalOrigin.CENTER) === window.Cesium.HorizontalOrigin.CENTER
+        return centered && offset.x === 0 && offset.y === dy
+      }, { id: markerId, dy: preferredY }, { timeout: 8000 })
+      assertSamePose(current.pose, (await readScene(page)).pose)
+      removesOffsetOnCollapse = true
+      await page.locator('.agent-fab').click()
+      await page.waitForFunction(({ id, dy }) => {
+        const chat = document.querySelector('.agent-window')
+        if (!chat || chat.classList.contains('agent-pop-enter-active')) return false
+        const { entities, clock } = window.__reviewComparison.viewer()
+        const label = entities.getById(id).label
+        const offset = label.pixelOffset.getValue(clock.currentTime)
+        const origin = label.horizontalOrigin?.getValue(clock.currentTime) ?? window.Cesium.HorizontalOrigin.CENTER
+        return origin !== window.Cesium.HorizontalOrigin.CENTER || offset.x !== 0 || offset.y !== dy
+      }, { id: markerId, dy: preferredY }, { timeout: 8000 })
+      await renderReviewFrames(page)
+      const reopened = await sampleReviewLabel(page, markerId)
+      assert.ok(reopened.picked > 0 && reopened.exposed / reopened.picked > .9, JSON.stringify(reopened))
+    }
+    result[mode] = { taskId: current.taskId, pose: current.pose, samples, keptCamera, removesOffsetOnCollapse, scene: placement(current), environment: current.environment,
+      fingerprints: await fingerprints(page, current.taskId) }
+    if (!isSupport) result[mode].overlap = await inspectOverlappingHandoffLabels(page, mode)
+    if (!isSupport && mode === 'adaptive') {
+      await button.press('Enter')
+      await page.setViewportSize({ width: 640, height: 360 })
+      await renderReviewFrames(page)
+      assert.equal(await page.evaluate(async () => {
+        const { readTaskViewport } = await import('/src/platform/tasks/TaskViewport.ts')
+        return readTaskViewport(window.__reviewComparison.viewer())?.safe
+      }), null)
+      const crowded = await readScene(page)
+      await button.press('Enter')
+      await panel.getByRole('status').filter({ hasText: '当前视窗空间不足' }).waitFor({ timeout: 5000 })
+      assertSamePose(crowded.pose, (await readScene(page)).pose)
+      result[mode].crowdedViewport = { width: 640, height: 360, reportedInsufficientSpace: true, keptCamera: true }
+      await page.setViewportSize(size)
+      await renderReviewFrames(page)
+      await button.press('Enter')
+      await button.press('Enter')
+      assert.doesNotMatch(await panel.innerText(), /当前视窗空间不足/)
+      result[mode].crowdedViewport.recoveredAfterResize = true
+    }
+  }
+  assert.equal(result.fixed.taskId, result.adaptive.taskId)
+  assertSamePose(result.fixed.pose, result.adaptive.pose)
+  assert.deepEqual(result.fixed.scene, result.adaptive.scene)
+  assert.deepEqual(result.fixed.environment, result.adaptive.environment)
+  assert.deepEqual(result.fixed.fingerprints, result.adaptive.fingerprints)
+  assert.equal(result.fixed.samples.text, result.adaptive.samples.text)
+  assert.ok(result.fixed.samples.exposed / result.fixed.samples.picked < .6, JSON.stringify(result.fixed.samples))
+  assert.ok(result.adaptive.samples.exposed / result.adaptive.samples.picked > .9, JSON.stringify(result.adaptive.samples))
+  if (!isSupport) {
+    const { fixed, adaptive } = result
+    assertSamePose(fixed.overlap.pose, adaptive.overlap.pose)
+    assert.ok(adaptive.overlap.samples.every(samples => samples.exposed >= 12))
+    const hitCount = condition => condition.overlap.samples.reduce((total, label) => total + label.picked, 0)
+    assert.ok(hitCount(adaptive) > hitCount(fixed) * 1.25)
+    const restored = await restorePresentation(page, assembly)
+    result.gradeLabels = { visibleBefore: assembly.overviewGradeLabels.filter(label => label.show).length,
+      visibleDuring: sceneBefore.overviewGradeLabels.filter(label => label.show).length,
+      restoredOriginalFlags: JSON.stringify(restored.overviewGradeLabels) === JSON.stringify(assembly.overviewGradeLabels) }
+    assert.doesNotMatch(await send(page, '增强当前复盘'), /未完成/)
+    await panel.waitFor()
+    await page.evaluate(async () => {
+      const { setDesignRockGradeModelEnabled } = await import('/src/utils/Common/DrawLine.ts')
+      await setDesignRockGradeModelEnabled(true, window.__reviewComparison.viewer())
+    })
+    const reloaded = (await readScene(page)).overviewGradeLabels
+    assert.ok(reloaded.length > 0 && reloaded.every(label => !label.show))
+    assert.match(await send(page, '恢复复盘装配表达'), /已恢复增强前的装配表达/)
+    await panel.waitFor({ state: 'detached' })
+    assert.ok((await readScene(page)).overviewGradeLabels.every(label => label.show))
+    result.gradeLabels.restoresReloadedLabels = true
+  }
+  await reset(page)
+  assert.equal(await page.locator('canvas[data-review-label-leaders]').count(), 0)
+  await page.close()
+}
+
 try {
-  if (fullReview) {
+  if (labelLayoutComparison) {
+    for (const scenario of cases) await compareReviewLabelLayout(scenario)
+  } else if (fullReview) {
     for (const stages of sequences) await verifySequence(stages)
   } else for (const scenario of cases) {
     const result = { key: scenario.key }
@@ -515,6 +840,7 @@ try {
   assert.equal(await ordinaryPage.locator('.agent-assembly-info').count(), 0)
   assert.match(await send(ordinaryPage, `先仅启动复核。${cases[0].title}`), /观察掌子面岩面/)
   assert.match(await send(ordinaryPage, '关闭复盘里程联动'), /仅用于开发环境/)
+  assert.match(await send(ordinaryPage, '固定复盘标注布局'), /仅用于开发环境/)
   await reset(ordinaryPage)
   assert.deepEqual(report.pageErrors, [])
   assert.equal(report.modelRequests, 0)

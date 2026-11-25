@@ -12,6 +12,7 @@ import { captureSupportFocusStyle, tintSupportForFocus } from './SupportFocusSty
 import { suspendTaskVolumeDomain } from './TaskVolumeDomain'
 import { getFocusedTunnelSegment, getTunnelGlbSegment } from '@/utils/Common/DrawLine'
 import { createScreenSpaceEventHandler } from '@/platform/input/ScreenSpaceEventRegistry'
+import { installReviewLabelLayout } from './ConstructionReviewLabelLayout'
 
 export function formatReviewReference(reference: ConstructionReviewReference) {
   const start = chainageService.format(reference.start)
@@ -63,6 +64,29 @@ function temporarilyHideSupportAnchors(ids: readonly string[]) {
   return restore
 }
 
+function suspendReviewGradeLabels(viewer: C.Viewer, keepLocalGrade: boolean) {
+  const hidden = new Set<C.Entity>()
+  const suspend = (entries: readonly C.Entity[]) => {
+    for (const entity of entries) {
+      if (!entity.show) continue
+      const { properties } = entity
+      if (!properties?.designRockGradeOverview?.getValue() && (keepLocalGrade || !properties?.taskBlastDesignGrade?.getValue())) continue
+      hidden.add(entity)
+      entity.show = false
+    }
+  }
+  suspend(viewer.entities.values)
+  const stop = viewer.entities.collectionChanged.addEventListener((_collection, added, removed) => {
+    removed.forEach(entity => hidden.delete(entity))
+    suspend(added)
+  })
+  return () => {
+    stop()
+    if (viewer.isDestroyed()) return
+    for (const entity of hidden) if (viewer.entities.getById(entity.id) === entity) entity.show = true
+  }
+}
+
 export function installConstructionReviewPresentation(
   viewer: C.Viewer, selection: ConstructionReviewSelection, onReferencePick: (role: ReviewReferenceRole) => void,
 ) {
@@ -88,11 +112,7 @@ export function installConstructionReviewPresentation(
   const backgroundCloud = fanDetail ? getBlastModel() as C.Model | undefined : undefined
   const cloudWasVisible = backgroundCloud?.show
   if (backgroundCloud) backgroundCloud.show = false
-  const gradeLabels = selection.kind === 'blast-handoff' && selection.stepIndex > 0
-    ? viewer.entities.values.filter(entity => entity.properties?.taskBlastDesignGrade?.getValue())
-    : []
-  const visibleGradeLabels = gradeLabels.filter(entity => entity.show)
-  visibleGradeLabels.forEach(entity => { entity.show = false })
+  const restoreGradeLabels = selection.kind === 'blast-handoff' ? suspendReviewGradeLabels(viewer, step.key === 'blast') : undefined
   const displayedRole = step.key === 'blast' ? 'blast-cloud' : fanDetail ? 'jet-fan' : undefined
   const references = selection.references.filter(reference => !displayedRole || reference.role === displayedRole)
   const entities: C.Entity[] = []
@@ -105,6 +125,7 @@ export function installConstructionReviewPresentation(
   const warm = C.Color.fromCssColorString('#ffdc9a')
   const labelBackground = C.Color.fromCssColorString('#142734').withAlpha(.94)
   const selectedBackground = C.Color.fromCssColorString('#105574')
+  const labelLayout = installReviewLabelLayout(viewer, !selection.fixedLabelLayout)
   const line = (id: string, positions: C.Cartesian3[], color: C.Color, width = 3) => {
     const entity = viewer.entities.add({ id, polyline: {
       positions, arcType: C.ArcType.NONE, width, material: color, depthFailMaterial: color.withAlpha(.65),
@@ -112,7 +133,7 @@ export function installConstructionReviewPresentation(
     entities.push(entity)
     return entity
   }
-  const label = (id: string, position: C.Cartesian3, text: string, fillColor: C.Color, offset: number) => {
+  const label = (id: string, position: C.Cartesian3, text: string, fillColor: C.Color, offset: number, optional = false, leaderTarget?: C.Cartesian3) => {
     const entity = viewer.entities.add({ id, position, label: {
       text, font: '600 14px "Microsoft YaHei", sans-serif', fillColor,
       showBackground: true, backgroundColor: labelBackground,
@@ -120,6 +141,7 @@ export function installConstructionReviewPresentation(
       disableDepthTestDistance: Number.POSITIVE_INFINITY,
     } })
     entities.push(entity)
+    labelLayout.track(entity, optional, leaderTarget)
     return entity
   }
   const bench = comparison ? getActiveThreeBenchModel() : undefined
@@ -144,6 +166,7 @@ export function installConstructionReviewPresentation(
   }
   for (const reference of references) {
     let position: C.Cartesian3 | undefined
+    let leaderTarget: C.Cartesian3 | undefined
     const color = comparison && reference.end !== undefined ? warm : cyan
     if (reference.end !== undefined) {
       const first = supportUnits[0], last = supportUnits.at(-1)
@@ -170,6 +193,8 @@ export function installConstructionReviewPresentation(
       if (!model?.ready) continue
       modelRoles.set(model, reference.role)
       position = model.boundingSphere.center
+      if (step.key === 'handoff') leaderTarget = C.Cartesian3.clone(position)
+      labelLayout.protectTarget(position)
       focusLocations.set(reference.role, [{ position }])
     } else if (workface?.ready) {
       modelRoles.set(workface, reference.role)
@@ -188,12 +213,12 @@ export function installConstructionReviewPresentation(
     }
     const offset = reference.end !== undefined ? 34 : fanDetail ? -90 : -28
     const marker = label(`construction-review-reference-${reference.start}`, position,
-      `${reference.label} · ${formatReviewReference(reference)}`, color, offset)
+      `${reference.label} · ${formatReviewReference(reference)}`, color, offset, false, leaderTarget)
     entityRoles.set(marker, reference.role)
     referenceLabels.set(reference.role, marker)
   }
   if (bench?.ready) {
-    const benchLabel = label('construction-review-bench', bench.boundingSphere.center, '三台阶开挖', cyan, -48)
+    const benchLabel = label('construction-review-bench', bench.boundingSphere.center, '三台阶开挖', cyan, -48, true)
     entityRoles.set(benchLabel, 'excavation')
   }
   if (selection.kind === 'blast-handoff' && selection.stepIndex === 2) {
@@ -211,10 +236,12 @@ export function installConstructionReviewPresentation(
   const setAnnotations = (visible: boolean) => {
     if (viewer.isDestroyed()) return
     entities.forEach(entity => { entity.show = visible })
+    labelLayout.schedule()
     viewer.scene.requestRender()
   }
   const clearFocusPoints = () => {
     for (const point of focusPoints.splice(0)) {
+      labelLayout.untrack(point)
       entityRoles.delete(point)
       if (!viewer.isDestroyed()) viewer.entities.remove(point)
     }
@@ -222,6 +249,7 @@ export function installConstructionReviewPresentation(
   const setReferenceFocus = (role: ReviewReferenceRole | null) => {
     if (viewer.isDestroyed()) return
     clearFocusPoints()
+    labelLayout.setLeaderFocus(role ? referenceLabels.get(role) : undefined)
     for (const [entity, candidate] of entityRoles) {
       const selected = candidate === role
       if (entity.label) entity.label.backgroundColor = new C.ConstantProperty(selected ? selectedBackground : labelBackground)
@@ -243,26 +271,20 @@ export function installConstructionReviewPresentation(
       })
       focusPoints.push(point)
       entityRoles.set(point, role)
+      labelLayout.track(point, true)
     }
     viewer.scene.requestRender()
   }
   const ensureReferenceInView = (role: ReviewReferenceRole, current: ConstructionReviewSelection) => {
-    if (viewer.isDestroyed()) return
+    if (viewer.isDestroyed()) return false
     const marker = referenceLabels.get(role)
-    const time = viewer.clock.currentTime
-    const position = marker?.position?.getValue(time)
     const viewport = readTaskViewport(viewer)
-    if (!marker?.show || !position || !viewport?.safe) return
-    const { camera, scene } = viewer
-    const toPosition = C.Cartesian3.subtract(position, camera.positionWC, new C.Cartesian3())
-    const projected = C.Cartesian3.dot(toPosition, camera.directionWC) > 0
-      ? C.SceneTransforms.worldToWindowCoordinates(scene, position) : undefined
-    const offset = marker.label?.pixelOffset?.getValue(time) ?? C.Cartesian2.ZERO
-    if (projected) C.Cartesian2.add(projected, offset, projected)
-    if (projected && projected.x >= 0 && projected.x < viewport.width && projected.y >= 0 && projected.y < viewport.height &&
-        !viewport.obstacles.some(rect => projected.x >= rect.left && projected.x <= rect.right &&
-          projected.y >= rect.top && projected.y <= rect.bottom)) return
-    focusConstructionReview(viewer, current)
+    if (!marker?.show || !viewport?.safe) return false
+    if (!labelLayout.fitsViewport(marker, viewport)) {
+      focusConstructionReview(viewer, current)
+      labelLayout.schedule()
+    }
+    return true
   }
   let cancelPick: (() => void) | undefined
   let referenceLinksActive = selection.sceneAnnotations !== false && selection.referenceLinks !== false
@@ -304,6 +326,7 @@ export function installConstructionReviewPresentation(
     cancelPick?.()
     handler.destroy()
     clearFocusPoints()
+    labelLayout.dispose()
     if (textureShader) {
       if (workface && !workface.isDestroyed() && workface.customShader === textureShader) workface.customShader = undefined!
       if (!textureShader.isDestroyed()) textureShader.destroy()
@@ -314,11 +337,11 @@ export function installConstructionReviewPresentation(
     restoreStyle()
     restoreVolumeDomain?.()
     if (backgroundCloud && !backgroundCloud.isDestroyed() && cloudWasVisible !== undefined) backgroundCloud.show = cloudWasVisible
-    visibleGradeLabels.forEach(entity => { entity.show = true })
+    restoreGradeLabels?.()
     if (viewer.isDestroyed()) return
     entities.forEach(entity => viewer.entities.remove(entity))
     viewer.scene.requestRender()
   }
   return { selectableRoles: new Set(referenceLabels.keys()), setAnnotations, setReferenceFocus, showSupportComponent,
-    setReferenceLinksActive, ensureReferenceInView, dispose }
+    setReferenceLinksActive, ensureReferenceInView, setLabelAvoidance: labelLayout.setEnabled, dispose }
 }

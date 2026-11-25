@@ -1,0 +1,853 @@
+{
+  "passed": true,
+  "scope": "fixed versus adjusted annotations",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "cases": [
+    {
+      "key": "support",
+      "markerId": "construction-review-reference-2238",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "fixed": {
+        "pose": [
+          [
+            -475204.14617339236,
+            5536135.518071057,
+            3126954.924895335
+          ],
+          [
+            0.14977129689927898,
+            0.3911143762155601,
+            -0.9080738424503931
+          ],
+          [
+            -0.056887491343962954,
+            0.9203204871209241,
+            0.38700647838776003
+          ]
+        ],
+        "samples": {
+          "picked": 90,
+          "exposed": 48,
+          "sampleTarget": {
+            "x": 620,
+            "y": 542
+          },
+          "origin": 0,
+          "offset": [
+            0,
+            34
+          ],
+          "text": "ZZ-IVb 初支 · YK2+238–YK2+243"
+        },
+        "keptCamera": false,
+        "removesOffsetOnCollapse": false,
+        "scene": {
+          "resources": [
+            "blast.design-data",
+            "rock.three-bench",
+            "rock.tsp-integrity",
+            "support.test-section-zz-ivb"
+          ],
+          "matrices": [
+            [
+              -0.04214446023312385,
+              0.4911288563875297,
+              -0.8700668312808713,
+              0,
+              -0.07438828223370382,
+              0.866881003576301,
+              0.4929337776059418,
+              0,
+              0.9963384103496048,
+              0.08549720499538294,
+              -1.6301015716329842e-16,
+              0,
+              -475193.07950184203,
+              5536147.263124687,
+              3126922.556426498,
+              1
+            ],
+            [
+              -0.14409683040392884,
+              -0.49845961221254925,
+              0.8548532730594511,
+              0,
+              -0.06944177527284173,
+              0.8668328315440487,
+              0.49373948799370243,
+              0,
+              -0.9871240769601852,
+              0.01178376638610358,
+              -0.15952178388941188,
+              0,
+              -475187.63627055916,
+              5536147.021069524,
+              3126923.340197923,
+              1
+            ],
+            [
+              -0.14450388291029134,
+              -0.49845650097221117,
+              0.8547863735825395,
+              0,
+              -0.06944207630625927,
+              0.8668318009949006,
+              0.49374125493239146,
+              0,
+              -0.987064549997681,
+              0.011989387910861266,
+              -0.1598744154497474,
+              0,
+              -475188.6233642796,
+              5536147.032948524,
+              3126923.1804955006,
+              1
+            ],
+            [
+              -0.14491081517877022,
+              -0.4984533056670839,
+              0.8547193444129956,
+              0,
+              -0.06944237895140626,
+              0.866830770705961,
+              0.4937430211789114,
+              0,
+              -0.9870048691114921,
+              0.012194959076040096,
+              -0.16022693694675727,
+              0,
+              -475189.61039839505,
+              5536147.045033124,
+              3126923.0204405035,
+              1
+            ],
+            [
+              -0.1453176269881124,
+              -0.49845002635888075,
+              0.8546521856927384,
+              0,
+              -0.06944268320676358,
+              0.8668297406783467,
+              0.4937447867315211,
+              0,
+              -0.9869450344551052,
+              0.012400479762547365,
+              -0.16057934819294087,
+              0,
+              -475190.5973727737,
+              5536147.0573235275,
+              3126922.860033187,
+              1
+            ],
+            [
+              -0.14572431811681175,
+              -0.498446663109459,
+              0.8545848975639786,
+              0,
+              -0.06944298907080844,
+              0.8668287109131746,
+              0.4937465515884802,
+              0,
+              -0.9868850461823312,
+              0.012605949851145173,
+              -0.16093164900058843,
+              0,
+              -475191.58428727475,
+              5536147.069819845,
+              3126922.6992737525,
+              1
+            ]
+          ],
+          "range": {
+            "start": 2244,
+            "end": 2244
+          },
+          "paths": [
+            "/data/blast/blast-design.json",
+            "/data/tsp_actual/integrity.json",
+            "/data/tsp_actual/integrity_volume.png",
+            "/data/tunnel/三台阶.glb",
+            "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+          ],
+          "fanStation": null
+        },
+        "environment": {
+          "terrain": "CesiumTerrainProvider",
+          "globe": true,
+          "translucency": [
+            true,
+            1,
+            1,
+            [
+              400,
+              0.9,
+              800,
+              0.9
+            ],
+            null
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "fingerprints": [
+          {
+            "sourceId": "asset:/data/blast/blast-design.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+          },
+          {
+            "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+          },
+          {
+            "sourceId": "asset:/data/tsp_actual/integrity.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/三台阶.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/tunnel002.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+          },
+          {
+            "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+          }
+        ]
+      },
+      "adaptive": {
+        "pose": [
+          [
+            -475204.14617339236,
+            5536135.518071057,
+            3126954.924895335
+          ],
+          [
+            0.14977129689927957,
+            0.39111437621555756,
+            -0.9080738424503941
+          ],
+          [
+            -0.056887491343962926,
+            0.9203204871209241,
+            0.38700647838776003
+          ]
+        ],
+        "samples": {
+          "picked": 87,
+          "exposed": 87,
+          "sampleTarget": {
+            "x": 508,
+            "y": 542
+          },
+          "origin": -1,
+          "offset": [
+            0,
+            34
+          ],
+          "text": "ZZ-IVb 初支 · YK2+238–YK2+243"
+        },
+        "keptCamera": true,
+        "removesOffsetOnCollapse": true,
+        "scene": {
+          "resources": [
+            "blast.design-data",
+            "rock.three-bench",
+            "rock.tsp-integrity",
+            "support.test-section-zz-ivb"
+          ],
+          "matrices": [
+            [
+              -0.04214446023312385,
+              0.4911288563875297,
+              -0.8700668312808713,
+              0,
+              -0.07438828223370382,
+              0.866881003576301,
+              0.4929337776059418,
+              0,
+              0.9963384103496048,
+              0.08549720499538294,
+              -1.6301015716329842e-16,
+              0,
+              -475193.07950184203,
+              5536147.263124687,
+              3126922.556426498,
+              1
+            ],
+            [
+              -0.14409683040392884,
+              -0.49845961221254925,
+              0.8548532730594511,
+              0,
+              -0.06944177527284173,
+              0.8668328315440487,
+              0.49373948799370243,
+              0,
+              -0.9871240769601852,
+              0.01178376638610358,
+              -0.15952178388941188,
+              0,
+              -475187.63627055916,
+              5536147.021069524,
+              3126923.340197923,
+              1
+            ],
+            [
+              -0.14450388291029134,
+              -0.49845650097221117,
+              0.8547863735825395,
+              0,
+              -0.06944207630625927,
+              0.8668318009949006,
+              0.49374125493239146,
+              0,
+              -0.987064549997681,
+              0.011989387910861266,
+              -0.1598744154497474,
+              0,
+              -475188.6233642796,
+              5536147.032948524,
+              3126923.1804955006,
+              1
+            ],
+            [
+              -0.14491081517877022,
+              -0.4984533056670839,
+              0.8547193444129956,
+              0,
+              -0.06944237895140626,
+              0.866830770705961,
+              0.4937430211789114,
+              0,
+              -0.9870048691114921,
+              0.012194959076040096,
+              -0.16022693694675727,
+              0,
+              -475189.61039839505,
+              5536147.045033124,
+              3126923.0204405035,
+              1
+            ],
+            [
+              -0.1453176269881124,
+              -0.49845002635888075,
+              0.8546521856927384,
+              0,
+              -0.06944268320676358,
+              0.8668297406783467,
+              0.4937447867315211,
+              0,
+              -0.9869450344551052,
+              0.012400479762547365,
+              -0.16057934819294087,
+              0,
+              -475190.5973727737,
+              5536147.0573235275,
+              3126922.860033187,
+              1
+            ],
+            [
+              -0.14572431811681175,
+              -0.498446663109459,
+              0.8545848975639786,
+              0,
+              -0.06944298907080844,
+              0.8668287109131746,
+              0.4937465515884802,
+              0,
+              -0.9868850461823312,
+              0.012605949851145173,
+              -0.16093164900058843,
+              0,
+              -475191.58428727475,
+              5536147.069819845,
+              3126922.6992737525,
+              1
+            ]
+          ],
+          "range": {
+            "start": 2244,
+            "end": 2244
+          },
+          "paths": [
+            "/data/blast/blast-design.json",
+            "/data/tsp_actual/integrity.json",
+            "/data/tsp_actual/integrity_volume.png",
+            "/data/tunnel/三台阶.glb",
+            "/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb"
+          ],
+          "fanStation": null
+        },
+        "environment": {
+          "terrain": "CesiumTerrainProvider",
+          "globe": true,
+          "translucency": [
+            true,
+            1,
+            1,
+            [
+              400,
+              0.9,
+              800,
+              0.9
+            ],
+            null
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "fingerprints": [
+          {
+            "sourceId": "asset:/data/blast/blast-design.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "dd97f5c2f40efe7874071d39f0b2b323c4db61351892f5db743f67063a42fa74"
+          },
+          {
+            "sourceId": "asset:/data/tsp_actual/integrity_volume.png",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "7cfdca6c2b2f81de499ed4b63a89eac1de19c0a9825c205a586dcf29956ef2ca"
+          },
+          {
+            "sourceId": "asset:/data/tsp_actual/integrity.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "42e53440a37fec76cc9d5e50dd699a2c7c56be19d60d0cfe26f751076845be22"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/三台阶.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "9cc499837ae167d917c24d06f32d5f94deafa93dd5386d4041cbe7bc8e2bda0b"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/tunnel002.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "e54a8a9bc4a96265aba68ca81e8d91b96dd90993f7d58e540ce3728fe3a2116d"
+          },
+          {
+            "sourceId": "asset:/support-modeler/outputs/multi_support/ZZ-IVb_support_1m.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "d6a0aaf506dd53f86d8f1cf7dcfefffb35aaabd38ba51819ba70d814633f1dbf"
+          }
+        ]
+      }
+    },
+    {
+      "key": "handoff",
+      "markerId": "construction-review-reference-3988",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "fixed": {
+        "pose": [
+          [
+            -476732.7683250314,
+            5536425.96840096,
+            3126262.194835529
+          ],
+          [
+            -0.0598984754544081,
+            0.20884434855009898,
+            -0.9761128063481815
+          ],
+          [
+            -0.09666688134229035,
+            0.9720588979992812,
+            0.21390888918410705
+          ]
+        ],
+        "samples": {
+          "picked": 66,
+          "exposed": 36,
+          "sampleTarget": {
+            "x": 964,
+            "y": 439
+          },
+          "origin": 0,
+          "offset": [
+            0,
+            -28
+          ],
+          "text": "洞顶射流风机 · YK3+988"
+        },
+        "keptCamera": false,
+        "removesOffsetOnCollapse": false,
+        "scene": {
+          "resources": [
+            "blast.effect",
+            "rock.design-grade",
+            "ventilation.ceiling-jet-fan",
+            "ventilation.co-analysis"
+          ],
+          "matrices": [
+            [
+              0.7428626022897471,
+              0.37802838906023173,
+              -0.552494064387873,
+              0,
+              -0.665272579936972,
+              0.32488534622356574,
+              -0.6722067436385917,
+              0,
+              -0.0746160070180018,
+              0.8669164024712648,
+              0.4928370954209612,
+              0,
+              -476519.5816764833,
+              5536378.299953326,
+              3126331.1548570856,
+              1
+            ],
+            [
+              -0.590998824145423,
+              -0.4365138528995239,
+              0.6783627687937627,
+              0,
+              -0.07464743360651142,
+              0.8669253818835305,
+              0.49281654081621096,
+              0,
+              -0.8032111493964017,
+              0.2406159563971339,
+              -0.5449365201676281,
+              0,
+              -476720.53419650515,
+              5536441.257157644,
+              3126202.793002462,
+              1
+            ]
+          ],
+          "range": {
+            "start": 4000,
+            "end": 4000
+          },
+          "paths": [
+            "/data/blast/blast_effect.glb",
+            "/data/ventilation/ceiling-jet-fan.glb",
+            "/data/ventilation/co_transport_results.json"
+          ],
+          "fanStation": 3988
+        },
+        "environment": {
+          "terrain": "CesiumTerrainProvider",
+          "globe": true,
+          "translucency": [
+            true,
+            1,
+            1,
+            [
+              400,
+              0.9,
+              800,
+              0.9
+            ],
+            null
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "fingerprints": [
+          {
+            "sourceId": "asset:/data/blast/blast_effect.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/tunnel005.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+          },
+          {
+            "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+          },
+          {
+            "sourceId": "asset:/data/ventilation/co_transport_results.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+          }
+        ],
+        "overlap": {
+          "samples": [
+            {
+              "picked": 29,
+              "exposed": 29,
+              "sampleTarget": {
+                "x": 650,
+                "y": 444
+              },
+              "origin": 0,
+              "offset": [
+                0,
+                -28
+              ],
+              "text": "爆后点云 · YK4+000"
+            },
+            {
+              "picked": 29,
+              "exposed": 29,
+              "sampleTarget": {
+                "x": 634,
+                "y": 444
+              },
+              "origin": 0,
+              "offset": [
+                0,
+                -28
+              ],
+              "text": "洞顶射流风机 · YK3+988"
+            }
+          ],
+          "pose": [
+            [
+              -476758.4149851641,
+              5536454.413010596,
+              3126178.2972425087
+            ],
+            [
+              0.8066382067363126,
+              -0.2934815040366558,
+              0.5130335371314511
+            ],
+            [
+              -0.02483772268113633,
+              0.8504116667683388,
+              0.5255312403238376
+            ]
+          ],
+          "pickedEvents": []
+        }
+      },
+      "adaptive": {
+        "pose": [
+          [
+            -476732.7683250314,
+            5536425.96840096,
+            3126262.194835529
+          ],
+          [
+            -0.0598984754544081,
+            0.20884434855009898,
+            -0.9761128063481815
+          ],
+          [
+            -0.09666688134229035,
+            0.9720588979992812,
+            0.21390888918410705
+          ]
+        ],
+        "samples": {
+          "picked": 66,
+          "exposed": 66,
+          "sampleTarget": {
+            "x": 876,
+            "y": 439
+          },
+          "origin": -1,
+          "offset": [
+            0,
+            -28
+          ],
+          "text": "洞顶射流风机 · YK3+988"
+        },
+        "keptCamera": true,
+        "removesOffsetOnCollapse": true,
+        "scene": {
+          "resources": [
+            "blast.effect",
+            "rock.design-grade",
+            "ventilation.ceiling-jet-fan",
+            "ventilation.co-analysis"
+          ],
+          "matrices": [
+            [
+              0.7428626022897471,
+              0.37802838906023173,
+              -0.552494064387873,
+              0,
+              -0.665272579936972,
+              0.32488534622356574,
+              -0.6722067436385917,
+              0,
+              -0.0746160070180018,
+              0.8669164024712648,
+              0.4928370954209612,
+              0,
+              -476519.5816764833,
+              5536378.299953326,
+              3126331.1548570856,
+              1
+            ],
+            [
+              -0.590998824145423,
+              -0.4365138528995239,
+              0.6783627687937627,
+              0,
+              -0.07464743360651142,
+              0.8669253818835305,
+              0.49281654081621096,
+              0,
+              -0.8032111493964017,
+              0.2406159563971339,
+              -0.5449365201676281,
+              0,
+              -476720.53419650515,
+              5536441.257157644,
+              3126202.793002462,
+              1
+            ]
+          ],
+          "range": {
+            "start": 4000,
+            "end": 4000
+          },
+          "paths": [
+            "/data/blast/blast_effect.glb",
+            "/data/ventilation/ceiling-jet-fan.glb",
+            "/data/ventilation/co_transport_results.json"
+          ],
+          "fanStation": 3988
+        },
+        "environment": {
+          "terrain": "CesiumTerrainProvider",
+          "globe": true,
+          "translucency": [
+            true,
+            1,
+            1,
+            [
+              400,
+              0.9,
+              800,
+              0.9
+            ],
+            null
+          ],
+          "imagery": [
+            {
+              "show": true,
+              "alpha": 1,
+              "brightness": 1,
+              "saturation": 1
+            }
+          ]
+        },
+        "fingerprints": [
+          {
+            "sourceId": "asset:/data/blast/blast_effect.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "cb9862c138ca2a17254b9e0781e8a5ab10ec2357fc3598c0e0d4431f18d2c5a4"
+          },
+          {
+            "sourceId": "asset:/data/tunnel/tunnel005.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "f691383517d6d9f725631a6ca427bdb93a7d598dd3de0354c71d6f288de16ddf"
+          },
+          {
+            "sourceId": "asset:/data/ventilation/ceiling-jet-fan.glb",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "6eec540359259e36c568b9cdb0135b24c6903b37500283d4b992be38b2169cb3"
+          },
+          {
+            "sourceId": "asset:/data/ventilation/co_transport_results.json",
+            "algorithm": "sha256-bytes-v1",
+            "digest": "29df754dd0ee557a0eb89fcf7c7470602c683f4d7f40c18f927b41ce78148d85"
+          }
+        ],
+        "overlap": {
+          "samples": [
+            {
+              "picked": 49,
+              "exposed": 49,
+              "sampleTarget": {
+                "x": 650,
+                "y": 444
+              },
+              "origin": 0,
+              "offset": [
+                0,
+                -28
+              ],
+              "text": "爆后点云 · YK4+000"
+            },
+            {
+              "picked": 41,
+              "exposed": 41,
+              "sampleTarget": {
+                "x": 634,
+                "y": 388
+              },
+              "origin": 0,
+              "offset": [
+                0,
+                -84
+              ],
+              "text": "洞顶射流风机 · YK3+988"
+            }
+          ],
+          "pose": [
+            [
+              -476758.4149851641,
+              5536454.413010596,
+              3126178.2972425087
+            ],
+            [
+              0.8066382067363126,
+              -0.2934815040366558,
+              0.5130335371314511
+            ],
+            [
+              -0.024837722681137223,
+              0.8504116667683387,
+              0.5255312403238376
+            ]
+          ],
+          "pickedEvents": [
+            "起爆",
+            "启风"
+          ]
+        },
+        "crowdedViewport": {
+          "width": 640,
+          "height": 360,
+          "reportedInsufficientSpace": true,
+          "keptCamera": true
+        }
+      }
+    }
+  ],
+  "pageErrors": [],
+  "modelRequests": 0
+}

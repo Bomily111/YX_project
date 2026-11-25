@@ -1,0 +1,1164 @@
+{
+  "viewport": {
+    "width": 900,
+    "height": 680
+  },
+  "stages": [
+    {
+      "key": "workface",
+      "taskId": "scene-1795583644767-3tlo5",
+      "roots": [
+        "rock.workface-surface"
+      ],
+      "view": "face",
+      "sameCanvas": true,
+      "targetCenters": [
+        {
+          "x": 434.9999999973042,
+          "y": 347.0000000113399,
+          "visible": true
+        }
+      ],
+      "projectedSpan": null,
+      "workfaceReady": true,
+      "workfaceTextureDisplay": true,
+      "shellAlpha": 0.025,
+      "workfaceMatrix": [
+        0.0259063318902152,
+        0.08972304014064278,
+        -0.15387864710841012,
+        0,
+        -0.013393346768155028,
+        0.15603856203348512,
+        0.08872759109132945,
+        0,
+        0.17762173355291286,
+        -0.0013203130094099416,
+        0.029133769807822892,
+        0,
+        -475180.0195431422,
+        5536147.703044718,
+        3126926.1197220813,
+        1
+      ],
+      "camera": [
+        [
+          -475166.9950819614,
+          5536148.19136009,
+          3126941.1816643234
+        ],
+        [
+          -0.7350767900159495,
+          0.05802492953044412,
+          -0.6754962770680789
+        ],
+        [
+          -0.24853283049568412,
+          0.9039125517397011,
+          0.3480998864883841
+        ]
+      ],
+      "references": [
+        "掌子面岩面 · YK2+244"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 0,
+      "overviewGradeLabels": 0,
+      "stationGap": null,
+      "cloudVisible": null,
+      "supports": [],
+      "supportLayers": [],
+      "supportMatrices": [],
+      "charts": [],
+      "reply": "观察掌子面岩面｜用既有纹理网格观察岩面起伏和邻近岩壁。源工点和比例尚未核验，现场揭示须另查本循环编录。"
+    },
+    {
+      "key": "reveal",
+      "taskId": "scene-1795583649768-gc9xv",
+      "roots": [
+        "blast.design-data",
+        "rock.three-bench",
+        "rock.tsp-integrity",
+        "support.test-section-zz-ivb"
+      ],
+      "view": "overview",
+      "sameCanvas": true,
+      "targetCenters": [
+        {
+          "x": 382.63747599114663,
+          "y": 263.0486748327693,
+          "visible": true
+        },
+        {
+          "x": 462.7921494866273,
+          "y": 261.0271064792903,
+          "visible": true
+        }
+      ],
+      "projectedSpan": {
+        "width": 8.650855281713177,
+        "endpointsInView": true,
+        "datumInView": true
+      },
+      "workfaceReady": false,
+      "workfaceTextureDisplay": false,
+      "shellAlpha": 0.035,
+      "workfaceMatrix": null,
+      "camera": [
+        [
+          -475063.5860578378,
+          5536045.466571948,
+          3127286.5136698727
+        ],
+        [
+          -0.3454637812722626,
+          0.15566912429028745,
+          -0.9254306562740211
+        ],
+        [
+          -0.18475565271544794,
+          0.9555626607594575,
+          0.22970709643368614
+        ]
+      ],
+      "references": [
+        "开挖基准 · YK2+244",
+        "ZZ-IVb 初支 · YK2+238–YK2+243"
+      ],
+      "volumeFrames": 12,
+      "gradeLabels": 0,
+      "overviewGradeLabels": 0,
+      "stationGap": null,
+      "cloudVisible": null,
+      "supports": [
+        {
+          "supportType": "ZZ-IVb",
+          "lengthM": 5
+        }
+      ],
+      "supportLayers": [
+        {
+          "component": "primary_concrete",
+          "visible": true
+        },
+        {
+          "component": "primary_mesh",
+          "visible": true
+        },
+        {
+          "component": "steel_arch",
+          "visible": true
+        },
+        {
+          "component": "system_anchor",
+          "visible": true
+        },
+        {
+          "component": "secondary_lining",
+          "visible": true
+        }
+      ],
+      "supportMatrices": [
+        [
+          -0.14409683040392884,
+          -0.49845961221254925,
+          0.8548532730594511,
+          0,
+          -0.06944177527284173,
+          0.8668328315440487,
+          0.49373948799370243,
+          0,
+          -0.9871240769601852,
+          0.01178376638610358,
+          -0.15952178388941188,
+          0,
+          -475187.63627055916,
+          5536147.021069524,
+          3126923.340197923,
+          1
+        ],
+        [
+          -0.14450388291029134,
+          -0.49845650097221117,
+          0.8547863735825395,
+          0,
+          -0.06944207630625927,
+          0.8668318009949006,
+          0.49374125493239146,
+          0,
+          -0.987064549997681,
+          0.011989387910861266,
+          -0.1598744154497474,
+          0,
+          -475188.6233642796,
+          5536147.032948524,
+          3126923.1804955006,
+          1
+        ],
+        [
+          -0.14491081517877022,
+          -0.4984533056670839,
+          0.8547193444129956,
+          0,
+          -0.06944237895140626,
+          0.866830770705961,
+          0.4937430211789114,
+          0,
+          -0.9870048691114921,
+          0.012194959076040096,
+          -0.16022693694675727,
+          0,
+          -475189.61039839505,
+          5536147.045033124,
+          3126923.0204405035,
+          1
+        ],
+        [
+          -0.1453176269881124,
+          -0.49845002635888075,
+          0.8546521856927384,
+          0,
+          -0.06944268320676358,
+          0.8668297406783467,
+          0.4937447867315211,
+          0,
+          -0.9869450344551052,
+          0.012400479762547365,
+          -0.16057934819294087,
+          0,
+          -475190.5973727737,
+          5536147.0573235275,
+          3126922.860033187,
+          1
+        ],
+        [
+          -0.14572431811681175,
+          -0.498446663109459,
+          0.8545848975639786,
+          0,
+          -0.06944298907080844,
+          0.8668287109131746,
+          0.4937465515884802,
+          0,
+          -0.9868850461823312,
+          0.012605949851145173,
+          -0.16093164900058843,
+          0,
+          -475191.58428727475,
+          5536147.069819845,
+          3126922.6992737525,
+          1
+        ]
+      ],
+      "charts": [],
+      "reply": "揭示与影响范围｜以 TSP 完整性解释体和三台阶开挖基准观察空间关系。从循环设计图确认待比对字段，实际影响界线和分部范围待掌子面编录划定。"
+    },
+    {
+      "key": "baseline",
+      "taskId": "scene-1795583649768-gc9xv",
+      "roots": [
+        "blast.design-data",
+        "rock.three-bench",
+        "rock.tsp-integrity",
+        "support.test-section-zz-ivb"
+      ],
+      "view": "support",
+      "sameCanvas": true,
+      "targetCenters": [
+        {
+          "x": 391.2301353938132,
+          "y": 339.62196965123667,
+          "visible": true
+        },
+        {
+          "x": 482.08188182827286,
+          "y": 342.1692126667204,
+          "visible": true
+        }
+      ],
+      "projectedSpan": {
+        "width": 33.51794965449636,
+        "endpointsInView": true,
+        "datumInView": true
+      },
+      "workfaceReady": false,
+      "workfaceTextureDisplay": false,
+      "shellAlpha": 0.035,
+      "workfaceMatrix": null,
+      "camera": [
+        [
+          -475173.71183516964,
+          5536128.565868891,
+          3127029.63726899
+        ],
+        [
+          -0.19337803739591658,
+          0.1898490931979614,
+          -0.9625810389077978
+        ],
+        [
+          -0.13770660064688992,
+          0.9661361989202693,
+          0.21821488783804815
+        ]
+      ],
+      "references": [
+        "开挖基准 · YK2+244",
+        "ZZ-IVb 初支 · YK2+238–YK2+243"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 0,
+      "overviewGradeLabels": 0,
+      "stationGap": null,
+      "cloudVisible": null,
+      "supports": [
+        {
+          "supportType": "ZZ-IVb",
+          "lengthM": 5
+        }
+      ],
+      "supportLayers": [
+        {
+          "component": "primary_concrete",
+          "visible": true
+        },
+        {
+          "component": "primary_mesh",
+          "visible": true
+        },
+        {
+          "component": "steel_arch",
+          "visible": true
+        },
+        {
+          "component": "system_anchor",
+          "visible": false
+        },
+        {
+          "component": "secondary_lining",
+          "visible": true
+        }
+      ],
+      "supportMatrices": [
+        [
+          -0.14409683040392884,
+          -0.49845961221254925,
+          0.8548532730594511,
+          0,
+          -0.06944177527284173,
+          0.8668328315440487,
+          0.49373948799370243,
+          0,
+          -0.9871240769601852,
+          0.01178376638610358,
+          -0.15952178388941188,
+          0,
+          -475187.63627055916,
+          5536147.021069524,
+          3126923.340197923,
+          1
+        ],
+        [
+          -0.14450388291029134,
+          -0.49845650097221117,
+          0.8547863735825395,
+          0,
+          -0.06944207630625927,
+          0.8668318009949006,
+          0.49374125493239146,
+          0,
+          -0.987064549997681,
+          0.011989387910861266,
+          -0.1598744154497474,
+          0,
+          -475188.6233642796,
+          5536147.032948524,
+          3126923.1804955006,
+          1
+        ],
+        [
+          -0.14491081517877022,
+          -0.4984533056670839,
+          0.8547193444129956,
+          0,
+          -0.06944237895140626,
+          0.866830770705961,
+          0.4937430211789114,
+          0,
+          -0.9870048691114921,
+          0.012194959076040096,
+          -0.16022693694675727,
+          0,
+          -475189.61039839505,
+          5536147.045033124,
+          3126923.0204405035,
+          1
+        ],
+        [
+          -0.1453176269881124,
+          -0.49845002635888075,
+          0.8546521856927384,
+          0,
+          -0.06944268320676358,
+          0.8668297406783467,
+          0.4937447867315211,
+          0,
+          -0.9869450344551052,
+          0.012400479762547365,
+          -0.16057934819294087,
+          0,
+          -475190.5973727737,
+          5536147.0573235275,
+          3126922.860033187,
+          1
+        ],
+        [
+          -0.14572431811681175,
+          -0.498446663109459,
+          0.8545848975639786,
+          0,
+          -0.06944298907080844,
+          0.8668287109131746,
+          0.4937465515884802,
+          0,
+          -0.9868850461823312,
+          0.012605949851145173,
+          -0.16093164900058843,
+          0,
+          -475191.58428727475,
+          5536147.069819845,
+          3126922.6992737525,
+          1
+        ]
+      ],
+      "charts": [],
+      "reply": "复核原支护版本｜在同一开挖基准后方展示原版 ZZ-IVb 支护单元排列。三台阶保留为比对基准，待核对原施工方案和循环记录。轮廓对照暂收起已有锚杆组。"
+    },
+    {
+      "key": "candidate",
+      "taskId": "scene-1795583655387-dm4vq",
+      "roots": [
+        "blast.design-data",
+        "rock.three-bench",
+        "rock.tsp-integrity",
+        "support.test-section"
+      ],
+      "view": "support",
+      "sameCanvas": true,
+      "targetCenters": [
+        {
+          "x": 391.2301353938132,
+          "y": 339.62196965123667,
+          "visible": true
+        },
+        {
+          "x": 482.026267293822,
+          "y": 345.304512179307,
+          "visible": true
+        }
+      ],
+      "projectedSpan": {
+        "width": 33.51794965449636,
+        "endpointsInView": true,
+        "datumInView": true
+      },
+      "workfaceReady": false,
+      "workfaceTextureDisplay": false,
+      "shellAlpha": 0.035,
+      "workfaceMatrix": null,
+      "camera": [
+        [
+          -475173.71183516964,
+          5536128.565868891,
+          3127029.63726899
+        ],
+        [
+          -0.19337803739591658,
+          0.1898490931979614,
+          -0.9625810389077978
+        ],
+        [
+          -0.13770660064688992,
+          0.9661361989202693,
+          0.21821488783804815
+        ]
+      ],
+      "references": [
+        "开挖基准 · YK2+244",
+        "ZZ-Va 初支 · YK2+238–YK2+243"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 0,
+      "overviewGradeLabels": 0,
+      "stationGap": null,
+      "cloudVisible": null,
+      "supports": [
+        {
+          "supportType": "ZZ-Va",
+          "lengthM": 5
+        }
+      ],
+      "supportLayers": [
+        {
+          "component": "primary_concrete",
+          "visible": true
+        },
+        {
+          "component": "primary_mesh",
+          "visible": true
+        },
+        {
+          "component": "steel_arch",
+          "visible": true
+        },
+        {
+          "component": "system_anchor",
+          "visible": false
+        },
+        {
+          "component": "lock_foot_anchor",
+          "visible": false
+        },
+        {
+          "component": "secondary_lining",
+          "visible": true
+        },
+        {
+          "component": "secondary_rebar_N1",
+          "visible": true
+        },
+        {
+          "component": "secondary_rebar_N2",
+          "visible": true
+        },
+        {
+          "component": "secondary_rebar_N3",
+          "visible": true
+        },
+        {
+          "component": "secondary_rebar_N4",
+          "visible": true
+        }
+      ],
+      "supportMatrices": [
+        [
+          -0.14409683040392884,
+          -0.49845961221254925,
+          0.8548532730594511,
+          0,
+          -0.06944177527284173,
+          0.8668328315440487,
+          0.49373948799370243,
+          0,
+          -0.9871240769601852,
+          0.01178376638610358,
+          -0.15952178388941188,
+          0,
+          -475187.63627055916,
+          5536147.021069524,
+          3126923.340197923,
+          1
+        ],
+        [
+          -0.14450388291029134,
+          -0.49845650097221117,
+          0.8547863735825395,
+          0,
+          -0.06944207630625927,
+          0.8668318009949006,
+          0.49374125493239146,
+          0,
+          -0.987064549997681,
+          0.011989387910861266,
+          -0.1598744154497474,
+          0,
+          -475188.6233642796,
+          5536147.032948524,
+          3126923.1804955006,
+          1
+        ],
+        [
+          -0.14491081517877022,
+          -0.4984533056670839,
+          0.8547193444129956,
+          0,
+          -0.06944237895140626,
+          0.866830770705961,
+          0.4937430211789114,
+          0,
+          -0.9870048691114921,
+          0.012194959076040096,
+          -0.16022693694675727,
+          0,
+          -475189.61039839505,
+          5536147.045033124,
+          3126923.0204405035,
+          1
+        ],
+        [
+          -0.1453176269881124,
+          -0.49845002635888075,
+          0.8546521856927384,
+          0,
+          -0.06944268320676358,
+          0.8668297406783467,
+          0.4937447867315211,
+          0,
+          -0.9869450344551052,
+          0.012400479762547365,
+          -0.16057934819294087,
+          0,
+          -475190.5973727737,
+          5536147.0573235275,
+          3126922.860033187,
+          1
+        ],
+        [
+          -0.14572431811681175,
+          -0.498446663109459,
+          0.8545848975639786,
+          0,
+          -0.06944298907080844,
+          0.8668287109131746,
+          0.4937465515884802,
+          0,
+          -0.9868850461823312,
+          0.012605949851145173,
+          -0.16093164900058843,
+          0,
+          -475191.58428727475,
+          5536147.069819845,
+          3126922.6992737525,
+          1
+        ]
+      ],
+      "charts": [],
+      "reply": "复核拟变更版本｜在同一展示区间换装 ZZ-Va，对照初支构造。开挖差异和审批状态待核验。轮廓对照暂收起已有锚杆组。"
+    },
+    {
+      "key": "reveal",
+      "taskId": "scene-1795583667430-cjzbv",
+      "roots": [
+        "blast.design-data",
+        "rock.three-bench",
+        "rock.tsp-integrity",
+        "support.test-section-zz-ivb"
+      ],
+      "view": "overview",
+      "sameCanvas": true,
+      "targetCenters": [
+        {
+          "x": 382.6374759915835,
+          "y": 263.0486748327693,
+          "visible": true
+        },
+        {
+          "x": 462.79214948707823,
+          "y": 261.0271064756827,
+          "visible": true
+        }
+      ],
+      "projectedSpan": {
+        "width": 8.65085528171602,
+        "endpointsInView": true,
+        "datumInView": true
+      },
+      "workfaceReady": false,
+      "workfaceTextureDisplay": false,
+      "shellAlpha": 0.035,
+      "workfaceMatrix": null,
+      "camera": [
+        [
+          -475063.5860578378,
+          5536045.466571948,
+          3127286.5136698727
+        ],
+        [
+          -0.3454637812722626,
+          0.15566912429028745,
+          -0.9254306562740211
+        ],
+        [
+          -0.18475565271544817,
+          0.9555626607594574,
+          0.22970709643368623
+        ]
+      ],
+      "references": [
+        "开挖基准 · YK2+244",
+        "ZZ-IVb 初支 · YK2+238–YK2+243"
+      ],
+      "volumeFrames": 12,
+      "gradeLabels": 0,
+      "overviewGradeLabels": 0,
+      "stationGap": null,
+      "cloudVisible": null,
+      "supports": [
+        {
+          "supportType": "ZZ-IVb",
+          "lengthM": 5
+        }
+      ],
+      "supportLayers": [
+        {
+          "component": "primary_concrete",
+          "visible": true
+        },
+        {
+          "component": "primary_mesh",
+          "visible": true
+        },
+        {
+          "component": "steel_arch",
+          "visible": true
+        },
+        {
+          "component": "system_anchor",
+          "visible": true
+        },
+        {
+          "component": "secondary_lining",
+          "visible": true
+        }
+      ],
+      "supportMatrices": [
+        [
+          -0.14409683040392884,
+          -0.49845961221254925,
+          0.8548532730594511,
+          0,
+          -0.06944177527284173,
+          0.8668328315440487,
+          0.49373948799370243,
+          0,
+          -0.9871240769601852,
+          0.01178376638610358,
+          -0.15952178388941188,
+          0,
+          -475187.63627055916,
+          5536147.021069524,
+          3126923.340197923,
+          1
+        ],
+        [
+          -0.14450388291029134,
+          -0.49845650097221117,
+          0.8547863735825395,
+          0,
+          -0.06944207630625927,
+          0.8668318009949006,
+          0.49374125493239146,
+          0,
+          -0.987064549997681,
+          0.011989387910861266,
+          -0.1598744154497474,
+          0,
+          -475188.6233642796,
+          5536147.032948524,
+          3126923.1804955006,
+          1
+        ],
+        [
+          -0.14491081517877022,
+          -0.4984533056670839,
+          0.8547193444129956,
+          0,
+          -0.06944237895140626,
+          0.866830770705961,
+          0.4937430211789114,
+          0,
+          -0.9870048691114921,
+          0.012194959076040096,
+          -0.16022693694675727,
+          0,
+          -475189.61039839505,
+          5536147.045033124,
+          3126923.0204405035,
+          1
+        ],
+        [
+          -0.1453176269881124,
+          -0.49845002635888075,
+          0.8546521856927384,
+          0,
+          -0.06944268320676358,
+          0.8668297406783467,
+          0.4937447867315211,
+          0,
+          -0.9869450344551052,
+          0.012400479762547365,
+          -0.16057934819294087,
+          0,
+          -475190.5973727737,
+          5536147.0573235275,
+          3126922.860033187,
+          1
+        ],
+        [
+          -0.14572431811681175,
+          -0.498446663109459,
+          0.8545848975639786,
+          0,
+          -0.06944298907080844,
+          0.8668287109131746,
+          0.4937465515884802,
+          0,
+          -0.9868850461823312,
+          0.012605949851145173,
+          -0.16093164900058843,
+          0,
+          -475191.58428727475,
+          5536147.069819845,
+          3126922.6992737525,
+          1
+        ]
+      ],
+      "charts": [],
+      "reply": "揭示与影响范围｜以 TSP 完整性解释体和三台阶开挖基准观察空间关系。从循环设计图确认待比对字段，实际影响界线和分部范围待掌子面编录划定。"
+    },
+    {
+      "key": "workface",
+      "taskId": "scene-1795583668684-jlwqy",
+      "roots": [
+        "rock.workface-surface"
+      ],
+      "view": "face",
+      "sameCanvas": true,
+      "targetCenters": [
+        {
+          "x": 434.9999999973042,
+          "y": 347.0000000113399,
+          "visible": true
+        }
+      ],
+      "projectedSpan": null,
+      "workfaceReady": true,
+      "workfaceTextureDisplay": true,
+      "shellAlpha": 0.025,
+      "workfaceMatrix": [
+        0.0259063318902152,
+        0.08972304014064278,
+        -0.15387864710841012,
+        0,
+        -0.013393346768155028,
+        0.15603856203348512,
+        0.08872759109132945,
+        0,
+        0.17762173355291286,
+        -0.0013203130094099416,
+        0.029133769807822892,
+        0,
+        -475180.0195431422,
+        5536147.703044718,
+        3126926.1197220813,
+        1
+      ],
+      "camera": [
+        [
+          -475166.9950819614,
+          5536148.19136009,
+          3126941.1816643234
+        ],
+        [
+          -0.7350767900159495,
+          0.05802492953044412,
+          -0.6754962770680789
+        ],
+        [
+          -0.24853283049568412,
+          0.9039125517397011,
+          0.3480998864883841
+        ]
+      ],
+      "references": [
+        "掌子面岩面 · YK2+244"
+      ],
+      "volumeFrames": 0,
+      "gradeLabels": 0,
+      "overviewGradeLabels": 0,
+      "stationGap": null,
+      "cloudVisible": null,
+      "supports": [],
+      "supportLayers": [],
+      "supportMatrices": [],
+      "charts": [],
+      "reply": "观察掌子面岩面｜用既有纹理网格观察岩面起伏和邻近岩壁。源工点和比例尚未核验，现场揭示须另查本循环编录。"
+    }
+  ],
+  "referenceLinks": [
+    {
+      "key": "baseline",
+      "station": 2238,
+      "role": "support-span",
+      "canvasClick": {
+        "x": 485,
+        "y": 416
+      },
+      "modelClick": {
+        "x": 482,
+        "y": 346,
+        "depthIndex": 0
+      },
+      "idle": {
+        "background": "#142734f0",
+        "spanWidth": 3,
+        "markers": [],
+        "endpointLabels": [],
+        "source": [
+          [
+            -475186.9482715499,
+            5536144.588045713,
+            3126922.0374882487
+          ],
+          [
+            -475191.8832894284,
+            5536144.64900243,
+            3126921.2363175834
+          ]
+        ]
+      },
+      "selected": {
+        "background": "#105574",
+        "spanWidth": 6,
+        "markers": [
+          [
+            -475186.9482715499,
+            5536144.588045713,
+            3126922.0374882487
+          ],
+          [
+            -475191.8832894284,
+            5536144.64900243,
+            3126921.2363175834
+          ]
+        ],
+        "endpointLabels": [
+          "+238",
+          "+243"
+        ],
+        "source": [
+          [
+            -475186.9482715499,
+            5536144.588045713,
+            3126922.0374882487
+          ],
+          [
+            -475191.8832894284,
+            5536144.64900243,
+            3126921.2363175834
+          ]
+        ]
+      },
+      "unitEdges": [
+        [
+          0,
+          -2.7999999998137355,
+          -0.5
+        ],
+        [
+          0,
+          -2.799999998882413,
+          0.5000000001164153
+        ]
+      ],
+      "cameraUnchanged": true
+    },
+    {
+      "key": "candidate",
+      "station": 2238,
+      "role": "support-span",
+      "canvasClick": {
+        "x": 485,
+        "y": 416
+      },
+      "modelClick": {
+        "x": 482,
+        "y": 345,
+        "depthIndex": 0
+      },
+      "idle": {
+        "background": "#142734f0",
+        "spanWidth": 3,
+        "markers": [],
+        "endpointLabels": [],
+        "source": [
+          [
+            -475186.9482715499,
+            5536144.588045713,
+            3126922.0374882487
+          ],
+          [
+            -475191.8832894284,
+            5536144.64900243,
+            3126921.2363175834
+          ]
+        ]
+      },
+      "selected": {
+        "background": "#105574",
+        "spanWidth": 6,
+        "markers": [
+          [
+            -475186.9482715499,
+            5536144.588045713,
+            3126922.0374882487
+          ],
+          [
+            -475191.8832894284,
+            5536144.64900243,
+            3126921.2363175834
+          ]
+        ],
+        "endpointLabels": [
+          "+238",
+          "+243"
+        ],
+        "source": [
+          [
+            -475186.9482715499,
+            5536144.588045713,
+            3126922.0374882487
+          ],
+          [
+            -475191.8832894284,
+            5536144.64900243,
+            3126921.2363175834
+          ]
+        ]
+      },
+      "unitEdges": [
+        [
+          0,
+          -2.7999999998137355,
+          -0.5
+        ],
+        [
+          0,
+          -2.799999998882413,
+          0.5000000001164153
+        ]
+      ],
+      "cameraUnchanged": true
+    }
+  ],
+  "pageErrors": [],
+  "passed": false,
+  "lastReply": "观察掌子面岩面｜用既有纹理网格观察岩面起伏和邻近岩壁。源工点和比例尚未核验，现场揭示须另查本循环编录。",
+  "baselineOutline": {
+    "cameraUnchanged": true,
+    "matricesUnchanged": true,
+    "anchors": [
+      {
+        "component": "system_anchor",
+        "visible": false
+      }
+    ],
+    "assembled": [
+      {
+        "component": "primary_concrete",
+        "visible": true
+      },
+      {
+        "component": "primary_mesh",
+        "visible": true
+      },
+      {
+        "component": "steel_arch",
+        "visible": true
+      },
+      {
+        "component": "system_anchor",
+        "visible": true
+      },
+      {
+        "component": "secondary_lining",
+        "visible": true
+      }
+    ]
+  },
+  "baselineComponent": {
+    "component": "system_anchor",
+    "visibleLayers": [
+      "system_anchor"
+    ],
+    "exactNodeRestore": true,
+    "sameCamera": true
+  },
+  "candidateOutline": {
+    "cameraUnchanged": true,
+    "matricesUnchanged": true,
+    "anchors": [
+      {
+        "component": "system_anchor",
+        "visible": false
+      },
+      {
+        "component": "lock_foot_anchor",
+        "visible": false
+      }
+    ],
+    "assembled": [
+      {
+        "component": "primary_concrete",
+        "visible": true
+      },
+      {
+        "component": "primary_mesh",
+        "visible": true
+      },
+      {
+        "component": "steel_arch",
+        "visible": true
+      },
+      {
+        "component": "system_anchor",
+        "visible": true
+      },
+      {
+        "component": "lock_foot_anchor",
+        "visible": true
+      },
+      {
+        "component": "secondary_lining",
+        "visible": true
+      },
+      {
+        "component": "secondary_rebar_N1",
+        "visible": true
+      },
+      {
+        "component": "secondary_rebar_N2",
+        "visible": true
+      },
+      {
+        "component": "secondary_rebar_N3",
+        "visible": true
+      },
+      {
+        "component": "secondary_rebar_N4",
+        "visible": true
+      }
+    ]
+  },
+  "candidateComponent": {
+    "component": "lock_foot_anchor",
+    "visibleLayers": [
+      "lock_foot_anchor"
+    ],
+    "exactNodeRestore": true,
+    "sameCamera": true
+  },
+  "supportSideView": {
+    "overviewSpanPx": 33.51794965449636,
+    "sideSpanPx": 94.09381381714849,
+    "sameSideCameraAcrossVersions": true,
+    "restoresOverview": true
+  },
+  "componentVersionComparison": {
+    "shared": "system_anchor",
+    "unavailable": "lock_foot_anchor",
+    "resumed": true,
+    "cleared": true
+  },
+  "failure": "locator.waitFor: Timeout 180000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.agent-messages .msg-row.assistant .msg-block .msg-bubble').nth(20) to be visible\u001b[22m\n\n    at send (D:\\project\\scripts\\verify-construction-review.mjs:39:33)\n    at async stage (D:\\project\\scripts\\verify-construction-review.mjs:117:19)\n    at async file:///D:/project/scripts/verify-construction-review.mjs:429:17"
+}

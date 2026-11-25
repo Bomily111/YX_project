@@ -30,6 +30,13 @@ const entries = mileageData as MileageEntry[]
 const DATASET_REFERENCE: ChainageReference = Object.freeze({ prefix: 'YK', origin: 1116 })
 const LEGACY_DK_REFERENCE: ChainageReference = Object.freeze({ prefix: 'DK', origin: 278100 })
 
+/** Read project centerline labels without treating source labels such as X1DK as targets. */
+export function findMainCenterlineMileageLabels(request: string): string[] {
+  const normalized = request.replace(/[Ａ-Ｚａ-ｚ０-９＋．]/g, value => value.normalize('NFKC'))
+  return (normalized.match(/(?<![A-Z0-9])(?:DK|YK)\s*\d+\s*\+\s*\d+(?:\.\d+)?/gi) ?? [])
+    .map(value => value.replace(/\s+/g, '').toUpperCase())
+}
+
 const formatRemainder = (value: number): string => {
   const rounded = Math.round(value * 1000) / 1000
   const text = Number.isInteger(rounded)

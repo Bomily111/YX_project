@@ -202,6 +202,7 @@ export class AgentEngine {
       // Explicit recovery remains available even when the model provider is down.
       const localTool=(taskVisualReviewIntent(userMessage)||readOnlyTaskReviewTool(userMessage)==='inspect_task_scene')?undefined:wantsTaskReset(userMessage)?'reset_task_scene':wantsSupportInspection(userMessage)?'inspect_current_support':undefined
       if(localTool){
+        if (localTool === 'reset_task_scene') this.pendingSceneRequest = undefined
         const call:ToolUseBlock={type:'tool_use',id:`local-scene-${Date.now()}`,name:localTool,input:{}}
         this.messages.push({role:'assistant',content:'',tool_calls:[{id:call.id,name:call.name,input:call.input}]})
         const output=callbacks.onToolUse?await callbacks.onToolUse(call):await executeTool(call.name,call.input)
@@ -391,6 +392,10 @@ export class AgentEngine {
               }
               try {
                 const observation = JSON.parse(result)
+                if (directSceneAssembly && tool.name === 'assemble_scene_at_mileage' &&
+                    observation.ok === false && ['test-support-type', 'target-mileage'].includes(observation.clarification)) {
+                  this.pendingSceneRequest = effectiveRequest
+                }
                 if (combinedTask && !assembledTaskId && ['assemble_scene_at_mileage','retry_scene_load'].includes(tool.name)
                     && observation.ok === true && observation.status === 'completed' && typeof observation.taskId === 'string') {
                   assembledTaskId = observation.taskId

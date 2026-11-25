@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "pageErrors": [],
+  "modelRequests": 0,
+  "developmentControlDenied": true,
+  "modelPick": {
+    "hit": {
+      "x": 482,
+      "y": 341,
+      "depthIndex": 1
+    },
+    "viewport": {
+      "width": 900,
+      "height": 680
+    },
+    "evidence": "启风"
+  },
+  "crowdedViewportFeedback": true,
+  "reset": true
+}

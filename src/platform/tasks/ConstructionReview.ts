@@ -59,6 +59,7 @@ export type ConstructionReviewSelection = ConstructionReviewNode & {
   assemblyOnly?: boolean
   restoreAssemblyView?: () => void
   sceneAnnotations?: boolean
+  fixedLabelLayout?: boolean
   referenceLinks?: boolean
   simulation?: { range: readonly [number, number]; unit: string }
   supportDisplay?: ReviewSupportDisplay
@@ -99,8 +100,9 @@ export function toggleReviewSupportDetailView(current: ConstructionReviewSelecti
 
 type ConstructionReviewIntent = Pick<ConstructionReviewNode, 'kind' | 'stepIndex'> & {
   start: boolean
-  experiment?: 'assemble' | 'enhance' | 'restore' | 'annotations' | 'reference-links'
+  experiment?: 'assemble' | 'enhance' | 'restore' | 'annotations' | 'reference-links' | 'label-layout'
   sceneAnnotations?: boolean
+  fixedLabelLayout?: boolean
   referenceLinks?: boolean
   supportDisplay?: ReviewSupportDisplay
   workfaceView?: ReviewWorkfaceView
@@ -145,6 +147,10 @@ export function resolveConstructionReviewRequest(request: string, current: Const
   if (/^(隐藏|显示)复盘三维标注$/.test(phrase)) {
     return { kind: current.kind, stepIndex: current.stepIndex, start: false, experiment: 'annotations',
       sceneAnnotations: phrase.startsWith('显示') }
+  }
+  if (phrase === '固定复盘标注布局' || phrase === '启用复盘标注避让') {
+    return { kind: current.kind, stepIndex: current.stepIndex, start: false, experiment: 'label-layout',
+      fixedLabelLayout: phrase === '固定复盘标注布局' }
   }
   if (/^(关闭|开启)复盘里程联动$/.test(phrase)) {
     return { kind: current.kind, stepIndex: current.stepIndex, start: false, experiment: 'reference-links',

@@ -919,6 +919,7 @@ function addDesignRockGradeLabels(viewer: any) {
     designRockGradeLabels.push(viewer.entities.add({
       id: `design-rock-grade-${segment.modelIndex}`,
       position: midpoint,
+      properties: { designRockGradeOverview: true },
       point: {
         pixelSize: 8,
         color,
